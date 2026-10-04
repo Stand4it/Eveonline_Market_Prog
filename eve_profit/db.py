@@ -1,0 +1,55 @@
+"""SQLite schema and helpers."""
+import os
+import sqlite3
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS systems(
+  system_id INTEGER PRIMARY KEY, name TEXT NOT NULL, security REAL NOT NULL,
+  region_id INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_sys_name ON systems(name);
+CREATE TABLE IF NOT EXISTS gates(
+  from_id INTEGER NOT NULL, to_id INTEGER NOT NULL, PRIMARY KEY(from_id,to_id));
+CREATE TABLE IF NOT EXISTS stations(
+  station_id INTEGER PRIMARY KEY, system_id INTEGER NOT NULL, name TEXT);
+CREATE TABLE IF NOT EXISTS types(
+  type_id INTEGER PRIMARY KEY, name TEXT, volume REAL NOT NULL DEFAULT 1,
+  group_id INTEGER, category_id INTEGER, is_ore INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS orders(
+  order_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, location_id INTEGER,
+  system_id INTEGER NOT NULL, region_id INTEGER NOT NULL, is_buy INTEGER NOT NULL,
+  price REAL NOT NULL, volume_remain INTEGER NOT NULL, min_volume INTEGER NOT NULL DEFAULT 1,
+  issued TEXT, fetched_at REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_ord_type ON orders(type_id, is_buy);
+CREATE INDEX IF NOT EXISTS ix_ord_sys ON orders(system_id);
+CREATE TABLE IF NOT EXISTS inventory(
+  type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
+  PRIMARY KEY(type_id, system_id));
+CREATE TABLE IF NOT EXISTS system_kills(
+  system_id INTEGER PRIMARY KEY, ship_kills INTEGER, pod_kills INTEGER, fetched_at REAL);
+CREATE TABLE IF NOT EXISTS opportunities(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, scanned_at REAL NOT NULL, kind TEXT NOT NULL,
+  description TEXT NOT NULL, profit_isk REAL, risk_cost_isk REAL, jumps INTEGER,
+  hours REAL, isk_per_jump REAL, isk_per_hour REAL, route TEXT, detail TEXT);
+CREATE INDEX IF NOT EXISTS ix_opp_scan ON opportunities(scanned_at);
+CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
+"""
+
+
+def connect(path: str) -> sqlite3.Connection:
+    d = os.path.dirname(path)
+    if d:
+        os.makedirs(d, exist_ok=True)
+    con = sqlite3.connect(path)
+    con.row_factory = sqlite3.Row
+    con.execute("PRAGMA journal_mode=WAL")
+    con.executescript(SCHEMA)
+    return con
+
+
+def set_meta(con, key, value):
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(value)))
+
+
+def get_meta(con, key, default=None):
+    r = con.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
+    return r[0] if r else default
