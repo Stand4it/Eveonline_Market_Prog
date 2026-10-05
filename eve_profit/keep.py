@@ -43,6 +43,8 @@ def keep_vs_sell(con, g, p, top=5):
                     short_cost += c
             if not ok or not own_used:
                 continue
+            if own_value < 0.25 * (own_value + short_cost):
+                continue          # mostly bought materials: that is ordinary manufacturing (see `scan`), not "keep vs sell"
             units = prod["quantity"] * runs
             best = None
             for s, bids in buys[prod["product_id"]].items():
@@ -65,8 +67,9 @@ def keep_vs_sell(con, g, p, top=5):
 
 def format_keep(res, slots):
     if not res:
-        return ("No blueprint you own can use the materials in your hangar here (or no buyers for the product).\n"
-                "=> SELL the materials; rebuy later only if a build clearly pays.")
+        return ("None of your blueprints can build from the materials in this hangar (or no buyers for the product).\n"
+                "=> SELL the materials; rebuy later only if a build clearly pays.\n"
+                "(Builds that need mostly BOUGHT materials are ordinary manufacturing: see `scan` / the 'build' lines.)")
     L = [f"Manufacturing slots free: {slots}.  (gain = product sale - fees - what your own materials would sell for now)"]
     for d in res:
         verdict = "BUILD beats selling" if d["gain"] > 0 else "SELL the materials (building loses)"
