@@ -53,6 +53,17 @@ CREATE TABLE IF NOT EXISTS salvage_items(
 CREATE TABLE IF NOT EXISTS activity_log(
   id INTEGER PRIMARY KEY AUTOINCREMENT, activity TEXT NOT NULL, isk REAL NOT NULL,
   hours REAL NOT NULL, ts REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS contracts(
+  contract_id INTEGER PRIMARY KEY, region_id INTEGER NOT NULL, type TEXT NOT NULL,
+  price REAL NOT NULL DEFAULT 0, reward REAL NOT NULL DEFAULT 0, collateral REAL NOT NULL DEFAULT 0,
+  volume REAL NOT NULL DEFAULT 0, buyout REAL NOT NULL DEFAULT 0,
+  start_system_id INTEGER, end_system_id INTEGER, expires REAL, days_to_complete INTEGER,
+  title TEXT, items_fetched INTEGER NOT NULL DEFAULT 0, fetched_at REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_con_start ON contracts(start_system_id);
+CREATE TABLE IF NOT EXISTS contract_items(
+  contract_id INTEGER NOT NULL, type_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
+  is_included INTEGER NOT NULL DEFAULT 1, is_bpc INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS ix_ci ON contract_items(contract_id);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 

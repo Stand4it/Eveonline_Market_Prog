@@ -51,3 +51,11 @@ the hull in range or building it from a blueprint you own, plus fit, minus insur
 (lose-chance x replacement cost) is subtracted from ISK/hr and the win % is shown. With `ship_ehp` = 0 no combat
 is shown. Enemy ehp/threat numbers are placeholders in the `activities` table: log real results (log a lost
 ship as a negative ISK run) and calibrate.
+
+## Contracts & player offers
+Market player orders were already scanned (buy/sell orders are player offers). `--live` scans now also pull
+public contracts for the region(s) (no login): **item-exchange/auction** bundles whose contents sell for more
+than their price (contents valued at best buy orders in range; blueprint copies and unpriced items count as 0)
+and **courier** jobs ranked by reward per jump/hour (cargo, collateral and wallet checked). Contracts in player
+structures are skipped (system unknown without login). "CHECK-IN-GAME" marks margins >3x: look-alike-item scams
+exist, so open the contract and verify every item before accepting. Contents are fetched 150 contracts per scan.

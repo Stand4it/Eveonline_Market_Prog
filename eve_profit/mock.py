@@ -23,7 +23,7 @@ def load_mock(con, seed=7, systems=30):
     con.executescript("DELETE FROM systems;DELETE FROM gates;DELETE FROM stations;"
                       "DELETE FROM types;DELETE FROM orders;DELETE FROM inventory;"
                       "DELETE FROM system_kills;DELETE FROM bp_materials;"
-                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;")
+                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM contracts;DELETE FROM contract_items;")
     con.execute("INSERT INTO systems VALUES(1,'Home',0.9,10000001)")
     for i in range(2, systems + 1):
         con.execute("INSERT INTO systems VALUES(?,?,?,?)",
@@ -44,6 +44,13 @@ def load_mock(con, seed=7, systems=30):
     con.execute("INSERT INTO bp_products VALUES(90002,90001,1,3600)")
     con.execute("INSERT INTO my_blueprints VALUES(90002,10,20,-1)")
     con.executemany("INSERT INTO prices VALUES(?,?)", [(t[0], t[3]) for t in TYPES])
+    far = time.time() + 86400 * 10
+    # underpriced bundle at Home (worth ~5x tritanium+pyerite base; priced at 40% of base value)
+    con.execute("INSERT INTO contracts VALUES(5001,10000001,'item_exchange',200000,0,0,0,0,1,1,?,0,'',1,?)",
+                (far, time.time()))
+    con.executemany("INSERT INTO contract_items VALUES(5001,?,?,1,0)", [(34, 40000), (35, 20000)])
+    con.execute("INSERT INTO contracts VALUES(5002,10000001,'courier',0,2500000,5000000,3000,0,2,8,?,3,'',1,?)",
+                (far, time.time()))
     con.execute("INSERT INTO system_kills VALUES(5,9,2,?)", (time.time(),))
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")

@@ -3,11 +3,12 @@ import time
 
 from .graph import Graph
 from .combat import find_combat
+from .contracts import find_contracts
 from .manufacturing import find_manufacturing
 from .mining import find_mining
 from .trade import find_liquidations, find_trades
 
-FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find_combat]
+FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find_combat, find_contracts]
 # Stage 6: route automation / alerts.
 
 

@@ -96,6 +96,12 @@ def main(argv=None):
             if a.live:
                 from .esi import refresh_orders
                 print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages))
+                from .contracts import refresh_contracts
+                from .graph import Graph
+                g0 = Graph(con)
+                near = g0.reach(g0.id_of(p.current_system), p.max_jumps * 2, p.avoid_yellow)
+                print("Contracts stored / contents fetched:",
+                      refresh_contracts(con, esi, regions, set(near)))
             elif a.cmd == "watch":
                 from .mock import refresh_mock_orders
                 refresh_mock_orders(con, random.Random())
