@@ -107,6 +107,8 @@ class LoginFlow(unittest.TestCase):
         s = socket.socket()
         if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
             s.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        else:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)     # ignore TIME_WAIT from earlier tests
         s.bind(("127.0.0.1", sso.CALLBACK_PORT)); s.listen(1)
         try:
             with self.assertRaises(RuntimeError) as cm:
