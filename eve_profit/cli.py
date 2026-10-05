@@ -14,8 +14,11 @@ def resolve_client_id(explicit=""):
     rejected: a real CCP client id is 32 hex characters."""
     import re
     cands = [explicit]
-    if os.path.exists("client_id.txt"):
-        cands.append(open("client_id.txt").read().strip())
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for path in ("client_id.txt", os.path.join(root, "client_id.txt"), os.path.join(root, "scripts", "client_id.txt")):
+        if os.path.exists(path):
+            cands.append(open(path).read().strip())
+            break
     cands.append(os.environ.get("EVE_CLIENT_ID", ""))
     for c in cands:
         if c and re.fullmatch(r"[0-9a-fA-F]{32}", c.strip()):
