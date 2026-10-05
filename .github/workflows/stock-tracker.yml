@@ -1,0 +1,40 @@
+name: Stock recommendation tracker
+
+on:
+  schedule:
+    - cron: "37 21 * * 1-5"   # weekdays, after the US market close
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    env:
+      STOCK_EMAIL_USER: ${{ secrets.STOCK_EMAIL_USER }}
+      STOCK_EMAIL_PASSWORD: ${{ secrets.STOCK_EMAIL_PASSWORD }}
+    defaults:
+      run:
+        working-directory: stock_screens
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Import recommendations from email
+        if: ${{ env.STOCK_EMAIL_USER != '' }}
+        run: python email_ingest.py
+
+      - name: Update paper-trading report
+        run: python tracker.py
+
+      - name: Commit results
+        run: |
+          git config user.name "stock-tracker-bot"
+          git config user.email "stock-tracker-bot@users.noreply.github.com"
+          git add recommendations.csv history.csv report.md
+          git diff --cached --quiet || git commit -m "Update stock tracker report $(date -u +%F)"
+          git push

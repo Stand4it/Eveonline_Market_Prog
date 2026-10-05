@@ -1,0 +1,12 @@
+{
+  "benchmark": "SPY",
+  "bank_rate_pct": 4.09,
+  "position_size_usd": 1000,
+  "recent_window_trading_days": 21,
+  "email": {
+    "imap_host": "imap.gmail.com",
+    "mailbox": "INBOX",
+    "search": "(FROM \"newsletter@example.com\")",
+    "days_back": 14
+  }
+}
