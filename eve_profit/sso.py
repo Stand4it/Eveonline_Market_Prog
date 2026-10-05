@@ -17,7 +17,7 @@ from .config import USER_AGENT
 
 AUTH_URL = "https://login.eveonline.com/v2/oauth/authorize"
 TOKEN_URL = "https://login.eveonline.com/v2/oauth/token"
-CALLBACK_PORT = 8765
+CALLBACK_PORT = int(os.environ.get("EVE_CALLBACK_PORT", "8801"))   # must match the app's callback URL
 CALLBACK = f"http://localhost:{CALLBACK_PORT}/callback"
 SCOPES = [
     "esi-location.read_location.v1",

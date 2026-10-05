@@ -12,7 +12,7 @@ See ROADMAP.md.
 
 ## EVE login (Stage 3)
 1. https://developers.eveonline.com -> Create application, type *Authentication & API Access*.
-2. Callback URL `http://localhost:8765/callback`; scopes: location, ship type, skills, wallet, assets, ui waypoint.
+2. Callback URL `http://localhost:8801/callback`; scopes: location, ship type, skills, wallet, assets, ui waypoint.
 3. `set EVE_CLIENT_ID=<client id>` then `scripts\login.bat` (login -> sync profile/inventory -> live scan).
 No client secret is used (PKCE). Tokens are saved to `tokens.json` (git-ignored; keep private).
 `sync` sets: system, ship name, cargo m3, wallet, Accounting level. Mining yield and ship value stay manual.
