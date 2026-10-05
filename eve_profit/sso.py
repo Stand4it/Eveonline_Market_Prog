@@ -27,6 +27,8 @@ SCOPES = [
     "esi-assets.read_assets.v1",
     "esi-characters.read_blueprints.v1",
     "esi-industry.read_character_jobs.v1",
+    "esi-markets.structure_markets.v1",
+    "esi-universe.read_structures.v1",
     "esi-characters.read_loyalty.v1",
     "esi-characters.read_standings.v1",
     "esi-ui.write_waypoint.v1",      # Stage 6 route automation (sets waypoints only)

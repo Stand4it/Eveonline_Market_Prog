@@ -23,7 +23,7 @@ def load_mock(con, seed=7, systems=30):
     con.executescript("DELETE FROM systems;DELETE FROM gates;DELETE FROM stations;"
                       "DELETE FROM types;DELETE FROM orders;DELETE FROM inventory;"
                       "DELETE FROM system_kills;DELETE FROM bp_materials;"
-                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM agents;DELETE FROM lp_offers;DELETE FROM lp_offer_items;DELETE FROM lp_balance;DELETE FROM standings;DELETE FROM skill_reqs;DELETE FROM type_skills;DELETE FROM character_skills;DELETE FROM contracts;DELETE FROM contract_items;")
+                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM structures;DELETE FROM agents;DELETE FROM lp_offers;DELETE FROM lp_offer_items;DELETE FROM lp_balance;DELETE FROM standings;DELETE FROM skill_reqs;DELETE FROM type_skills;DELETE FROM character_skills;DELETE FROM contracts;DELETE FROM contract_items;")
     con.execute("INSERT INTO systems VALUES(1,'Home',0.9,10000001)")
     for i in range(2, systems + 1):
         con.execute("INSERT INTO systems VALUES(?,?,?,?)",
@@ -62,6 +62,11 @@ def load_mock(con, seed=7, systems=30):
     # mission agents: (id, corp, system, level)
     for aid, corp, sysid, lvl in [(3001, 1000001, 1, 2), (3002, 1000002, 2, 3), (3003, 1000001, 8, 4)]:
         con.execute("INSERT INTO agents VALUES(?,?,?,?,?,5)", (aid, corp, 60000000 + sysid, sysid, lvl))
+    # a player structure in Sys02 whose buyers pay 2x for Tritanium (tests structure scanning)
+    con.execute("INSERT INTO structures VALUES(1000000000001,'Mock Citadel',2,99,1,?,?)",
+                (time.time(), time.time()))
+    con.execute("INSERT INTO orders VALUES(990000001,34,1000000000001,2,10000001,1,10.0,500000,1,'',?)",
+                (time.time(),))
     con.execute("INSERT INTO system_kills VALUES(5,9,2,?)", (time.time(),))
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")
@@ -71,7 +76,7 @@ def load_mock(con, seed=7, systems=30):
 def refresh_mock_orders(con, rnd=None):
     """Re-roll prices (simulates the live market moving)."""
     rnd = rnd or random.Random()
-    con.execute("DELETE FROM orders")
+    con.execute("DELETE FROM orders WHERE location_id < 1000000000000")   # keep structure orders
     now, oid = time.time(), 1
     for (sid,) in con.execute("SELECT system_id FROM systems").fetchall():
         for tid, _, _, base, _ in TYPES:

@@ -15,6 +15,8 @@ FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find
 
 
 def plan(con, p, top=15, save=True):
+    from .orders import set_structure_haircut
+    set_structure_haircut(p)
     g = Graph(con)
     opps = []
     for f in FINDERS:

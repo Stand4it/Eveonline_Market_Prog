@@ -79,3 +79,12 @@ Re-run `login` once to grant the new industry-jobs scope. Not checked: ship/modu
   don't add the two together.
 - Needs login: LP balance and standings (re-run `login` for the two new scopes). Without sync, standings are
   assumed OK and no redeem offers appear. LP stores in stations outside the SDE (player structures) are not seen.
+
+## Structure markets (player citadels)
+With `--live` and a saved login, each scan lists public market structures, reads which ones you can dock at
+(no access = remembered for a week, not retried), and downloads orders for accessible ones in range (20 per
+scan; add your own with `"structure_ids": [..]` in profile.json). Their orders join the normal books, so
+trades, contracts, builds and LP redeems can use them, and contracts located in known structures now resolve.
+`structure_sales_tax` (default 1%, owners set their own - check in game) is shaved off structure buy orders.
+Needs two more scopes (re-run `login`): structure markets + read structures. Caveats: you must be able to
+dock there (hostile/blue-list rules change), and structures in low/null space are avoided by the router.

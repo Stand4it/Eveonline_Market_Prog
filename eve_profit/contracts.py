@@ -36,6 +36,8 @@ def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
     `wanted_systems` (the systems you can reach). -> (contracts_stored, items_fetched)."""
     now = time.time()
     station_sys = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
+    station_sys.update({r[0]: r[1] for r in con.execute(
+        "SELECT structure_id,system_id FROM structures WHERE system_id>0")})
     stored = 0
     for rid in region_ids:
         rows = _paged_or_empty(esi, f"/contracts/public/{rid}/")

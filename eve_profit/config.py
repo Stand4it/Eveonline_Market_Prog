@@ -52,6 +52,9 @@ class Profile:
     risky_win_margin: float = 1.5     # below min but >= this only if one session's profit repays the ship
     can_salvage: bool = False         # salvager fitted
     salvage_wreck_seconds: float = 25.0
+    use_structures: bool = True       # scan player-structure markets (needs login + docking access)
+    structure_ids: list = field(default_factory=list)   # extra structure ids to always scan (e.g. your home citadel)
+    structure_sales_tax: float = 0.01  # extra tax set by structure owners; varies per structure - verify
     avoid_yellow: bool = True         # soft avoid
     min_profit_isk: float = 100_000.0
     min_margin: float = 0.03

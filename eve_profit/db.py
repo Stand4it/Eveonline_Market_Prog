@@ -89,6 +89,10 @@ CREATE INDEX IF NOT EXISTS ix_loi ON lp_offer_items(corporation_id, offer_id);
 CREATE TABLE IF NOT EXISTS lp_fetched(corporation_id INTEGER PRIMARY KEY, fetched_at REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS lp_balance(corporation_id INTEGER PRIMARY KEY, points INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS standings(from_id INTEGER PRIMARY KEY, standing REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS structures(
+  structure_id INTEGER PRIMARY KEY, name TEXT, system_id INTEGER, owner_id INTEGER,
+  access INTEGER NOT NULL DEFAULT -1, info_at REAL, orders_at REAL);
+CREATE INDEX IF NOT EXISTS ix_str_sys ON structures(system_id);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 

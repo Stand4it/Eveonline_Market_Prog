@@ -2,16 +2,30 @@
 from collections import defaultdict
 
 
+STRUCT_BID_HAIRCUT = 0.0
+
+
+def set_structure_haircut(profile):
+    """Structure owners add their own sales tax. We model it by shaving structure bids so the
+    existing `price * (1 - sales_tax)` math nets (1 - tax - structure_tax)."""
+    global STRUCT_BID_HAIRCUT
+    STRUCT_BID_HAIRCUT = profile.structure_sales_tax / max(1e-9, 1 - profile.sales_tax)
+
+
 def load_books(con, systems):
     """-> sells[type][system]=[(price,vol,min)] asc ; buys[...] desc."""
+    structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()
     sells = defaultdict(lambda: defaultdict(list))
     buys = defaultdict(lambda: defaultdict(list))
     ids = ",".join(str(int(s)) for s in systems) or "0"
     for r in con.execute(
-        f"SELECT type_id,system_id,is_buy,price,volume_remain,min_volume FROM orders "
+        f"SELECT type_id,system_id,is_buy,price,volume_remain,min_volume,location_id FROM orders "
         f"WHERE system_id IN ({ids})"):
+        price = r["price"]
+        if r["is_buy"] and r["location_id"] in structs:
+            price *= 1 - STRUCT_BID_HAIRCUT
         (buys if r["is_buy"] else sells)[r["type_id"]][r["system_id"]].append(
-            (r["price"], r["volume_remain"], r["min_volume"]))
+            (price, r["volume_remain"], r["min_volume"]))
     for book in sells.values():
         for l in book.values():
             l.sort()

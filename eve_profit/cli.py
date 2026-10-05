@@ -109,6 +109,14 @@ def main(argv=None):
                     f"WHERE system_id IN ({ids}) UNION SELECT corporation_id FROM stations "
                     f"WHERE system_id IN ({ids}) AND corporation_id IS NOT NULL")]
                 print("LP stores refreshed:", refresh_offers(con, esi, corps))
+                if p.use_structures:
+                    if a.client_id and os.path.exists("tokens.json"):
+                        from . import sso
+                        from .structures import refresh_structures
+                        esi.token, _ = sso.get_token(a.client_id)      # refreshes if expired
+                        print("Structures:", refresh_structures(con, esi, set(near), p.structure_ids))
+                    else:
+                        print("Structure markets skipped (run login first)")
             elif a.cmd == "watch":
                 from .mock import refresh_mock_orders
                 refresh_mock_orders(con, random.Random())
