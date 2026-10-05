@@ -31,3 +31,12 @@ Set `combat_dps` (your real DPS), `can_salvage` in profile.json. Activities live
 
 Rules baked in: NPC targets and your own wrecks only (no ganking / no taking others' wrecks); red never routed;
 systems with recent kills skipped; expected ship loss and docking-wait time are charged against ISK/hr.
+
+## Route automation (Stage 6)
+    python -m eve_profit go --pick 2          # dry run: shows waypoints for ranked opportunity #2
+    python -m eve_profit go --pick 2 --send   # sets them in your running game client (needs login)
+`scripts\go.bat [N]` does the send. It places a waypoint at every system on the safe path (so the in-game
+router can't detour through red), refuses any route with a red system, and prints ALERT lines for
+hot/recent-kill systems; `watch` also beeps when the best route turns hot. ESI only sets waypoints:
+you still engage autopilot or fly manually (set `"autopilot": true` in profile.json for slower timing).
+Re-run `login` once if you logged in before Stage 3 so the waypoint scope is granted.

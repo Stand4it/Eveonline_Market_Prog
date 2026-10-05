@@ -92,6 +92,10 @@ def find_manufacturing(con, g, p):
             active = (jumps * p.jump_seconds + (len(srcs) + 2) * p.dock_overhead_s
                       + p.trade_overhead_s + wait)
             job_h = build_seconds(prod["base_time"], runs, te, p) / 3600
+            tour = []
+            for s in sorted(srcs):      # out-and-back to each source, then the buyer
+                tour += reach[s].path[1:] + reach[s].path[::-1][1:]
+            tour += reach[sold_best[1]].path[1:]
             out.append(Opportunity(
                 "build",
                 f"Build {runs}x {name.get(prod['product_id'], bp)} (ME{me}/TE{te}), "
@@ -99,6 +103,6 @@ def find_manufacturing(con, g, p):
                 profit, loss, jumps, active / 3600,
                 "buy@" + ",".join(sorted(g.name[s] for s in srcs)) + " > sell@" + g.name[sold_best[1]],
                 {"blueprint": bp, "runs": runs, "units": units, "cost": cost, "fee": fee,
-                 "job_hours": job_h}))
+                 "job_hours": job_h}, waypoints=tour))
             break  # largest feasible batch wins for this blueprint
     return out

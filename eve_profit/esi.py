@@ -101,3 +101,15 @@ def refresh_orders(con, esi, region_ids, max_pages=None):
                      t.get("group_id")))
     con.commit()
     return n
+
+
+def _post(self, path, token, **params):
+    """Authenticated POST with query params, empty body. -> HTTP status."""
+    url = BASE + path + "?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, data=b"", method="POST", headers={
+        "User-Agent": USER_AGENT, "Authorization": "Bearer " + token})
+    with urllib.request.urlopen(req, timeout=self.timeout) as r:
+        return r.status
+
+
+ESI.post = lambda self, path, **params: _post(self, path, self.token, **params)

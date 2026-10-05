@@ -73,7 +73,8 @@ def find_combat(con, g, p):
         base = Opportunity("combat", f"{a['name']} @ {g.name[s]}{tag}",
                            rate * a["session_hours"], risk, 2 * rt.jumps,
                            a["session_hours"] + travel_h, " > ".join(g.name[x] for x in rt.path),
-                           {"activity": a["name"], "learned": learned})
+                           {"activity": a["name"], "learned": learned},
+                           rt.path[1:])
         out.append(base)
         if p.can_salvage and per_wreck > 0 and a["wrecks_per_hour"] > 0:
             wrecks = a["wrecks_per_hour"] * a["session_hours"]
@@ -82,5 +83,6 @@ def find_combat(con, g, p):
                 "combat+salv", f"{a['name']} + salvage own wrecks @ {g.name[s]}{tag}",
                 base.profit_isk + wrecks * per_wreck, risk, base.jumps,
                 base.hours + extra_h, base.route,
-                {"activity": a["name"], "wrecks": wrecks, "salvage_per_wreck": per_wreck}))
+                {"activity": a["name"], "wrecks": wrecks, "salvage_per_wreck": per_wreck},
+                base.waypoints))
     return out

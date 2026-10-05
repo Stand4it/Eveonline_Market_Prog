@@ -7,7 +7,7 @@
 | 3 | EVE SSO (PKCE) login + `sync`: location, ship, cargo, skills, wallet, assets | **Yes** | Code + tests done; live login unverified |
 | 4 | Manufacturing: BOM + ME/TE, job fees, build time vs active time, blueprint sync (contract scanning still TODO) | Yes (blueprints, skills) | Manufacturing done; contracts pending |
 | 5 | NPC combat + own-wreck salvage as ISK/hr candidates, DPS gating, hot-system skip, calibration from your logged runs | Optional | Done (payout numbers are placeholders) |
-| 6 | Automation: route-setting via ESI waypoint API (`ui/autopilot/waypoint`), manual-vs-autopilot timing, "dock when hot" alerts | Yes | |
+| 6 | Route automation: ESI waypoints at every safe-path system, dry-run default, red refusal, hot-system alerts in watch | Yes | Done; live waypoint call unverified |
 
 Ground rules: no suicide-ganking/ninja-looting by default; red systems never routed; yellow penalised.
 CCP rules: ESI cannot move your ship; it can only set waypoints. Automating in-game input is not allowed.

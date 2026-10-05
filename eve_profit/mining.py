@@ -30,5 +30,6 @@ def find_mining(con, g, p):
                 "mine",
                 f"Mine {sold:,} x {name} ({mine_s / 60:.0f} min), sell @ {g.name[b]}",
                 net, loss, 2 * rt.jumps, secs / 3600, " > ".join(g.name[s] for s in rt.path),
-                {"type_id": row["type_id"], "units": sold, "mine_minutes": mine_s / 60}))
+                {"type_id": row["type_id"], "units": sold, "mine_minutes": mine_s / 60},
+                waypoints=rt.path[1:]))
     return out

@@ -11,6 +11,7 @@ class Opportunity:
     hours: float
     route: str = ""
     detail: dict = field(default_factory=dict)
+    waypoints: list = field(default_factory=list)  # system ids, in order, excl. start
 
     @property
     def net_isk(self) -> float:

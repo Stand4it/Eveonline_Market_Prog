@@ -53,7 +53,8 @@ def find_trades(con, g, p):
                     f"sell @ {g.name[b]}",
                     profit, l1 + l2, jumps, secs / 3600,
                     _names(g, r1.path) + " | " + _names(g, r2.path),
-                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid]}))
+                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid]},
+                    waypoints=r1.path[1:] + r2.path[1:]))
     return out
 
 
@@ -89,5 +90,6 @@ def find_liquidations(con, g, p):
             f"Sell {sold:,} x {tname.get(tid, tid)} at {g.name[b]} "
             f"(vs {local:,.0f} ISK selling at {g.name[sid]})",
             uplift, loss, rt.jumps, secs / 3600, _names(g, rt.path),
-            {"type_id": tid, "units": sold, "net": net, "local_net": local}))
+            {"type_id": tid, "units": sold, "net": net, "local_net": local},
+            waypoints=rt.path[1:]))
     return out
