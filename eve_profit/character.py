@@ -37,6 +37,13 @@ def sync_character(con, esi, cid, profile):
     jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
     profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1
                                  and j["status"] in ("active", "paused", "ready"))
+    con.execute("DELETE FROM lp_balance")
+    con.executemany("INSERT INTO lp_balance VALUES(?,?)",
+                    [(x["corporation_id"], x["loyalty_points"])
+                     for x in esi.get(f"/characters/{cid}/loyalty/points/")[0]])
+    con.execute("DELETE FROM standings")
+    con.executemany("INSERT OR REPLACE INTO standings VALUES(?,?)",
+                    [(x["from_id"], x["standing"]) for x in esi.get(f"/characters/{cid}/standings/")[0]])
     con.execute("DELETE FROM my_blueprints")
     bps = esi.paged(f"/characters/{cid}/blueprints/")
     con.executemany("INSERT INTO my_blueprints VALUES(?,?,?,?)",
@@ -58,5 +65,5 @@ def sync_character(con, esi, cid, profile):
     con.commit()
     return {"system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "blueprints": len(bps), "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "assets_skipped": skipped,
+            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "assets_skipped": skipped,
             "system_known": bool(row)}

@@ -66,3 +66,16 @@ running jobs. Builds are skipped if you lack a blueprint skill (shown as "blocke
 (have 2)" after a scan), BPC runs cap the batch, and at most one build per free slot is ranked. Ores needing a
 skill you lack are skipped for mining. Before your first sync (no skills stored) the skill check is skipped.
 Re-run `login` once to grant the new industry-jobs scope. Not checked: ship/module fitting skills for combat.
+
+## Mission agents & LP stores
+- **LP value:** each corporation's LP store offers (public ESI, cached 24h) are priced as
+  (reward sold into buy orders - ISK cost - required items bought at cheapest asks) / LP cost = **ISK per LP**.
+- **Missions:** level 2/3/4 mission activities now need a real agent of that level in range (from the SDE),
+  usable with your standing (best of agent/corp/faction standing, no Connections/Diplomacy bonus - approximate),
+  and add `lp_per_hour x ISK/LP` of that agent's corporation to the mission's ISK/hr. LP-per-hour and
+  minimum-standing numbers are placeholders in the `activities` table; log real runs to calibrate.
+- **Redeem:** `lp-redeem` opportunities turn LP you already hold into ISK (best offer per corporation with a
+  store in range; never more than your LP, wallet or cargo). Missions *earn* LP and redeeming *spends* it, so
+  don't add the two together.
+- Needs login: LP balance and standings (re-run `login` for the two new scopes). Without sync, standings are
+  assumed OK and no redeem offers appear. LP stores in stations outside the SDE (player structures) are not seen.

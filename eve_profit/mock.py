@@ -23,7 +23,7 @@ def load_mock(con, seed=7, systems=30):
     con.executescript("DELETE FROM systems;DELETE FROM gates;DELETE FROM stations;"
                       "DELETE FROM types;DELETE FROM orders;DELETE FROM inventory;"
                       "DELETE FROM system_kills;DELETE FROM bp_materials;"
-                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM skill_reqs;DELETE FROM type_skills;DELETE FROM character_skills;DELETE FROM contracts;DELETE FROM contract_items;")
+                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM agents;DELETE FROM lp_offers;DELETE FROM lp_offer_items;DELETE FROM lp_balance;DELETE FROM standings;DELETE FROM skill_reqs;DELETE FROM type_skills;DELETE FROM character_skills;DELETE FROM contracts;DELETE FROM contract_items;")
     con.execute("INSERT INTO systems VALUES(1,'Home',0.9,10000001)")
     for i in range(2, systems + 1):
         con.execute("INSERT INTO systems VALUES(?,?,?,?)",
@@ -35,7 +35,7 @@ def load_mock(con, seed=7, systems=30):
             if other != parent:
                 con.execute("INSERT OR IGNORE INTO gates VALUES(?,?)", (other, i))
     for i in range(1, systems + 1):
-        con.execute("INSERT INTO stations VALUES(?,?,?)", (60000000 + i, i, f"Station {i}"))
+        con.execute("INSERT INTO stations VALUES(?,?,?,?)", (60000000 + i, i, f"Station {i}", 1000001 + i % 3))
     for t in TYPES:
         con.execute("INSERT INTO types(type_id,name,volume,is_ore) VALUES(?,?,?,?)",
                     (t[0], t[1], t[2], t[4]))
@@ -54,6 +54,14 @@ def load_mock(con, seed=7, systems=30):
     con.executemany("INSERT INTO types(type_id,name,volume) VALUES(?,?,0.01)",
                     [(3380, "Industry"), (3387, "Mass Production"), (3388, "Advanced Industry")])
     con.execute("INSERT INTO skill_reqs VALUES(90002,3380,3)")
+    # LP: corp 1000001 store sells a Widget for 1000 LP + 1000 ISK + 100 Tritanium; we hold 5000 LP
+    con.execute("INSERT INTO lp_offers VALUES(1000001,1,90001,1,1000,1000,0)")
+    con.execute("INSERT INTO lp_offer_items VALUES(1000001,1,34,100)")
+    con.execute("INSERT INTO lp_offers VALUES(1000001,2,11399,1,500,0,0)")   # Morphite, 500 LP
+    con.execute("INSERT INTO lp_balance VALUES(1000001,5000)")
+    # mission agents: (id, corp, system, level)
+    for aid, corp, sysid, lvl in [(3001, 1000001, 1, 2), (3002, 1000002, 2, 3), (3003, 1000001, 8, 4)]:
+        con.execute("INSERT INTO agents VALUES(?,?,?,?,?,5)", (aid, corp, 60000000 + sysid, sysid, lvl))
     con.execute("INSERT INTO system_kills VALUES(5,9,2,?)", (time.time(),))
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")

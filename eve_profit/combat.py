@@ -10,12 +10,13 @@ from .risk import route_risk
 CALIBRATE_AFTER = 3
 
 # name, kind, min_sec, max_sec, isk/h, wrecks/h, base p_loss/h (non-NPC causes), min_dps, session_h,
-# enemy_ehp (per wave), threat_dps (per wave, incl. spikes), waves/h   -- ALL placeholders
+# enemy_ehp (per wave), threat_dps (per wave, incl. spikes), waves/h,
+# agent_level (0 = no agent), lp_per_hour, min_standing (approx; verify in game)  -- ALL placeholders
 DEFAULT_ACTIVITIES = [
-    ("High-sec belt ratting (frigate)", "combat", 0.5, 1.0, 4_000_000, 40, 0.0005, 60, 1.0, 3_000, 40, 6),
-    ("Level 2 security mission", "combat", 0.5, 1.0, 10_000_000, 25, 0.0003, 150, 1.0, 15_000, 60, 4),
-    ("Level 3 security mission", "combat", 0.5, 1.0, 25_000_000, 40, 0.0005, 300, 1.0, 60_000, 250, 4),
-    ("Level 4 security mission", "combat", 0.5, 1.0, 60_000_000, 60, 0.001, 600, 1.0, 250_000, 700, 3),
+    ("High-sec belt ratting (frigate)", "combat", 0.5, 1.0, 4_000_000, 40, 0.0005, 60, 1.0, 3_000, 40, 6, 0, 0, 0),
+    ("Level 2 security mission", "combat", 0.5, 1.0, 10_000_000, 25, 0.0003, 150, 1.0, 15_000, 60, 4, 2, 800, 1.0),
+    ("Level 3 security mission", "combat", 0.5, 1.0, 25_000_000, 40, 0.0005, 300, 1.0, 60_000, 250, 4, 3, 2000, 3.0),
+    ("Level 4 security mission", "combat", 0.5, 1.0, 60_000_000, 60, 0.001, 600, 1.0, 250_000, 700, 3, 4, 5000, 5.0),
 ]
 # type name, avg units per wreck, chance (guesses; refine from your salvage results)
 DEFAULT_SALVAGE = [("Tripped Power Circuit", 0.4, 1.0), ("Charred Micro Circuit", 0.4, 1.0),
@@ -26,10 +27,14 @@ DEFAULT_SALVAGE = [("Tripped Power Circuit", 0.4, 1.0), ("Charred Micro Circuit"
 def seed_defaults(con):
     con.executemany("INSERT OR IGNORE INTO activities(name,kind,min_sec,max_sec,isk_per_hour,"
                     "wrecks_per_hour,p_loss_per_hour,min_dps,session_hours,enemy_ehp,threat_dps,"
-                    "waves_per_hour) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", DEFAULT_ACTIVITIES)
+                    "waves_per_hour,agent_level,lp_per_hour,min_standing) "
+                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", DEFAULT_ACTIVITIES)
     con.executemany("UPDATE activities SET enemy_ehp=?,threat_dps=?,waves_per_hour=? "
                     "WHERE name=? AND enemy_ehp=0 AND threat_dps=0",   # fill migrated rows only
                     [(d[9], d[10], d[11], d[0]) for d in DEFAULT_ACTIVITIES])
+    con.executemany("UPDATE activities SET agent_level=?,lp_per_hour=?,min_standing=? "
+                    "WHERE name=? AND agent_level=0 AND lp_per_hour=0 AND min_standing=0",
+                    [(d[12], d[13], d[14], d[0]) for d in DEFAULT_ACTIVITIES if d[12]])
     con.executemany("INSERT OR IGNORE INTO salvage_items VALUES(?,?,?)", DEFAULT_SALVAGE)
     con.commit()
 
@@ -94,7 +99,20 @@ def replacement_cost(con, p, reach, sells):
     return max(0.0, hull + p.fit_value_isk - p.insurance_payout_isk)
 
 
+def standing_ok(con, agent, need):
+    """Approximate access check: best raw standing among agent/corp/faction >= need.
+    (Ignores Connections/Diplomacy skill bonuses.) No standings synced -> assume OK."""
+    st = {r[0]: r[1] for r in con.execute("SELECT from_id,standing FROM standings")}
+    if not st:
+        return True
+    f = con.execute("SELECT faction_id FROM corp_faction WHERE corporation_id=?",
+                    (agent["corporation_id"],)).fetchone()
+    ids = [agent["agent_id"], agent["corporation_id"]] + ([f[0]] if f else [])
+    return max(st.get(i, 0.0) for i in ids) >= need
+
+
 def find_combat(con, g, p):
+    from .lp import corp_isk_per_lp
     if p.combat_dps <= 0 or p.ship_ehp <= 0:
         return []        # can't judge win odds without your DPS and ship EHP -> recommend nothing
     cur = g.id_of(p.current_system)
@@ -102,40 +120,55 @@ def find_combat(con, g, p):
     sells, buys = load_books(con, reach)
     repl = replacement_cost(con, p, reach, sells)
     per_wreck = salvage_value_per_wreck(con, buys, reach, p.sales_tax) if p.can_salvage else 0
+    have_agents = con.execute("SELECT COUNT(*) FROM agents").fetchone()[0] > 0
     out = []
     for a in con.execute("SELECT * FROM activities").fetchall():
         if p.combat_dps < a["min_dps"]:
             continue
-        cands = [s for s in reach if a["min_sec"] <= g.sec[s] <= a["max_sec"]
-                 and not g.is_hot(s) and (not p.avoid_yellow or not g.is_yellow(s))]
+        ok_sys = [s for s in reach if a["min_sec"] <= g.sec[s] <= a["max_sec"]
+                  and not g.is_hot(s) and (not p.avoid_yellow or not g.is_yellow(s))]
+        # (system, agent-or-None, LP value per hour)
+        cands = [(s, None, 0.0) for s in ok_sys]
+        if a["agent_level"] and have_agents:           # missions need a real agent you can use
+            ids = ",".join(str(int(s)) for s in ok_sys) or "0"
+            ags = [x for x in con.execute(f"SELECT * FROM agents WHERE level=? AND system_id IN ({ids})",
+                                          (a["agent_level"],)) if standing_ok(con, x, a["min_standing"])]
+            rates = corp_isk_per_lp(con, p, reach, sells, buys, [x["corporation_id"] for x in ags])
+            cands = [(x["system_id"], x, a["lp_per_hour"] * rates.get(x["corporation_id"], 0.0))
+                     for x in ags]
         if not cands:
             continue
-        s = min(cands, key=lambda x: reach[x].cost)
         rate, learned = calibrated_rate(con, a["name"], a["isk_per_hour"])
         margin, p_lose = win_assessment(a, p)
-        session_profit = rate * a["session_hours"]
         safe = margin >= p.min_win_margin
-        affordable = margin >= p.risky_win_margin and session_profit >= repl
+        affordable = margin >= p.risky_win_margin and rate * a["session_hours"] >= repl
         if not (safe or affordable):
             continue     # not likely enough to win and one session wouldn't repay the ship
-        rt = reach[s]
-        loss_travel, wait = route_risk(g, rt.path, p.ship_value_isk)
-        risk = 2 * loss_travel + p_lose * repl      # expected cost of losing the ship
-        travel_h = (2 * rt.jumps * p.jump_seconds + 2 * wait + p.dock_overhead_s) / 3600
-        tag = (" (your avg)" if learned else " (estimate)") + f" win {100 * (1 - p_lose):.1f}%"
-        base = Opportunity("combat", f"{a['name']} @ {g.name[s]}{tag}",
-                           rate * a["session_hours"], risk, 2 * rt.jumps,
-                           a["session_hours"] + travel_h, " > ".join(g.name[x] for x in rt.path),
-                           {"activity": a["name"], "learned": learned, "margin": margin, "p_lose": p_lose,
-                            "replacement_isk": repl},
-                           rt.path[1:])
+        best = None
+        for s, agent, lp_val in cands:
+            rt = reach[s]
+            loss_travel, wait = route_risk(g, rt.path, p.ship_value_isk)
+            risk = 2 * loss_travel + p_lose * repl      # expected cost of losing the ship
+            travel_h = (2 * rt.jumps * p.jump_seconds + 2 * wait + p.dock_overhead_s) / 3600
+            lp_note = f", agent {agent['agent_id']} ~{lp_val:,.0f} ISK/h LP" if agent and lp_val else ""
+            tag = (" (your avg)" if learned else " (estimate)") + f" win {100 * (1 - p_lose):.1f}%"
+            base = Opportunity("combat", f"{a['name']} @ {g.name[s]}{lp_note}{tag}",
+                               (rate + lp_val) * a["session_hours"], risk, 2 * rt.jumps,
+                               a["session_hours"] + travel_h, " > ".join(g.name[x] for x in rt.path),
+                               {"activity": a["name"], "learned": learned, "margin": margin,
+                                "p_lose": p_lose, "replacement_isk": repl, "lp_isk_per_hour": lp_val,
+                                "agent_id": agent["agent_id"] if agent else None},
+                               rt.path[1:])
+            if best is None or base.isk_per_hour > best[0].isk_per_hour:
+                best = (base, s, tag)
+        base, s, tag = best
         out.append(base)
         if p.can_salvage and per_wreck > 0 and a["wrecks_per_hour"] > 0:
             wrecks = a["wrecks_per_hour"] * a["session_hours"]
             extra_h = wrecks * p.salvage_wreck_seconds / 3600
             out.append(Opportunity(
                 "combat+salv", f"{a['name']} + salvage own wrecks @ {g.name[s]}{tag}",
-                base.profit_isk + wrecks * per_wreck, risk, base.jumps,
+                base.profit_isk + wrecks * per_wreck, base.risk_cost_isk, base.jumps,
                 base.hours + extra_h, base.route,
                 {"activity": a["name"], "wrecks": wrecks, "salvage_per_wreck": per_wreck},
                 base.waypoints))

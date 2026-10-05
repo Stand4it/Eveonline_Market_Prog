@@ -12,7 +12,7 @@ def jwt(sub="CHARACTER:EVE:42", name="Pilot"):
 class FakeESI:
     def get(self, path, **kw):
         d = {"/location/": {"solar_system_id": 2}, "/ship/": {"ship_type_id": 1, "ship_name": "Tank"},
-             "/wallet/": 1234.5, "/jobs/": [{"activity_id": 1, "status": "active"}, {"activity_id": 1, "status": "delivered"}, {"activity_id": 8, "status": "active"}], "/skills/": {"skills": [{"skill_id": 16622, "trained_skill_level": 5}, {"skill_id": 3387, "trained_skill_level": 2}]}}
+             "/wallet/": 1234.5, "/points/": [{"corporation_id": 1000001, "loyalty_points": 500}], "/standings/": [{"from_id": 3001, "standing": 2.5}], "/jobs/": [{"activity_id": 1, "status": "active"}, {"activity_id": 1, "status": "delivered"}, {"activity_id": 8, "status": "active"}], "/skills/": {"skills": [{"skill_id": 16622, "trained_skill_level": 5}, {"skill_id": 3387, "trained_skill_level": 2}]}}
         return next(v for k, v in d.items() if path.endswith(k)), 1
 
     def type_info(self, t):
@@ -55,7 +55,7 @@ class T(unittest.TestCase):
     def test_sync(self):
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         con.execute("INSERT INTO systems VALUES(2,'Jita',0.9,1)")
-        con.execute("INSERT INTO stations VALUES(61,2,'s')")
+        con.execute("INSERT INTO stations(station_id,system_id,name) VALUES(61,2,'s')")
         p = Profile()
         r = sync_character(con, FakeESI(), 42, p)
         self.assertEqual((p.current_system, p.cargo_m3, p.accounting_level), ("Jita", 60000.0, 5))

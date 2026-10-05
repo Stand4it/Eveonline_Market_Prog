@@ -102,6 +102,13 @@ def main(argv=None):
                 near = g0.reach(g0.id_of(p.current_system), p.max_jumps * 2, p.avoid_yellow)
                 print("Contracts stored / contents fetched:",
                       refresh_contracts(con, esi, regions, set(near)))
+                from .lp import refresh_offers
+                ids = ",".join(str(int(s)) for s in near) or "0"
+                corps = [r[0] for r in con.execute(
+                    f"SELECT corporation_id FROM lp_balance UNION SELECT corporation_id FROM agents "
+                    f"WHERE system_id IN ({ids}) UNION SELECT corporation_id FROM stations "
+                    f"WHERE system_id IN ({ids}) AND corporation_id IS NOT NULL")]
+                print("LP stores refreshed:", refresh_offers(con, esi, corps))
             elif a.cmd == "watch":
                 from .mock import refresh_mock_orders
                 refresh_mock_orders(con, random.Random())

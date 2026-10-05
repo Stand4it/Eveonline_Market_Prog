@@ -40,7 +40,12 @@ class T(unittest.TestCase):
         s = sqlite3.connect(f)
         s.executescript("""CREATE TABLE mapSolarSystems(solarSystemID,solarSystemName,security,regionID);
         CREATE TABLE mapSolarSystemJumps(fromSolarSystemID,toSolarSystemID);
-        CREATE TABLE staStations(stationID,solarSystemID,stationName);
+        CREATE TABLE staStations(stationID,solarSystemID,stationName,corporationID);
+        CREATE TABLE agtAgents(agentID,corporationID,locationID,level,quality,agentTypeID);
+        CREATE TABLE crpNPCCorporations(corporationID,factionID);
+        INSERT INTO staStations VALUES(60,1,'S1',1000);
+        INSERT INTO agtAgents VALUES(7,1000,60,3,10,2),(8,1000,60,1,0,5);
+        INSERT INTO crpNPCCorporations VALUES(1000,500);
         CREATE TABLE invTypes(typeID,typeName,volume,groupID,published);
         CREATE TABLE invGroups(groupID,categoryID);
         INSERT INTO mapSolarSystems VALUES(1,'A',0.9,5),(2,'B',0.4,5);
@@ -49,6 +54,9 @@ class T(unittest.TestCase):
         INSERT INTO invGroups VALUES(18,4);""")
         s.commit()
         self.assertEqual(import_sde(self.con, f), 2)
+        self.assertEqual([tuple(r) for r in self.con.execute("SELECT agent_id,system_id,level FROM agents")],
+                         [(7, 1, 3)])                       # only basic mission agents (type 2)
+        self.assertEqual(self.con.execute("SELECT faction_id FROM corp_faction").fetchone()[0], 500)
 
 
 if __name__ == "__main__":

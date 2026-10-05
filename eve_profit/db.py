@@ -10,7 +10,7 @@ CREATE INDEX IF NOT EXISTS ix_sys_name ON systems(name);
 CREATE TABLE IF NOT EXISTS gates(
   from_id INTEGER NOT NULL, to_id INTEGER NOT NULL, PRIMARY KEY(from_id,to_id));
 CREATE TABLE IF NOT EXISTS stations(
-  station_id INTEGER PRIMARY KEY, system_id INTEGER NOT NULL, name TEXT);
+  station_id INTEGER PRIMARY KEY, system_id INTEGER NOT NULL, name TEXT, corporation_id INTEGER);
 CREATE TABLE IF NOT EXISTS types(
   type_id INTEGER PRIMARY KEY, name TEXT, volume REAL NOT NULL DEFAULT 1,
   group_id INTEGER, category_id INTEGER, is_ore INTEGER NOT NULL DEFAULT 0);
@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS activities(
   isk_per_hour REAL NOT NULL, wrecks_per_hour REAL NOT NULL DEFAULT 0,
   p_loss_per_hour REAL NOT NULL DEFAULT 0.001, min_dps REAL NOT NULL DEFAULT 0,
   session_hours REAL NOT NULL DEFAULT 1.0,
+  agent_level INTEGER NOT NULL DEFAULT 0, lp_per_hour REAL NOT NULL DEFAULT 0,
+  min_standing REAL NOT NULL DEFAULT 0,
   enemy_ehp REAL NOT NULL DEFAULT 0, threat_dps REAL NOT NULL DEFAULT 0,
   waves_per_hour REAL NOT NULL DEFAULT 4);
 CREATE TABLE IF NOT EXISTS salvage_items(
@@ -71,6 +73,22 @@ CREATE TABLE IF NOT EXISTS type_skills(
   type_id INTEGER NOT NULL, skill_id INTEGER NOT NULL, level INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_ts ON type_skills(type_id);
 CREATE TABLE IF NOT EXISTS character_skills(skill_id INTEGER PRIMARY KEY, level INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS agents(
+  agent_id INTEGER PRIMARY KEY, corporation_id INTEGER, location_id INTEGER,
+  system_id INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER);
+CREATE INDEX IF NOT EXISTS ix_ag_sys ON agents(system_id);
+CREATE TABLE IF NOT EXISTS corp_faction(corporation_id INTEGER PRIMARY KEY, faction_id INTEGER);
+CREATE TABLE IF NOT EXISTS lp_offers(
+  corporation_id INTEGER NOT NULL, offer_id INTEGER NOT NULL, type_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL, lp_cost INTEGER NOT NULL, isk_cost REAL NOT NULL DEFAULT 0,
+  ak_cost INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(corporation_id, offer_id));
+CREATE TABLE IF NOT EXISTS lp_offer_items(
+  corporation_id INTEGER NOT NULL, offer_id INTEGER NOT NULL, type_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_loi ON lp_offer_items(corporation_id, offer_id);
+CREATE TABLE IF NOT EXISTS lp_fetched(corporation_id INTEGER PRIMARY KEY, fetched_at REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS lp_balance(corporation_id INTEGER PRIMARY KEY, points INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS standings(from_id INTEGER PRIMARY KEY, standing REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 
@@ -83,6 +101,14 @@ def connect(path: str) -> sqlite3.Connection:
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA journal_mode=WAL")
     con.executescript(SCHEMA)
+    for tbl, col, ddl in (("stations", "corporation_id", "INTEGER"),
+                          ("activities", "agent_level", "INTEGER NOT NULL DEFAULT 0"),
+                          ("activities", "lp_per_hour", "REAL NOT NULL DEFAULT 0"),
+                          ("activities", "min_standing", "REAL NOT NULL DEFAULT 0")):
+        try:
+            con.execute(f"ALTER TABLE {tbl} ADD COLUMN {col} {ddl}")
+        except sqlite3.OperationalError:
+            pass
     for col, ddl in (("enemy_ehp", "REAL NOT NULL DEFAULT 0"), ("threat_dps", "REAL NOT NULL DEFAULT 0"),
                      ("waves_per_hour", "REAL NOT NULL DEFAULT 4")):
         try:  # migrate databases created before the win-odds model

@@ -27,14 +27,15 @@ def download(dest_dir):
 
 def import_sde(con, sde_path):
     src = sqlite3.connect(sde_path)
-    for t in ("systems", "gates", "stations", "types"):
+    for t in ("systems", "gates", "stations", "types", "agents", "corp_faction"):
         con.execute(f"DELETE FROM {t}")
     con.executemany("INSERT INTO systems VALUES(?,?,?,?)", src.execute(
         "SELECT solarSystemID,solarSystemName,security,regionID FROM mapSolarSystems"))
     con.executemany("INSERT OR IGNORE INTO gates VALUES(?,?)", src.execute(
         "SELECT fromSolarSystemID,toSolarSystemID FROM mapSolarSystemJumps"))
-    con.executemany("INSERT INTO stations VALUES(?,?,?)", src.execute(
-        "SELECT stationID,solarSystemID,stationName FROM staStations"))
+    con.executemany("INSERT INTO stations(station_id,system_id,name,corporation_id) VALUES(?,?,?,?)",
+                    src.execute("SELECT stationID,solarSystemID,stationName,corporationID "
+                                "FROM staStations"))
     q = ",".join(map(str, ORE_GROUPS))
     con.executemany("INSERT INTO types VALUES(?,?,?,?,?,?)", src.execute(
         f"SELECT t.typeID,t.typeName,t.volume,t.groupID,g.categoryID,"
@@ -43,6 +44,14 @@ def import_sde(con, sde_path):
     for t in ("bp_materials", "bp_products", "skill_reqs", "type_skills"):
         con.execute(f"DELETE FROM {t}")
     _import_skill_reqs(con, src)
+    try:  # mission agents (agentTypeID 2 = basic mission agent) and corp -> faction
+        con.executemany("INSERT OR IGNORE INTO agents VALUES(?,?,?,?,?,?)", src.execute(
+            "SELECT a.agentID,a.corporationID,a.locationID,s.solarSystemID,a.level,a.quality "
+            "FROM agtAgents a JOIN staStations s ON s.stationID=a.locationID WHERE a.agentTypeID=2"))
+        con.executemany("INSERT OR IGNORE INTO corp_faction VALUES(?,?)", src.execute(
+            "SELECT corporationID,factionID FROM crpNPCCorporations WHERE factionID IS NOT NULL"))
+    except sqlite3.OperationalError:
+        pass
     try:  # manufacturing = activityID 1
         con.executemany("INSERT INTO bp_materials VALUES(?,?,?)", src.execute(
             "SELECT typeID,materialTypeID,quantity FROM industryActivityMaterials "
