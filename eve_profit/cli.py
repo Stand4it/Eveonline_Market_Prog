@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -134,6 +134,9 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "diag":
+        from .diag import diagnose
+        print(diagnose(con, p))
     elif a.cmd == "skills":
         from .advisor import advise, format_advice
         print("Testing each skill by re-running the planner (this can take a minute or two)...")

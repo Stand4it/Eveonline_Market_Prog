@@ -74,3 +74,12 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DiagTests(unittest.TestCase):
+    def test_diag_runs_and_reports_missing_pieces(self):
+        from eve_profit.diag import diagnose
+        con = setup()
+        out = diagnose(con, Profile(ship_name="X", ship_type_id=999999))
+        self.assertIn("MISSING", out)
+        self.assertIn("skill types with a rank", out)
