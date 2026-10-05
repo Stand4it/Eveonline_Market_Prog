@@ -23,7 +23,7 @@ def load_mock(con, seed=7, systems=30):
     con.executescript("DELETE FROM systems;DELETE FROM gates;DELETE FROM stations;"
                       "DELETE FROM types;DELETE FROM orders;DELETE FROM inventory;"
                       "DELETE FROM system_kills;DELETE FROM bp_materials;"
-                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM contracts;DELETE FROM contract_items;")
+                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;DELETE FROM skill_reqs;DELETE FROM type_skills;DELETE FROM character_skills;DELETE FROM contracts;DELETE FROM contract_items;")
     con.execute("INSERT INTO systems VALUES(1,'Home',0.9,10000001)")
     for i in range(2, systems + 1):
         con.execute("INSERT INTO systems VALUES(?,?,?,?)",
@@ -51,6 +51,9 @@ def load_mock(con, seed=7, systems=30):
     con.executemany("INSERT INTO contract_items VALUES(5001,?,?,1,0)", [(34, 40000), (35, 20000)])
     con.execute("INSERT INTO contracts VALUES(5002,10000001,'courier',0,2500000,5000000,3000,0,2,8,?,3,'',1,?)",
                 (far, time.time()))
+    con.executemany("INSERT INTO types(type_id,name,volume) VALUES(?,?,0.01)",
+                    [(3380, "Industry"), (3387, "Mass Production"), (3388, "Advanced Industry")])
+    con.execute("INSERT INTO skill_reqs VALUES(90002,3380,3)")
     con.execute("INSERT INTO system_kills VALUES(5,9,2,?)", (time.time(),))
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")

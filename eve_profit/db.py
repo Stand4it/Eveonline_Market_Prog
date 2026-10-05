@@ -64,6 +64,13 @@ CREATE TABLE IF NOT EXISTS contract_items(
   contract_id INTEGER NOT NULL, type_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
   is_included INTEGER NOT NULL DEFAULT 1, is_bpc INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX IF NOT EXISTS ix_ci ON contract_items(contract_id);
+CREATE TABLE IF NOT EXISTS skill_reqs(
+  blueprint_id INTEGER NOT NULL, skill_id INTEGER NOT NULL, level INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_sr ON skill_reqs(blueprint_id);
+CREATE TABLE IF NOT EXISTS type_skills(
+  type_id INTEGER NOT NULL, skill_id INTEGER NOT NULL, level INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_ts ON type_skills(type_id);
+CREATE TABLE IF NOT EXISTS character_skills(skill_id INTEGER PRIMARY KEY, level INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 

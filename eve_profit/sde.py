@@ -40,8 +40,9 @@ def import_sde(con, sde_path):
         f"SELECT t.typeID,t.typeName,t.volume,t.groupID,g.categoryID,"
         f"CASE WHEN t.groupID IN ({q}) THEN 1 ELSE 0 END "
         f"FROM invTypes t LEFT JOIN invGroups g ON g.groupID=t.groupID WHERE t.published=1"))
-    for t in ("bp_materials", "bp_products"):
+    for t in ("bp_materials", "bp_products", "skill_reqs", "type_skills"):
         con.execute(f"DELETE FROM {t}")
+    _import_skill_reqs(con, src)
     try:  # manufacturing = activityID 1
         con.executemany("INSERT INTO bp_materials VALUES(?,?,?)", src.execute(
             "SELECT typeID,materialTypeID,quantity FROM industryActivityMaterials "
@@ -54,3 +55,25 @@ def import_sde(con, sde_path):
         pass  # older dump without industry tables
     con.commit()
     return con.execute("SELECT COUNT(*) FROM systems").fetchone()[0]
+
+
+# dogma attribute ids: requiredSkillN -> its level attribute
+SKILL_ATTRS = {182: 277, 183: 278, 184: 279, 1285: 1286, 1289: 1287, 1290: 1288}
+
+
+def _import_skill_reqs(con, src):
+    """Blueprint manufacturing skills + required skills of ships/ores/modules."""
+    try:
+        con.executemany("INSERT INTO skill_reqs VALUES(?,?,?)", src.execute(
+            "SELECT typeID,skillID,level FROM industryActivitySkills WHERE activityID=1"))
+        attrs = {}
+        for tid, aid, vi, vf in src.execute(
+                "SELECT typeID,attributeID,valueInt,valueFloat FROM dgmTypeAttributes "
+                "WHERE attributeID IN (%s)" % ",".join(map(str, list(SKILL_ATTRS) + list(SKILL_ATTRS.values())))):
+            attrs.setdefault(tid, {})[aid] = int(vi if vi is not None else vf)
+        published = {r[0] for r in con.execute("SELECT type_id FROM types")}
+        rows = [(tid, a[sa], a[la]) for tid, a in attrs.items() if tid in published
+                for sa, la in SKILL_ATTRS.items() if sa in a and la in a]
+        con.executemany("INSERT INTO type_skills VALUES(?,?,?)", rows)
+    except sqlite3.OperationalError:
+        pass

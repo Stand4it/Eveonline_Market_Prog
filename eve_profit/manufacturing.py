@@ -5,6 +5,7 @@ import math
 from .opportunity import Opportunity
 from .orders import load_books, sell_into_bids
 from .risk import route_risk
+from .skills import blueprint_missing, free_slots, have
 
 
 def material_qty(base, runs, me):
@@ -30,6 +31,9 @@ def buy_cost(asks, units):
 
 
 def find_manufacturing(con, g, p):
+    if free_slots(p) <= 0:
+        return []                     # every manufacturing slot is busy
+    skills = have(con)                # empty = not synced -> skill check skipped
     cur = g.id_of(p.current_system)
     reach = g.reach(cur, p.max_jumps, p.avoid_yellow)
     sells, buys = load_books(con, reach)
@@ -37,19 +41,22 @@ def find_manufacturing(con, g, p):
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     adj = {r[0]: r[1] for r in con.execute("SELECT type_id,adjusted_price FROM prices")}
     if p.assume_all_blueprints:
-        bps = [(r[0], 0, 0) for r in con.execute("SELECT blueprint_id FROM bp_products")]
+        bps = [(r[0], 0, 0, -1) for r in con.execute("SELECT blueprint_id FROM bp_products")]
     else:
-        bps = [(r[0], r[1], r[2]) for r in con.execute(
-            "SELECT blueprint_id,me,te FROM my_blueprints")]
+        bps = [(r[0], r[1], r[2], r[3]) for r in con.execute(
+            "SELECT blueprint_id,me,te,runs FROM my_blueprints")]
     out = []
-    for bp, me, te in bps:
+    for bp, me, te, bp_runs in bps:
+        if skills and blueprint_missing(con, bp, skills):
+            continue                  # you lack a required skill
         prod = con.execute("SELECT product_id,quantity,base_time FROM bp_products "
                            "WHERE blueprint_id=?", (bp,)).fetchone()
         mats = con.execute("SELECT material_id,quantity FROM bp_materials "
                            "WHERE blueprint_id=?", (bp,)).fetchall()
         if not prod or not mats or prod["product_id"] not in buys:
             continue
-        for runs in range(p.max_runs, 0, -1):
+        max_r = p.max_runs if bp_runs < 0 else min(p.max_runs, bp_runs)   # BPC has limited runs
+        for runs in range(max_r, 0, -1):
             need = {m["material_id"]: material_qty(m["quantity"], runs, me) for m in mats}
             if sum(q * vol.get(t, 1) for t, q in need.items()) > p.cargo_m3:
                 continue

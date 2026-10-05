@@ -2,6 +2,7 @@
 from .opportunity import Opportunity
 from .orders import load_books, sell_into_bids
 from .risk import route_risk
+from .skills import have, type_missing
 
 
 def find_mining(con, g, p):
@@ -10,12 +11,15 @@ def find_mining(con, g, p):
     cur = g.id_of(p.current_system)
     reach = g.reach(cur, p.max_jumps, p.avoid_yellow)
     _, buys = load_books(con, reach)
+    skills = have(con)
     out = []
     for name in p.minable_ores:
         row = con.execute("SELECT type_id,volume FROM types WHERE name=? COLLATE NOCASE",
                           (name,)).fetchone()
         if not row or row["volume"] <= 0:
             continue
+        if skills and type_missing(con, row["type_id"], skills):
+            continue                  # ore needs a skill you lack
         units = int(p.mining_hold // row["volume"])
         mine_s = units * row["volume"] / p.mining_yield_m3_s
         for b, bids in buys[row["type_id"]].items():

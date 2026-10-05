@@ -109,6 +109,9 @@ def main(argv=None):
                   f"{p.cargo_m3:,.0f} m3, {p.max_jumps} jumps ===")
             top = plan(con, p, a.top)
             print(format_plan(top))
+            from .skills import blocked_blueprints
+            for name, why in blocked_blueprints(con, p):
+                print(f"  blocked build: {name} - needs {why}")
             if top:
                 from .autopilot import route_alerts
                 from .graph import Graph

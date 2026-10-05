@@ -6,6 +6,7 @@ from .combat import find_combat
 from .contracts import find_contracts
 from .manufacturing import find_manufacturing
 from .mining import find_mining
+from .skills import free_slots
 from .trade import find_liquidations, find_trades
 
 FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find_combat, find_contracts]
@@ -19,6 +20,14 @@ def plan(con, p, top=15, save=True):
         opps.extend(f(con, g, p))
     opps = [o for o in opps if o.net_isk > 0]     # never recommend a task that loses ISK after risk
     opps.sort(key=lambda o: o.isk_per_hour, reverse=True)
+    slots, kept = free_slots(p), []
+    for o in opps:                    # each build occupies one manufacturing slot
+        if o.kind == "build":
+            if slots <= 0:
+                continue
+            slots -= 1
+        kept.append(o)
+    opps = kept
     if save:
         now = time.time()
         con.executemany(

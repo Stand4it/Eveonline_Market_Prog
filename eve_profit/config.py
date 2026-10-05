@@ -37,6 +37,8 @@ class Profile:
     sales_tax_base: float = 0.045     # verify in-game; Stage 3 reads skills
     industry_level: int = 5           # skill 3380: -4% build time/level
     adv_industry_level: int = 3       # skill 3388: -3% build time/level
+    mfg_slots_total: int = 1          # 1 + Mass Production + Advanced Mass Production (sync sets)
+    mfg_slots_used: int = 0           # manufacturing jobs currently running (sync sets)
     max_runs: int = 10                # runs per batch considered
     job_fee_rate: float = 0.05        # fee on estimated item value (SCC 4% + system index); verify
     assume_all_blueprints: bool = False  # True = rank every buildable item (what to buy a BP for)

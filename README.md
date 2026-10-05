@@ -59,3 +59,10 @@ than their price (contents valued at best buy orders in range; blueprint copies 
 and **courier** jobs ranked by reward per jump/hour (cargo, collateral and wallet checked). Contracts in player
 structures are skipped (system unknown without login). "CHECK-IN-GAME" marks margins >3x: look-alike-item scams
 exist, so open the contract and verify every item before accepting. Contents are fetched 150 contracts per scan.
+
+## Skill & slot checks
+`sync` stores your trained skills, manufacturing slots (1 + Mass Production + Advanced Mass Production) and
+running jobs. Builds are skipped if you lack a blueprint skill (shown as "blocked build: X - needs Industry 3
+(have 2)" after a scan), BPC runs cap the batch, and at most one build per free slot is ranked. Ores needing a
+skill you lack are skipped for mining. Before your first sync (no skills stored) the skill check is skipped.
+Re-run `login` once to grant the new industry-jobs scope. Not checked: ship/module fitting skills for combat.

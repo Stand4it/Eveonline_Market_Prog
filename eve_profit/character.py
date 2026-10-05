@@ -1,6 +1,7 @@
 """Pull your character state from ESI and update the profile + inventory."""
 ACCOUNTING = 16622
 INDUSTRY, ADV_INDUSTRY = 3380, 3388
+MASS_PRODUCTION, ADV_MASS_PRODUCTION = 3387, 24625
 CAPACITY_ATTR = 38
 
 
@@ -29,6 +30,13 @@ def sync_character(con, esi, cid, profile):
     profile.accounting_level = lvl
     lv = lambda sid: next((s["trained_skill_level"] for s in skills if s["skill_id"] == sid), 0)
     profile.industry_level, profile.adv_industry_level = lv(INDUSTRY), lv(ADV_INDUSTRY)
+    con.execute("DELETE FROM character_skills")
+    con.executemany("INSERT INTO character_skills VALUES(?,?)",
+                    [(s["skill_id"], s["trained_skill_level"]) for s in skills])
+    profile.mfg_slots_total = 1 + lv(MASS_PRODUCTION) + lv(ADV_MASS_PRODUCTION)
+    jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
+    profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1
+                                 and j["status"] in ("active", "paused", "ready"))
     con.execute("DELETE FROM my_blueprints")
     bps = esi.paged(f"/characters/{cid}/blueprints/")
     con.executemany("INSERT INTO my_blueprints VALUES(?,?,?,?)",
@@ -50,5 +58,5 @@ def sync_character(con, esi, cid, profile):
     con.commit()
     return {"system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "blueprints": len(bps), "assets_kept": kept, "assets_skipped": skipped,
+            "blueprints": len(bps), "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "assets_skipped": skipped,
             "system_known": bool(row)}

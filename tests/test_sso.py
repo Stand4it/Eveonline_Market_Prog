@@ -12,7 +12,7 @@ def jwt(sub="CHARACTER:EVE:42", name="Pilot"):
 class FakeESI:
     def get(self, path, **kw):
         d = {"/location/": {"solar_system_id": 2}, "/ship/": {"ship_type_id": 1, "ship_name": "Tank"},
-             "/wallet/": 1234.5, "/skills/": {"skills": [{"skill_id": 16622, "trained_skill_level": 5}]}}
+             "/wallet/": 1234.5, "/jobs/": [{"activity_id": 1, "status": "active"}, {"activity_id": 1, "status": "delivered"}, {"activity_id": 8, "status": "active"}], "/skills/": {"skills": [{"skill_id": 16622, "trained_skill_level": 5}, {"skill_id": 3387, "trained_skill_level": 2}]}}
         return next(v for k, v in d.items() if path.endswith(k)), 1
 
     def type_info(self, t):
@@ -61,6 +61,7 @@ class T(unittest.TestCase):
         self.assertEqual((p.current_system, p.cargo_m3, p.accounting_level), ("Jita", 60000.0, 5))
         self.assertEqual(con.execute("SELECT quantity FROM inventory").fetchall()[0][0], 15)
         self.assertEqual(r["assets_skipped"], 2)
+        self.assertEqual((p.mfg_slots_total, p.mfg_slots_used), (3, 1))   # 1+2 slots, 1 busy job
 
 
 if __name__ == "__main__":
