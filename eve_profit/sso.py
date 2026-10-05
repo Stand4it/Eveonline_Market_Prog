@@ -83,6 +83,18 @@ def _store(tok, path):
     return rec
 
 
+class _ExclusiveServer(http.server.HTTPServer):
+    """Windows lets two sockets share a port by default; refuse that so a stray program on the
+    same port can't steal the callback."""
+    allow_reuse_address = os.name != "nt"     # Windows: never share; others: avoid TIME_WAIT lockout
+
+    def server_bind(self):
+        import socket
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
     """Blocks until the browser redirects back to the local callback."""
     verifier, challenge = make_pkce()
@@ -92,20 +104,26 @@ def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
     class H(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
-            got["code"], got["state"] = q.get("code", [""])[0], q.get("state", [""])[0]
+            if "code" in q or "error" in q:           # ignore favicon / browser pre-connects
+                got["code"], got["state"] = q.get("code", [""])[0], q.get("state", [""])[0]
+                got["error"] = q.get("error_description", q.get("error", [""]))[0]
+                msg = b"Login complete. You can close this tab." if got["code"] else b"Login failed. See the PowerShell window."
+            else:
+                msg = b"Waiting for EVE login..."
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b"Login complete. You can close this tab.")
+            self.wfile.write(msg)
 
         def log_message(self, *a):
             pass
 
     try:
-        srv = http.server.HTTPServer(("127.0.0.1", CALLBACK_PORT), H)
+        srv = _ExclusiveServer(("127.0.0.1", CALLBACK_PORT), H)
     except OSError:
-        raise RuntimeError(f"Port {CALLBACK_PORT} is busy (an earlier login still running?). "
-                           f"Close other eve_profit windows and retry.")
-    threading.Thread(target=srv.handle_request, daemon=True).start()
+        raise RuntimeError(f"Port {CALLBACK_PORT} is already used by another program. Find it with:  "
+                           f"netstat -ano | findstr :{CALLBACK_PORT}   then close that program "
+                           f"(tasklist /fi \"PID eq <pid>\") and retry.")
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
     url = auth_url(client_id, state, challenge)
     print("Opening your browser to log in. If it does not open, paste this URL into it:\n" + url)
     print("Waiting for you to click Authorize in the browser (Ctrl+C to cancel, gives up after 5 minutes)...",
@@ -115,9 +133,12 @@ def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
     deadline = time.time() + 300
     while "code" not in got and time.time() < deadline:
         time.sleep(0.2)
+    srv.shutdown()
     srv.server_close()
+    if got.get("error"):
+        raise RuntimeError("EVE refused the login: " + got["error"])
     if got.get("state") != state or not got.get("code"):
-        raise RuntimeError("SSO login failed or state mismatch")
+        raise RuntimeError("SSO login failed, timed out, or state mismatch")
     tok = _post({"grant_type": "authorization_code", "code": got["code"],
                  "client_id": client_id, "code_verifier": verifier}, post)
     return _store(tok, path)

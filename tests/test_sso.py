@@ -66,3 +66,51 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LoginFlow(unittest.TestCase):
+    def _run(self, hits):
+        import threading, urllib.request
+        from unittest import mock
+        path = os.path.join(tempfile.mkdtemp(), "t.json")
+        out = {}
+        def post(d):
+            out["post"] = d
+            return {"access_token": jwt(), "refresh_token": "r", "expires_in": 1199}
+        def runner():
+            try:
+                with mock.patch.object(sso.secrets, "token_urlsafe", return_value="STATE"):
+                    out["rec"] = sso.login("c" * 32, path, open_browser=False, post=post)
+            except Exception as e:
+                out["err"] = e
+        t = threading.Thread(target=runner); t.start()
+        time.sleep(0.5)
+        for h in hits:
+            try:
+                urllib.request.urlopen("http://127.0.0.1:%d%s" % (sso.CALLBACK_PORT, h), timeout=5).read()
+            except Exception:
+                pass
+        t.join(10)
+        return out
+
+    def test_callback_ignores_favicon_and_completes(self):
+        out = self._run(["/favicon.ico", "/callback?code=ABC&state=STATE"])
+        self.assertEqual(out["rec"]["character_id"], 42)
+        self.assertEqual(out["post"]["code"], "ABC")
+
+    def test_eve_error_is_reported(self):
+        out = self._run(["/callback?error=invalid_scope&error_description=Bad+scope&state=STATE"])
+        self.assertIn("Bad scope", str(out["err"]))
+
+    def test_busy_port_is_a_clear_error(self):
+        import socket
+        s = socket.socket()
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        s.bind(("127.0.0.1", sso.CALLBACK_PORT)); s.listen(1)
+        try:
+            with self.assertRaises(RuntimeError) as cm:
+                sso.login("c" * 32, os.path.join(tempfile.mkdtemp(), "t.json"), open_browser=False)
+            self.assertIn("netstat", str(cm.exception))
+        finally:
+            s.close()
