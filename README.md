@@ -172,3 +172,9 @@ list here, carry along the trip you are already making (about 2 min), detour to 
 market anywhere (`--world N` checks the N biggest stacks in every region). Each option is scored
 `gain = extra ISK - extra minutes x your time value`, where your time value is the ISK/hr of your best alternative task. Options
 under 2% extra are ignored; carrying respects your hold. Verdict per stack: SELL NOW / LIST / CARRY / DETOUR / HAUL.
+
+## A day plan: ISK per jump, per hour, and over time (`day`)
+`python -m eve_profit day --hours 8 [--cash 45000000]` chains the best tasks one after another, from where each one ended, with
+your wallet growing between steps (`--cash` = ISK you expect from selling stock first). For every step it shows net ISK, minutes,
+jumps, **ISK/jump** and **ISK/hr**, plus the running total, and ends with the overall ISK/hr and ISK/jump for the whole stretch.
+A task is used once (its market depth is spent). Greedy by ISK/hr, using the same risk/tax/skills/slot logic as `scan`.

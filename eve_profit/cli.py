@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -59,6 +59,7 @@ def main(argv=None):
     ap.add_argument("--to", default="", help="along: destination system name")
     ap.add_argument("--force", action="store_true", help="universe: reload even if already loaded")
     ap.add_argument("--world", type=int, default=0, help="sellplan: also check the N biggest stacks in every region")
+    ap.add_argument("--cash", type=float, default=0, help="day: extra ISK you expect to have (e.g. from selling stock)")
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
@@ -139,6 +140,10 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "day":
+        from .graph import Graph
+        from .schedule import build_day, format_day
+        print(format_day(build_day(con, Graph(con), p, a.hours or 8.0, a.cash)))
     elif a.cmd == "sellplan":
         from .esi import ESI
         from .graph import Graph
