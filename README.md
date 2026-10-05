@@ -97,3 +97,10 @@ dock there (hostile/blue-list rules change), and structures in low/null space ar
    No blueprint or agent data in this mode (ESI has no endpoint for them), so builds and mission agents are
    skipped until the SDE import works. Stations are learned from ESI as they turn up.
 `login.bat` runs: login -> sync (learns your system) -> universe -> sync again -> live scan.
+
+## Playing nicely with other bots
+- Only one `watch`, one `login` and one setup command (`sync`/`universe`/`sde`/`mock`) can run per database; a second
+  one stops with "already running (PID n)". Locks are `<db>.<kind>.lock` files; a lock left by a killed window is
+  detected and replaced automatically. `scan`/`plan`/`go` are not locked (SQLite handles concurrent reads).
+- The login callback port is 8801 (override with `EVE_CALLBACK_PORT`, and change the app's callback URL to match);
+  it is open only while logging in. No background services, startup items or files outside the repo and `E:\EveProfit`.

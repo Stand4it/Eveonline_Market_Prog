@@ -59,6 +59,19 @@ def main(argv=None):
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
 
+    kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
+            "sde": "setup", "mock": "setup"}.get(a.cmd)
+    if not kind:
+        return _run(a)
+    from .lock import AlreadyRunning, single_instance
+    try:
+        with single_instance(f"{a.db}.{kind}.lock", kind):
+            return _run(a)
+    except AlreadyRunning as e:
+        raise SystemExit(str(e))
+
+
+def _run(a):
     con = db.connect(a.db)
     p = Profile.load(a.profile)
     from .combat import seed_defaults
