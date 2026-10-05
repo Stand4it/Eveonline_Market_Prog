@@ -81,3 +81,18 @@ class ExplainTests(unittest.TestCase):
         self.assertIn(f"{o.detail['units']:,} units, pay", txt)
         self.assertIn("Wallet left after buying", txt)
         self.assertIn("supports trades", explain_trade(con, g, p, type("O", (), {"kind": "mine", "detail": {}})()))
+
+
+class ExplainWhereTests(unittest.TestCase):
+    def test_explain_names_station_vs_structure_and_data_age(self):
+        from eve_profit.explain import explain_trade
+        con, g = setup()
+        p = Profile(max_jumps=3, cargo_m3=2000, wallet_isk=1e9, min_profit_isk=1)
+        # the mock structure in Sys02 pays 10 ISK for Tritanium; make a trade into it the top pick
+        o = next(o for o in plan(con, p, 100000, False) if o.kind == "trade" and o.detail.get("to_sys") == 2
+                 and o.detail["type_id"] == 34)
+        txt = explain_trade(con, g, p, o)
+        self.assertIn("WHERE those orders are", txt)
+        self.assertIn("PLAYER STRUCTURE 'Mock Citadel'", txt)
+        self.assertIn("min old", txt)
+        self.assertIn("station 'Station", txt)
