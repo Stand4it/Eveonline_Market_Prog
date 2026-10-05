@@ -60,6 +60,7 @@ def main(argv=None):
     ap.add_argument("--force", action="store_true", help="universe: reload even if already loaded")
     ap.add_argument("--world", type=int, default=0, help="sellplan: also check the N biggest stacks in every region")
     ap.add_argument("--cash", type=float, default=0, help="day: extra ISK you expect to have (e.g. from selling stock)")
+    ap.add_argument("--no-stock", action="store_true", help="day: leave out selling/listing the stock in your hangar")
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
@@ -143,7 +144,7 @@ def _run(a):
     elif a.cmd == "day":
         from .graph import Graph
         from .schedule import build_day, format_day
-        print(format_day(build_day(con, Graph(con), p, a.hours or 8.0, a.cash)))
+        print(format_day(build_day(con, Graph(con), p, a.hours or 8.0, a.cash, include_stock=not a.no_stock)))
     elif a.cmd == "sellplan":
         from .esi import ESI
         from .graph import Graph

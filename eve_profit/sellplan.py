@@ -77,7 +77,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         scored.sort(key=lambda x: -x[0])
         best = scored[0]
         m3 = qty * (vol.get(tid, 0) or 0.0001)
-        rows.append({"name": name.get(tid, tid), "qty": qty, "now": now, "m3": m3, "best_label": best[1], "best_net": best[2],
+        rows.append({"tid": tid, "sys": cur, "name": name.get(tid, tid), "qty": qty, "now": now, "m3": m3, "best_label": best[1], "best_net": best[2],
                      "mins": best[3], "extra": best[6], "gain": best[0], "note": best[4], "sold_locally": sold0,
                      "list_gain": list_net - now})
     slots = order_slots(con)                                  # None = skills not synced: no limit applied
