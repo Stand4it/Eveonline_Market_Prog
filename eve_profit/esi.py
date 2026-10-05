@@ -46,11 +46,13 @@ class ESI:
                 raise
         raise RuntimeError(f"ESI failed: {url}")
 
-    def region_orders(self, region_id, max_pages=None):
+    def region_orders(self, region_id, max_pages=None, log=None):
         out, page, pages = [], 1, 1
         while page <= pages and (max_pages is None or page <= max_pages):
             data, pages = self.get(f"/markets/{region_id}/orders/", order_type="all", page=page)
             out.extend(data)
+            if log and (page == 1 or page % 25 == 0 or page == pages):
+                log(f"  region {region_id}: page {page}/{pages} ({len(out):,} orders)")
             page += 1
         return out
 
@@ -77,7 +79,7 @@ def refresh_orders(con, esi, region_ids, max_pages=None):
     now = time.time()
     n = 0
     for rid in region_ids:
-        rows = esi.region_orders(rid, max_pages)
+        rows = esi.region_orders(rid, max_pages, log=lambda m: print(m, flush=True))
         con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
         con.executemany(
             "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",

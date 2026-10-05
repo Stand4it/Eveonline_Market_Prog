@@ -64,6 +64,7 @@ def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
         "SELECT structure_id,system_id FROM structures WHERE system_id>0")})
     stored = 0
     for rid in region_ids:
+        print(f"  downloading public contracts for region {rid}...", flush=True)
         rows = _paged_or_empty(esi, f"/contracts/public/{rid}/")
         _learn_stations(con, esi, station_sys, rows)
         keep = {r[0]: r[1] for r in con.execute(
@@ -87,7 +88,9 @@ def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
         f"SELECT contract_id FROM contracts WHERE items_fetched=0 AND type IN "
         f"('item_exchange','auction') AND start_system_id IN ({ids}) "
         f"ORDER BY price ASC LIMIT ?", (cap,)).fetchall()
-    for (cid,) in todo:
+    for n, (cid,) in enumerate(todo, 1):
+        if n % 25 == 0 or n == len(todo):
+            print(f"  contract contents: {n}/{len(todo)}", flush=True)
         items = _paged_or_empty(esi, f"/contracts/public/items/{cid}/")
         con.execute("DELETE FROM contract_items WHERE contract_id=?", (cid,))
         con.executemany("INSERT INTO contract_items VALUES(?,?,?,?,?)",
