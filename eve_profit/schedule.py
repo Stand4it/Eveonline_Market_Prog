@@ -9,6 +9,8 @@ from .planner import plan
 def _keys(o):
     """What this task uses up: the buy side and the sell side of a trade are separate market depths."""
     d = o.detail
+    if o.kind == "liquidate" and "from_sys" in d:
+        return {("stock", d["type_id"], d["from_sys"])}               # one stack of stock is sold once, whatever ship/route
     if o.kind == "trade" and "type_id" in d:
         return {("buy", d["type_id"], d.get("from_sys")), ("sell", d["type_id"], d.get("to_sys"))}
     return {(o.kind, o.description)}
@@ -19,7 +21,7 @@ def build_day(con, g, p, hours=8.0, cash=0.0, max_steps=30):
     wallet = p.wallet_isk + cash
     elapsed, total, jumps_total, used, steps = 0.0, 0.0, 0, set(), []
     for _ in range(max_steps):
-        pi = dataclasses.replace(p, current_system=cur, wallet_isk=wallet)
+        pi = dataclasses.replace(p, current_system=cur, wallet_isk=wallet, consider_ship_swaps=False)   # ship state is not tracked
         left = hours - elapsed
         opps = [o for o in plan(con, pi, 60, False) if not (_keys(o) & used) and o.hours <= left and o.net_isk > 0]
         if not opps:

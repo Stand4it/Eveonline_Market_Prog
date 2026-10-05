@@ -90,3 +90,24 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ListLimitTests(unittest.TestCase):
+    def test_tiny_listing_gains_and_slot_limits_turn_into_sell_now(self):
+        con, g, path = world()
+        # three items listable: big gain, medium gain, tiny gain
+        for oid, tid, ask, qty in [(95020, 34, 2000.0, 100000), (95021, 35, 1000.0, 100000), (95022, 36, 3.0, 10)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,0,?,10000000,1,'',1)", (oid, tid, ask))
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,1,1.0,10000000,1,'',1)", (oid + 100, tid))
+            con.execute("INSERT INTO inventory VALUES(?,1,?)", (tid, qty))
+        with mock.patch("eve_profit.sellplan.order_slots", return_value=1):
+            res = sell_plan(con, g, prof(cargo_m3=1e9), min_value=1)
+        lab = {x["name"]: x["best_label"] for x in res["rows"]}
+        self.assertTrue(lab["Tritanium"].startswith("LIST"))             # best gain gets the only slot
+        self.assertEqual(lab["Pyerite"], "SELL NOW here")                # no free slot
+        self.assertEqual(lab["Mexallon"], "SELL NOW here")               # gain far below the minimum
+        with mock.patch("eve_profit.sellplan.order_slots", return_value=None):
+            res = sell_plan(con, g, prof(cargo_m3=1e9), min_value=1)
+        lab = {x["name"]: x["best_label"] for x in res["rows"]}
+        self.assertTrue(lab["Tritanium"].startswith("LIST") and lab["Pyerite"].startswith("LIST"))
+        self.assertEqual(lab["Mexallon"], "SELL NOW here")

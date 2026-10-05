@@ -8,8 +8,12 @@ where your time is worth the ISK/hr of your best alternative task (top of `scan`
 the hassle/risk); the hold size and the value you carry are respected."""
 from .along import _bids_at
 from .orders import load_books, sell_into_bids
-from .planner import plan
+import dataclasses
 
+from .planner import plan
+from .skills import order_slots
+
+MIN_LIST_GAIN = 250_000.0     # a listing must add at least this much: order slots and attention are scarce
 MIN_EXTRA_FRAC = 0.02        # ignore gains under 2% of the sell-now value
 DOCK_MIN = 2.0               # minutes to dock and sell somewhere on the way
 FALLBACK_RATE = 1_000_000.0  # ISK/hr when the planner finds nothing else to do
@@ -23,7 +27,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
     """world: optional {type_id: rows from bestprice.best_prices} for the stacks you checked worldwide.
     -> dict(rate, path, rows=[...], summary=...)"""
     cur = g.id_of(p.current_system)
-    top = plan(con, p, 10, False)
+    top = plan(con, dataclasses.replace(p, consider_ship_swaps=False), 10, False)
     rate = rate or (max(top[0].isk_per_hour, FALLBACK_RATE) if top else FALLBACK_RATE)
     if dest:
         path = g.route(cur, g.id_of(dest), 60, p.avoid_yellow).path
@@ -74,7 +78,14 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         best = scored[0]
         m3 = qty * (vol.get(tid, 0) or 0.0001)
         rows.append({"name": name.get(tid, tid), "qty": qty, "now": now, "m3": m3, "best_label": best[1], "best_net": best[2],
-                     "mins": best[3], "extra": best[6], "gain": best[0], "note": best[4], "sold_locally": sold0})
+                     "mins": best[3], "extra": best[6], "gain": best[0], "note": best[4], "sold_locally": sold0,
+                     "list_gain": list_net - now})
+    slots = order_slots(con)                                  # None = skills not synced: no limit applied
+    listers = sorted([x for x in rows if x["best_label"].startswith("LIST")], key=lambda x: -x["list_gain"])
+    for k, x in enumerate(listers):
+        if x["list_gain"] < MIN_LIST_GAIN or (slots is not None and k >= slots):
+            x["best_label"], x["best_net"], x["extra"], x["gain"] = "SELL NOW here", x["now"], 0.0, 0.0
+            x["note"] = "listing gain too small" if x["list_gain"] < MIN_LIST_GAIN else "no free order slot"
     # hold check: carried stacks must fit; densest value per m3 first, the rest sell now
     carry = sorted([x for x in rows if not x["best_label"].startswith(("SELL", "LIST"))], key=lambda x: -(x["best_net"] / max(x["m3"], 1e-6)))
     room = p.cargo_m3

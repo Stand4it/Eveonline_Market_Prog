@@ -82,6 +82,7 @@ def find_liquidations(con, g, p):
     from_cur = g.reach(cur, p.pickup * 2, p.avoid_yellow)
     tname = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
+    ctx = {}                                   # per stock system: (reach, buy books) computed once, not once per stack
     for inv in con.execute("SELECT type_id,system_id,quantity FROM inventory").fetchall():
         tid, sid, qty = inv["type_id"], inv["system_id"], inv["quantity"]
         r0 = from_cur.get(sid)
@@ -91,8 +92,10 @@ def find_liquidations(con, g, p):
             qty = min(qty, int(p.cargo_m3 // vol[tid]))      # one hold-load at a time
         if qty < 1:
             continue
-        reach = g.reach(sid, p.max_jumps, p.avoid_yellow)
-        _, buys = load_books(con, reach)
+        if sid not in ctx:
+            reach_s = g.reach(sid, p.max_jumps, p.avoid_yellow)
+            ctx[sid] = (reach_s, load_books(con, reach_s)[1])
+        reach, buys = ctx[sid]
         _, local = sell_into_bids(buys[tid].get(sid, []), qty, p.sales_tax)
         best = None
         for b, bids in buys[tid].items():
@@ -117,6 +120,6 @@ def find_liquidations(con, g, p):
             f"Collect + sell {sold:,} x {tname.get(tid, tid)} (stock at {g.name[sid]}) at {g.name[b]} "
             f"(vs {local:,.0f} ISK selling at {g.name[sid]})",
             uplift, l0 + l1, jumps, secs / 3600, _names(g, r0.path) + " | " + _names(g, rt.path),
-            {"type_id": tid, "units": sold, "net": net, "local_net": local},
+            {"type_id": tid, "units": sold, "net": net, "local_net": local, "from_sys": sid},
             waypoints=r0.path[1:] + rt.path[1:]))
     return out

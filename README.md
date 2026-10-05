@@ -178,3 +178,7 @@ under 2% extra are ignored; carrying respects your hold. Verdict per stack: SELL
 your wallet growing between steps (`--cash` = ISK you expect from selling stock first). For every step it shows net ISK, minutes,
 jumps, **ISK/jump** and **ISK/hr**, plus the running total, and ends with the overall ISK/hr and ISK/jump for the whole stretch.
 A task is used once (its market depth is spent). Greedy by ISK/hr, using the same risk/tax/skills/slot logic as `scan`.
+
+Speed/accuracy notes (day/sellplan): `day` ignores ship swaps (your ship state is not tracked between steps) and sells each stack of
+stock once; `sellplan` lists only the best gains up to your market-order slots, and skips listings that add under 250,000 ISK.
+If you see `[timing]` lines, clear the setting:  Remove-Item Env:EVE_PROFIT_TIMING

@@ -50,6 +50,13 @@ class T(unittest.TestCase):
         self.assertEqual(len(sells), len(set(sells)))
         self.assertEqual(len(buys), len(set(buys)))
 
+    def test_a_stack_of_stock_is_sold_once(self):
+        from eve_profit.schedule import _keys
+        from eve_profit.opportunity import Opportunity
+        a = Opportunity("liquidate", "Collect + sell 5 x X (stock at A) at B", 1, 0, 1, 1, "", {"type_id": 7, "from_sys": 3})
+        b = Opportunity("liquidate", "[swap to Venture] Collect + sell 5 x X (stock at A) at C", 1, 0, 1, 1, "", {"type_id": 7, "from_sys": 3})
+        self.assertEqual(_keys(a), _keys(b))
+
     def test_more_hours_never_means_less_total(self):
         con, g = world()
         short = build_day(con, g, prof(), hours=1.0)["total"]
