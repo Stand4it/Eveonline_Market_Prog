@@ -83,3 +83,34 @@ class DiagTests(unittest.TestCase):
         out = diagnose(con, Profile(ship_name="X", ship_type_id=999999))
         self.assertIn("MISSING", out)
         self.assertIn("skill types with a rank", out)
+
+
+class FillTests(unittest.TestCase):
+    class E:
+        calls = 0
+        def type_info(self, tid):
+            self.calls += 1
+            return {"dogma_attributes": [{"attribute_id": 275, "value": 3}, {"attribute_id": 180, "value": 165},
+                                         {"attribute_id": 181, "value": 164}, {"attribute_id": 38, "value": 5500}]}
+
+    def test_fill_skill_info_only_for_missing(self):
+        from eve_profit.advisor import fill_skill_info
+        con = setup()
+        e = self.E()
+        con.execute("UPDATE types SET skill_rank=NULL WHERE type_id=16622")
+        n = fill_skill_info(con, e, [16622, 3380])           # 3380 already has a rank
+        self.assertEqual((n, e.calls), (1, 1))
+        self.assertEqual(tuple(con.execute("SELECT skill_rank,skill_primary,skill_secondary FROM types WHERE type_id=16622").fetchone()),
+                         (3, 165, 164))
+
+    def test_hauler_named_skill_gives_cargo_bonus_and_capacity_fill(self):
+        from eve_profit.advisor import hull_racial_skill
+        from eve_profit.character import _fill_capacity, _hull_cargo_bonus
+        con = setup()
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(652,'Mammoth',255000)")
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(3341,'Minmatar Hauler',0.01)")
+        con.execute("INSERT INTO type_skills VALUES(652,3341,1)")
+        self.assertEqual(hull_racial_skill(con, Profile(ship_type_id=652)), "Minmatar Hauler")
+        self.assertAlmostEqual(_hull_cargo_bonus(con, 652, [{"skill_id": 3341, "trained_skill_level": 4}]), 1.20)
+        _fill_capacity(con, self.E(), 652)
+        self.assertEqual(con.execute("SELECT capacity FROM types WHERE type_id=652").fetchone()[0], 5500)

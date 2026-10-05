@@ -13,10 +13,23 @@ def _hull_cargo_bonus(con, ship_type_id, skills):
     """Racial industrial hulls get +5% cargo per level of their Industrial skill."""
     for r in con.execute("SELECT s.skill_id,t.name FROM type_skills s JOIN types t ON t.type_id=s.skill_id "
                          "WHERE s.type_id=?", (ship_type_id,)):
-        if r["name"].endswith("Industrial"):
+        if r["name"].endswith(("Industrial", "Hauler")):
             lvl = next((x["trained_skill_level"] for x in skills if x["skill_id"] == r["skill_id"]), 0)
             return 1 + 0.05 * lvl
     return 1.0
+
+
+def _fill_capacity(con, esi, type_id):
+    """Hull hold size from ESI (dogma attribute 38) when the SDE import didn't provide it."""
+    r = con.execute("SELECT capacity FROM types WHERE type_id=?", (type_id,)).fetchone()
+    if r is None or r[0]:
+        return
+    try:
+        cap = next((x["value"] for x in esi.type_info(type_id).get("dogma_attributes", [])
+                    if x["attribute_id"] == CAPACITY_ATTR), 0)
+    except Exception:
+        return
+    con.execute("UPDATE types SET capacity=? WHERE type_id=?", (cap, type_id))
 
 
 def _is_ship(con, esi, type_id):
@@ -127,6 +140,7 @@ def sync_character(con, esi, cid, profile):
         if a.get("is_singleton"):
             if _is_ship(con, esi, a["type_id"]):
                 con.execute("INSERT OR REPLACE INTO my_ships VALUES(?,?,?,?)", (a.get("item_id", 0), a["type_id"], sid, lid))
+                _fill_capacity(con, esi, a["type_id"])
                 ships += 1
             else:
                 skipped += 1                   # assembled non-ship (container, rigged module...)

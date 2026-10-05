@@ -87,6 +87,8 @@ def import_jsonl(con, zip_path):
         if r["_key"] not in published:
             continue
         raw = {x["attributeID"]: x["value"] for x in r.get("dogmaAttributes", [])}
+        if 38 in raw and raw[38]:
+            con.execute("UPDATE types SET capacity=? WHERE type_id=? AND capacity=0", (raw[38], r["_key"]))
         if 275 in raw:                                    # skillTimeConstant = rank; 180/181 = training attributes
             con.execute("UPDATE types SET skill_rank=?,skill_primary=?,skill_secondary=? WHERE type_id=?",
                         (raw[275], int(raw.get(180, 0)), int(raw.get(181, 0)), r["_key"]))

@@ -139,6 +139,11 @@ def _run(a):
         print(diagnose(con, p))
     elif a.cmd == "skills":
         from .advisor import advise, format_advice
+        from .advisor import candidate_skill_ids, fill_skill_info
+        from .esi import ESI
+        got = fill_skill_info(con, ESI(), candidate_skill_ids(con, p))
+        if got:
+            print(f"Fetched training ranks for {got} skills from ESI.")
         print("Testing each skill by re-running the planner (this can take a minute or two)...")
         print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
     elif a.cmd == "fleet":

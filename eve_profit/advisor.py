@@ -75,9 +75,33 @@ def hull_racial_skill(con, p):
     """Name of the racial Industrial skill that gives your hull its cargo bonus, if any."""
     for r in con.execute("SELECT t.name FROM type_skills s JOIN types t ON t.type_id=s.skill_id "
                          "WHERE s.type_id=?", (p.ship_type_id,)):
-        if r["name"].endswith("Industrial"):
+        if r["name"].endswith(("Industrial", "Hauler")):
             return r["name"]
     return None
+
+
+def candidate_skill_ids(con, p):
+    names = list(EFFECTS) + ([hull_racial_skill(con, p)] if hull_racial_skill(con, p) else [])
+    return [r[0] for n in names for r in [_skill_row(con, n)] if r]
+
+
+def fill_skill_info(con, esi, type_ids):
+    """Rank (attr 275) and training attributes (180/181) from ESI for skills missing them. -> count filled."""
+    n = 0
+    for tid in type_ids:
+        r = con.execute("SELECT skill_rank FROM types WHERE type_id=?", (tid,)).fetchone()
+        if r is None or r[0]:
+            continue
+        try:
+            attrs = {x["attribute_id"]: x["value"] for x in esi.type_info(tid).get("dogma_attributes", [])}
+        except Exception:
+            continue
+        if 275 in attrs:
+            con.execute("UPDATE types SET skill_rank=?,skill_primary=?,skill_secondary=? WHERE type_id=?",
+                        (attrs[275], int(attrs.get(180, 0)), int(attrs.get(181, 0)), tid))
+            n += 1
+    con.commit()
+    return n
 
 
 def advise(con, p, plan_fn, hours=72.0):
