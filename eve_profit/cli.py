@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -134,6 +134,27 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "check":
+        from .esi import ESI, refresh_item
+        from .explain import explain_trade
+        from .graph import Graph
+        opps = plan(con, p, max(a.top, a.pick), save=False)
+        if len(opps) < a.pick or opps[a.pick - 1].kind != "trade":
+            raise SystemExit("check works on a ranked trade; run scan, then check --pick N")
+        o = opps[a.pick - 1]
+        g = Graph(con)
+        regions = sorted({g.region[o.detail["from_sys"]], g.region[o.detail["to_sys"]]})
+        print(f"Asking ESI for fresh orders of this item in regions {regions}...", flush=True)
+        print(f"Fresh orders stored: {refresh_item(con, ESI(), regions, o.detail['type_id'])}")
+        fresh = [x for x in plan(con, p, 10000, save=False) if x.kind == "trade"
+                 and x.detail.get("type_id") == o.detail["type_id"]
+                 and x.detail.get("from_sys") == o.detail["from_sys"] and x.detail.get("to_sys") == o.detail["to_sys"]]
+        if not fresh:
+            print("\nAFTER REFRESH THIS TRADE NO LONGER MAKES MONEY. Do not buy.")
+        else:
+            print(format_plan([fresh[0]]))
+            print()
+            print(explain_trade(con, g, p, fresh[0]))
     elif a.cmd == "explain":
         from .explain import explain_trade
         from .graph import Graph

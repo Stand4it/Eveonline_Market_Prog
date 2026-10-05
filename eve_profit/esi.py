@@ -135,3 +135,19 @@ def _post_json(self, path, body):
 
 
 ESI.post_json = _post_json
+
+
+def refresh_item(con, esi, region_ids, type_id):
+    """Fresh public orders for ONE item in the given regions (a handful of calls, not a full download).
+    Replaces that item's NPC-station orders in those regions; structure orders are left alone."""
+    now, n = time.time(), 0
+    for rid in region_ids:
+        rows = esi.paged(f"/markets/{rid}/orders/", order_type="all", type_id=type_id)
+        con.execute("DELETE FROM orders WHERE region_id=? AND type_id=? AND location_id<1000000000000", (rid, type_id))
+        con.executemany(
+            "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid, int(o["is_buy_order"]),
+              o["price"], o["volume_remain"], o.get("min_volume", 1), o.get("issued", ""), now) for o in rows])
+        n += len(rows)
+    con.commit()
+    return n

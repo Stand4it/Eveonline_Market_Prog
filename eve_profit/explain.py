@@ -16,7 +16,7 @@ def _where(con, g, tid, system, is_buy, label):
         if sc:
             kind = f"PLAYER STRUCTURE '{sc[0] or r['location_id']}' - not shown in the in-game regional market; only visible when docked there"
         elif st:
-            kind = f"station '{st[0]}'"
+            kind = f"NPC station {st[0]!r}" if st[0] else f"NPC station id {r['location_id']} (a normal station market)"
         else:
             kind = f"location {r['location_id']}"
         age = (time.time() - r["fetched_at"]) / 60

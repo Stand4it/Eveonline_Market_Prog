@@ -96,3 +96,23 @@ class ExplainWhereTests(unittest.TestCase):
         self.assertIn("PLAYER STRUCTURE 'Mock Citadel'", txt)
         self.assertIn("min old", txt)
         self.assertIn("station 'Station", txt)
+
+
+class CheckTests(unittest.TestCase):
+    def test_refresh_item_replaces_only_that_item_in_those_regions(self):
+        import time
+        from eve_profit.esi import refresh_item
+        con, g = setup()
+        before_other = con.execute("SELECT COUNT(*) FROM orders WHERE type_id!=34").fetchone()[0]
+        struct = con.execute("SELECT COUNT(*) FROM orders WHERE location_id>=1000000000000").fetchone()[0]
+
+        class E:
+            def paged(self, path, **kw):
+                assert kw == {"order_type": "all", "type_id": 34}
+                return [{"order_id": 5551, "type_id": 34, "location_id": 60000002, "system_id": 2,
+                         "is_buy_order": True, "price": 123.0, "volume_remain": 9, "min_volume": 1, "issued": ""}]
+        n = refresh_item(con, E(), [10000001], 34)
+        self.assertEqual(n, 1)
+        self.assertEqual(con.execute("SELECT COUNT(*) FROM orders WHERE type_id=34 AND location_id<1000000000000").fetchone()[0], 1)
+        self.assertEqual(con.execute("SELECT COUNT(*) FROM orders WHERE type_id!=34").fetchone()[0], before_other)
+        self.assertEqual(con.execute("SELECT COUNT(*) FROM orders WHERE location_id>=1000000000000").fetchone()[0], struct)
