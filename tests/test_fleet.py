@@ -439,3 +439,27 @@ class BpBuyTests(unittest.TestCase):
         res, scanned = bp_buy_candidates(con, g, Profile(max_jumps=1))
         self.assertEqual(res, [])
         self.assertIn("none beats simply selling", format_bpbuy(res, scanned))
+
+
+class BpBuyScaleTests(unittest.TestCase):
+    def test_big_stock_makes_a_blueprint_worthwhile_that_one_batch_would_not(self):
+        from eve_profit.bpbuy import bp_buy_candidates
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM my_blueprints")
+        con.execute("DELETE FROM orders WHERE type_id IN (34,35,36,90001,90002)")
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(90002,'Mock Widget Blueprint',0.01)")
+        con.execute("DELETE FROM skill_reqs"); con.execute("UPDATE prices SET adjusted_price=0")
+        for oid, tid, price in [(9921, 34, 1.0), (9922, 35, 2.0), (9923, 36, 10.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,1,?,1000000000,1,'',1)", (oid, tid, price))
+        # per run: product bid 3,000 vs materials 1000x1 + 500x2 + 50x10 = 2,500 sell value -> +500 minus 7%... use bid 3,000
+        con.execute("INSERT INTO orders VALUES(9924,90001,60000001,1,10000001,1,3000.0,100000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(9925,90002,60000001,1,10000001,0,100000.0,5,1,'',1)")   # blueprint 100,000
+        for tid, q in ((34, 10_000_000), (35, 5_000_000), (36, 500_000)):
+            con.execute("INSERT INTO inventory VALUES(?,1,?)", (tid, q))
+        p = Profile(max_jumps=1, cargo_m3=1e9, wallet_isk=1e12, job_fee_rate=0.0)
+        res, scanned = bp_buy_candidates(con, g, p)
+        d = res[0]
+        self.assertGreaterEqual(d["runs"], 100)                                  # chose a big batch, not 10
+        self.assertGreater(d["net"], 0)                                          # pays back the 100,000 blueprint
+        # at 10 runs alone it would NOT have paid back the blueprint:
+        self.assertLess(10 * 500, 100000)

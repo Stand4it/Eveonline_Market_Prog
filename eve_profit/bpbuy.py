@@ -8,6 +8,9 @@ from .orders import load_books, sell_into_bids
 from .skills import blueprint_missing, explain, have
 
 
+RUN_STEPS = (1, 5, 10, 25, 50, 100, 250, 500, 1000)
+
+
 def bp_buy_candidates(con, g, p, top=6):
     cur = g.id_of(p.current_system)
     reach = g.reach(cur, p.max_jumps, p.avoid_yellow)
@@ -28,7 +31,10 @@ def bp_buy_candidates(con, g, p, top=6):
         mats = con.execute("SELECT material_id,quantity FROM bp_materials WHERE blueprint_id=?", (bp,)).fetchall()
         lacking = blueprint_missing(con, bp, skills) if skills else []
         scanned += 1
-        for runs in range(p.max_runs, 0, -1):
+        asks = [a[0][0] for s, a in sells.get(bp, {}).items()]
+        bpo = min(asks) if asks else None
+        best_row = None
+        for runs in RUN_STEPS:                              # a blueprint original can be run many times: try big batches
             need = {m["material_id"]: material_qty(m["quantity"], runs, 0) for m in mats}
             own_value, short_cost, ok, used = 0.0, 0.0, True, []
             for t, q in need.items():
@@ -47,22 +53,24 @@ def bp_buy_candidates(con, g, p, top=6):
                 continue
             units = prod["quantity"] * runs
             best = None
-            for s, bids in buys[prod["product_id"]].items():
+            for s2, bids in buys[prod["product_id"]].items():
                 sold, net = sell_into_bids(bids, units, p.sales_tax)
                 if sold == units and (best is None or net > best[0]):
-                    best = (net, s)
+                    best = (net, s2)
             if not best:
                 continue
             fee = sum(m["quantity"] * runs * adj.get(m["material_id"], 0) for m in mats) * p.job_fee_rate
             gain = best[0] - fee - own_value - short_cost
-            asks = [a[0][0] for s, a in sells.get(bp, {}).items()]
-            bpo = min(asks) if asks else None
-            out.append({"blueprint": name.get(bp, bp), "product": name.get(prod["product_id"], prod["product_id"]),
-                        "runs": runs, "gain": gain, "bpo_price": bpo, "net": None if bpo is None else gain - bpo,
-                        "revenue": best[0], "sell_instead": own_value, "buy_extra": short_cost,
-                        "job_hours": build_seconds(prod["base_time"], runs, 0, p) / 3600, "sell_at": g.name[best[1]],
-                        "uses": used, "skills_missing": explain(con, lacking) if lacking else ""})
-            break
+            row = {"blueprint": name.get(bp, bp), "product": name.get(prod["product_id"], prod["product_id"]),
+                   "runs": runs, "gain": gain, "bpo_price": bpo, "net": None if bpo is None else gain - bpo,
+                   "revenue": best[0], "sell_instead": own_value, "buy_extra": short_cost,
+                   "job_hours": build_seconds(prod["base_time"], runs, 0, p) / 3600, "sell_at": g.name[best[1]],
+                   "uses": used, "skills_missing": explain(con, lacking) if lacking else ""}
+            score = row["net"] if row["net"] is not None else row["gain"] - 1e12
+            if best_row is None or score > best_row[0]:
+                best_row = (score, row)
+        if best_row:
+            out.append(best_row[1])
     out = [d for d in out if d["bpo_price"] is not None or d["gain"] > 0]
     out.sort(key=lambda d: -(d["net"] if d["net"] is not None else d["gain"] - 1e12))
     return out[:top], scanned
@@ -80,7 +88,7 @@ def format_bpbuy(res, scanned):
         verdict = "BUY the blueprint and build" if d["net"] > 0 else "NO - not worth buying"
         L.append(f"\n{verdict}: {d['blueprint']}   net after blueprint: {d['net']:,.0f} ISK")
         L.append(f"   blueprint costs {d['bpo_price']:,.0f}; {d['runs']} runs of {d['product']} sell for {d['revenue']:,.0f} at "
-                 f"{d['sell_at']}; job {d['job_hours']:.1f} h")
+                 f"{d['sell_at']}; job {d['job_hours']:.1f} h on one slot (split across free slots to finish sooner)")
         L.append(f"   building gains {d['gain']:,.0f} over selling your materials ({d['sell_instead']:,.0f}); "
                  f"extra materials to buy {d['buy_extra']:,.0f}")
         L.append("   uses your: " + ", ".join(f"{q:,} x {n}" for n, q in d["uses"][:5]))

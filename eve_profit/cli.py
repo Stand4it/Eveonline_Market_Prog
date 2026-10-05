@@ -138,10 +138,14 @@ def _run(a):
     elif a.cmd == "bpbuy":
         from .bpbuy import bp_buy_candidates, format_bpbuy
         from .graph import Graph
+        if a.to:
+            p.current_system = a.to           # evaluate the stock parked in that system, priced there
         print(format_bpbuy(*bp_buy_candidates(con, Graph(con), p)))
     elif a.cmd == "keep":
         from .graph import Graph
         from .keep import format_keep, keep_vs_sell
+        if a.to:
+            p.current_system = a.to
         print(format_keep(*keep_vs_sell(con, Graph(con), p)))
     elif a.cmd == "next":
         from .graph import Graph
