@@ -35,6 +35,29 @@ class T(unittest.TestCase):
         self.assertEqual([x.isk_per_hour for x in o],
                          sorted([x.isk_per_hour for x in o], reverse=True))
 
+    def test_regions_near(self):
+        from eve_profit.cli import regions_near
+        self.assertEqual(regions_near(self.con, Profile()), [10000001])
+
+    def test_unknown_system_is_a_clean_error(self):
+        from eve_profit.cli import main
+        pf = os.path.join(self.d, "p.json")
+        Profile(current_system="Nowhere").save(pf)
+        with self.assertRaises(SystemExit) as cm:
+            main(["scan", "--db", os.path.join(self.d, "t.db"), "--profile", pf])
+        self.assertIn("not found", str(cm.exception))
+
+    def test_sde_extract_plain_and_bz2(self):
+        import bz2
+        from eve_profit.sde import extract
+        plain = os.path.join(self.d, "a.sqlite")
+        open(plain, "wb").write(b"x")
+        self.assertEqual(extract(plain, os.path.join(self.d, "out.sqlite")), plain)
+        z = os.path.join(self.d, "b.sqlite.bz2")
+        open(z, "wb").write(bz2.compress(b"hello"))
+        out = os.path.join(self.d, "o2.sqlite")
+        self.assertEqual(open(extract(z, out), "rb").read(), b"hello")
+
     def test_sde_import(self):
         f = os.path.join(self.d, "sde.sqlite")
         s = sqlite3.connect(f)

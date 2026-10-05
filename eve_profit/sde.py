@@ -8,21 +8,40 @@ import urllib.request
 
 from .config import USER_AGENT
 
-URL = "https://www.fuzzwork.co.uk/dump/latest/sqlite-latest.sqlite.bz2"
+URLS = ["https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2",
+        "https://www.fuzzwork.co.uk/dump/latest/sqlite-latest.sqlite.bz2"]
+MANUAL = ("Could not download the SDE automatically. Manual fix: open https://www.fuzzwork.co.uk/dump/ in a "
+          "browser, download sqlite-latest.sqlite.bz2, then run:  python -m eve_profit sde --sde-file "
+          "\"C:\\path\\to\\sqlite-latest.sqlite.bz2\"   (a .sqlite file or the .bz2 both work)")
 ORE_GROUPS = (450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 467, 468,
               469, 4029, 4030, 4031, 4032, 4033, 4034, 4035, 4036, 4037, 4038)  # approx; refine
 
 
-def download(dest_dir):
+def download(dest_dir, url=None):
+    """Try the given URL (or known Fuzzwork locations); -> path to extracted .sqlite."""
     os.makedirs(dest_dir, exist_ok=True)
     out = os.path.join(dest_dir, "sde.sqlite")
-    req = urllib.request.Request(URL, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req) as r, open(out + ".bz2", "wb") as f:
-        shutil.copyfileobj(r, f)
-    with bz2.open(out + ".bz2") as s, open(out, "wb") as d:
-        shutil.copyfileobj(s, d)
-    os.remove(out + ".bz2")
-    return out
+    errors = []
+    for u in ([url] if url else URLS):
+        try:
+            req = urllib.request.Request(u, headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, timeout=120) as r, open(out + ".bz2", "wb") as f:
+                shutil.copyfileobj(r, f)
+            return extract(out + ".bz2", out)
+        except Exception as e:           # 404, DNS, proxy...
+            errors.append(f"{u}: {e}")
+    raise RuntimeError("\n".join(errors) + "\n" + MANUAL)
+
+
+def extract(src, out):
+    """Accept .bz2 or plain sqlite; leave the result at `out`."""
+    if src.endswith(".bz2"):
+        with bz2.open(src) as s, open(out, "wb") as d:
+            shutil.copyfileobj(s, d)
+        if os.path.abspath(src) == os.path.abspath(out) + ".bz2":
+            os.remove(src)
+        return out
+    return src
 
 
 def import_sde(con, sde_path):

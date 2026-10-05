@@ -9,13 +9,25 @@ from .config import Profile, default_db_path
 from .planner import format_plan, plan
 
 
+def regions_near(con, p):
+    """Region ids of every system within 2x your jump radius (so cross-border trades are seen)."""
+    from .graph import Graph
+    g = Graph(con)
+    reach = g.reach(g.id_of(p.current_system), p.max_jumps * 2, p.avoid_yellow)
+    return sorted({g.region[s] for s in reach})
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
     ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
-    ap.add_argument("--regions", default="10000002", help="comma list of region ids")
+    ap.add_argument("--regions", default="", help="comma list of region ids (default: auto from your system)")
+    ap.add_argument("--system", default="", help="profile: set current system name")
+    ap.add_argument("--cargo", type=float, default=0, help="profile: set cargo m3")
+    ap.add_argument("--sde-file", default="", help="sde: import this local sqlite/.bz2 instead of downloading")
+    ap.add_argument("--sde-url", default="", help="sde: download from this URL")
     ap.add_argument("--max-pages", type=int, default=None)
     ap.add_argument("--interval", type=int, default=300, help="watch seconds (ESI caches 5 min)")
     ap.add_argument("--client-id", default=os.environ.get("EVE_CLIENT_ID", ""))
@@ -34,6 +46,10 @@ def main(argv=None):
     if a.cmd == "init":
         print("DB ready:", a.db)
     elif a.cmd == "profile":
+        if a.system:
+            p.current_system = a.system
+        if a.cargo:
+            p.cargo_m3 = a.cargo
         p.save(a.profile)
         print("Wrote", a.profile, "- edit ship/cargo/system, then run scan")
     elif a.cmd in ("login", "sync"):
@@ -84,15 +100,30 @@ def main(argv=None):
         print("Mock universe + market loaded into", a.db)
     elif a.cmd == "sde":
         from .sde import download, import_sde
-        path = download(os.path.dirname(a.db) or ".")
+        from .sde import extract
+        try:
+            if a.sde_file:
+                if not os.path.exists(a.sde_file):
+                    raise SystemExit(f"File not found: {a.sde_file}")
+                path = extract(a.sde_file, os.path.join(os.path.dirname(a.db) or ".", "sde.sqlite"))
+            else:
+                path = download(os.path.dirname(a.db) or ".", a.sde_url or None)
+        except RuntimeError as e:
+            raise SystemExit(str(e))
         print("Imported systems:", import_sde(con, path))
     else:
-        regions = [int(x) for x in a.regions.split(",")]
         esi = None
         if a.live:
             from .esi import ESI
             esi = ESI()
+        if con.execute("SELECT COUNT(*) FROM systems WHERE name=? COLLATE NOCASE",
+                       (p.current_system,)).fetchone()[0] == 0:
+            raise SystemExit(f"System '{p.current_system}' not found in this database. Set yours with:  "
+                             f"python -m eve_profit profile --system \"<system name>\"   "
+                             f"(for live data run  python -m eve_profit sde  first)")
         while True:
+            regions = ([int(x) for x in a.regions.split(",")] if a.regions
+                       else regions_near(con, p))
             if a.live:
                 from .esi import refresh_orders
                 print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages))
