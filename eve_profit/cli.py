@@ -64,9 +64,12 @@ def main(argv=None):
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
+    ap.add_argument("--char", default="", help="separate character: own login, profile and database (e.g. --char fresh)")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
+    if a.char:
+        _use_character(a, ap)
     a.client_id = resolve_client_id(a.client_id)
 
     kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
@@ -79,6 +82,41 @@ def main(argv=None):
             return _run(a)
     except AlreadyRunning as e:
         raise SystemExit(str(e))
+
+
+CHAR_TABLES = ["inventory", "my_blueprints", "character_skills", "skill_queue", "char_attrs", "standings",
+               "lp_balance", "transactions", "fitted", "my_ships", "opportunities", "activity_log"]
+
+
+def _use_character(a, ap):
+    """--char NAME: own tokens_NAME.json, profile_NAME.json and eve_profit_NAME.db. The first time, the shared
+    game data (map, items, prices) is copied from the main database so no re-download is needed."""
+    import re
+    import sqlite3
+    name = re.sub(r"[^A-Za-z0-9_-]", "", a.char)
+    if not name:
+        raise SystemExit("--char needs a simple name, e.g. --char fresh")
+    os.environ["EVE_PROFIT_TOKENS"] = f"tokens_{name}.json"
+    if a.profile == ap.get_default("profile"):
+        a.profile = f"profile_{name}.json"
+    main_db = a.db
+    if a.db == ap.get_default("db"):
+        a.db = os.path.join(os.path.dirname(main_db), f"eve_profit_{name}.db")
+        if not os.path.exists(a.db) and os.path.exists(main_db):
+            os.makedirs(os.path.dirname(a.db) or ".", exist_ok=True)
+            src, dst = sqlite3.connect(main_db), sqlite3.connect(a.db)
+            src.backup(dst)
+            for t in CHAR_TABLES:
+                try:
+                    dst.execute(f"DELETE FROM {t}")
+                except sqlite3.OperationalError:
+                    pass
+            dst.commit()
+            src.close()
+            dst.close()
+            print(f"[{name}] new character database created from the shared game data: {a.db}")
+    if not os.path.exists(a.profile) and os.path.exists(ap.get_default("profile")):
+        print(f"[{name}] no {a.profile} yet: run login, then sync (it fills in ship, cargo, wallet, location)")
 
 
 def _run(a):
@@ -375,8 +413,8 @@ def _run(a):
                 except Exception as e:           # optional signal: never break a scan
                     print("zKillboard skipped:", e)
                 if p.use_structures:
-                    if a.client_id and os.path.exists("tokens.json"):
-                        from . import sso
+                    from . import sso
+                    if a.client_id and os.path.exists(sso.token_path()):
                         from .structures import refresh_structures
                         esi.token, _ = sso.get_token(a.client_id)      # refreshes if expired
                         print("Structures:", refresh_structures(con, esi, set(near), p.structure_ids))

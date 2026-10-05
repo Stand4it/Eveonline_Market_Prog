@@ -96,8 +96,14 @@ class _ExclusiveServer(http.server.HTTPServer):
         super().server_bind()
 
 
-def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
+def token_path(path=None):
+    """tokens.json, or the per-character file when --char is used (env EVE_PROFIT_TOKENS)."""
+    return path or os.environ.get("EVE_PROFIT_TOKENS") or TOKEN_FILE
+
+
+def login(client_id, path=None, open_browser=True, post=None):
     """Blocks until the browser redirects back to the local callback."""
+    path = token_path(path)
     verifier, challenge = make_pkce()
     state = secrets.token_urlsafe(16)
     got = {}
@@ -145,8 +151,9 @@ def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
     return _store(tok, path)
 
 
-def get_token(client_id, path=TOKEN_FILE, post=None):
+def get_token(client_id, path=None, post=None):
     """Valid access token, refreshing if needed. -> (token, character_id)."""
+    path = token_path(path)
     with open(path) as f:
         rec = json.load(f)
     if time.time() >= rec["expires_at"]:
