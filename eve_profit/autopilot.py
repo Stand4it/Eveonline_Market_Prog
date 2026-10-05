@@ -13,20 +13,32 @@ def dedupe(wps):
     return out
 
 
+def dedupe_ids(ids):
+    return dedupe(ids)
+
+
 def route_alerts(g, waypoints):
     """Systems on the route that need attention: red (never go) or hot (recent kills)."""
     return [(g.name[s], "RED" if g.is_red(s) else "HOT") for s in waypoints
             if g.is_red(s) or g.is_hot(s)]
 
 
-def send_route(esi, g, waypoints, send=False, pause=0.3):
+def send_route(esi, g, waypoints, send=False, pause=0.3, stops=None):
     """Dry-run by default. Refuses any route containing a red system."""
     wps = dedupe(waypoints)
     red = [g.name[s] for s in wps if g.is_red(s)]
     if red:
         raise ValueError("refusing route through red systems: " + ", ".join(red))
+    dests = list(waypoints)
+    pre = []
+    for idx, loc in (stops or []):          # swap the system waypoint for the station in it so autopilot docks
+        if idx < 0:
+            pre.append(loc)
+        elif idx < len(dests):
+            dests[idx] = loc
+    sent = pre + dedupe_ids(dests)
     if send:
-        for i, sid in enumerate(wps):
+        for i, sid in enumerate(sent):
             esi.post("/ui/autopilot/waypoint/", destination_id=sid,
                      add_to_beginning="false", clear_other_waypoints="true" if i == 0 else "false")
             time.sleep(pause)

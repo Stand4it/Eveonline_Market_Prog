@@ -12,7 +12,7 @@ def route_risk(g: Graph, path, exposed_value: float):
     """Return (expected_loss_isk, wait_seconds) for a route."""
     loss = wait = 0.0
     for s in path[1:]:
-        p = P_LOSS["yellow" if g.is_yellow(s) else "green"]
+        p = P_LOSS["yellow" if g.is_yellow(s) else "green"] * getattr(g, "risk_mult", 1.0)
         if g.is_hot(s):
             p *= HOT_MULT
             wait += HOT_WAIT_S

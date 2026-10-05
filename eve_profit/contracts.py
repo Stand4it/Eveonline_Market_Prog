@@ -103,7 +103,7 @@ def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
 
 def find_contracts(con, g, p):
     cur = g.id_of(p.current_system)
-    reach_a = g.reach(cur, p.max_jumps, p.avoid_yellow)
+    reach_a = g.reach(cur, p.pickup, p.avoid_yellow)
     now = time.time()
     ids = ",".join(str(int(s)) for s in reach_a) or "0"
     cons = con.execute(f"SELECT * FROM contracts WHERE start_system_id IN ({ids}) "

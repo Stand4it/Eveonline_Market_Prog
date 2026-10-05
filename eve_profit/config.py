@@ -55,9 +55,19 @@ class Profile:
     use_structures: bool = True       # scan player-structure markets (needs login + docking access)
     structure_ids: list = field(default_factory=list)   # extra structure ids to always scan (e.g. your home citadel)
     structure_sales_tax: float = 0.01  # extra tax set by structure owners; varies per structure - verify
+    away_mode: bool = False           # unattended: long autopilot hauls on strictly safe routes (or run with --away)
+    away_max_jumps: int = 15          # how far a delivery may go while you are away
+    pickup_jumps: int = 0             # how far to go to PICK UP goods (0 = max_jumps); away mode uses 3
+    consider_ship_swaps: bool = True  # also rank "go to another ship, swap, then do X"
+    swap_overhead_s: float = 120.0    # dock, swap ship, undock
+    ships: dict = field(default_factory=dict)   # per-hull stats, e.g. {"Vexor": {"combat_dps": 300, "ship_ehp": 40000, "ship_tank_dps": 150, "ship_value_isk": 15000000, "cargo_m3": 500}}
     avoid_yellow: bool = True         # soft avoid
     min_profit_isk: float = 100_000.0
     min_margin: float = 0.03
+
+    @property
+    def pickup(self) -> int:
+        return self.pickup_jumps or self.max_jumps
 
     @property
     def sales_tax(self) -> float:

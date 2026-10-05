@@ -63,9 +63,11 @@ def import_jsonl(con, zip_path):
                     [(r["_key"], r.get("solarSystemID"), _name(r.get("name")), r.get("ownerID"))
                      for r in _rows(zf, "npcStations") if r.get("solarSystemID")])
     n["stations"] = con.execute("SELECT COUNT(*) FROM stations").fetchone()[0]
-    con.executemany("INSERT OR IGNORE INTO types VALUES(?,?,?,?,?,0)",
+    con.executemany("INSERT OR IGNORE INTO types(type_id,name,volume,group_id,category_id,is_ore,capacity) "
+                    "VALUES(?,?,?,?,?,0,?)",
                     [(r["_key"], _name(r.get("name")), r.get("volume", 1) or 1, r.get("groupID"),
-                      cat.get(r.get("groupID"))) for r in _rows(zf, "types") if r.get("published", True)])
+                      cat.get(r.get("groupID")), r.get("capacity", 0) or 0)
+                     for r in _rows(zf, "types") if r.get("published", True)])
     n["types"] = con.execute("SELECT COUNT(*) FROM types").fetchone()[0]
     for r in _rows(zf, "blueprints"):
         m = (r.get("activities") or {}).get("manufacturing") or {}

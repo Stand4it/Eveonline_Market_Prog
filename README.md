@@ -104,3 +104,19 @@ dock there (hostile/blue-list rules change), and structures in low/null space ar
   detected and replaced automatically. `scan`/`plan`/`go` are not locked (SQLite handles concurrent reads).
 - The login callback port is 8801 (override with `EVE_CALLBACK_PORT`, and change the app's callback URL to match);
   it is open only while logging in. No background services, startup items or files outside the repo and `E:\EveProfit`.
+
+## Fleet & ship swaps
+`sync` now keeps your **parked ships** (assembled hulls in stations/structures) and stock in structures too.
+`python -m eve_profit fleet` lists them with jumps/minutes from where you are. The planner also ranks
+"go to <ship> at <system>, swap, then do X" (travel, docking and `swap_overhead_s` are charged). Parked ships haul by
+default with their hull's cargo size; for combat/mining give per-hull numbers in profile.json, e.g.
+`"ships": {"Vexor": {"combat_dps": 300, "ship_ehp": 40000, "ship_tank_dps": 150, "ship_value_isk": 15000000}}`.
+Hull cargo ignores skill/module bonuses, so real holds may be larger. Turn off with `"consider_ship_swaps": false`.
+
+## Away mode (you are not watching the screen)
+`python -m eve_profit scan --live --away` (or `"away_mode": true`) ranks only hauls you can leave running:
+- autopilot timing (1.6x slower per jump), pickup within 3 jumps, delivery up to `away_max_jumps` (15);
+- routes avoid every 0.5-0.6 and recently-attacked system, loss odds tripled for autopilot, no combat/mining/builds/swaps;
+- `go --away --pick N --send` sets waypoints at each system and ends at the **selling station**, so the autopilot docks.
+You still click "start autopilot" once in the game (CCP's API only sets waypoints) and do the buy/sell at each end.
+Autopilot in empire space can still be ganked or interrupted; keep cargo value modest while away.

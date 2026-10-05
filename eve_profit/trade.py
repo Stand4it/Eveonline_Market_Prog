@@ -12,9 +12,24 @@ def _tail(g, path):
     return g.name[path[-1]]
 
 
+def _dock_stops(con, tid, a, b, j1, j2):
+    """Station/structure ids of the cheapest ask in A and best bid in B so autopilot docks there.
+    -> [(waypoint_index, location_id)]; index -1 = before the first waypoint (already in A's system)."""
+    ask = con.execute("SELECT location_id FROM orders WHERE type_id=? AND system_id=? AND is_buy=0 "
+                      "ORDER BY price ASC LIMIT 1", (tid, a)).fetchone()
+    bid = con.execute("SELECT location_id FROM orders WHERE type_id=? AND system_id=? AND is_buy=1 "
+                      "ORDER BY price DESC LIMIT 1", (tid, b)).fetchone()
+    stops = []
+    if ask and ask[0]:
+        stops.append((j1 - 1 if j1 > 0 else -1, ask[0]))
+    if bid and bid[0]:
+        stops.append((j1 + j2 - 1, bid[0]))
+    return stops
+
+
 def find_trades(con, g, p):
     cur = g.id_of(p.current_system)
-    reach_a = g.reach(cur, p.max_jumps, p.avoid_yellow)
+    reach_a = g.reach(cur, p.pickup, p.avoid_yellow)
     reach_b = {a: g.reach(a, p.max_jumps, p.avoid_yellow) for a in reach_a}
     systems = set(reach_a)
     for r in reach_b.values():
@@ -47,13 +62,14 @@ def find_trades(con, g, p):
                 jumps = r1.jumps + r2.jumps
                 secs = (jumps * p.jump_seconds + 2 * p.dock_overhead_s
                         + p.trade_overhead_s + w1 + w2)
+                stops = _dock_stops(con, tid, a, b, r1.jumps, r2.jumps)
                 out.append(Opportunity(
                     "trade",
                     f"Buy {units:,} x {tname.get(tid, tid)} @ {g.name[a]}, "
                     f"sell @ {g.name[b]}",
                     profit, l1 + l2, jumps, secs / 3600,
                     _names(g, r1.path) + " | " + _names(g, r2.path),
-                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid]},
+                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid], "stops": stops},
                     waypoints=r1.path[1:] + r2.path[1:]))
     return out
 
@@ -63,7 +79,7 @@ def find_liquidations(con, g, p):
     ship IS: it includes getting to the stock, and never carries more than the hold fits."""
     out = []
     cur = g.id_of(p.current_system)
-    from_cur = g.reach(cur, p.max_jumps * 2, p.avoid_yellow)
+    from_cur = g.reach(cur, p.pickup * 2, p.avoid_yellow)
     tname = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     for inv in con.execute("SELECT type_id,system_id,quantity FROM inventory").fetchall():

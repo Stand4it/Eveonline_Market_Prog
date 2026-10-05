@@ -31,6 +31,8 @@ class Graph:
         self.kills = {r[0]: (r[1] or 0) for r in
                       con.execute("SELECT system_id,ship_kills FROM system_kills")}
         self._ids = {n.lower(): i for i, n in self.name.items()}
+        self.ban_yellow = False     # away mode: never route through 0.5-0.6 or recently-attacked systems
+        self.risk_mult = 1.0        # away mode: autopilot is easier to gank -> scale loss odds
 
     def id_of(self, name: str) -> int:
         return self._ids[name.lower()]
@@ -64,7 +66,7 @@ class Graph:
             if best[u].jumps >= max_jumps:
                 continue
             for v in self.adj[u]:
-                if self.is_red(v):
+                if self.is_red(v) or (self.ban_yellow and (self.is_yellow(v) or self.is_hot(v))):
                     continue
                 nc = cost + self.node_cost(v, avoid_yellow)
                 if v not in best or nc < best[v].cost:

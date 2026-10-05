@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS stations(
   station_id INTEGER PRIMARY KEY, system_id INTEGER NOT NULL, name TEXT, corporation_id INTEGER);
 CREATE TABLE IF NOT EXISTS types(
   type_id INTEGER PRIMARY KEY, name TEXT, volume REAL NOT NULL DEFAULT 1,
-  group_id INTEGER, category_id INTEGER, is_ore INTEGER NOT NULL DEFAULT 0);
+  group_id INTEGER, category_id INTEGER, is_ore INTEGER NOT NULL DEFAULT 0,
+  capacity REAL NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS orders(
   order_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, location_id INTEGER,
   system_id INTEGER NOT NULL, region_id INTEGER NOT NULL, is_buy INTEGER NOT NULL,
@@ -93,6 +94,8 @@ CREATE TABLE IF NOT EXISTS structures(
   structure_id INTEGER PRIMARY KEY, name TEXT, system_id INTEGER, owner_id INTEGER,
   access INTEGER NOT NULL DEFAULT -1, info_at REAL, orders_at REAL);
 CREATE INDEX IF NOT EXISTS ix_str_sys ON structures(system_id);
+CREATE TABLE IF NOT EXISTS my_ships(
+  item_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, location_id INTEGER);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 
@@ -106,6 +109,7 @@ def connect(path: str) -> sqlite3.Connection:
     con.execute("PRAGMA journal_mode=WAL")
     con.executescript(SCHEMA)
     for tbl, col, ddl in (("stations", "corporation_id", "INTEGER"),
+                          ("types", "capacity", "REAL NOT NULL DEFAULT 0"),
                           ("activities", "agent_level", "INTEGER NOT NULL DEFAULT 0"),
                           ("activities", "lp_per_hour", "REAL NOT NULL DEFAULT 0"),
                           ("activities", "min_standing", "REAL NOT NULL DEFAULT 0")):

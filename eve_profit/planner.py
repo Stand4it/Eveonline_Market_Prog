@@ -14,13 +14,31 @@ FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find
 # Stage 6: route automation / alerts.
 
 
+HAUL_FINDERS = [find_trades, find_liquidations, find_contracts, find_lp_redemptions]
+
+
+def away_profile(p):
+    """Unattended: autopilot timing, long deliveries, short pickups, haul-type tasks only."""
+    import dataclasses
+    return dataclasses.replace(p, autopilot=True, max_jumps=p.away_max_jumps,
+                               pickup_jumps=p.pickup_jumps or 3, avoid_yellow=True,
+                               consider_ship_swaps=False)
+
+
 def plan(con, p, top=15, save=True):
     from .orders import set_structure_haircut
+    if p.away_mode:
+        p = away_profile(p)
     set_structure_haircut(p)
     g = Graph(con)
+    if p.away_mode:
+        g.ban_yellow, g.risk_mult = True, 3.0
     opps = []
-    for f in FINDERS:
+    for f in (HAUL_FINDERS if p.away_mode else FINDERS):
         opps.extend(f(con, g, p))
+    if p.consider_ship_swaps:
+        from .fleet import swap_opportunities
+        opps.extend(swap_opportunities(con, g, p, FINDERS))
     opps = [o for o in opps if o.net_isk > 0]     # never recommend a task that loses ISK after risk
     opps.sort(key=lambda o: o.isk_per_hour, reverse=True)
     slots, kept = free_slots(p), []

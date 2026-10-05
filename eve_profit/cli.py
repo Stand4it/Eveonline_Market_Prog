@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -55,6 +55,7 @@ def main(argv=None):
     ap.add_argument("--activity", default="")
     ap.add_argument("--isk", type=float, default=0)
     ap.add_argument("--hours", type=float, default=0)
+    ap.add_argument("--away", action="store_true", help="unattended mode: long safe autopilot hauls only")
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
@@ -74,6 +75,8 @@ def main(argv=None):
 def _run(a):
     con = db.connect(a.db)
     p = Profile.load(a.profile)
+    if a.away:
+        p.away_mode = True
     from .combat import seed_defaults
     seed_defaults(con)
     if a.cmd == "init":
@@ -115,7 +118,7 @@ def _run(a):
             from .esi import ESI
             esi = ESI()
             esi.token, _ = sso.get_token(a.client_id)
-        print("Waypoints:", " > ".join(send_route(esi, g, o.waypoints, a.send)))
+        print("Waypoints:", " > ".join(send_route(esi, g, o.waypoints, a.send, stops=o.detail.get("stops"))))
         print("SENT to game client - press autopilot / fly it yourself." if a.send
               else "Dry run. Add --send to set waypoints in your game client.")
         for n, k in route_alerts(g, o.waypoints):
@@ -131,6 +134,10 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "fleet":
+        from .fleet import describe_fleet
+        from .graph import Graph
+        print(describe_fleet(con, Graph(con), p))
     elif a.cmd in ("universe", "esimap"):
         have = con.execute("SELECT COUNT(*) FROM systems").fetchone()[0]
         if a.cmd == "universe" and have > 500:

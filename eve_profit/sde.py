@@ -56,7 +56,7 @@ def import_sde(con, sde_path):
                     src.execute("SELECT stationID,solarSystemID,stationName,corporationID "
                                 "FROM staStations"))
     q = ",".join(map(str, ORE_GROUPS))
-    con.executemany("INSERT INTO types VALUES(?,?,?,?,?,?)", src.execute(
+    con.executemany("INSERT INTO types(type_id,name,volume,group_id,category_id,is_ore) VALUES(?,?,?,?,?,?)", src.execute(
         f"SELECT t.typeID,t.typeName,t.volume,t.groupID,g.categoryID,"
         f"CASE WHEN t.groupID IN ({q}) THEN 1 ELSE 0 END "
         f"FROM invTypes t LEFT JOIN invGroups g ON g.groupID=t.groupID WHERE t.published=1"))

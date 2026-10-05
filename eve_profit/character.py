@@ -9,6 +9,21 @@ def _type(esi, tid):
     return esi.type_info(tid)
 
 
+def _is_ship(con, esi, type_id):
+    """Category 6 = ships. Unknown category (no SDE) is looked up once from ESI."""
+    r = con.execute("SELECT category_id,group_id FROM types WHERE type_id=?", (type_id,)).fetchone()
+    if r is None:
+        return False
+    if r[0] is None and r[1]:
+        try:
+            cat = esi.get(f"/universe/groups/{r[1]}/")[0]["category_id"]
+            con.execute("UPDATE types SET category_id=? WHERE group_id=?", (cat, r[1]))
+            return cat == 6
+        except Exception:
+            return False
+    return r[0] == 6
+
+
 def sync_character(con, esi, cid, profile):
     """Fills profile (system, ship, cargo, wallet, tax) and inventory. -> summary dict."""
     loc = esi.get(f"/characters/{cid}/location/")[0]
@@ -53,30 +68,45 @@ def sync_character(con, esi, cid, profile):
                      for b in bps])
 
     con.execute("DELETE FROM inventory")
+    con.execute("DELETE FROM my_ships")
     known = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
-    skipped = kept = 0
-    lookups = 0
+    known.update({r[0]: r[1] for r in con.execute("SELECT structure_id,system_id FROM structures WHERE system_id>0")})
+    skipped = kept = ships = lookups = 0
+    cur_ship = ship.get("ship_item_id")
     for a in esi.paged(f"/characters/{cid}/assets/"):
-        if (a.get("location_type") == "station" and a["location_id"] not in known and lookups < 150):
-            lookups += 1               # station not in our data: learn it from ESI
+        lid, lt = a["location_id"], a.get("location_type")
+        if lid not in known and lookups < 200 and (lt == "station" or (lt == "other" and lid >= 10**12)):
+            lookups += 1                       # station/structure not in our data: ask ESI once
             try:
-                info = esi.get(f"/universe/stations/{a['location_id']}/")[0]
-                con.execute("INSERT OR REPLACE INTO stations(station_id,system_id,name,corporation_id) "
-                            "VALUES(?,?,?,?)", (a["location_id"], info["system_id"], info.get("name", ""),
-                                                info.get("owner")))
-                known[a["location_id"]] = info["system_id"]
+                if lt == "station":
+                    info = esi.get(f"/universe/stations/{lid}/")[0]
+                    con.execute("INSERT OR REPLACE INTO stations(station_id,system_id,name,corporation_id) "
+                                "VALUES(?,?,?,?)", (lid, info["system_id"], info.get("name", ""), info.get("owner")))
+                    known[lid] = info["system_id"]
+                else:
+                    info = esi.get(f"/universe/structures/{lid}/")[0]
+                    con.execute("INSERT OR REPLACE INTO structures(structure_id,name,system_id,owner_id,access,info_at) "
+                                "VALUES(?,?,?,?,1,strftime('%s','now'))",
+                                (lid, info.get("name", ""), info["solar_system_id"], info.get("owner_id")))
+                    known[lid] = info["solar_system_id"]
             except Exception:
-                known[a["location_id"]] = None
-        sid = known.get(a["location_id"]) if a.get("location_type") == "station" else None
-        if sid is None or a.get("is_singleton"):
-            skipped += 1      # structures/containers/assembled ships: not tradeable here
+                known[lid] = None
+        sid = known.get(lid) if lt in ("station", "other") else None
+        if sid is None or (cur_ship is not None and a.get("item_id") == cur_ship):
+            skipped += 1                       # in a container/ship, unknown structure, or the ship you fly
+            continue
+        if a.get("is_singleton"):
+            if _is_ship(con, esi, a["type_id"]):
+                con.execute("INSERT OR REPLACE INTO my_ships VALUES(?,?,?,?)", (a.get("item_id", 0), a["type_id"], sid, lid))
+                ships += 1
+            else:
+                skipped += 1                   # assembled non-ship (container, rigged module...)
             continue
         con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) "
-                    "DO UPDATE SET quantity=quantity+excluded.quantity",
-                    (a["type_id"], sid, a["quantity"]))
+                    "DO UPDATE SET quantity=quantity+excluded.quantity", (a["type_id"], sid, a["quantity"]))
         kept += 1
     con.commit()
     return {"system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "assets_skipped": skipped,
+            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
             "system_known": bool(row)}
