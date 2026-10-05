@@ -116,8 +116,9 @@ def connect(path: str) -> sqlite3.Connection:
     d = os.path.dirname(path)
     if d:
         os.makedirs(d, exist_ok=True)
-    con = sqlite3.connect(path)
+    con = sqlite3.connect(path, timeout=120)
     con.row_factory = sqlite3.Row
+    con.execute("PRAGMA busy_timeout=120000")
     con.execute("PRAGMA journal_mode=WAL")
     con.executescript(SCHEMA)
     for tbl, col, ddl in (("stations", "corporation_id", "INTEGER"),
