@@ -29,7 +29,7 @@ class T(unittest.TestCase):
 
     def test_lacking_skill_blocks_build_and_is_explained(self):
         con, g = setup()
-        con.execute("INSERT INTO character_skills VALUES(3380,2)")        # needs 3
+        con.execute("INSERT INTO character_skills(skill_id,level) VALUES(3380,2)")        # needs 3
         self.assertEqual(find_manufacturing(con, g, prof()), [])
         self.assertIn("Industry 3 (have 2)", blocked_blueprints(con, prof())[0][1])
         con.execute("UPDATE character_skills SET level=3")
@@ -59,7 +59,7 @@ class T(unittest.TestCase):
         from eve_profit.mining import find_mining
         con, g = setup()
         con.execute("INSERT INTO type_skills VALUES(1230,3380,5)")        # Veldspar "needs" Industry 5
-        con.execute("INSERT INTO character_skills VALUES(3380,3)")
+        con.execute("INSERT INTO character_skills(skill_id,level) VALUES(3380,3)")
         p = prof(mining_yield_m3_s=0.5, minable_ores=["Veldspar"])
         self.assertEqual(find_mining(con, g, p), [])
         con.execute("UPDATE character_skills SET level=5")

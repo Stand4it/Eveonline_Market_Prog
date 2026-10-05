@@ -120,3 +120,12 @@ Hull cargo ignores skill/module bonuses, so real holds may be larger. Turn off w
 - `go --away --pick N --send` sets waypoints at each system and ends at the **selling station**, so the autopilot docks.
 You still click "start autopilot" once in the game (CCP's API only sets waypoints) and do the buy/sell at each end.
 Autopilot in empire space can still be ganked or interrupted; keep cargo value modest while away.
+
+## Skill advisor
+`python -m eve_profit skills --hours 72` (after `sync`) tests each skill the planner models (Accounting, your hull's
+racial Industrial skill, Evasive Maneuvering, Spaceship Command, Industry, Advanced Industry, Mass Production,
+Advanced Mass Production) by re-running the planner with that skill one level higher, and ranks levels by
+ISK/hr gained per hour of training, using your real attributes, trained SP and current queue (queued skills count
+as done). It fills ~`--hours` of queue, in an order that respects levels, and lists useful skills it can't measure
+(broker/contracts/standings/transport ships). Align/speed effects are ESTIMATES. Needs the skill-queue permission
+(re-run `login` once) and the SDE import (for skill ranks).

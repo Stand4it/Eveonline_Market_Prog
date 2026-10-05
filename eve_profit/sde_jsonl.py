@@ -86,8 +86,11 @@ def import_jsonl(con, zip_path):
     for r in _rows(zf, "typeDogma"):
         if r["_key"] not in published:
             continue
-        a = {x["attributeID"]: int(x["value"]) for x in r.get("dogmaAttributes", [])
-             if x["attributeID"] in SKILL_ATTRS or x["attributeID"] in SKILL_ATTRS.values()}
+        raw = {x["attributeID"]: x["value"] for x in r.get("dogmaAttributes", [])}
+        if 275 in raw:                                    # skillTimeConstant = rank; 180/181 = training attributes
+            con.execute("UPDATE types SET skill_rank=?,skill_primary=?,skill_secondary=? WHERE type_id=?",
+                        (raw[275], int(raw.get(180, 0)), int(raw.get(181, 0)), r["_key"]))
+        a = {k: int(v) for k, v in raw.items() if k in SKILL_ATTRS or k in SKILL_ATTRS.values()}
         rows += [(r["_key"], a[s], a[l]) for s, l in SKILL_ATTRS.items() if s in a and l in a]
     con.executemany("INSERT INTO type_skills VALUES(?,?,?)", rows)
     n["type_skills"] = len(rows)

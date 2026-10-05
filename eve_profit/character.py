@@ -9,6 +9,16 @@ def _type(esi, tid):
     return esi.type_info(tid)
 
 
+def _hull_cargo_bonus(con, ship_type_id, skills):
+    """Racial industrial hulls get +5% cargo per level of their Industrial skill."""
+    for r in con.execute("SELECT s.skill_id,t.name FROM type_skills s JOIN types t ON t.type_id=s.skill_id "
+                         "WHERE s.type_id=?", (ship_type_id,)):
+        if r["name"].endswith("Industrial"):
+            lvl = next((x["trained_skill_level"] for x in skills if x["skill_id"] == r["skill_id"]), 0)
+            return 1 + 0.05 * lvl
+    return 1.0
+
+
 def _is_ship(con, esi, type_id):
     """Category 6 = ships. Unknown category (no SDE) is looked up once from ESI."""
     r = con.execute("SELECT category_id,group_id FROM types WHERE type_id=?", (type_id,)).fetchone()
@@ -22,6 +32,24 @@ def _is_ship(con, esi, type_id):
         except Exception:
             return False
     return r[0] == 6
+
+
+def _sync_attributes_and_queue(con, esi, cid):
+    """Training attributes + skill queue (queue needs esi-skills.read_skillqueue.v1: skipped if not granted)."""
+    try:
+        at = esi.get(f"/characters/{cid}/attributes/")[0]
+        con.execute("DELETE FROM char_attrs")
+        con.executemany("INSERT INTO char_attrs VALUES(?,?)",
+                        [(k, at[k]) for k in ("charisma", "intelligence", "memory", "perception", "willpower") if k in at])
+    except Exception:
+        pass
+    con.execute("DELETE FROM skill_queue")
+    try:
+        q = esi.get(f"/characters/{cid}/skillqueue/")[0]
+        con.executemany("INSERT INTO skill_queue VALUES(?,?,?,?)",
+                        [(x["queue_position"], x["skill_id"], x["finished_level"], x.get("finish_date")) for x in q])
+    except Exception:
+        pass
 
 
 def sync_character(con, esi, cid, profile):
@@ -41,15 +69,16 @@ def sync_character(con, esi, cid, profile):
     cap = next((a["value"] for a in _type(esi, ship["ship_type_id"]).get("dogma_attributes", [])
                 if a["attribute_id"] == CAPACITY_ATTR), None)
     if cap:
-        profile.cargo_m3 = cap
+        profile.cargo_m3 = cap * _hull_cargo_bonus(con, ship["ship_type_id"], skills)
     profile.wallet_isk = wallet
     lvl = next((s["trained_skill_level"] for s in skills if s["skill_id"] == ACCOUNTING), 0)
     profile.accounting_level = lvl
     lv = lambda sid: next((s["trained_skill_level"] for s in skills if s["skill_id"] == sid), 0)
     profile.industry_level, profile.adv_industry_level = lv(INDUSTRY), lv(ADV_INDUSTRY)
     con.execute("DELETE FROM character_skills")
-    con.executemany("INSERT INTO character_skills VALUES(?,?)",
-                    [(s["skill_id"], s["trained_skill_level"]) for s in skills])
+    con.executemany("INSERT INTO character_skills(skill_id,level,sp) VALUES(?,?,?)",
+                    [(s["skill_id"], s["trained_skill_level"], s.get("skillpoints_in_skill", 0)) for s in skills])
+    _sync_attributes_and_queue(con, esi, cid)
     profile.mfg_slots_total = 1 + lv(MASS_PRODUCTION) + lv(ADV_MASS_PRODUCTION)
     jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
     profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1
