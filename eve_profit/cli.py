@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -58,6 +58,8 @@ def main(argv=None):
     ap.add_argument("--away", action="store_true", help="unattended mode: long safe autopilot hauls only")
     ap.add_argument("--to", default="", help="along: destination system name")
     ap.add_argument("--force", action="store_true", help="universe: reload even if already loaded")
+    ap.add_argument("--item", default="", help="bestprice: item name or type id")
+    ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
@@ -136,6 +138,19 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "bestprice":
+        from .bestprice import best_prices, format_best, resolve_type
+        from .esi import ESI
+        from .graph import Graph
+        if not a.item:
+            raise SystemExit('usage: bestprice --item "Zydrine" [--qty 25393]')
+        g = Graph(con)
+        tid, nm, _ = resolve_type(con, a.item)
+        held = con.execute("SELECT quantity FROM inventory WHERE type_id=? AND system_id=?", (tid, g.id_of(p.current_system))).fetchone()
+        qty = a.qty or (held[0] if held else 1)
+        print(f"Asking ESI for buy orders of {nm} in every region (about a minute)...", flush=True)
+        rows, _ = best_prices(con, g, p, ESI(), tid, qty, log=lambda m: print(m, flush=True))
+        print(format_best(nm, qty, rows, p.current_system))
     elif a.cmd == "update":
         from .update import check_update, remember
         status, build = check_update(con)

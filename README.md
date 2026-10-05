@@ -159,3 +159,9 @@ NO - not worth buying / CANNOT PRICE (no seller in range). Shows missing skills 
 `python -m eve_profit universe --force`, then `scan --live`, `bpbuy`, `skills` to catch new items, blueprints, ships and skills.
 Valuation note: your own materials are valued at the **best buyer within ~4 jumps**, not just the local station (a system with
 no buyers does not make your stock free). Product sales use the same range.
+
+## Best price anywhere (`bestprice`)
+`python -m eve_profit bestprice --item "Zydrine" [--qty 25393]` asks ESI for buy orders of that item in EVERY region (about a
+minute, public data), then shows the best buyers by net ISK for your quantity (order depth, after tax), how many safe jumps away,
+GANK warnings, and the gain over selling where you are. It says "just sell here" when the best price is within 5%. `next` suggests
+it for big stacks. This is the same idea as the "best price in the whole of EVE" lists on EVE Workbench, using CCP's own data.

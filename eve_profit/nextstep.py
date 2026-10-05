@@ -19,6 +19,9 @@ def next_action(con, g, p):
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} ~{d['net']:>12,.0f}")
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
+        big = sells[0]
+        if big["net"] >= 5_000_000:
+            L.append(f"   BIG ONE: before selling {big['name']}, compare other markets:  python -m eve_profit bestprice --item \"{big['name']}\"")
         L.append("   In game: Market > item > Sell > pick the HIGHEST buy order at your station.")
         L.append(AFTER)
         return "\n".join(x for x in L if x != "")
