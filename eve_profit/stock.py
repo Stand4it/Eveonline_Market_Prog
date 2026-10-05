@@ -2,9 +2,13 @@
 from .orders import load_books, sell_into_bids
 
 
+FAR_JUMPS = 40     # how far (safe jumps) to look for your own stock
+
+
 def stock_report(con, g, p, top=25):
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
+    here = g.reach(g.id_of(p.current_system), FAR_JUMPS, p.avoid_yellow)
     rows, total, unpriced = [], 0.0, []
     for inv in con.execute("SELECT type_id,system_id,quantity FROM inventory").fetchall():
         tid, sid, qty = inv["type_id"], inv["system_id"], inv["quantity"]
@@ -20,15 +24,15 @@ def stock_report(con, g, p, top=25):
         m3 = qty * (vol.get(tid, 0) or 0)
         if best:
             total += best[1]
-            rows.append((best[1], name.get(tid, tid), qty, best[2], g.name[sid], g.name[best[0]], best[3], m3))
+            rows.append((best[1], name.get(tid, tid), qty, best[2], f"{g.name[sid]} ({here[sid].jumps}j)" if sid in here else f"{g.name[sid]} (far)", g.name[best[0]], best[3], m3))
         else:
             unpriced.append((name.get(tid, tid), qty, g.name[sid]))
     rows.sort(reverse=True)
     L = [f"Stock in stations/structures: {len(rows) + len(unpriced)} stacks, "
          f"{total:,.0f} ISK if sold now into nearby buy orders (after tax).", "",
-         f"{'ISK if sold':>14}  {'item':<34} {'qty':>10} {'sellable':>9} {'m3':>9}  {'where it is':<12} -> best buyer (jumps)"]
+         f"{'ISK if sold':>14}  {'item':<34} {'qty':>10} {'sellable':>9} {'m3':>9}  {'where it is (jumps from you)':<26} -> best buyer (jumps)"]
     for net, n, qty, sold, at, to, j, m3 in rows[:top]:
-        L.append(f"{net:>14,.0f}  {str(n)[:34]:<34} {qty:>10,} {sold:>9,} {m3:>9,.0f}  {at:<12} -> {to} ({j})")
+        L.append(f"{net:>14,.0f}  {str(n)[:34]:<34} {qty:>10,} {sold:>9,} {m3:>9,.0f}  {at:<26} -> {to} ({j})")
     if unpriced:
         L += ["", f"No buy orders in range for {len(unpriced)} stacks (e.g. SKINs, special items): " +
               ", ".join(f"{n} x{q:,} @ {s}" for n, q, s in unpriced[:8])]
@@ -42,7 +46,7 @@ def best_loads(con, g, p, top=3, max_sources=6):
     """For stock parked in a system: the best single hold-load to carry to ONE buyer, filled by value per m3.
     Time = trip from where you are to the stock + stock to buyer. -> list of dict, best ISK/hr first."""
     cur = g.id_of(p.current_system)
-    from_cur = g.reach(cur, p.max_jumps * 3, p.avoid_yellow)
+    from_cur = g.reach(cur, FAR_JUMPS, p.avoid_yellow)          # where is each pile relative to YOU
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     by_sys = {}
