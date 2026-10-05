@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -135,6 +135,16 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "zkill":
+        from .esi import ESI
+        from .zkill import ZKill, refresh_gank_map
+        print("Fetching recent hauler losses from zKillboard (about 1 request per second)...")
+        print(refresh_gank_map(con, ZKill(), ESI(), regions_near(con, p)))
+        from .graph import Graph
+        g = Graph(con)
+        top = sorted(g.gank.items(), key=lambda kv: -kv[1])[:10]
+        for s, n in top:
+            print(f"   {g.name[s]:<14} {n} hauler losses in 7 days  (sec {g.sec[s]:.1f})")
     elif a.cmd == "fit":
         from .fit import describe_fit
         print(describe_fit(con, p))
@@ -272,6 +282,11 @@ def _run(a):
                     f"WHERE system_id IN ({ids}) UNION SELECT corporation_id FROM stations "
                     f"WHERE system_id IN ({ids}) AND corporation_id IS NOT NULL")]
                 print("LP stores refreshed:", refresh_offers(con, esi, corps))
+                try:
+                    from .zkill import ZKill, refresh_gank_map
+                    print("zKillboard:", refresh_gank_map(con, ZKill(), esi, regions))
+                except Exception as e:           # optional signal: never break a scan
+                    print("zKillboard skipped:", e)
                 if p.use_structures:
                     if a.client_id and os.path.exists("tokens.json"):
                         from . import sso

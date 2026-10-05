@@ -6,6 +6,7 @@ RED_BELOW = 0.5      # low/null/wormhole: forbidden for routes (hard avoid)
 YELLOW_BELOW = 0.65  # 0.5-0.6 high-sec edge: allowed, penalised
 YELLOW_PENALTY = 4.0  # a yellow system costs as much as this many jumps
 KILL_HOT = 5          # >= this many ship kills in the last hour => avoid if possible
+GANK_HOT = 2          # >= this many hauler losses in the last 7 days (zKillboard) => treat as a gank hotspot
 
 
 @dataclass
@@ -30,6 +31,7 @@ class Graph:
                 self.adj[b].append(a)
         self.kills = {r[0]: (r[1] or 0) for r in
                       con.execute("SELECT system_id,ship_kills FROM system_kills")}
+        self.gank = {r[0]: r[1] for r in con.execute("SELECT system_id,COUNT(*) FROM gank_events GROUP BY system_id")}
         self._ids = {n.lower(): i for i, n in self.name.items()}
         self.ban_yellow = False     # away mode: never route through 0.5-0.6 or recently-attacked systems
         self.risk_mult = 1.0        # away mode: autopilot is easier to gank -> scale loss odds
@@ -44,7 +46,7 @@ class Graph:
         return RED_BELOW <= self.sec[s] < YELLOW_BELOW
 
     def is_hot(self, s) -> bool:
-        return self.kills.get(s, 0) >= KILL_HOT
+        return self.kills.get(s, 0) >= KILL_HOT or self.gank.get(s, 0) >= GANK_HOT
 
     def node_cost(self, s, avoid_yellow=True) -> float:
         c = 1.0

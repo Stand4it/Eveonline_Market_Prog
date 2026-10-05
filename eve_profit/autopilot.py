@@ -19,8 +19,16 @@ def dedupe_ids(ids):
 
 def route_alerts(g, waypoints):
     """Systems on the route that need attention: red (never go) or hot (recent kills)."""
-    return [(g.name[s], "RED" if g.is_red(s) else "HOT") for s in waypoints
-            if g.is_red(s) or g.is_hot(s)]
+    out = []
+    for s in waypoints:
+        n = getattr(g, "gank", {}).get(s, 0)
+        if g.is_red(s):
+            out.append((g.name[s], "RED"))
+        elif n:
+            out.append((g.name[s], f"GANKS x{n} in 7 days (haulers destroyed here)"))
+        elif g.is_hot(s):
+            out.append((g.name[s], "HOT"))
+    return out
 
 
 def send_route(esi, g, waypoints, send=False, pause=0.3, stops=None):
