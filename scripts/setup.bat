@@ -1,6 +1,6 @@
 @echo off
 REM One-time setup: DB on E:, profile, test, mock demo.
-cd /d %~dp0..
+cd /d "%~dp0.."
 if not exist E:\EveProfit mkdir E:\EveProfit
 python -m eve_profit init
 if not exist profile.json python -m eve_profit profile

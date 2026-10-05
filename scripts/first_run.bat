@@ -1,6 +1,6 @@
 @echo off
 REM One file, run on your PC. Stops at the first failure.
-cd /d %~dp0..
+cd /d "%~dp0.."
 echo [1/4] Checking Python...
 python --version >nul 2>&1 || (echo Python not found. Install 3.11+ from python.org ^(tick "Add to PATH"^) and rerun. & exit /b 1)
 python -c "import sys; sys.exit(0 if sys.version_info>=(3,11) else 1)" || (echo Python is older than 3.11. Please upgrade. & exit /b 1)
