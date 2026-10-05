@@ -59,12 +59,21 @@ def find_trades(con, g, p):
 
 
 def find_liquidations(con, g, p):
-    """Best place to dump items you already own vs. selling in place."""
+    """Best place to dump items you already own vs. selling in place. The trip starts where your
+    ship IS: it includes getting to the stock, and never carries more than the hold fits."""
     out = []
+    cur = g.id_of(p.current_system)
+    from_cur = g.reach(cur, p.max_jumps * 2, p.avoid_yellow)
     tname = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
+    vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     for inv in con.execute("SELECT type_id,system_id,quantity FROM inventory").fetchall():
         tid, sid, qty = inv["type_id"], inv["system_id"], inv["quantity"]
-        if sid not in g.adj:
+        r0 = from_cur.get(sid)
+        if r0 is None:
+            continue                      # stock is too far / only reachable through red space
+        if vol.get(tid, 0) > 0:
+            qty = min(qty, int(p.cargo_m3 // vol[tid]))      # one hold-load at a time
+        if qty < 1:
             continue
         reach = g.reach(sid, p.max_jumps, p.avoid_yellow)
         _, buys = load_books(con, reach)
@@ -83,13 +92,15 @@ def find_liquidations(con, g, p):
         if uplift < p.min_profit_isk:
             continue
         rt = reach[b]
-        loss, wait = route_risk(g, rt.path, p.ship_value_isk + net)
-        secs = rt.jumps * p.jump_seconds + p.dock_overhead_s + p.trade_overhead_s + wait
+        l0, w0 = route_risk(g, r0.path, p.ship_value_isk)
+        l1, w1 = route_risk(g, rt.path, p.ship_value_isk + net)
+        jumps = r0.jumps + rt.jumps
+        secs = jumps * p.jump_seconds + 2 * p.dock_overhead_s + p.trade_overhead_s + w0 + w1
         out.append(Opportunity(
             "liquidate",
-            f"Sell {sold:,} x {tname.get(tid, tid)} at {g.name[b]} "
+            f"Collect + sell {sold:,} x {tname.get(tid, tid)} (stock at {g.name[sid]}) at {g.name[b]} "
             f"(vs {local:,.0f} ISK selling at {g.name[sid]})",
-            uplift, loss, rt.jumps, secs / 3600, _names(g, rt.path),
+            uplift, l0 + l1, jumps, secs / 3600, _names(g, r0.path) + " | " + _names(g, rt.path),
             {"type_id": tid, "units": sold, "net": net, "local_net": local},
-            waypoints=rt.path[1:]))
+            waypoints=r0.path[1:] + rt.path[1:]))
     return out

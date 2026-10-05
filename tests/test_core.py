@@ -100,3 +100,33 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LiquidationTests(unittest.TestCase):
+    def setUp(self):
+        self.d = tempfile.mkdtemp()
+        self.con = db.connect(os.path.join(self.d, "t.db"))
+        load_mock(self.con)
+        self.con.execute("DELETE FROM inventory")
+
+    def _find(self, **kw):
+        from eve_profit.trade import find_liquidations
+        p = Profile(max_jumps=3, min_profit_isk=1, **kw)
+        return find_liquidations(self.con, Graph(self.con), p)
+
+    def test_cargo_cap_and_trip_to_stock_are_counted(self):
+        g = Graph(self.con)
+        far = next(s for s in g.reach(1, 2) if g.reach(1, 2)[s].jumps == 2)
+        # 1,000,000 Tritanium (0.01 m3 = 10,000 m3 total) held 2 jumps away
+        self.con.execute("INSERT INTO inventory VALUES(34,?,1000000)", (far,))
+        r = self._find(cargo_m3=5000)
+        self.assertTrue(r)
+        o = r[0]
+        self.assertLessEqual(o.detail["units"], 500000)            # 5,000 m3 / 0.01
+        self.assertGreaterEqual(o.jumps, 2 + 1)                    # trip to the stock + trip to the buyer
+        self.assertEqual(o.waypoints[:2], g.route(1, far).path[1:])
+
+    def test_stock_where_you_stand_has_no_pickup_leg(self):
+        self.con.execute("INSERT INTO inventory VALUES(34,1,100000)")
+        o = self._find(cargo_m3=5000)[0]
+        self.assertEqual(o.route.split(" | ")[0], "Home")
