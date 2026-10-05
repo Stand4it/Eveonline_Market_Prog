@@ -15,12 +15,16 @@ class ESI:
     def __init__(self, timeout=30):
         self.timeout, self.etags, self.cache = timeout, {}, {}
 
+    token = None  # bearer access token for authenticated endpoints (set by sso)
+
     def get(self, path, **params):
         """-> (json, pages). Retries on 420/5xx; uses ETag for cheap refreshes."""
         url = BASE + path + ("?" + urllib.parse.urlencode(params) if params else "")
         for attempt in range(5):
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
                                                        "Accept": "application/json"})
+            if self.token:
+                req.add_header("Authorization", "Bearer " + self.token)
             if url in self.etags:
                 req.add_header("If-None-Match", self.etags[url])
             try:
@@ -55,6 +59,14 @@ class ESI:
 
     def type_info(self, type_id):
         return self.get(f"/universe/types/{type_id}/")[0]
+
+    def paged(self, path, **params):
+        out, page, pages = [], 1, 1
+        while page <= pages:
+            data, pages = self.get(path, page=page, **params)
+            out.extend(data)
+            page += 1
+        return out
 
     def status(self):
         return self.get("/status/")[0]

@@ -11,13 +11,14 @@ from .planner import format_plan, plan
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
     ap.add_argument("--regions", default="10000002", help="comma list of region ids")
     ap.add_argument("--max-pages", type=int, default=None)
     ap.add_argument("--interval", type=int, default=300, help="watch seconds (ESI caches 5 min)")
+    ap.add_argument("--client-id", default=os.environ.get("EVE_CLIENT_ID", ""))
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
 
@@ -28,6 +29,21 @@ def main(argv=None):
     elif a.cmd == "profile":
         p.save(a.profile)
         print("Wrote", a.profile, "- edit ship/cargo/system, then run scan")
+    elif a.cmd in ("login", "sync"):
+        from . import sso
+        if not a.client_id:
+            raise SystemExit("Set EVE_CLIENT_ID or pass --client-id (see README: EVE login)")
+        if a.cmd == "login":
+            r = sso.login(a.client_id)
+            print("Logged in as", r["character_name"], r["character_id"])
+        else:
+            from .character import sync_character
+            from .esi import ESI
+            esi = ESI()
+            esi.token, cid = sso.get_token(a.client_id)
+            print(sync_character(con, esi, cid, p))
+            p.save(a.profile)
+            print("Profile updated:", a.profile)
     elif a.cmd == "mock":
         from .mock import load_mock
         load_mock(con)
