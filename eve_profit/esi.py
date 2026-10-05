@@ -113,3 +113,14 @@ def _post(self, path, token, **params):
 
 
 ESI.post = lambda self, path, **params: _post(self, path, self.token, **params)
+
+
+def _post_json(self, path, body):
+    import json as _json
+    req = urllib.request.Request(BASE + path, data=_json.dumps(body).encode(), method="POST", headers={
+        "User-Agent": USER_AGENT, "Content-Type": "application/json", "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=self.timeout) as r:
+        return _json.load(r)
+
+
+ESI.post_json = _post_json

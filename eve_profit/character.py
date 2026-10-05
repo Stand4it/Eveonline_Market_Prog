@@ -19,6 +19,8 @@ def sync_character(con, esi, cid, profile):
                       (loc["solar_system_id"],)).fetchone()
     if row:
         profile.current_system = row[0]
+    else:                    # universe not loaded yet: ask ESI for the name
+        profile.current_system = esi.get(f"/universe/systems/{loc['solar_system_id']}/")[0]["name"]
     profile.ship_name = ship.get("ship_name", profile.ship_name)
     profile.ship_type_id = ship["ship_type_id"]
     cap = next((a["value"] for a in _type(esi, ship["ship_type_id"]).get("dogma_attributes", [])
@@ -53,7 +55,18 @@ def sync_character(con, esi, cid, profile):
     con.execute("DELETE FROM inventory")
     known = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
     skipped = kept = 0
+    lookups = 0
     for a in esi.paged(f"/characters/{cid}/assets/"):
+        if (a.get("location_type") == "station" and a["location_id"] not in known and lookups < 150):
+            lookups += 1               # station not in our data: learn it from ESI
+            try:
+                info = esi.get(f"/universe/stations/{a['location_id']}/")[0]
+                con.execute("INSERT OR REPLACE INTO stations(station_id,system_id,name,corporation_id) "
+                            "VALUES(?,?,?,?)", (a["location_id"], info["system_id"], info.get("name", ""),
+                                                info.get("owner")))
+                known[a["location_id"]] = info["system_id"]
+            except Exception:
+                known[a["location_id"]] = None
         sid = known.get(a["location_id"]) if a.get("location_type") == "station" else None
         if sid is None or a.get("is_singleton"):
             skipped += 1      # structures/containers/assembled ships: not tradeable here

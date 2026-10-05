@@ -31,6 +31,30 @@ def _paged_or_empty(esi, path):
         raise
 
 
+def _learn_stations(con, esi, station_sys, rows, cap=100):
+    """NPC stations we haven't seen (no SDE import): look them up in ESI once and remember."""
+    todo = {c.get("start_location_id") for c in rows} | {c.get("end_location_id") for c in rows}
+    n = 0
+    for lid in sorted(x for x in todo if x and 60000000 <= x < 64000000 and x not in station_sys):
+        if n >= cap:
+            break
+        info, _ = _try_get(esi, f"/universe/stations/{lid}/")
+        n += 1
+        if info:
+            con.execute("INSERT OR REPLACE INTO stations(station_id,system_id,name,corporation_id) "
+                        "VALUES(?,?,?,?)", (lid, info["system_id"], info.get("name", ""), info.get("owner")))
+            station_sys[lid] = info["system_id"]
+
+
+def _try_get(esi, path):
+    try:
+        return esi.get(path)
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 404):
+            return None, None
+        raise
+
+
 def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
     """Replace public contracts for regions; fetch contents for item contracts that start in
     `wanted_systems` (the systems you can reach). -> (contracts_stored, items_fetched)."""
@@ -41,6 +65,7 @@ def refresh_contracts(con, esi, region_ids, wanted_systems, cap=MAX_ITEM_FETCH):
     stored = 0
     for rid in region_ids:
         rows = _paged_or_empty(esi, f"/contracts/public/{rid}/")
+        _learn_stations(con, esi, station_sys, rows)
         keep = {r[0]: r[1] for r in con.execute(
             "SELECT contract_id,items_fetched FROM contracts WHERE region_id=?", (rid,))}
         con.execute("DELETE FROM contracts WHERE region_id=?", (rid,))

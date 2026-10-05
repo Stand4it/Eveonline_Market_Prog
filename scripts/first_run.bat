@@ -9,7 +9,7 @@ echo [2/4] Setup, universe download, live market scan...
 call scripts\setup.bat || exit /b 1
 if "%~1"=="" (echo Give your system name:  scripts\first_run.bat "Jita" 5000 & exit /b 1)
 python -m eve_profit profile --system "%~1" --cargo %~2 || exit /b 1
-if not exist E:\EveProfit\sde.sqlite python -m eve_profit sde || exit /b 1
+python -m eve_profit universe || exit /b 1
 python -m eve_profit scan --live || (echo Live scan failed - send me this output. & exit /b 1)
 echo [3/4] EVE login...
 if "%EVE_CLIENT_ID%"=="" (echo Live scan OK. To continue: create the app at developers.eveonline.com, run  set EVE_CLIENT_ID=your_id  then rerun this file. & exit /b 0)

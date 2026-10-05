@@ -88,3 +88,12 @@ trades, contracts, builds and LP redeems can use them, and contracts located in 
 `structure_sales_tax` (default 1%, owners set their own - check in game) is shaved off structure buy orders.
 Needs two more scopes (re-run `login`): structure markets + read structures. Caveats: you must be able to
 dock there (hostile/blue-list rules change), and structures in low/null space are avoided by the router.
+
+## Universe data (replaces the Fuzzwork download)
+`python -m eve_profit universe` loads the map once, trying in order:
+1. CCP's official SDE (JSONL zip, `developers.eveonline.com/static-data/...`) - systems, gates, stations, types,
+   blueprints, skills, agents. Or import a zip you downloaded: `universe --sde-file "C:\path\sde.zip"`.
+2. If that fails, it builds the map **around your system from ESI** (`--depth N` jumps, default 3x your radius).
+   No blueprint or agent data in this mode (ESI has no endpoint for them), so builds and mission agents are
+   skipped until the SDE import works. Stations are learned from ESI as they turn up.
+`login.bat` runs: login -> sync (learns your system) -> universe -> sync again -> live scan.

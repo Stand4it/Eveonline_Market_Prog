@@ -19,13 +19,14 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
     ap.add_argument("--regions", default="", help="comma list of region ids (default: auto from your system)")
     ap.add_argument("--system", default="", help="profile: set current system name")
     ap.add_argument("--cargo", type=float, default=0, help="profile: set cargo m3")
+    ap.add_argument("--depth", type=int, default=0, help="esimap: jumps around your system (default 3x radius)")
     ap.add_argument("--sde-file", default="", help="sde: import this local sqlite/.bz2 instead of downloading")
     ap.add_argument("--sde-url", default="", help="sde: download from this URL")
     ap.add_argument("--max-pages", type=int, default=None)
@@ -102,6 +103,31 @@ def main(argv=None):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd in ("universe", "esimap"):
+        have = con.execute("SELECT COUNT(*) FROM systems").fetchone()[0]
+        if a.cmd == "universe" and have > 500:
+            print(f"Universe already loaded ({have} systems).")
+        else:
+            ok = False
+            if a.cmd == "universe":                       # 1) official SDE download
+                from .sde_jsonl import download as dl_jsonl, import_jsonl
+                try:
+                    zip_path = a.sde_file or (dl_jsonl(os.path.dirname(a.db) or ".", a.sde_url)
+                                              if a.sde_url else dl_jsonl(os.path.dirname(a.db) or "."))
+                    counts = import_jsonl(con, zip_path)
+                    print("Imported SDE:", counts)
+                    ok = counts.get("systems", 0) > 500 and counts.get("gates", 0) > 500
+                    if not ok:
+                        print("SDE layout not as expected; falling back to the ESI map builder.")
+                except Exception as e:
+                    print("SDE download/import failed:", e)
+            if not ok:                                    # 2) build the neighbourhood from ESI
+                from .esi import ESI
+                from .esimap import build_map
+                depth = a.depth or max(3, p.max_jumps * 3)
+                print(f"Building the map around {p.current_system} ({depth} jumps) from ESI...")
+                s, g = build_map(con, ESI(), p.current_system, depth)
+                print(f"Map ready: {s} systems, {g} gates. (No blueprint/agent data without the SDE.)")
     elif a.cmd == "sde":
         from .sde import download, import_sde
         from .sde import extract
