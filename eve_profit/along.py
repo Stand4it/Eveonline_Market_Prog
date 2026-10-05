@@ -14,7 +14,7 @@ def _bids_at(con, location_id):
     return out
 
 
-def plan_along(con, g, p, dest_name):
+def plan_along(con, g, p, dest_name, slots_override=None):
     cur = g.id_of(p.current_system)
     route = g.route(cur, g.id_of(dest_name), 60, p.avoid_yellow)
     if route is None:
@@ -69,7 +69,7 @@ def plan_along(con, g, p, dest_name):
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
                          "listing": listing, "list_net": list_net, "advice": "LIST" if list_it else "SELL NOW",
                          "cost": cost, "covered": covered})
-    slots = order_slots(con)
+    slots = slots_override if slots_override is not None else order_slots(con)
     listers = sorted([d for d in here if d["advice"] == "LIST"], key=lambda d: -(d["list_net"] - d["net"]))
     if slots is not None:
         for d in listers[slots:]:

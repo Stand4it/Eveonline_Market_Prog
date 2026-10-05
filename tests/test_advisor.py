@@ -114,3 +114,30 @@ class FillTests(unittest.TestCase):
         self.assertAlmostEqual(_hull_cargo_bonus(con, 652, [{"skill_id": 3341, "trained_skill_level": 4}]), 1.20)
         _fill_capacity(con, self.E(), 652)
         self.assertEqual(con.execute("SELECT capacity FROM types WHERE type_id=652").fetchone()[0], 5500)
+
+
+class StockSkillTests(unittest.TestCase):
+    def test_broker_and_slot_skills_have_value_on_listable_stock(self):
+        from eve_profit.advisor import stock_skill_gains
+        con = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,35,36)")
+        for oid, tid, buy, price in [(9001, 34, 1, 1.0), (9002, 34, 0, 100.0), (9003, 35, 1, 1.0), (9004, 35, 0, 90.0),
+                                     (9005, 36, 1, 1.0), (9006, 36, 0, 80.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,?,?,10000000,1,'',1)", (oid, tid, buy, price))
+        for tid in (34, 35, 36):
+            con.execute("INSERT INTO inventory VALUES(?,1,1000)", (tid,))
+        con.execute("DELETE FROM character_skills")
+        con.executemany("INSERT INTO character_skills(skill_id,level) VALUES(?,?)", [(3443, 0), (3446, 0)])   # 5 slots, 3% fee
+        con.execute("UPDATE types SET skill_rank=1 WHERE type_id IN (3380)")
+        p = Profile(current_location_id=60000001, broker_fee=0.03, secs_per_jump=45)
+        gains = {d["skill"]: d["gain"] for d in stock_skill_gains(con, p)}
+        self.assertGreater(gains["Broker Relations"], 0)                      # cheaper listing fee => more ISK on every listed stack
+        # 5 slots already list all 3 stacks, so extra slots add nothing here:
+        self.assertEqual(gains["Trade"], 0)
+        # with only 1 slot the other stacks are sold instantly, so slots become valuable
+        con.execute("UPDATE character_skills SET level=0 WHERE skill_id=3443")
+        from unittest import mock
+        with mock.patch("eve_profit.skills.order_slots", return_value=1):
+            gains = {d["skill"]: d["gain"] for d in stock_skill_gains(con, p)}
+        self.assertGreater(gains["Trade"], 0)
+        self.assertGreaterEqual(gains["Retail"], gains["Trade"])                # +8 slots is never worse than +4

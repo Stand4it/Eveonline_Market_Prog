@@ -7,6 +7,7 @@ import dataclasses
 import math
 
 from .graph import Graph
+from .skills import have
 
 ATTR_NAMES = {164: "charisma", 165: "intelligence", 166: "memory", 167: "perception", 168: "willpower"}
 TOP_N = 10
@@ -80,8 +81,48 @@ def hull_racial_skill(con, p):
     return None
 
 
+STOCK_SKILLS = [("Broker Relations", 3446, "broker"), ("Trade", 3443, 4), ("Retail", 3444, 8),
+                ("Wholesale", 16596, 16), ("Tycoon", 18580, 32)]
+
+
+def _stock_total(res):
+    return sum((d["list_net"] if d["advice"] == "LIST" else d["net"]) for d in res["sell_here"])
+
+
+def stock_skill_gains(con, p):
+    """One-time ISK your CURRENT hangar stock would gain from one more level of a trading skill:
+    Broker Relations cuts the listing fee ~0.3%/level; Trade/Retail/Wholesale/Tycoon add market-order slots (4/8/16/32 per level),
+    so more of your high-gap stacks can be listed instead of sold instantly. Per-level gains for the next level only."""
+    from .along import plan_along
+    from .graph import Graph
+    from .skills import order_slots
+    g = Graph(con)
+    lv = have(con)
+    try:
+        base_slots = order_slots(con)
+        if base_slots is None:
+            return []
+        base = plan_along(con, g, p, p.current_system, slots_override=base_slots)
+    except Exception:
+        return []
+    base_total = _stock_total(base)
+    out = []
+    for name, sid, eff in STOCK_SKILLS:
+        cur = lv.get(sid, 0)
+        if cur >= 5:
+            continue
+        if eff == "broker":
+            alt = plan_along(con, g, dataclasses.replace(p, broker_fee=max(0.0, p.broker_fee - 0.003)),
+                             p.current_system, slots_override=base_slots)
+        else:
+            alt = plan_along(con, g, p, p.current_system, slots_override=base_slots + eff)
+        out.append({"skill": name, "skill_id": sid, "have": cur, "gain": _stock_total(alt) - base_total})
+    return out
+
+
 def candidate_skill_ids(con, p):
     names = list(EFFECTS) + ([hull_racial_skill(con, p)] if hull_racial_skill(con, p) else [])
+    names += [n for n, _, _ in STOCK_SKILLS]
     return [r[0] for n in names for r in [_skill_row(con, n)] if r]
 
 
@@ -149,7 +190,17 @@ def advise(con, p, plan_fn, hours=72.0):
         used += step["minutes"]
         if not best:
             chains.remove(best)
-    return {"steps": chosen, "unmodelled": NOT_MODELLED, "notes": notes, "base": base, "total_minutes": used}
+    stock = []
+    for d in stock_skill_gains(con, p):
+        row = _skill_row(con, d["skill"])
+        if not row or not row["skill_rank"] or d["gain"] <= 0:
+            continue
+        prim = attrs.get(ATTR_NAMES.get(row["skill_primary"], ""), 20)
+        sec = attrs.get(ATTR_NAMES.get(row["skill_secondary"], ""), 20)
+        mins = train_minutes(row["skill_rank"], d["have"] + 1, sp_now.get(d["skill_id"], 0), prim, sec)
+        stock.append(dict(d, level=d["have"] + 1, minutes=mins, per_day=d["gain"] / max(mins / 1440, 1e-9)))
+    stock.sort(key=lambda d: -d["per_day"])
+    return {"steps": chosen, "stock": stock, "unmodelled": NOT_MODELLED, "notes": notes, "base": base, "total_minutes": used}
 
 
 def format_advice(res):
@@ -163,6 +214,11 @@ def format_advice(res):
             t += s["minutes"]
             lines.append(f"{i:>2}  {s['skill']:<30} {s['level']:>3} {fmt_minutes(s['minutes']):>8}  "
                          f"{s['gain']:>10,.0f}  {s['per_hour']:>24,.0f}  {s['why']}   (queue ends in {fmt_minutes(t)})")
+    if res.get("stock"):
+        lines += ["", "ONE-TIME gain on the stock you hold here right now (listing instead of selling instantly):",
+                  f"   {'skill':<18} {'lvl':>3} {'train':>8} {'+ISK now':>13} {'per training day':>18}"]
+        for d in res["stock"]:
+            lines.append(f"   {d['skill']:<18} {d['level']:>3} {fmt_minutes(d['minutes']):>8} {d['gain']:>13,.0f} {d['per_day']:>18,.0f}")
     lines += ["", "Worth training but not measured by the planner:"] + [f"  - {n}: {w}" for n, w in res["unmodelled"]]
     lines += [""] + [f"NOTE: {n}" for n in res["notes"]]
     return "\n".join(lines)
