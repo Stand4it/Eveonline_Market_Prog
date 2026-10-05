@@ -348,3 +348,43 @@ class NextStepTests(unittest.TestCase):
         txt = next_action(con, g, p)
         self.assertTrue(txt.startswith("STEP: TRADE"))
         self.assertIn("check --pick 1", txt)
+
+
+class KeepTests(unittest.TestCase):
+    def _world(self, widget_bid):
+        from eve_profit.keep import keep_vs_sell
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,35,36,90001)")
+        # materials (blueprint 90002 needs 34x1000, 35x500, 36x50 per run at ME0): bids 1/2/10 ISK here, no asks
+        for oid, tid, price in [(9901, 34, 1.0), (9902, 35, 2.0), (9903, 36, 10.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,1,?,100000000,1,'',1)", (oid, tid, price))
+        con.execute("INSERT INTO orders VALUES(9904,90001,60000001,1,10000001,1,?,1000,1,'',1)", (widget_bid,))
+        for tid, q in ((34, 100000), (35, 50000), (36, 5000)):
+            con.execute("INSERT INTO inventory VALUES(?,1,?)", (tid, q))
+        con.execute("UPDATE my_blueprints SET me=0,te=0"); con.execute("DELETE FROM skill_reqs")
+        con.execute("UPDATE prices SET adjusted_price=0")
+        p = Profile(max_jumps=1, cargo_m3=1e6, wallet_isk=1e9, max_runs=10, job_fee_rate=0.0)
+        return keep_vs_sell(con, g, p)
+
+    def test_build_wins_when_product_pays_more_than_materials(self):
+        from eve_profit.keep import format_keep
+        res, slots = self._world(widget_bid=10000.0)       # 10 runs: product 10 x 10,000; materials sell for ~1000+1000+500
+        d = res[0]
+        self.assertGreater(d["gain"], 0)
+        self.assertEqual(d["runs"], 10)
+        self.assertIn("BUILD beats selling", format_keep(res, slots))
+        self.assertIn("Tritanium", format_keep(res, slots))
+
+    def test_sell_wins_when_product_is_worth_less(self):
+        from eve_profit.keep import format_keep
+        res, slots = self._world(widget_bid=100.0)         # product 10 x 100 = 1,000 < 25,000 of materials
+        self.assertLess(res[0]["gain"], 0)
+        self.assertIn("SELL the materials", format_keep(res, slots))
+
+    def test_no_owned_materials_means_nothing_to_compare(self):
+        from eve_profit.keep import format_keep, keep_vs_sell
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        res, slots = keep_vs_sell(con, g, Profile(max_jumps=1))
+        self.assertEqual(res, [])
+        self.assertIn("SELL the materials", format_keep(res, slots))

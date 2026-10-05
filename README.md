@@ -140,3 +140,8 @@ returns) show `(no record)` and count as free. The average is across all buys of
 `python -m eve_profit fit` lists the modules in each slot of the ship you are flying (read from your asset list during
 `sync`) and says whether it has a salvager, tractor beam, miners, cargo expanders, etc. `sync` sets `can_salvage` when a
 Salvager module is fitted. Fits of parked ships are not read (only the ship you are flying).
+
+## Keep and build, or sell? (`keep`)
+`python -m eve_profit keep` takes the materials in your current hangar, tries every blueprint you own, and compares
+**build and sell the product** against **sell the materials now** (the true cost of using your own materials). Shows
+BUILD beats selling / SELL the materials, the job time (runs in the background in a slot), fees, and extra materials to buy.
