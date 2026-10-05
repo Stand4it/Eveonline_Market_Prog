@@ -62,3 +62,18 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StockTests(unittest.TestCase):
+    def test_stock_report_values_and_flags_unpriced(self):
+        from eve_profit.stock import stock_report
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        con.execute("INSERT INTO inventory VALUES(34,1,1000)")           # Tritanium: has buyers nearby
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(77777,'Odd Skin',0.1)")
+        con.execute("INSERT INTO inventory VALUES(77777,1,5)")           # no orders anywhere
+        txt = stock_report(con, g, Profile(max_jumps=2))
+        self.assertIn("Tritanium", txt)
+        self.assertIn("Odd Skin x5", txt)
+        self.assertIn("2 stacks", txt)
+        self.assertIn("inside your ship's cargo", txt)
