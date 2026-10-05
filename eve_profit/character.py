@@ -134,12 +134,20 @@ def sync_character(con, esi, cid, profile):
 
     con.execute("DELETE FROM inventory")
     con.execute("DELETE FROM my_ships")
+    con.execute("DELETE FROM fitted")
+    fit_n = 0
     known = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
     known.update({r[0]: r[1] for r in con.execute("SELECT structure_id,system_id FROM structures WHERE system_id>0")})
     skipped = kept = ships = lookups = 0
     cur_ship = ship.get("ship_item_id")
     for a in esi.paged(f"/characters/{cid}/assets/"):
         lid, lt = a["location_id"], a.get("location_type")
+        if cur_ship is not None and lid == cur_ship:          # something inside the ship you are flying
+            flag = a.get("location_flag", "")
+            if flag.endswith(("Slot0", "Slot1", "Slot2", "Slot3", "Slot4", "Slot5", "Slot6", "Slot7")) or flag in ("DroneBay", "Cargo"):
+                con.execute("INSERT INTO fitted VALUES(?,?,?)", (a["type_id"], flag, a.get("quantity", 1)))
+                fit_n += 1
+            continue
         if lid not in known and lookups < 200 and (lt == "station" or (lt == "other" and lid >= 10**12)):
             lookups += 1                       # station/structure not in our data: ask ESI once
             try:
@@ -171,8 +179,11 @@ def sync_character(con, esi, cid, profile):
         con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) "
                     "DO UPDATE SET quantity=quantity+excluded.quantity", (a["type_id"], sid, a["quantity"]))
         kept += 1
+    names = [r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id "
+                                               "WHERE f.flag LIKE '%Slot%'")]
+    profile.can_salvage = any("salvager" in n for n in names)
     con.commit()
-    return {"system": profile.current_system, "ship": profile.ship_name,
+    return {"fitted_items": fit_n, "salvager_fitted": profile.can_salvage, "system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
             "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "transactions": n_tx, "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
             "system_known": bool(row)}

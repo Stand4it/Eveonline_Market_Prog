@@ -135,3 +135,8 @@ as done). It fills ~`--hours` of queue, in an order that respects levels, and li
 if selling anywhere on the route would lose money, moves the item to **DO NOT SELL AT A LOSS** with the best buyer within
 ~10 jumps (or "hold / list above X"). Items with no buy record (mined, looted, built, or older than the history ESI
 returns) show `(no record)` and count as free. The average is across all buys of that item, so mixed-price stacks are approximate.
+
+## What is fitted to my ship? (`fit`)
+`python -m eve_profit fit` lists the modules in each slot of the ship you are flying (read from your asset list during
+`sync`) and says whether it has a salvager, tractor beam, miners, cargo expanders, etc. `sync` sets `can_salvage` when a
+Salvager module is fitted. Fits of parked ships are not read (only the ship you are flying).

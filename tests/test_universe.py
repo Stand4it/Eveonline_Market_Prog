@@ -101,3 +101,37 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FitTests(unittest.TestCase):
+    def test_sync_reads_fitted_modules_and_sets_salvager_flag(self):
+        from eve_profit.fit import describe_fit
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(2000,'Small Salvager I',5)")
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(2001,'Small Tractor Beam I',5)")
+        con.execute("INSERT INTO systems VALUES(1,'Hek',0.5,1)")
+
+        class E:
+            def get(self, path, **kw):
+                d = {"/location/": {"solar_system_id": 1, "station_id": 60005686},
+                     "/ship/": {"ship_type_id": 652, "ship_name": "M", "ship_item_id": 555},
+                     "/wallet/": 1.0, "/skills/": {"skills": []}, "/jobs/": [], "/points/": [], "/standings/": [],
+                     "/transactions/": []}
+                return next(v for k, v in d.items() if path.endswith(k)), 1
+            def type_info(self, t): return {"dogma_attributes": [{"attribute_id": 38, "value": 5500.0}]}
+            def paged(self, path):
+                if path.endswith("/blueprints/"):
+                    return []
+                return [{"item_id": 1, "type_id": 2000, "quantity": 1, "location_id": 555, "location_type": "item",
+                         "location_flag": "HiSlot0"},
+                        {"item_id": 2, "type_id": 2001, "quantity": 1, "location_id": 555, "location_type": "item",
+                         "location_flag": "HiSlot1"},
+                        {"item_id": 3, "type_id": 34, "quantity": 9, "location_id": 555, "location_type": "item",
+                         "location_flag": "Cargo"}]
+        p = Profile()
+        r = sync_character(con, E(), 1, p)
+        self.assertEqual((r["fitted_items"], r["salvager_fitted"], p.can_salvage, p.current_location_id), (3, True, True, 60005686))
+        txt = describe_fit(con, p)
+        self.assertIn("Small Salvager I", txt)
+        self.assertIn("Salvager (salvages wrecks)", txt)
+        self.assertIn("Tractor Beam", txt)

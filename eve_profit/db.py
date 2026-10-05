@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS transactions(
   transaction_id INTEGER PRIMARY KEY, date TEXT, type_id INTEGER NOT NULL, location_id INTEGER,
   unit_price REAL NOT NULL, quantity INTEGER NOT NULL, is_buy INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_tx_type ON transactions(type_id);
+CREATE TABLE IF NOT EXISTS fitted(type_id INTEGER NOT NULL, flag TEXT NOT NULL, quantity INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS my_ships(
   item_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, location_id INTEGER);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
