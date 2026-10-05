@@ -41,14 +41,15 @@ def next_action(con, g, p):
         L.append("   In game: right-click the item in your hangar > Sell this item > choose 'Create sell order'.")
         L.append(AFTER)
         return "\n".join(L)
-    opps = [o for o in plan(con, p, 30, False) if o.kind == "trade"]
+    opps = plan(con, p, 30, False)
     if opps:
         o = opps[0]
-        return "\n".join([
-            "STEP: TRADE (nothing left to sell here)",
-            f"   {o.description}",
-            f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)",
-            "   FIRST confirm live prices:   python -m eve_profit check --pick 1",
-            "   then route:                  python -m eve_profit go --pick 1 --send",
-            AFTER])
+        L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
+             f"   {o.description}",
+             f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)"]
+        if o.kind in ("trade", "liquidate"):
+            L.append("   FIRST confirm live prices:   python -m eve_profit check --pick 1")
+        L.append("   then route:                  python -m eve_profit go --pick 1 --send")
+        L.append(AFTER)
+        return "\n".join(L)
     return "No clear action. Refresh data:  python -m eve_profit scan --live   then   python -m eve_profit next"
