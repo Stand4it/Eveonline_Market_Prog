@@ -45,7 +45,9 @@ CREATE TABLE IF NOT EXISTS activities(
   name TEXT PRIMARY KEY, kind TEXT NOT NULL, min_sec REAL NOT NULL, max_sec REAL NOT NULL,
   isk_per_hour REAL NOT NULL, wrecks_per_hour REAL NOT NULL DEFAULT 0,
   p_loss_per_hour REAL NOT NULL DEFAULT 0.001, min_dps REAL NOT NULL DEFAULT 0,
-  session_hours REAL NOT NULL DEFAULT 1.0);
+  session_hours REAL NOT NULL DEFAULT 1.0,
+  enemy_ehp REAL NOT NULL DEFAULT 0, threat_dps REAL NOT NULL DEFAULT 0,
+  waves_per_hour REAL NOT NULL DEFAULT 4);
 CREATE TABLE IF NOT EXISTS salvage_items(
   type_name TEXT PRIMARY KEY, qty_per_wreck REAL NOT NULL, chance REAL NOT NULL DEFAULT 1.0);
 CREATE TABLE IF NOT EXISTS activity_log(
@@ -63,6 +65,12 @@ def connect(path: str) -> sqlite3.Connection:
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA journal_mode=WAL")
     con.executescript(SCHEMA)
+    for col, ddl in (("enemy_ehp", "REAL NOT NULL DEFAULT 0"), ("threat_dps", "REAL NOT NULL DEFAULT 0"),
+                     ("waves_per_hour", "REAL NOT NULL DEFAULT 4")):
+        try:  # migrate databases created before the win-odds model
+            con.execute(f"ALTER TABLE activities ADD COLUMN {col} {ddl}")
+        except sqlite3.OperationalError:
+            pass
     return con
 
 

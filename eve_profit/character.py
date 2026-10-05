@@ -19,6 +19,7 @@ def sync_character(con, esi, cid, profile):
     if row:
         profile.current_system = row[0]
     profile.ship_name = ship.get("ship_name", profile.ship_name)
+    profile.ship_type_id = ship["ship_type_id"]
     cap = next((a["value"] for a in _type(esi, ship["ship_type_id"]).get("dogma_attributes", [])
                 if a["attribute_id"] == CAPACITY_ATTR), None)
     if cap:

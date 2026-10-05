@@ -41,6 +41,13 @@ class Profile:
     job_fee_rate: float = 0.05        # fee on estimated item value (SCC 4% + system index); verify
     assume_all_blueprints: bool = False  # True = rank every buildable item (what to buy a BP for)
     combat_dps: float = 0.0           # your ship's real DPS; 0 = no combat
+    ship_type_id: int = 0             # sync sets this; used to price hull replacement
+    ship_ehp: float = 0.0             # your fit's effective HP (shield+armor+hull); 0 = unknown -> no combat
+    ship_tank_dps: float = 0.0        # sustained effective repair per second
+    fit_value_isk: float = 0.0        # modules/rigs you'd also lose with the hull
+    insurance_payout_isk: float = 0.0
+    min_win_margin: float = 3.0       # ship_ehp / expected damage taken; >=3 = "very likely wins"
+    risky_win_margin: float = 1.5     # below min but >= this only if one session's profit repays the ship
     can_salvage: bool = False         # salvager fitted
     salvage_wreck_seconds: float = 25.0
     avoid_yellow: bool = True         # soft avoid

@@ -40,7 +40,7 @@ class T(unittest.TestCase):
 
     def test_every_opportunity_has_safe_waypoints(self):
         con, g = setup()
-        p = Profile(max_jumps=3, combat_dps=400, can_salvage=True, mining_yield_m3_s=0.5,
+        p = Profile(max_jumps=3, combat_dps=400, can_salvage=True, ship_ehp=100000, ship_tank_dps=300, mining_yield_m3_s=0.5,
                     minable_ores=["Veldspar"], assume_all_blueprints=True, min_profit_isk=1,
                     wallet_isk=1e9, cargo_m3=50000)
         opps = plan(con, p, 200, False)

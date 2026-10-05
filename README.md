@@ -40,3 +40,14 @@ router can't detour through red), refuses any route with a red system, and print
 hot/recent-kill systems; `watch` also beeps when the best route turns hot. ESI only sets waypoints:
 you still engage autopilot or fly manually (set `"autopilot": true` in profile.json for slower timing).
 Re-run `login` once if you logged in before Stage 3 so the waypoint scope is granted.
+
+### Combat win-odds (safety gate)
+Combat is only recommended if the planner can show you win. Set in profile.json: `combat_dps`, `ship_ehp`
+(fit's effective HP), `ship_tank_dps` (sustained repair), `ship_value_isk`/`fit_value_isk`, `ship_type_id`
+(sync sets it), optional `insurance_payout_isk`. Per wave: damage taken = (enemy threat dps - your tank) x
+(enemy ehp / your dps); margin = ship_ehp / damage. Offered only if margin >= `min_win_margin` (3.0), or
+margin >= `risky_win_margin` (1.5) AND one session's profit >= the ship's replacement cost (cheaper of buying
+the hull in range or building it from a blueprint you own, plus fit, minus insurance). The expected loss
+(lose-chance x replacement cost) is subtracted from ISK/hr and the win % is shown. With `ship_ehp` = 0 no combat
+is shown. Enemy ehp/threat numbers are placeholders in the `activities` table: log real results (log a lost
+ship as a negative ISK run) and calibrate.
