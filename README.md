@@ -153,3 +153,7 @@ then subtract the blueprint's market price (assumed ME0/TE0, original). Verdict 
 NO - not worth buying / CANNOT PRICE (no seller in range). Shows missing skills if you synced.
 `bpbuy` and `keep` accept `--to <system>` to evaluate the stock parked in that system (priced there); `bpbuy` tries batches up to
 1,000 runs, since a blueprint original can be run repeatedly, and reports the best batch size.
+
+## After every game patch (`update`)
+`python -m eve_profit update` compares CCP's published game-data build with the one stored. If it changed: run
+`python -m eve_profit universe --force`, then `scan --live`, `bpbuy`, `skills` to catch new items, blueprints, ships and skills.

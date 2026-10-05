@@ -11,3 +11,5 @@
 
 Ground rules: no suicide-ganking/ninja-looting by default; red systems never routed; yellow penalised.
 CCP rules: ESI cannot move your ship; it can only set waypoints. Automating in-game input is not allowed.
+
+| 7 | Ship shopping advisor, journey composer, character contracts, multi-character, reactions/T2/PI | Yes | Planned (see STATUS.md backlog) |

@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -57,6 +57,7 @@ def main(argv=None):
     ap.add_argument("--hours", type=float, default=0)
     ap.add_argument("--away", action="store_true", help="unattended mode: long safe autopilot hauls only")
     ap.add_argument("--to", default="", help="along: destination system name")
+    ap.add_argument("--force", action="store_true", help="universe: reload even if already loaded")
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
@@ -135,6 +136,18 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "update":
+        from .update import check_update, remember
+        status, build = check_update(con)
+        if status == "new":
+            print(f"NEW GAME DATA (build {build}): a patch has changed items/blueprints/skills.\n"
+                  f"   Reload and re-check:  python -m eve_profit universe --force\n"
+                  f"   then:  python -m eve_profit scan --live   python -m eve_profit bpbuy   python -m eve_profit skills")
+        elif status == "first":
+            remember(con, build)
+            print(f"Recorded the current game data build ({build}). Run `update` again after each patch.")
+        else:
+            print(f"Game data is up to date (build {build}).")
     elif a.cmd == "bpbuy":
         from .bpbuy import bp_buy_candidates, format_bpbuy
         from .graph import Graph
@@ -231,7 +244,7 @@ def _run(a):
         print(describe_fleet(con, Graph(con), p))
     elif a.cmd in ("universe", "esimap"):
         have = con.execute("SELECT COUNT(*) FROM systems").fetchone()[0]
-        if a.cmd == "universe" and have > 500:
+        if a.cmd == "universe" and have > 500 and not a.force:
             print(f"Universe already loaded ({have} systems).")
         else:
             ok = False
@@ -241,6 +254,11 @@ def _run(a):
                     zip_path = a.sde_file or (dl_jsonl(os.path.dirname(a.db) or ".", a.sde_url)
                                               if a.sde_url else dl_jsonl(os.path.dirname(a.db) or "."))
                     counts = import_jsonl(con, zip_path)
+                    try:
+                        from .update import check_update, remember
+                        remember(con, check_update(con)[1])
+                    except Exception:
+                        pass
                     print("Imported SDE:", counts)
                     ok = counts.get("systems", 0) > 500 and counts.get("gates", 0) > 500
                     if not ok:

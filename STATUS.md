@@ -1,4 +1,4 @@
-# EVE Profit Planner - status (saved 2026-10-05)
+# EVE Profit Planner - status (updated 2026-10-06)
 
 Repo: `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f`. 83 unit tests pass.
 Runs on the user's Windows PC (`C:\Users\Martin Dahl\Documents\eveonline_market_prog`), database `E:\EveProfit\eve_profit.db`.
@@ -33,3 +33,26 @@ Env: `EVE_CLIENT_ID`, `EVE_CALLBACK_PORT` (8801), `EVE_PROFIT_DB`, `EVE_PROFIT_T
 5. Known limits: all payout/threat numbers for combat/missions are placeholders; align/speed skill effects are estimates;
    cargo bonus assumes +5%/level for racial hauler/industrial skills; EVE client on user PC had memory trouble (64 GB RAM arriving).
 6. Security: a Client Secret was shown in a screenshot earlier - rotate it in the developer portal (this program doesn't use it).
+
+
+## Principle (from the user)
+Keep EVERY way of making ISK on the table and keep progressing: re-rank as skills, ships, blueprints, stock, wallet and
+game patches change. Profit is the key; stay safe (red never routed, loss-aware, no suicide ganking).
+
+## Added since the first live run
+`explain` / `check` (live item check before buying) | `stock` (value of what you own, best hold-loads) | `along` (sell on the way,
+SELL NOW vs LIST, order slots, route watch, cost basis) | `fit` (what is fitted) | `zkill` (hauler-loss map) | `next` (one step
+at a time) | `keep` (build vs sell owned materials) | `bpbuy` (buy a blueprint to use stock) | `update` (new game data after a patch).
+
+## Backlog, in priority order (agreed)
+1. Ship shopping advisor: which hull to BUY or BUILD (and fit/pilot, skills allowing) raises ISK/hr most, with payback time
+   (cargo hulls are measurable now; combat hulls need Pyfa numbers in profile.json `ships`).
+2. Journey composer: main task + minor trades/backhauls along the route with spare hold space.
+3. Character contracts (needs scope esi-contracts.read_character_contracts.v1): your open/expiring couriers; accepted jobs.
+4. Agents/missions: real offers are NOT in ESI; calibrate with `log` after each mission (isk/LP/time/losses) so estimates
+   become your own averages; standings-gated agent finder already exists.
+5. "Kill contracts"/bounties: no public API; zKillboard only shows killmails. Revisit if CCP adds an endpoint.
+6. Patch watch: run `update` after each patch (new items/blueprints/ships/skills), then `universe --force`, `scan --live`,
+   `bpbuy`, `skills`.
+7. Multi-character (Dahldaberg02, Dahldaberg3) as helper pilots; corp assets/blueprints if the corp is active.
+8. Reactions, invention/T2, PI, exploration/abyssal loot valuation, market-making (order-based station trading).
