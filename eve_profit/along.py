@@ -83,12 +83,33 @@ def plan_along(con, g, p, dest_name):
         frac = units / d["sold"]
         load.append(dict(d, sold=units, net=d["net"] * frac, m3=d["m3"] * frac, extra=d["extra"] * frac))
         room -= d["m3"] * frac
-    return {"dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
+    watch = []
+    for s in path:
+        ships = g.kills.get(s, 0)
+        gk = getattr(g, "gank", {}).get(s, 0)
+        watch.append({"name": g.name[s], "sec": g.sec[s], "kills": ships, "gank": gk,
+                      "level": "DANGER" if g.is_hot(s) else ("CAUTION" if (g.is_yellow(s) or ships or gk) else "ok")})
+    return {"watch": watch, "dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
             "slots": slots, "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
+
+
+def _watch_lines(watch):
+    """Where there may be a kill on the route: ships destroyed in the last hour (CCP) and hauler losses in 7 days (zKillboard)."""
+    flagged = [w for w in watch if w["level"] != "ok"]
+    if not flagged:
+        return ["ROUTE WATCH: no recent kills or hauler losses on any system of this route (data may be stale: run `scan --live`"
+                " and `zkill` for fresh numbers).", ""]
+    L = ["ROUTE WATCH (kills in the last hour / hauler losses in 7 days / security):"]
+    for w in flagged:
+        L.append(f"   {w['level']:<8} {w['name']:<14} sec {w['sec']:.1f}   ships killed last hour: {w['kills']:<3} "
+                 f"hauler losses 7d: {w['gank']}")
+    L.append("   DANGER = avoid or wait; CAUTION = fly it awake, not on autopilot. Refresh with: scan --live  and  zkill")
+    return L + [""]
 
 
 def format_along(res):
     L = [f"Route: {' > '.join(res['path'])}  ({res['jumps']} jumps)", ""]
+    L += _watch_lines(res.get("watch", []))
     if res.get("empty"):
         return "\n".join(L + [f"No items found in your {res['here_name']} hangar. Items inside your ship are invisible to the program.",
                               "Move them into the Item hangar (Ctrl+A in the ship's cargo, drag to Item hangar), then run:",

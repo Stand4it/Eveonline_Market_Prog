@@ -277,3 +277,37 @@ class SlotTests(unittest.TestCase):
         txt = format_along(res)
         self.assertIn("Market order slots from your skills: 2", txt)
         self.assertIn("(no free slot)", txt)
+
+
+class WatchTests(unittest.TestCase):
+    def test_route_watch_flags_kills_and_gank_systems(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("INSERT INTO inventory VALUES(34,1,10)")
+        path = g.route(1, far).path
+        mid = path[1]
+        con.execute("DELETE FROM system_kills")
+        con.execute("INSERT INTO system_kills VALUES(?,7,1,0)", (mid,))                    # 7 ships killed last hour
+        con.execute("INSERT INTO gank_events VALUES(1,?,652,1e7,'t',10000001)", (mid,))
+        con.execute("INSERT INTO gank_events VALUES(2,?,652,1e7,'t',10000001)", (mid,))
+        res = plan_along(con, Graph(con), Profile(cargo_m3=5000), Graph(con).name[far])
+        w = {x["name"]: x for x in res["watch"]}
+        self.assertEqual(w[Graph(con).name[mid]]["level"], "DANGER")
+        txt = format_along(res)
+        self.assertIn("ROUTE WATCH", txt)
+        self.assertIn("DANGER", txt)
+        self.assertIn("ships killed last hour: 7", txt)
+        self.assertIn("hauler losses 7d: 2", txt)
+
+    def test_clean_route_says_so(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM system_kills"); con.execute("DELETE FROM inventory")
+        con.execute("INSERT INTO inventory VALUES(34,1,10)")
+        for s in list(g.reach(1, 3)):
+            if g.is_yellow(s):
+                con.execute("UPDATE systems SET security=0.9 WHERE system_id=?", (s,))
+        g2 = Graph(con)
+        far2 = [s for s, r in g2.reach(1, 2).items() if r.jumps == 2][0]
+        txt = format_along(plan_along(con, g2, Profile(cargo_m3=5000), g2.name[far2]))
+        self.assertIn("no recent kills or hauler losses", txt)
