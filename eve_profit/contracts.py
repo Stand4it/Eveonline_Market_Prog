@@ -129,6 +129,8 @@ def find_contracts(con, g, p):
             continue
         best = None
         for b, r2 in reach_b[a].items():
+            if g.is_hot(b):
+                continue          # never plan to deliver into a system with recent kills
             rev = unvalued = 0
             for i in items:
                 if i["is_bpc"]:

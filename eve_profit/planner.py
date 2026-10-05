@@ -17,6 +17,7 @@ def plan(con, p, top=15, save=True):
     opps = []
     for f in FINDERS:
         opps.extend(f(con, g, p))
+    opps = [o for o in opps if o.net_isk > 0]     # never recommend a task that loses ISK after risk
     opps.sort(key=lambda o: o.isk_per_hour, reverse=True)
     if save:
         now = time.time()
