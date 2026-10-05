@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -64,6 +64,7 @@ def main(argv=None):
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
+    ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
@@ -210,6 +211,8 @@ def _run(a):
         if a.to:
             p.current_system = a.to
         print(format_keep(*keep_vs_sell(con, Graph(con), p)))
+    elif a.cmd == "now":
+        _now(a)
     elif a.cmd == "next":
         from .graph import Graph
         from .nextstep import next_action
@@ -397,6 +400,63 @@ def _run(a):
             if a.cmd != "watch":
                 break
             time.sleep(a.interval if a.live else 3)
+
+
+def _now(a):
+    """One command: sync -> live market scan -> best next step -> worldwide price check for the big stacks."""
+    import contextlib
+    import copy
+    import io
+    t0 = time.time()
+
+    def stage(label, cmd, **kw):
+        b = copy.copy(a)
+        b.cmd, b.sync = cmd, False
+        for k, v in kw.items():
+            setattr(b, k, v)
+        print(f"[{label}] ...", flush=True)
+        buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf):
+                _run(b)
+        except SystemExit as e:
+            print(f"   skipped: {e}")
+        except Exception as e:                  # one failed stage must not stop the rest
+            print(f"   failed: {type(e).__name__}: {e}")
+        return buf.getvalue().strip()
+
+    stage("1/4 your character: assets, wallet, location", "sync")
+    if not a.fast:
+        stage("2/4 market prices (live)", "scan", live=True, top=5)
+    step = stage("3/4 working out your next step", "next")
+    checks = []
+    try:
+        from .along import plan_along
+        from .bestprice import best_prices, format_best
+        from .esi import ESI
+        from .graph import Graph
+        con = db.connect(a.db)
+        p = Profile.load(a.profile)
+        g = Graph(con)
+        sells = [d for d in plan_along(con, g, p, p.current_system)["sell_here"]
+                 if d["advice"] != "LIST" and d["net"] >= 5_000_000 and d.get("tid")]
+        if sells:
+            print(f"[4/4 best price in all of New Eden for your {min(len(sells), 2)} biggest sell stack(s)] ...", flush=True)
+            esi = ESI()
+            for d in sells[:2]:
+                rows, _ = best_prices(con, g, p, esi, d["tid"], d["sold"], log=lambda m: None)
+                checks.append(f"   {d['name']}: " + format_best(d["name"], d["sold"], rows, p.current_system).splitlines()[-1])
+        else:
+            print("[4/4 worldwide price check] nothing big enough to check")
+    except SystemExit as e:
+        print(f"   skipped: {e}")
+    except Exception as e:
+        print(f"   price check failed: {type(e).__name__}: {e}")
+    print(f"\n{'=' * 70}\n{step}")
+    if checks:
+        print("\nWORLDWIDE PRICE CHECK:")
+        print("\n".join(checks))
+    print(f"\n(done in {time.time() - t0:.0f} s)")
 
 
 if __name__ == "__main__":

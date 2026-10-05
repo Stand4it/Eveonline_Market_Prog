@@ -182,3 +182,6 @@ A task is used once (its market depth is spent). Greedy by ISK/hr, using the sam
 Speed/accuracy notes (day/sellplan): `day` ignores ship swaps (your ship state is not tracked between steps) and sells each stack of
 stock once; `sellplan` lists only the best gains up to your market-order slots, and skips listings that add under 250,000 ISK.
 If you see `[timing]` lines, clear the setting:  Remove-Item Env:EVE_PROFIT_TIMING
+
+## `now`: the one command
+`python -m eve_profit now` runs, in order: sync your character, live market scan, `next`, and a worldwide best-price check for your biggest sell stacks, then prints ONE next step. Use `now --fast` to skip the market re-scan (about a minute quicker).

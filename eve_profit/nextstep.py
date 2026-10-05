@@ -3,7 +3,7 @@ high-gap item, (3) the best trade (verify with `check`). Do the step, run `sync`
 from .along import plan_along
 from .planner import plan
 
-AFTER = "Then run:  python -m eve_profit sync   and   python -m eve_profit next"
+AFTER = "Then run:  python -m eve_profit now"
 
 
 def next_action(con, g, p):
