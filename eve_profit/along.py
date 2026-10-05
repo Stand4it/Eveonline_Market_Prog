@@ -63,8 +63,11 @@ def plan_along(con, g, p, dest_name):
         elif local:
             asks = sells.get(tid, {}).get(cur, [])
             listing = qty * asks[0][0] if asks else 0.0
+            list_net = listing * (1 - p.broker_fee - p.sales_tax)
+            list_it = listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
-                         "listing": listing, "cost": cost, "covered": covered})
+                         "listing": listing, "list_net": list_net, "advice": "LIST" if list_it else "SELL NOW",
+                         "cost": cost, "covered": covered})
     carried.sort(key=lambda d: -(d["net"] / max(d["m3"], 1e-6)))
     room, load = p.cargo_m3, []
     for d in carried:                                   # fill the hold by value per m3
@@ -85,15 +88,21 @@ def format_along(res):
                               "Move them into the Item hangar (Ctrl+A in the ship's cargo, drag to Item hangar), then run:",
                               "   python -m eve_profit sync", "and run `along` again."])
     here = res["sell_here"]
+    now_items = [d for d in here if d.get("advice") != "LIST"]
+    list_items = [d for d in here if d.get("advice") == "LIST"]
     where = "the station you are docked at" if res.get("dock_known") else "any Hek station (dock unknown: check each buyer's station!)"
-    L.append(f"SELL IN {res['path'][0]} - into buy orders at {where}: {sum(d['net'] for d in here):,.0f} ISK instantly")
-    L.append(f"   {'qty':>10}   {'item':<32} {'sell now':>14} {'if listed*':>14} {'you paid':>14} {'profit':>12}")
-    for d in here[:15]:
+    L.append(f"IN {res['path'][0]}, buy orders at {where}: {sum(d['net'] for d in here):,.0f} ISK if everything sold instantly")
+    L.append(f"PLAN: sell {len(now_items)} stacks now for {sum(d['net'] for d in now_items):,.0f} ISK; "
+             f"list {len(list_items)} stacks for about {sum(d['list_net'] for d in list_items):,.0f} ISK after fees "
+             f"(vs {sum(d['net'] for d in list_items):,.0f} instantly) - listing takes time and an order slot each")
+    L.append(f"   {'qty':>10}   {'item':<30} {'sell now':>13} {'listed, after fees*':>20} {'advice':<9} {'you paid':>12}")
+    for d in sorted(here, key=lambda d: -max(d['net'], d.get('list_net', 0)))[:20]:
         short = f" (only {d['sold']:,} of {d['qty']:,} have buyers)" if d["sold"] < d["qty"] else ""
-        paid = f"{d['cost']:>14,.0f}" if d.get("covered") else f"{'(no record)':>14}"
-        prof = f"{d['net'] - d['cost']:>12,.0f}" if d.get("covered") else f"{'':>12}"
-        L.append(f"   {d['sold']:>10,} x {d['name']:<32} {d['net']:>14,.0f} {d['listing']:>14,.0f} {paid} {prof}{short}")
-    L.append("   * 'if listed' = quantity x the cheapest existing sell order, BEFORE broker fee, sales tax and waiting; real result is lower.")
+        paid = f"{d['cost']:>12,.0f}" if d.get("covered") else f"{'(no record)':>12}"
+        vd = f"  ~{d['vol_day']:,.0f}/day on the market" if d.get("vol_day") is not None else ""
+        L.append(f"   {d['sold']:>10,} x {d['name']:<30} {d['net']:>13,.0f} {d.get('list_net', 0):>20,.0f} "
+                 f"{d.get('advice', ''):<9} {paid}{short}{vd}")
+    L.append("   * after the broker fee and sales tax, assuming you list at the cheapest existing sell order; others may undercut you.")
     if res.get("losses"):
         L += ["", "DO NOT SELL AT A LOSS - these would sell below what you paid on this whole route:"]
         for d in res["losses"]:
@@ -101,10 +110,10 @@ def format_along(res):
                    if d["alt"] and d["alt"][0] > d["cost"] else
                    f"no buyer within reach pays your cost; HOLD or list a sell order above {d['cost'] / max(d['qty'], 1):,.0f} each")
             L.append(f"   {d['qty']:>10,} x {d['name']:<32} paid {d['cost']:>12,.0f}, best here {d['best_here']:>12,.0f} -> {msg}")
+    L += ["", f"CARRY ({res['used_m3']:,.0f} m3) and sell on the way:"]
     by = {}
     for d in res["carry"]:
         by.setdefault(d["at"], []).append(d)
-    L += ["", f"CARRY ({res['used_m3']:,.0f} m3) and sell on the way:"]
     for i in sorted(by):
         tot = sum(d["net"] for d in by[i])
         L.append(f"  at {res['path'][i]} (jump {i}): {tot:,.0f} ISK  (+{sum(d['extra'] for d in by[i]):,.0f} vs selling at the start)")
@@ -113,3 +122,20 @@ def format_along(res):
     if not by:
         L.append("   nothing sells better along the way; sell it all at the start.")
     return "\n".join(L)
+
+
+def attach_history(esi, res, region_id, days=30, cap=12):
+    """Daily traded volume for LIST candidates (public ESI history) so you can see if listing will actually sell."""
+    n = 0
+    for d in res["sell_here"]:
+        if d.get("advice") != "LIST" or n >= cap:
+            continue
+        try:
+            rows = esi.get(f"/markets/{region_id}/history/", type_id=d["tid"])[0][-days:]
+        except Exception:
+            continue
+        n += 1
+        if rows:
+            d["vol_day"] = sum(r.get("volume", 0) for r in rows) / len(rows)
+            d["days_to_sell"] = d["qty"] / d["vol_day"] if d["vol_day"] else None
+    return res

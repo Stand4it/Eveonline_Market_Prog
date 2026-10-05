@@ -55,6 +55,7 @@ class Profile:
     salvage_wreck_seconds: float = 25.0
     use_structures: bool = True       # scan player-structure markets (needs login + docking access)
     structure_ids: list = field(default_factory=list)   # extra structure ids to always scan (e.g. your home citadel)
+    broker_fee: float = 0.03          # NPC station base; sync lowers it with Broker Relations (~0.3% per level, verify)
     structure_sales_tax: float = 0.01  # extra tax set by structure owners; varies per structure - verify
     away_mode: bool = False           # unattended: long autopilot hauls on strictly safe routes (or run with --away)
     away_max_jumps: int = 15          # how far a delivery may go while you are away

@@ -119,7 +119,7 @@ class AlongTests(unittest.TestCase):
         self.assertEqual([d["name"] for d in res["carry"]], ["Tritanium"])              # better at the destination: carried
         self.assertEqual(res["carry"][0]["at"], len(path) - 1)
         txt = format_along(res)
-        self.assertIn("SELL IN Home", txt)
+        self.assertIn("IN Home, buy orders", txt)
         self.assertIn("CARRY", txt)
 
     def test_carry_respects_hold(self):
@@ -157,8 +157,9 @@ class AlongDockTests(unittest.TestCase):
         d = res["sell_here"][0]
         self.assertAlmostEqual(d["net"], 1000 * 5.0 * (1 - p.sales_tax), places=4)        # not the 50 ISK order
         self.assertEqual(d["listing"], 8000.0)
+        self.assertEqual(d["advice"], "LIST")                                             # 8,000 listed beats 4,900 instant by >15%
         txt = format_along(res)
-        self.assertIn("if listed", txt)
+        self.assertIn("listed, after fees", txt)
         self.assertIn("the station you are docked at", txt)
         p.current_location_id = 0
         self.assertIn("dock unknown", format_along(plan_along(con, g, p, g.name[far])))
@@ -215,3 +216,30 @@ class BasisTests(unittest.TestCase):
         txt = format_along(res)
         self.assertIn("(no record)", txt)
         self.assertIn("you paid", txt)
+
+
+class AdviceTests(unittest.TestCase):
+    def test_list_vs_sell_now_and_history(self):
+        from eve_profit.along import attach_history, format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,36)")
+        # Tritanium: bid 5 vs ask 5.2 -> sell now.  Mexallon: bid 10 vs ask 100 -> list.
+        for oid, tid, buy, price in [(9501, 34, 1, 5.0), (9502, 34, 0, 5.2), (9503, 36, 1, 10.0), (9504, 36, 0, 100.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,?,?,10000000,1,'',1)", (oid, tid, buy, price))
+        con.execute("INSERT INTO inventory VALUES(34,1,1000)"); con.execute("INSERT INTO inventory VALUES(36,1,100)")
+        p = Profile(cargo_m3=5000, current_location_id=60000001, broker_fee=0.03)
+        res = plan_along(con, g, p, g.name[far])
+        adv = {d["name"]: d["advice"] for d in res["sell_here"]}
+        self.assertEqual(adv, {"Tritanium": "SELL NOW", "Mexallon": "LIST"})
+
+        class E:
+            def get(self, path, **kw):
+                assert path == "/markets/10000001/history/" and kw == {"type_id": 36}
+                return [{"volume": 10}] * 40, 1
+        attach_history(E(), res, 10000001)
+        mx = next(d for d in res["sell_here"] if d["name"] == "Mexallon")
+        self.assertEqual(mx["vol_day"], 10)
+        self.assertEqual(mx["days_to_sell"], 10)
+        txt = format_along(res)
+        self.assertIn("PLAN: sell 1 stacks now", txt)
+        self.assertIn("~10/day on the market", txt)

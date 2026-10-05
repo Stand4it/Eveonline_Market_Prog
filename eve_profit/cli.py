@@ -143,7 +143,16 @@ def _run(a):
         from .graph import Graph
         if not a.to:
             raise SystemExit('usage: along --to "<destination system>"')
-        print(format_along(plan_along(con, Graph(con), p, a.to)))
+        g = Graph(con)
+        res = plan_along(con, g, p, a.to)
+        if any(d.get("advice") == "LIST" for d in res["sell_here"]):
+            try:
+                from .along import attach_history
+                from .esi import ESI
+                attach_history(ESI(), res, g.region[g.id_of(p.current_system)])
+            except Exception as e:
+                print("(could not fetch market history:", e, ")")
+        print(format_along(res))
     elif a.cmd == "stock":
         from .graph import Graph
         from .stock import stock_report

@@ -108,6 +108,7 @@ def sync_character(con, esi, cid, profile):
     profile.wallet_isk = wallet
     lvl = next((s["trained_skill_level"] for s in skills if s["skill_id"] == ACCOUNTING), 0)
     profile.accounting_level = lvl
+    profile.broker_fee = max(0.0, 0.03 - 0.003 * next((s["trained_skill_level"] for s in skills if s["skill_id"] == 3446), 0))
     lv = lambda sid: next((s["trained_skill_level"] for s in skills if s["skill_id"] == sid), 0)
     profile.industry_level, profile.adv_industry_level = lv(INDUSTRY), lv(ADV_INDUSTRY)
     con.execute("DELETE FROM character_skills")
