@@ -5,3 +5,4 @@ __pycache__/
 data/
 profile.json
 tokens.json
+client_id.txt

@@ -30,7 +30,7 @@ def main(argv=None):
     ap.add_argument("--sde-url", default="", help="sde: download from this URL")
     ap.add_argument("--max-pages", type=int, default=None)
     ap.add_argument("--interval", type=int, default=300, help="watch seconds (ESI caches 5 min)")
-    ap.add_argument("--client-id", default=os.environ.get("EVE_CLIENT_ID", ""))
+    ap.add_argument("--client-id", default="", help="else env EVE_CLIENT_ID, else client_id.txt")
     ap.add_argument("--pick", type=int, default=1, help="go: which ranked opportunity")
     ap.add_argument("--send", action="store_true", help="go: really set in-game waypoints")
     ap.add_argument("--activity", default="")
@@ -38,6 +38,10 @@ def main(argv=None):
     ap.add_argument("--hours", type=float, default=0)
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
+    if not a.client_id:
+        a.client_id = os.environ.get("EVE_CLIENT_ID", "")
+        if not a.client_id and os.path.exists("client_id.txt"):
+            a.client_id = open("client_id.txt").read().strip()
 
     con = db.connect(a.db)
     p = Profile.load(a.profile)
