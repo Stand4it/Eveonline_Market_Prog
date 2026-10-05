@@ -64,6 +64,7 @@ def main(argv=None):
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
+    ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
 
@@ -86,6 +87,14 @@ def _run(a):
         p.away_mode = True
     from .combat import seed_defaults
     seed_defaults(con)
+    if a.sync and a.cmd not in ("login", "sync", "init", "mock", "sde", "universe", "esimap"):
+        from . import sso
+        from .character import sync_character
+        from .esi import ESI
+        esi = ESI()
+        esi.token, cid = sso.get_token(a.client_id)
+        print(sync_character(con, esi, cid, p))
+        p.save(a.profile)
     if a.cmd == "init":
         print("DB ready:", a.db)
     elif a.cmd == "profile":
