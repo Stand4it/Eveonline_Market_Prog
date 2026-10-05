@@ -36,7 +36,9 @@ class T(unittest.TestCase):
                          sorted([x.isk_per_hour for x in o], reverse=True))
 
     def test_client_id_validation_and_priority(self):
+        from eve_profit import cli
         from eve_profit.cli import resolve_client_id
+        cli._ROOT = self.d                                                 # ignore any real client_id.txt in the repo
         good = "1bcbf467858d46c29b98c19f5cf383c7"
         old = os.getcwd()
         os.chdir(self.d)

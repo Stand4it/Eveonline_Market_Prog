@@ -9,13 +9,15 @@ from .config import Profile, default_db_path
 from .planner import format_plan, plan
 
 
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def resolve_client_id(explicit=""):
     """Priority: --client-id, then client_id.txt, then env EVE_CLIENT_ID. Placeholders/typos are
     rejected: a real CCP client id is 32 hex characters."""
     import re
     cands = [explicit]
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    for path in ("client_id.txt", os.path.join(root, "client_id.txt"), os.path.join(root, "scripts", "client_id.txt")):
+    for path in ("client_id.txt", os.path.join(_ROOT, "client_id.txt"), os.path.join(_ROOT, "scripts", "client_id.txt")):
         if os.path.exists(path):
             cands.append(open(path).read().strip())
             break
