@@ -1,6 +1,8 @@
 """Minimal ESI client (public endpoints, no auth). Stdlib only, honours ETag/Expires.
 NOTE: written without network access in the dev sandbox; verify with `scripts\\check_esi`."""
+import http.client
 import json
+import socket
 import time
 import urllib.error
 import urllib.parse
@@ -12,7 +14,7 @@ BASE = "https://esi.evetech.net/latest"
 
 
 class ESI:
-    def __init__(self, timeout=30):
+    def __init__(self, timeout=20):
         self.timeout, self.etags, self.cache = timeout, {}, {}
 
     token = None  # bearer access token for authenticated endpoints (set by sso)
@@ -45,6 +47,12 @@ class ESI:
                     time.sleep(2 ** attempt)
                     continue
                 raise
+            except (socket.timeout, TimeoutError, ConnectionError, http.client.IncompleteRead,
+                    json.JSONDecodeError, urllib.error.URLError) as e:
+                wait = min(2 ** attempt, 20)
+                print(f"  network stall/error ({type(e).__name__}); retry {attempt + 1}/5 in {wait}s...", flush=True)
+                time.sleep(wait)
+                continue
         raise RuntimeError(f"ESI failed: {url}")
 
     def region_orders(self, region_id, max_pages=None, log=None):

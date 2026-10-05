@@ -116,3 +116,38 @@ class LoginFlow(unittest.TestCase):
             self.assertIn("netstat", str(cm.exception))
         finally:
             s.close()
+
+
+class ESIRetry(unittest.TestCase):
+    def test_retries_stalls_but_not_http_errors(self):
+        import io, socket, urllib.error
+        from unittest import mock
+        from eve_profit import esi as E
+
+        class Resp:
+            headers = {"X-Pages": "1"}
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def read(self, *a): return b"[1]"
+        calls = {"n": 0}
+        def flaky(req, timeout=0):
+            calls["n"] += 1
+            if calls["n"] < 3:
+                raise socket.timeout("read timed out")
+            return Resp()
+        with mock.patch.object(E.urllib.request, "urlopen", flaky), mock.patch.object(E.time, "sleep", lambda s: None):
+            self.assertEqual(E.ESI().get("/x/")[0], [1])
+        self.assertEqual(calls["n"], 3)
+        def notfound(req, timeout=0):
+            calls["n"] += 1
+            raise urllib.error.HTTPError("u", 404, "nf", {}, io.BytesIO(b""))
+        calls["n"] = 0
+        with mock.patch.object(E.urllib.request, "urlopen", notfound), mock.patch.object(E.time, "sleep", lambda s: None):
+            with self.assertRaises(urllib.error.HTTPError):
+                E.ESI().get("/x/")
+        self.assertEqual(calls["n"], 1)                       # a real 404 is not retried
+        def always(req, timeout=0):
+            raise socket.timeout("x")
+        with mock.patch.object(E.urllib.request, "urlopen", always), mock.patch.object(E.time, "sleep", lambda s: None):
+            with self.assertRaises(RuntimeError):
+                E.ESI().get("/x/")
