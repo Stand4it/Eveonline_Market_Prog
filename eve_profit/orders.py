@@ -49,6 +49,17 @@ def sell_into_bids(bids, units, tax):
     return sold, net
 
 
+def best_sale_anywhere(buys_for_type, qty, tax):
+    """Best (net, units_sold, system) for selling `qty` of one item at ANY system in the given {system: bids} map.
+    Used to value stock at what you could really get for it, not just at the one station you stand in."""
+    best = (0.0, 0, None)
+    for system, bids in buys_for_type.items():
+        sold, net = sell_into_bids(bids, qty, tax)
+        if net > best[0]:
+            best = (net, sold, system)
+    return best
+
+
 def walk_trade(asks, bids, max_units, wallet, tax, trace=None):
     """Buy from asks, sell into bids while each marginal unit stays profitable.
     -> (units, cost, net_revenue)."""

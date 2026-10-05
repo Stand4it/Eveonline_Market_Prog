@@ -4,7 +4,7 @@ materials (valued at what they'd sell for NOW), buy any shortfall at the cheapes
 then subtract the blueprint's market price. net > 0 => buying the blueprint and building beats selling the materials once.
 Assumes a blueprint original at ME0/TE0 (conservative) and that you have the skills (checked if skills were synced)."""
 from .manufacturing import buy_cost, build_seconds, material_qty
-from .orders import load_books, sell_into_bids
+from .orders import best_sale_anywhere, load_books, sell_into_bids
 from .skills import blueprint_missing, explain, have
 
 
@@ -13,7 +13,7 @@ RUN_STEPS = (1, 5, 10, 25, 50, 100, 250, 500, 1000)
 
 def bp_buy_candidates(con, g, p, top=6):
     cur = g.id_of(p.current_system)
-    reach = g.reach(cur, p.max_jumps, p.avoid_yellow)
+    reach = g.reach(cur, max(p.max_jumps * 2, 4), p.avoid_yellow)     # wide enough to value stock at its real best buyer
     sells, buys = load_books(con, reach)
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     adj = {r[0]: r[1] for r in con.execute("SELECT type_id,adjusted_price FROM prices")}
@@ -40,7 +40,7 @@ def bp_buy_candidates(con, g, p, top=6):
             for t, q in need.items():
                 use = min(q, inv.get(t, 0))
                 if use:
-                    sold, net = sell_into_bids(buys.get(t, {}).get(cur, []), use, p.sales_tax)
+                    net, sold, _ = best_sale_anywhere(buys.get(t, {}), use, p.sales_tax)   # value at the best buyer in reach
                     own_value += net
                     used.append((name.get(t, t), use))
                 if q > use:

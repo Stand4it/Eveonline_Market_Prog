@@ -3,13 +3,13 @@ For each blueprint you own: use materials from your hangar (valued at what you c
 opportunity cost), buy any shortfall at the cheapest ask here, sell the product, subtract job fees.
 gain > 0 means building beats selling the materials. Build time runs in the background (slot, not your attention)."""
 from .manufacturing import buy_cost, build_seconds, material_qty
-from .orders import load_books, sell_into_bids
+from .orders import best_sale_anywhere, load_books, sell_into_bids
 from .skills import blueprint_missing, free_slots, have
 
 
 def keep_vs_sell(con, g, p, top=5):
     cur = g.id_of(p.current_system)
-    reach = g.reach(cur, p.max_jumps, p.avoid_yellow)
+    reach = g.reach(cur, max(p.max_jumps * 2, 4), p.avoid_yellow)     # wide enough to value stock at its real best buyer
     sells, buys = load_books(con, reach)
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     adj = {r[0]: r[1] for r in con.execute("SELECT type_id,adjusted_price FROM prices")}
@@ -32,7 +32,7 @@ def keep_vs_sell(con, g, p, top=5):
             for t, q in need.items():
                 use = min(q, inv.get(t, 0))
                 if use:
-                    sold, net = sell_into_bids(buys.get(t, {}).get(cur, []), use, p.sales_tax)
+                    net, sold, _ = best_sale_anywhere(buys.get(t, {}), use, p.sales_tax)   # value at the best buyer in reach
                     own_used[t] = use
                     own_value += net                      # what selling those units would have paid
                 if q > use:

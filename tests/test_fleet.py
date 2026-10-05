@@ -463,3 +463,27 @@ class BpBuyScaleTests(unittest.TestCase):
         self.assertGreater(d["net"], 0)                                          # pays back the 100,000 blueprint
         # at 10 runs alone it would NOT have paid back the blueprint:
         self.assertLess(10 * 500, 100000)
+
+
+class OpportunityCostTests(unittest.TestCase):
+    def test_materials_with_no_local_buyer_are_valued_at_the_best_buyer_in_reach(self):
+        from eve_profit.bpbuy import bp_buy_candidates
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM my_blueprints")
+        con.execute("DELETE FROM orders WHERE type_id IN (34,35,36,90001,90002)")
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(90002,'Mock Widget Blueprint',0.01)")
+        con.execute("DELETE FROM skill_reqs"); con.execute("UPDATE prices SET adjusted_price=0")
+        neighbor = [s for s, r in g.reach(1, 1).items() if r.jumps == 1 and not g.is_red(s)][0]
+        # Home has NO bids for the materials, but the neighbour pays well: selling there is the real alternative
+        for oid, tid, price in [(9931, 34, 1.0), (9932, 35, 2.0), (9933, 36, 10.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000002,?,10000001,1,?,1000000000,1,'',1)", (oid, tid, neighbor, price))
+        con.execute("INSERT INTO orders VALUES(9934,90001,60000001,1,10000001,1,2000.0,100000,1,'',1)")   # product 2,000 < 2,500 materials
+        con.execute("INSERT INTO orders VALUES(9935,90002,60000001,1,10000001,0,1000.0,5,1,'',1)")
+        for tid, q in ((34, 10_000_000), (35, 5_000_000), (36, 500_000)):
+            con.execute("INSERT INTO inventory VALUES(?,1,?)", (tid, q))
+        p = Profile(max_jumps=1, cargo_m3=1e9, wallet_isk=1e12, job_fee_rate=0.0)
+        res, scanned = bp_buy_candidates(con, g, p)
+        d = res[0]
+        self.assertGreater(d["sell_instead"], 0)          # materials are NOT free just because Home has no buyer
+        self.assertLess(d["gain"], 0)                     # selling them at the neighbour beats building a 2,000 product
+        self.assertLess(d["net"], 0)
