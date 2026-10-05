@@ -311,3 +311,40 @@ class WatchTests(unittest.TestCase):
         far2 = [s for s, r in g2.reach(1, 2).items() if r.jumps == 2][0]
         txt = format_along(plan_along(con, g2, Profile(cargo_m3=5000), g2.name[far2]))
         self.assertIn("no recent kills or hauler losses", txt)
+
+
+class NextStepTests(unittest.TestCase):
+    def _world(self):
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,35,36)")
+        return con, g
+
+    def test_sell_now_comes_first_and_is_short(self):
+        from eve_profit.nextstep import next_action
+        con, g = self._world()
+        for oid, tid, buy, price in [(9701, 34, 1, 5000.0), (9702, 34, 0, 5100.0),            # liquid: sell now
+                                     (9703, 36, 1, 100.0), (9704, 36, 0, 100000.0)]:        # huge gap: list
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,?,?,10000000,1,'',1)", (oid, tid, buy, price))
+        con.execute("INSERT INTO inventory VALUES(34,1,100)"); con.execute("INSERT INTO inventory VALUES(36,1,50)")
+        txt = next_action(con, g, Profile(cargo_m3=5000, current_location_id=60000001))
+        self.assertTrue(txt.startswith("STEP: SELL NOW"))
+        self.assertIn("Tritanium", txt)
+        self.assertNotIn("Mexallon", txt)                                   # one thing at a time
+        self.assertLess(len(txt.splitlines()), 14)
+        self.assertIn("python -m eve_profit next", txt)
+
+    def test_then_list_one_item_then_trade(self):
+        from eve_profit.nextstep import next_action
+        con, g = self._world()
+        for oid, tid, buy, price in [(9803, 36, 1, 100.0), (9804, 36, 0, 100000.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,?,?,10000000,1,'',1)", (oid, tid, buy, price))
+        con.execute("INSERT INTO inventory VALUES(36,1,50)")
+        txt = next_action(con, g, Profile(cargo_m3=5000, current_location_id=60000001))
+        self.assertTrue(txt.startswith("STEP: LIST 1 item"))
+        self.assertIn("100,000.00", txt)
+        con.execute("DELETE FROM inventory")
+        p = Profile(max_jumps=3, cargo_m3=5000, wallet_isk=1e9, min_profit_isk=1, current_location_id=60000001)
+        con.execute("DELETE FROM orders WHERE order_id>=9800")
+        txt = next_action(con, g, p)
+        self.assertTrue(txt.startswith("STEP: TRADE"))
+        self.assertIn("check --pick 1", txt)
