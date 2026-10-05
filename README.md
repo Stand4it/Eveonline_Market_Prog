@@ -190,3 +190,6 @@ If you see `[timing]` lines, clear the setting:  Remove-Item Env:EVE_PROFIT_TIMI
 `python -m eve_profit login --char fresh` then `sync --char fresh`, `now --char fresh`, etc. Each name gets its own `tokens_NAME.json`, `profile_NAME.json` and `eve_profit_NAME.db` (the map and item data are copied once from the main database), so your main character is never touched. At the browser login screen choose the new character.
 
 `python -m eve_profit chars` lists the main character and every `--char` you have set up (skill points, blueprints, wallet, ship, location) and points at the least built up one.
+
+## No `--char` needed (automatic character)
+Log each character in once with `python -m eve_profit login` (pick the character at the browser screen; it is filed automatically). After that every command finds the character you are playing: the one that is online now, else the last one used. Each has its own database (`E:\EveProfit\eve_profit_<name>.db`) and profile. `--char NAME` (label, id or part of the name) still overrides. Logins made before the online permission was added need one more `login` so the tool can see who is online.

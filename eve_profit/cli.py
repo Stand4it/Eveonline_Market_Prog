@@ -73,9 +73,15 @@ def main(argv=None):
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
+    a.client_id = resolve_client_id(a.client_id)
+    if a.char:
+        from .active import match
+        a.char = match(a.char)
+    elif a.cmd not in ("init", "mock", "sde", "universe", "esimap", "login", "chars", "update") and a.client_id:
+        from .active import pick
+        a.char = pick(a.client_id, os.path.dirname(a.db) or ".")
     if a.char:
         _use_character(a, ap)
-    a.client_id = resolve_client_id(a.client_id)
 
     kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
             "sde": "setup", "mock": "setup"}.get(a.cmd)
@@ -153,8 +159,15 @@ def _run(a):
         if not a.client_id:
             raise SystemExit("Set EVE_CLIENT_ID or pass --client-id (see README: EVE login)")
         if a.cmd == "login":
-            r = sso.login(a.client_id)
-            print("Logged in as", r["character_name"], r["character_id"])
+            if a.char:
+                r = sso.login(a.client_id)
+                print("Logged in as", r["character_name"], r["character_id"])
+            else:                                         # any character: it is filed automatically
+                from .active import register, remember
+                r = sso.login(a.client_id, path="tokens_pending.json")
+                label, name = register()
+                remember(os.path.dirname(a.db) or ".", label)
+                print(f"Logged in as {name}. From now on the tool finds this character by itself (no --char needed).")
         else:
             from .character import sync_character
             from .esi import ESI

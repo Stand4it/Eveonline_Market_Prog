@@ -38,5 +38,40 @@ class CharTests(unittest.TestCase):
                 os.environ["EVE_PROFIT_TOKENS"] = old_env
 
 
+class ActiveTests(unittest.TestCase):
+    def setUp(self):
+        import json
+        self.d = tempfile.mkdtemp()
+        self.old = os.getcwd()
+        os.chdir(self.d)
+        for f, cid, name in (("tokens.json", 1, "Stand Dahldaberg"), ("tokens_fresh.json", 2, "Stand Dahldaberg02")):
+            json.dump({"character_id": cid, "character_name": name}, open(f, "w"))
+
+    def tearDown(self):
+        os.chdir(self.old)
+
+    def test_picks_the_online_character_and_falls_back_to_last_used(self):
+        from unittest import mock
+        from eve_profit import active
+        with mock.patch.object(active, "is_online", side_effect=lambda cid, k: k["label"] == "fresh"):
+            self.assertEqual(active.pick("x", self.d, say=lambda m: None), "fresh")
+        with mock.patch.object(active, "is_online", return_value=None):
+            self.assertEqual(active.pick("x", self.d, say=lambda m: None), "fresh")     # last used
+        active.remember(self.d, "")
+        with mock.patch.object(active, "is_online", return_value=None):
+            self.assertEqual(active.pick("x", self.d, say=lambda m: None), "")
+
+    def test_char_matches_by_name_and_new_login_is_filed(self):
+        import json
+        from eve_profit import active
+        self.assertEqual(active.match("dahldaberg02"), "fresh")
+        json.dump({"character_id": 3, "character_name": "Stand Dahldaberg3"}, open("tokens_pending.json", "w"))
+        label, name = active.register()
+        self.assertEqual((label, name), ("dahldaberg3", "Stand Dahldaberg3"))
+        self.assertTrue(os.path.exists("tokens_dahldaberg3.json"))
+        json.dump({"character_id": 2, "character_name": "Stand Dahldaberg02"}, open("tokens_pending.json", "w"))
+        self.assertEqual(active.register()[0], "fresh")                  # known character: file replaced
+
+
 if __name__ == "__main__":
     unittest.main()
