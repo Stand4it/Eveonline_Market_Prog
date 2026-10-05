@@ -11,7 +11,7 @@ from .planner import format_plan, plan
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -19,11 +19,16 @@ def main(argv=None):
     ap.add_argument("--max-pages", type=int, default=None)
     ap.add_argument("--interval", type=int, default=300, help="watch seconds (ESI caches 5 min)")
     ap.add_argument("--client-id", default=os.environ.get("EVE_CLIENT_ID", ""))
+    ap.add_argument("--activity", default="")
+    ap.add_argument("--isk", type=float, default=0)
+    ap.add_argument("--hours", type=float, default=0)
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
 
     con = db.connect(a.db)
     p = Profile.load(a.profile)
+    from .combat import seed_defaults
+    seed_defaults(con)
     if a.cmd == "init":
         print("DB ready:", a.db)
     elif a.cmd == "profile":
@@ -44,6 +49,13 @@ def main(argv=None):
             print(sync_character(con, esi, cid, p))
             p.save(a.profile)
             print("Profile updated:", a.profile)
+    elif a.cmd == "log":
+        if not (a.activity and a.hours > 0):
+            raise SystemExit('usage: log --activity "<name>" --isk <earned> --hours <spent>')
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES(?,?,?,?)",
+                    (a.activity, a.isk, a.hours, time.time()))
+        con.commit()
+        print("Logged. Planner will use your real average after 3 runs.")
     elif a.cmd == "mock":
         from .mock import load_mock
         load_mock(con)

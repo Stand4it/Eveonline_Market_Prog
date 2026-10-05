@@ -22,3 +22,12 @@ Uses your blueprints (`sync` loads them; re-run `login` once to grant the new bl
 `"assume_all_blueprints": true` in profile.json to rank everything buildable. Materials come from the
 cheapest in-range ask, product sells into buy orders. Ranking uses *your active time*; the build job runs in
 the background (`job_hours` is shown). Skill requirements and slot limits are not checked yet.
+
+## Combat & salvage (Stage 5)
+Set `combat_dps` (your real DPS), `can_salvage` in profile.json. Activities live in the `activities` table
+(seeded placeholders, edit freely). Log real results so estimates become your own averages after 3 runs:
+
+    python -m eve_profit log --activity "Level 3 security mission" --isk 28000000 --hours 1.1
+
+Rules baked in: NPC targets and your own wrecks only (no ganking / no taking others' wrecks); red never routed;
+systems with recent kills skipped; expected ship loss and docking-wait time are charged against ISK/hr.

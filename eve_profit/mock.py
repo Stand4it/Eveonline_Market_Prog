@@ -11,6 +11,8 @@ TYPES = [
     (3645, "Water", 1.0, 120, 0), (3689, "Mechanical Parts", 1.0, 1500, 0),
     (2268, "Nanite Repair Paste", 0.01, 400, 0), (16275, "Strontium Clathrates", 0.4, 500, 0),
     (90001, "Mock Widget", 5.0, 16000, 0),
+    (80001, "Tripped Power Circuit", 0.01, 3000, 0),
+    (80002, "Charred Micro Circuit", 0.01, 2500, 0),
     (28999, "Skill Injector (cheap test item)", 0.01, 4_000_000, 0),
 ]
 SEC_LAYERS = [0.9, 0.8, 0.6, 0.5, 0.3, 0.7, 0.9, 0.4, 0.8]

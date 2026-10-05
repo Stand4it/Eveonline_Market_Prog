@@ -40,6 +40,9 @@ class Profile:
     max_runs: int = 10                # runs per batch considered
     job_fee_rate: float = 0.05        # fee on estimated item value (SCC 4% + system index); verify
     assume_all_blueprints: bool = False  # True = rank every buildable item (what to buy a BP for)
+    combat_dps: float = 0.0           # your ship's real DPS; 0 = no combat
+    can_salvage: bool = False         # salvager fitted
+    salvage_wreck_seconds: float = 25.0
     avoid_yellow: bool = True         # soft avoid
     min_profit_isk: float = 100_000.0
     min_margin: float = 0.03

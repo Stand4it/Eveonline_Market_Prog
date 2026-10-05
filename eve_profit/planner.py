@@ -2,12 +2,13 @@
 import time
 
 from .graph import Graph
+from .combat import find_combat
 from .manufacturing import find_manufacturing
 from .mining import find_mining
 from .trade import find_liquidations, find_trades
 
-FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing]
-# Stage 5+: salvage, missions/combat plug in here.
+FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing, find_combat]
+# Stage 6: route automation / alerts.
 
 
 def plan(con, p, top=15, save=True):
