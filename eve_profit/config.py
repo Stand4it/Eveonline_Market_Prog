@@ -35,6 +35,11 @@ class Profile:
     minable_ores: list = field(default_factory=list)
     accounting_level: int = 4         # sales tax reduction
     sales_tax_base: float = 0.045     # verify in-game; Stage 3 reads skills
+    industry_level: int = 5           # skill 3380: -4% build time/level
+    adv_industry_level: int = 3       # skill 3388: -3% build time/level
+    max_runs: int = 10                # runs per batch considered
+    job_fee_rate: float = 0.05        # fee on estimated item value (SCC 4% + system index); verify
+    assume_all_blueprints: bool = False  # True = rank every buildable item (what to buy a BP for)
     avoid_yellow: bool = True         # soft avoid
     min_profit_isk: float = 100_000.0
     min_margin: float = 0.03

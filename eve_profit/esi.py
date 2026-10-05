@@ -89,6 +89,9 @@ def refresh_orders(con, esi, region_ids, max_pages=None):
     con.executemany("INSERT INTO system_kills VALUES(?,?,?,?)",
                     [(k["system_id"], k["ship_kills"], k["pod_kills"], now)
                      for k in esi.system_kills()])
+    con.execute("DELETE FROM prices")
+    con.executemany("INSERT OR IGNORE INTO prices VALUES(?,?)",
+                    [(x["type_id"], x.get("adjusted_price", 0)) for x in esi.get("/markets/prices/")[0]])
     missing = [r[0] for r in con.execute(
         "SELECT DISTINCT type_id FROM orders WHERE type_id NOT IN (SELECT type_id FROM types)")]
     for tid in missing[:300]:  # cap per pass; remaining fill in on later scans

@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS opportunities(
   description TEXT NOT NULL, profit_isk REAL, risk_cost_isk REAL, jumps INTEGER,
   hours REAL, isk_per_jump REAL, isk_per_hour REAL, route TEXT, detail TEXT);
 CREATE INDEX IF NOT EXISTS ix_opp_scan ON opportunities(scanned_at);
+CREATE TABLE IF NOT EXISTS bp_materials(
+  blueprint_id INTEGER NOT NULL, material_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
+  PRIMARY KEY(blueprint_id, material_id));
+CREATE TABLE IF NOT EXISTS bp_products(
+  blueprint_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
+  base_time INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS my_blueprints(
+  blueprint_id INTEGER NOT NULL, me INTEGER NOT NULL DEFAULT 0, te INTEGER NOT NULL DEFAULT 0,
+  runs INTEGER NOT NULL DEFAULT -1);
+CREATE TABLE IF NOT EXISTS prices(type_id INTEGER PRIMARY KEY, adjusted_price REAL);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
 """
 

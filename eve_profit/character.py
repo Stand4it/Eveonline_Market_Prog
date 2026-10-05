@@ -1,5 +1,6 @@
 """Pull your character state from ESI and update the profile + inventory."""
 ACCOUNTING = 16622
+INDUSTRY, ADV_INDUSTRY = 3380, 3388
 CAPACITY_ATTR = 38
 
 
@@ -25,6 +26,13 @@ def sync_character(con, esi, cid, profile):
     profile.wallet_isk = wallet
     lvl = next((s["trained_skill_level"] for s in skills if s["skill_id"] == ACCOUNTING), 0)
     profile.accounting_level = lvl
+    lv = lambda sid: next((s["trained_skill_level"] for s in skills if s["skill_id"] == sid), 0)
+    profile.industry_level, profile.adv_industry_level = lv(INDUSTRY), lv(ADV_INDUSTRY)
+    con.execute("DELETE FROM my_blueprints")
+    bps = esi.paged(f"/characters/{cid}/blueprints/")
+    con.executemany("INSERT INTO my_blueprints VALUES(?,?,?,?)",
+                    [(b["type_id"], b["material_efficiency"], b["time_efficiency"], b["runs"])
+                     for b in bps])
 
     con.execute("DELETE FROM inventory")
     known = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
@@ -41,5 +49,5 @@ def sync_character(con, esi, cid, profile):
     con.commit()
     return {"system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "assets_kept": kept, "assets_skipped": skipped,
+            "blueprints": len(bps), "assets_kept": kept, "assets_skipped": skipped,
             "system_known": bool(row)}

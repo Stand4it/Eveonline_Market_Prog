@@ -10,6 +10,7 @@ TYPES = [
     (18, "Plagioclase", 0.35, 30, 1), (11399, "Morphite", 0.01, 9000, 0),
     (3645, "Water", 1.0, 120, 0), (3689, "Mechanical Parts", 1.0, 1500, 0),
     (2268, "Nanite Repair Paste", 0.01, 400, 0), (16275, "Strontium Clathrates", 0.4, 500, 0),
+    (90001, "Mock Widget", 5.0, 16000, 0),
     (28999, "Skill Injector (cheap test item)", 0.01, 4_000_000, 0),
 ]
 SEC_LAYERS = [0.9, 0.8, 0.6, 0.5, 0.3, 0.7, 0.9, 0.4, 0.8]
@@ -19,7 +20,8 @@ def load_mock(con, seed=7, systems=30):
     rnd = random.Random(seed)
     con.executescript("DELETE FROM systems;DELETE FROM gates;DELETE FROM stations;"
                       "DELETE FROM types;DELETE FROM orders;DELETE FROM inventory;"
-                      "DELETE FROM system_kills;")
+                      "DELETE FROM system_kills;DELETE FROM bp_materials;"
+                      "DELETE FROM bp_products;DELETE FROM my_blueprints;DELETE FROM prices;")
     con.execute("INSERT INTO systems VALUES(1,'Home',0.9,10000001)")
     for i in range(2, systems + 1):
         con.execute("INSERT INTO systems VALUES(?,?,?,?)",
@@ -35,6 +37,11 @@ def load_mock(con, seed=7, systems=30):
     for t in TYPES:
         con.execute("INSERT INTO types(type_id,name,volume,is_ore) VALUES(?,?,?,?)",
                     (t[0], t[1], t[2], t[4]))
+    con.executemany("INSERT INTO bp_materials VALUES(90002,?,?)",
+                    [(34, 1000), (35, 500), (36, 50)])
+    con.execute("INSERT INTO bp_products VALUES(90002,90001,1,3600)")
+    con.execute("INSERT INTO my_blueprints VALUES(90002,10,20,-1)")
+    con.executemany("INSERT INTO prices VALUES(?,?)", [(t[0], t[3]) for t in TYPES])
     con.execute("INSERT INTO system_kills VALUES(5,9,2,?)", (time.time(),))
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")

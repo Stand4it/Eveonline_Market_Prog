@@ -19,6 +19,8 @@ class FakeESI:
         return {"dogma_attributes": [{"attribute_id": 38, "value": 60000.0}]}
 
     def paged(self, path):
+        if path.endswith("/blueprints/"):
+            return [{"type_id": 9, "material_efficiency": 10, "time_efficiency": 20, "runs": -1}]
         return [{"type_id": 34, "quantity": 10, "location_id": 61, "location_type": "station"},
                 {"type_id": 34, "quantity": 5, "location_id": 61, "location_type": "station"},
                 {"type_id": 35, "quantity": 1, "location_id": 99, "location_type": "other"},

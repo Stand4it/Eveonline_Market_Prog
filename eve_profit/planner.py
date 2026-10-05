@@ -2,11 +2,12 @@
 import time
 
 from .graph import Graph
+from .manufacturing import find_manufacturing
 from .mining import find_mining
 from .trade import find_liquidations, find_trades
 
-FINDERS = [find_trades, find_liquidations, find_mining]
-# Stage 4+: manufacturing, salvage, missions/combat plug in here.
+FINDERS = [find_trades, find_liquidations, find_mining, find_manufacturing]
+# Stage 5+: salvage, missions/combat plug in here.
 
 
 def plan(con, p, top=15, save=True):

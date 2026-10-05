@@ -40,5 +40,17 @@ def import_sde(con, sde_path):
         f"SELECT t.typeID,t.typeName,t.volume,t.groupID,g.categoryID,"
         f"CASE WHEN t.groupID IN ({q}) THEN 1 ELSE 0 END "
         f"FROM invTypes t LEFT JOIN invGroups g ON g.groupID=t.groupID WHERE t.published=1"))
+    for t in ("bp_materials", "bp_products"):
+        con.execute(f"DELETE FROM {t}")
+    try:  # manufacturing = activityID 1
+        con.executemany("INSERT INTO bp_materials VALUES(?,?,?)", src.execute(
+            "SELECT typeID,materialTypeID,quantity FROM industryActivityMaterials "
+            "WHERE activityID=1"))
+        con.executemany("INSERT OR IGNORE INTO bp_products VALUES(?,?,?,?)", src.execute(
+            "SELECT p.typeID,p.productTypeID,p.quantity,COALESCE(a.time,0) "
+            "FROM industryActivityProducts p LEFT JOIN industryActivity a "
+            "ON a.typeID=p.typeID AND a.activityID=1 WHERE p.activityID=1"))
+    except sqlite3.OperationalError:
+        pass  # older dump without industry tables
     con.commit()
     return con.execute("SELECT COUNT(*) FROM systems").fetchone()[0]

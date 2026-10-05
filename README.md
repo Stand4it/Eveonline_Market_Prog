@@ -16,3 +16,9 @@ See ROADMAP.md.
 3. `set EVE_CLIENT_ID=<client id>` then `scripts\login.bat` (login -> sync profile/inventory -> live scan).
 No client secret is used (PKCE). Tokens are saved to `tokens.json` (git-ignored; keep private).
 `sync` sets: system, ship name, cargo m3, wallet, Accounting level. Mining yield and ship value stay manual.
+
+## Manufacturing (Stage 4)
+Uses your blueprints (`sync` loads them; re-run `login` once to grant the new blueprint scope) or set
+`"assume_all_blueprints": true` in profile.json to rank everything buildable. Materials come from the
+cheapest in-range ask, product sells into buy orders. Ranking uses *your active time*; the build job runs in
+the background (`job_hours` is shown). Skill requirements and slot limits are not checked yet.
