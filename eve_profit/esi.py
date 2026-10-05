@@ -41,6 +41,7 @@ class ESI:
                 if e.code == 304 and url in self.cache:
                     return self.cache[url]
                 if e.code in (420, 429, 500, 502, 503, 504):
+                    print(f"  ESI answered {e.code} (busy/limited); retrying in {2 ** attempt}s...", flush=True)
                     time.sleep(2 ** attempt)
                     continue
                 raise

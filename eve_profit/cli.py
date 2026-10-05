@@ -211,6 +211,8 @@ def _run(a):
             regions = ([int(x) for x in a.regions.split(",")] if a.regions
                        else regions_near(con, p))
             if a.live:
+                print(f"Contacting ESI for market orders in regions {regions} "
+                      f"(first page can take up to ~30 s; Ctrl+C to stop)...", flush=True)
                 from .esi import refresh_orders
                 print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages))
                 from .contracts import refresh_contracts
