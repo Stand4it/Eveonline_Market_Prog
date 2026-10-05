@@ -132,3 +132,11 @@ class AlongTests(unittest.TestCase):
         res = plan_along(con, g, Profile(cargo_m3=2000), g.name[far])
         self.assertLessEqual(res["used_m3"], 2000 + 1e-6)
         self.assertEqual(res["carry"][0]["sold"], 200000)
+
+    def test_empty_hangar_gives_instructions(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        txt = format_along(plan_along(con, g, Profile(cargo_m3=5000), g.name[far]))
+        self.assertIn("No items found in your Home hangar", txt)
+        self.assertIn("sync", txt)

@@ -14,6 +14,7 @@ def plan_along(con, g, p, dest_name):
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     _, buys = load_books(con, set(path))
     here, carried = [], []
+    n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
         opts = []
@@ -40,12 +41,16 @@ def plan_along(con, g, p, dest_name):
         frac = units / d["sold"]
         load.append(dict(d, sold=units, net=d["net"] * frac, m3=d["m3"] * frac, extra=d["extra"] * frac))
         room -= d["m3"] * frac
-    return {"path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
+    return {"empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
             "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
 
 
 def format_along(res):
     L = [f"Route: {' > '.join(res['path'])}  ({res['jumps']} jumps)", ""]
+    if res.get("empty"):
+        return "\n".join(L + [f"No items found in your {res['here_name']} hangar. Items inside your ship are invisible to the program.",
+                              "Move them into the Item hangar (Ctrl+A in the ship's cargo, drag to Item hangar), then run:",
+                              "   python -m eve_profit sync", "and run `along` again."])
     here = res["sell_here"]
     L.append(f"SELL IN {res['path'][0]} (no carrying needed): {sum(d['net'] for d in here):,.0f} ISK")
     for d in here[:15]:
