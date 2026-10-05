@@ -47,6 +47,27 @@ def _is_ship(con, esi, type_id):
     return r[0] == 6
 
 
+def _sync_transactions(con, esi, cid, max_pages=10):
+    """Wallet transactions (buys/sells with prices) -> cost basis. Pages back from the newest."""
+    try:
+        from_id, total = None, 0
+        for _ in range(max_pages):
+            params = {"from_id": from_id} if from_id else {}
+            batch = esi.get(f"/characters/{cid}/wallet/transactions/", **params)[0]
+            if not batch:
+                break
+            con.executemany("INSERT OR REPLACE INTO transactions VALUES(?,?,?,?,?,?,?)",
+                            [(t["transaction_id"], t.get("date"), t["type_id"], t.get("location_id"),
+                              t["unit_price"], t["quantity"], int(t["is_buy"])) for t in batch])
+            total += len(batch)
+            from_id = min(t["transaction_id"] for t in batch)
+            if len(batch) < 100:
+                break
+        return total
+    except Exception:
+        return 0
+
+
 def _sync_attributes_and_queue(con, esi, cid):
     """Training attributes + skill queue (queue needs esi-skills.read_skillqueue.v1: skipped if not granted)."""
     try:
@@ -93,6 +114,7 @@ def sync_character(con, esi, cid, profile):
     con.executemany("INSERT INTO character_skills(skill_id,level,sp) VALUES(?,?,?)",
                     [(s["skill_id"], s["trained_skill_level"], s.get("skillpoints_in_skill", 0)) for s in skills])
     _sync_attributes_and_queue(con, esi, cid)
+    n_tx = _sync_transactions(con, esi, cid)
     profile.mfg_slots_total = 1 + lv(MASS_PRODUCTION) + lv(ADV_MASS_PRODUCTION)
     jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
     profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1
@@ -152,5 +174,5 @@ def sync_character(con, esi, cid, profile):
     con.commit()
     return {"system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
+            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "transactions": n_tx, "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
             "system_known": bool(row)}

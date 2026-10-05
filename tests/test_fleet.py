@@ -162,3 +162,56 @@ class AlongDockTests(unittest.TestCase):
         self.assertIn("the station you are docked at", txt)
         p.current_location_id = 0
         self.assertIn("dock unknown", format_along(plan_along(con, g, p, g.name[far])))
+
+
+class BasisTests(unittest.TestCase):
+    def _world(self):
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,36)")
+        return con, g, far
+
+    def test_cost_basis_averages_buys_and_subtracts_sales(self):
+        from eve_profit.basis import cost_basis, stack_basis
+        con, g, far = self._world()
+        con.executemany("INSERT INTO transactions VALUES(?,?,?,?,?,?,?)", [
+            (1, "d", 34, 1, 10.0, 100, 1), (2, "d", 34, 1, 20.0, 100, 1), (3, "d", 34, 1, 50.0, 50, 0)])
+        b = cost_basis(con)
+        self.assertEqual(b[34], (15.0, 150))                                    # avg of buys; 50 already sold
+        self.assertEqual(stack_basis(b, 34, 120), (1800.0, 120))
+        self.assertEqual(stack_basis(b, 34, 200), (2250.0, 150))                # only 150 units have a known price
+        self.assertEqual(stack_basis(b, 99, 5), (0.0, 0))                       # never bought: no basis
+
+    def test_loss_everywhere_on_route_is_held_with_better_buyer_hint(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = self._world()
+        con.execute("INSERT INTO transactions VALUES(1,'d',34,1,100.0,1000,1)")  # paid 100 each
+        con.execute("INSERT INTO inventory VALUES(34,1,1000)")
+        con.execute("INSERT INTO orders VALUES(9301,34,60000001,1,10000001,1,60.0,10000000,1,'',1)")   # here: 60 (loss)
+        # a far buyer (not on the route) pays 150
+        route = set(g.route(1, far).path)
+        off = next(s for s in g.reach(1, 8) if s not in route and not g.is_red(s) and g.reach(1, 8)[s].jumps >= 1)
+        con.execute("INSERT INTO orders VALUES(9302,34,60000002,?,10000001,1,150.0,10000000,1,'',1)", (off,))
+        res = plan_along(con, g, Profile(cargo_m3=5000, current_location_id=60000001), g.name[far])
+        self.assertFalse(res["sell_here"])
+        self.assertEqual(len(res["losses"]), 1)
+        self.assertEqual(res["losses"][0]["alt_name"], g.name[off])
+        txt = format_along(res)
+        self.assertIn("DO NOT SELL AT A LOSS", txt)
+        self.assertIn("better buyer", txt)
+
+    def test_profit_column_and_no_record_items(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = self._world()
+        con.execute("INSERT INTO transactions VALUES(1,'d',34,1,2.0,1000,1)")    # paid 2 each; sells at 5 -> profit
+        con.execute("INSERT INTO inventory VALUES(34,1,1000)")
+        con.execute("INSERT INTO inventory VALUES(36,1,500)")                    # no record: mined/looted
+        con.execute("INSERT INTO orders VALUES(9401,34,60000001,1,10000001,1,5.0,10000000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(9402,36,60000001,1,10000001,1,3.0,10000000,1,'',1)")
+        p = Profile(cargo_m3=5000, current_location_id=60000001)
+        res = plan_along(con, g, p, g.name[far])
+        by = {d["name"]: d for d in res["sell_here"]}
+        self.assertGreater(by["Tritanium"]["net"], by["Tritanium"]["cost"])
+        self.assertEqual(by["Mexallon"]["covered"], 0)
+        txt = format_along(res)
+        self.assertIn("(no record)", txt)
+        self.assertIn("you paid", txt)

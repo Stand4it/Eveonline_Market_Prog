@@ -79,7 +79,9 @@ class T(unittest.TestCase):
     def test_sync_works_before_universe_is_loaded(self):
         class E:
             def get(self, path, **kw):
-                d = {"/location/": {"solar_system_id": 30000142}, "/ship/": {"ship_type_id": 1, "ship_name": "T"},
+                d = {"/transactions/": [{"transaction_id": 7, "date": "d", "type_id": 34, "location_id": 60003760,
+                                         "unit_price": 5.0, "quantity": 10, "is_buy": True}],
+                     "/location/": {"solar_system_id": 30000142}, "/ship/": {"ship_type_id": 1, "ship_name": "T"},
                      "/wallet/": 5.0, "/skills/": {"skills": []}, "/jobs/": [], "/points/": [], "/standings/": [],
                      "/30000142/": {"name": "Jita"}, "/60003760/": {"system_id": 30000142, "owner": 1000, "name": "4-4"}}
                 return next(v for k, v in d.items() if path.endswith(k)), 1
@@ -91,6 +93,8 @@ class T(unittest.TestCase):
         p = Profile()
         r = sync_character(self.con, E(), 1, p)
         self.assertEqual(p.current_system, "Jita")
+        self.assertEqual(r["transactions"], 1)
+        self.assertEqual(self.con.execute("SELECT unit_price FROM transactions").fetchone()[0], 5.0)
         self.assertEqual(self.con.execute("SELECT quantity FROM inventory").fetchone()[0], 7)
         self.assertEqual(self.con.execute("SELECT corporation_id FROM stations").fetchone()[0], 1000)
 

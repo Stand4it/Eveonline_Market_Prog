@@ -97,6 +97,10 @@ CREATE INDEX IF NOT EXISTS ix_str_sys ON structures(system_id);
 CREATE TABLE IF NOT EXISTS char_attrs(attr TEXT PRIMARY KEY, value REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS skill_queue(
   position INTEGER PRIMARY KEY, skill_id INTEGER NOT NULL, level INTEGER NOT NULL, finish_date TEXT);
+CREATE TABLE IF NOT EXISTS transactions(
+  transaction_id INTEGER PRIMARY KEY, date TEXT, type_id INTEGER NOT NULL, location_id INTEGER,
+  unit_price REAL NOT NULL, quantity INTEGER NOT NULL, is_buy INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_tx_type ON transactions(type_id);
 CREATE TABLE IF NOT EXISTS my_ships(
   item_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, location_id INTEGER);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);

@@ -129,3 +129,9 @@ ISK/hr gained per hour of training, using your real attributes, trained SP and c
 as done). It fills ~`--hours` of queue, in an order that respects levels, and lists useful skills it can't measure
 (broker/contracts/standings/transport ships). Align/speed effects are ESTIMATES. Needs the skill-queue permission
 (re-run `login` once) and the SDE import (for skill ranks).
+
+## Cost basis ("don't sell at a loss")
+`sync` stores your wallet transactions (what you actually paid). `along` shows **you paid** and **profit** per stack and,
+if selling anywhere on the route would lose money, moves the item to **DO NOT SELL AT A LOSS** with the best buyer within
+~10 jumps (or "hold / list above X"). Items with no buy record (mined, looted, built, or older than the history ESI
+returns) show `(no record)` and count as free. The average is across all buys of that item, so mixed-price stacks are approximate.

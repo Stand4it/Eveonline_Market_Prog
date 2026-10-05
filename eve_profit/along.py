@@ -1,6 +1,7 @@
 """`along --to X`: sell what you have in your current system's hangar at the best system ON THE WAY to X.
 Items that sell best here are sold here (no carrying); the rest are carried, densest value per m3 first,
 and sold at the best system along the safe route. Unsold items stay in the hangar."""
+from .basis import cost_basis, stack_basis
 from .orders import load_books, sell_into_bids
 
 
@@ -23,7 +24,10 @@ def plan_along(con, g, p, dest_name):
     sells, buys = load_books(con, set(path))
     dock = p.current_location_id
     dock_bids = _bids_at(con, dock) if dock else None        # {type_id: [(price, vol, min)]} at YOUR station only
-    here, carried = [], []
+    basis = cost_basis(con)
+    far = g.reach(cur, max(p.max_jumps * 5, 10), p.avoid_yellow)       # where a loss-making item could go instead
+    _, far_buys = load_books(con, set(far))
+    here, carried, losses = [], [], []
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
@@ -38,6 +42,21 @@ def plan_along(con, g, p, dest_name):
         best = max(opts)
         local = next((o for o in opts if o[2] == 0), None)
         # carry only if it clearly beats selling here (>3%), else sell here and travel light
+        cost, covered = stack_basis(basis, tid, qty)
+        if covered:
+            per_unit = cost / covered
+            basis_for_best = per_unit * min(best[3], covered)       # what the units we could sell here cost you
+            if best[0] < basis_for_best:
+                # selling anywhere on this route would lose money: look further afield, otherwise hold
+                alt = None
+                for s2 in far:
+                    sold2, net2 = sell_into_bids(far_buys.get(tid, {}).get(s2, []), qty, p.sales_tax)
+                    if sold2 and (alt is None or net2 > alt[0]):
+                        alt = (net2, s2, sold2)
+                losses.append({"name": name.get(tid, tid), "qty": qty, "cost": cost, "best_here": best[0],
+                               "alt": alt, "alt_name": g.name[alt[1]] if alt else None,
+                               "alt_jumps": far[alt[1]].jumps if alt else None})
+                continue
         if best[2] != 0 and (local is None or best[0] > local[0] * 1.03):
             carried.append({"tid": tid, "name": name.get(tid, tid), "sold": best[3], "net": best[0], "at": best[2],
                             "m3": best[3] * (vol.get(tid, 0) or 0.0001), "extra": best[0] - (local[0] if local else 0)})
@@ -45,7 +64,7 @@ def plan_along(con, g, p, dest_name):
             asks = sells.get(tid, {}).get(cur, [])
             listing = qty * asks[0][0] if asks else 0.0
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
-                         "listing": listing})
+                         "listing": listing, "cost": cost, "covered": covered})
     carried.sort(key=lambda d: -(d["net"] / max(d["m3"], 1e-6)))
     room, load = p.cargo_m3, []
     for d in carried:                                   # fill the hold by value per m3
@@ -56,7 +75,7 @@ def plan_along(con, g, p, dest_name):
         load.append(dict(d, sold=units, net=d["net"] * frac, m3=d["m3"] * frac, extra=d["extra"] * frac))
         room -= d["m3"] * frac
     return {"dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
-            "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
+            "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
 
 
 def format_along(res):
@@ -68,11 +87,20 @@ def format_along(res):
     here = res["sell_here"]
     where = "the station you are docked at" if res.get("dock_known") else "any Hek station (dock unknown: check each buyer's station!)"
     L.append(f"SELL IN {res['path'][0]} - into buy orders at {where}: {sum(d['net'] for d in here):,.0f} ISK instantly")
-    L.append(f"   {'qty':>10}   {'item':<32} {'sell now':>14} {'if listed*':>14}")
+    L.append(f"   {'qty':>10}   {'item':<32} {'sell now':>14} {'if listed*':>14} {'you paid':>14} {'profit':>12}")
     for d in here[:15]:
         short = f" (only {d['sold']:,} of {d['qty']:,} have buyers)" if d["sold"] < d["qty"] else ""
-        L.append(f"   {d['sold']:>10,} x {d['name']:<32} {d['net']:>14,.0f} {d['listing']:>14,.0f}{short}")
+        paid = f"{d['cost']:>14,.0f}" if d.get("covered") else f"{'(no record)':>14}"
+        prof = f"{d['net'] - d['cost']:>12,.0f}" if d.get("covered") else f"{'':>12}"
+        L.append(f"   {d['sold']:>10,} x {d['name']:<32} {d['net']:>14,.0f} {d['listing']:>14,.0f} {paid} {prof}{short}")
     L.append("   * 'if listed' = quantity x the cheapest existing sell order, BEFORE broker fee, sales tax and waiting; real result is lower.")
+    if res.get("losses"):
+        L += ["", "DO NOT SELL AT A LOSS - these would sell below what you paid on this whole route:"]
+        for d in res["losses"]:
+            msg = (f"better buyer: {d['alt_name']} ({d['alt_jumps']} jumps) pays {d['alt'][0]:,.0f} vs your cost {d['cost']:,.0f}"
+                   if d["alt"] and d["alt"][0] > d["cost"] else
+                   f"no buyer within reach pays your cost; HOLD or list a sell order above {d['cost'] / max(d['qty'], 1):,.0f} each")
+            L.append(f"   {d['qty']:>10,} x {d['name']:<32} paid {d['cost']:>12,.0f}, best here {d['best_here']:>12,.0f} -> {msg}")
     by = {}
     for d in res["carry"]:
         by.setdefault(d["at"], []).append(d)
