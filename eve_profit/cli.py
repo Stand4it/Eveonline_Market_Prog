@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -58,6 +58,7 @@ def main(argv=None):
     ap.add_argument("--away", action="store_true", help="unattended mode: long safe autopilot hauls only")
     ap.add_argument("--to", default="", help="along: destination system name")
     ap.add_argument("--force", action="store_true", help="universe: reload even if already loaded")
+    ap.add_argument("--world", type=int, default=0, help="sellplan: also check the N biggest stacks in every region")
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
@@ -138,6 +139,25 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "sellplan":
+        from .esi import ESI
+        from .graph import Graph
+        from .sellplan import format_sellplan, sell_plan
+        g = Graph(con)
+        world = {}
+        if a.world:
+            from .bestprice import best_prices
+            esi = ESI()
+            held = con.execute("SELECT i.type_id,i.quantity FROM inventory i WHERE i.system_id=? ORDER BY i.quantity DESC",
+                               (g.id_of(p.current_system),)).fetchall()
+            first = sell_plan(con, g, p, a.to or None)["rows"][:a.world]       # the biggest stacks only
+            ids = {r["name"]: r for r in first}
+            for r in held:
+                nm = con.execute("SELECT name FROM types WHERE type_id=?", (r["type_id"],)).fetchone()[0]
+                if nm in ids:
+                    print(f"Checking every market for {nm}...", flush=True)
+                    world[r["type_id"]] = best_prices(con, g, p, esi, r["type_id"], r["quantity"])[0]
+        print(format_sellplan(sell_plan(con, g, p, a.to or None, world)))
     elif a.cmd == "bestprice":
         from .bestprice import best_prices, format_best, resolve_type
         from .esi import ESI
