@@ -35,7 +35,7 @@ def variant_profile(p, ship, system_name):
         can_salvage=st.get("can_salvage", False))
 
 
-def swap_opportunities(con, g, p, finders, per_variant=5, max_variants=6):
+def swap_opportunities(con, g, p, finders, per_variant=5, max_variants=3):
     """For each parked ship within reach: travel there (in your current ship), swap, then the best
     things that ship can do from there. Time/risk of the trip and the swap are charged."""
     cur = g.id_of(p.current_system)
@@ -53,6 +53,10 @@ def swap_opportunities(con, g, p, finders, per_variant=5, max_variants=6):
         trip_s = trip.jumps * p.jump_seconds + 2 * p.dock_overhead_s + p.swap_overhead_s + wait
         opps = []
         for f in finders:
+            if f.__name__ in ("find_mining", "find_manufacturing") and not p.ships.get(ship["name"]):
+                continue                    # slow finders only when you gave this hull real stats
+            if f.__name__ == "find_combat" and p2.combat_dps <= 0:
+                continue                    # combat needs your numbers; skip the work otherwise
             opps.extend(f(con, g, p2))
         opps = [o for o in opps if o.net_isk > 0]
         opps.sort(key=lambda o: o.net_isk / (o.hours + trip_s / 3600), reverse=True)

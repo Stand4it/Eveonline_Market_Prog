@@ -34,11 +34,19 @@ def plan(con, p, top=15, save=True):
     if p.away_mode:
         g.ban_yellow, g.risk_mult = True, 3.0
     opps = []
+    import os, time as _t
+    timing = os.environ.get("EVE_PROFIT_TIMING")
     for f in (HAUL_FINDERS if p.away_mode else FINDERS):
+        t0 = _t.time()
         opps.extend(f(con, g, p))
+        if timing:
+            print(f"  [timing] {f.__name__}: {_t.time() - t0:.1f}s", flush=True)
     if p.consider_ship_swaps:
         from .fleet import swap_opportunities
+        t0 = _t.time()
         opps.extend(swap_opportunities(con, g, p, FINDERS))
+        if timing:
+            print(f"  [timing] ship swaps: {_t.time() - t0:.1f}s", flush=True)
     opps = [o for o in opps if o.net_isk > 0]     # never recommend a task that loses ISK after risk
     opps.sort(key=lambda o: o.isk_per_hour, reverse=True)
     slots, kept = free_slots(p), []
