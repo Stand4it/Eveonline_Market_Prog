@@ -6,11 +6,12 @@ import dataclasses
 from .planner import plan
 
 
-def _key(o):
+def _keys(o):
+    """What this task uses up: the buy side and the sell side of a trade are separate market depths."""
     d = o.detail
     if o.kind == "trade" and "type_id" in d:
-        return ("trade", d["type_id"], d.get("from_sys"))
-    return (o.kind, o.description)
+        return {("buy", d["type_id"], d.get("from_sys")), ("sell", d["type_id"], d.get("to_sys"))}
+    return {(o.kind, o.description)}
 
 
 def build_day(con, g, p, hours=8.0, cash=0.0, max_steps=30):
@@ -20,14 +21,14 @@ def build_day(con, g, p, hours=8.0, cash=0.0, max_steps=30):
     for _ in range(max_steps):
         pi = dataclasses.replace(p, current_system=cur, wallet_isk=wallet)
         left = hours - elapsed
-        opps = [o for o in plan(con, pi, 60, False) if _key(o) not in used and o.hours <= left and o.net_isk > 0]
+        opps = [o for o in plan(con, pi, 60, False) if not (_keys(o) & used) and o.hours <= left and o.net_isk > 0]
         if not opps:
             break
         o = opps[0]
         steps.append({"start_h": elapsed, "kind": o.kind, "what": o.description, "net": o.net_isk, "hours": o.hours,
                       "jumps": o.jumps, "per_jump": o.isk_per_jump, "per_hr": o.isk_per_hour, "from": cur,
                       "wallet": wallet})
-        used.add(_key(o))
+        used |= _keys(o)
         elapsed += o.hours
         total += o.net_isk
         jumps_total += o.jumps

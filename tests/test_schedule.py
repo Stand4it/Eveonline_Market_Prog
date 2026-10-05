@@ -33,6 +33,23 @@ class T(unittest.TestCase):
         self.assertAlmostEqual(res["total"], cums[-1])
         self.assertAlmostEqual(res["per_hr"], res["total"] / res["hours"])
 
+    def test_a_markets_depth_is_spent_once(self):
+        con, g = world()
+        res = build_day(con, g, prof(), hours=8.0)
+        sells = []
+        buys = []
+        from eve_profit.planner import plan
+        # re-derive each step's (type, from, to) by replanning from its start: here we just check descriptions for repeats
+        for s in res["steps"]:
+            if s["kind"] == "trade":
+                what = s["what"]                      # "Buy N x ITEM @ A, sell @ B"
+                item = what.split(" x ", 1)[1].split(" @ ")[0]
+                a = what.split(" @ ")[1].split(",")[0]
+                b = what.rsplit("sell @ ", 1)[1]
+                buys.append((item, a)); sells.append((item, b))
+        self.assertEqual(len(sells), len(set(sells)))
+        self.assertEqual(len(buys), len(set(buys)))
+
     def test_more_hours_never_means_less_total(self):
         con, g = world()
         short = build_day(con, g, prof(), hours=1.0)["total"]
