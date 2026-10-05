@@ -22,6 +22,7 @@ class Profile:
     """What the planner knows about you. Stage 3 fills this from ESI."""
     ship_name: str = "Generic hauler"
     current_system: str = "Home"
+    current_location_id: int = 0      # station/structure you are docked in (sync sets; 0 = unknown/undocked)
     cargo_m3: float = 5000.0          # general cargo
     ore_hold_m3: float = 0.0          # 0 -> mining uses cargo_m3
     ship_value_isk: float = 20_000_000.0

@@ -140,3 +140,25 @@ class AlongTests(unittest.TestCase):
         txt = format_along(plan_along(con, g, Profile(cargo_m3=5000), g.name[far]))
         self.assertIn("No items found in your Home hangar", txt)
         self.assertIn("sync", txt)
+
+
+class AlongDockTests(unittest.TestCase):
+    def test_sell_here_uses_only_the_docked_station_and_shows_listing_value(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id=34")
+        # two Home stations: the one you dock at pays 5, the other pays 50 (you cannot sell there from your dock)
+        con.execute("INSERT INTO orders VALUES(9001,34,60000001,1,10000001,1,5.0,10000000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(9002,34,60000555,1,10000001,1,50.0,10000000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(9003,34,60000001,1,10000001,0,8.0,10000000,1,'',1)")
+        con.execute("INSERT INTO inventory VALUES(34,1,1000)")
+        p = Profile(cargo_m3=5000, current_location_id=60000001)
+        res = plan_along(con, g, p, g.name[far])
+        d = res["sell_here"][0]
+        self.assertAlmostEqual(d["net"], 1000 * 5.0 * (1 - p.sales_tax), places=4)        # not the 50 ISK order
+        self.assertEqual(d["listing"], 8000.0)
+        txt = format_along(res)
+        self.assertIn("if listed", txt)
+        self.assertIn("the station you are docked at", txt)
+        p.current_location_id = 0
+        self.assertIn("dock unknown", format_along(plan_along(con, g, p, g.name[far])))
