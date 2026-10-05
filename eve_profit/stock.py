@@ -71,7 +71,7 @@ def best_loads(con, g, p, top=3, max_sources=6):
             cands.sort(reverse=True)
             room, total, items = p.cargo_m3, 0.0, []
             for dens, tid, sold, net, v in cands:
-                units = min(sold, int(room // v))
+                units = min(sold, int(room / v + 1e-9))
                 if units <= 0:
                     continue
                 part = net * units / sold

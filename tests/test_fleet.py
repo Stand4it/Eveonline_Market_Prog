@@ -96,3 +96,39 @@ class LoadTests(unittest.TestCase):
         self.assertEqual(dens, sorted(dens, reverse=True))                # densest value is loaded first
         self.assertIn("Best hold-loads", format_loads(loads))
         self.assertFalse([w for w in d["waypoints"] if g.is_red(w)])
+
+
+class AlongTests(unittest.TestCase):
+    def test_sells_where_best_along_route_and_travels_light(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        con.execute("DELETE FROM orders WHERE type_id IN (34,36)")
+        path = g.route(1, far).path
+        mid = path[1]
+        now = 1.0
+        # Tritanium: better price at the destination; Mexallon: best right here at the start
+        con.execute("INSERT INTO orders VALUES(8001,34,60000099,?,10000001,1,9.0,10000000,1,'',?)", (far, now))
+        con.execute("INSERT INTO orders VALUES(8002,34,60000098,1,10000001,1,5.0,10000000,1,'',?)", (now,))
+        con.execute("INSERT INTO orders VALUES(8003,36,60000097,1,10000001,1,100.0,10000000,1,'',?)", (now,))
+        con.execute("INSERT INTO orders VALUES(8004,36,60000096,?,10000001,1,60.0,10000000,1,'',?)", (far, now))
+        con.execute("INSERT INTO inventory VALUES(34,1,100000)")
+        con.execute("INSERT INTO inventory VALUES(36,1,5000)")
+        res = plan_along(con, g, Profile(cargo_m3=5000), g.name[far])
+        self.assertEqual([d["name"] for d in res["sell_here"]], ["Mexallon"])           # best at the start: sold there
+        self.assertEqual([d["name"] for d in res["carry"]], ["Tritanium"])              # better at the destination: carried
+        self.assertEqual(res["carry"][0]["at"], len(path) - 1)
+        txt = format_along(res)
+        self.assertIn("SELL IN Home", txt)
+        self.assertIn("CARRY", txt)
+
+    def test_carry_respects_hold(self):
+        from eve_profit.along import plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        con.execute("DELETE FROM orders WHERE type_id=34")
+        con.execute("INSERT INTO orders VALUES(8101,34,60000099,?,10000001,1,9.0,10000000,1,'',1)", (far,))
+        con.execute("INSERT INTO inventory VALUES(34,1,1000000)")                        # 10,000 m3 of Tritanium
+        res = plan_along(con, g, Profile(cargo_m3=2000), g.name[far])
+        self.assertLessEqual(res["used_m3"], 2000 + 1e-6)
+        self.assertEqual(res["carry"][0]["sold"], 200000)

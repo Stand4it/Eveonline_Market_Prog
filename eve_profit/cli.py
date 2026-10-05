@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -56,6 +56,7 @@ def main(argv=None):
     ap.add_argument("--isk", type=float, default=0)
     ap.add_argument("--hours", type=float, default=0)
     ap.add_argument("--away", action="store_true", help="unattended mode: long safe autopilot hauls only")
+    ap.add_argument("--to", default="", help="along: destination system name")
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
@@ -134,6 +135,12 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "along":
+        from .along import format_along, plan_along
+        from .graph import Graph
+        if not a.to:
+            raise SystemExit('usage: along --to "<destination system>"')
+        print(format_along(plan_along(con, Graph(con), p, a.to)))
     elif a.cmd == "stock":
         from .graph import Graph
         from .stock import stock_report
