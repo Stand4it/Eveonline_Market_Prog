@@ -145,3 +145,9 @@ Salvager module is fitted. Fits of parked ships are not read (only the ship you 
 `python -m eve_profit keep` takes the materials in your current hangar, tries every blueprint you own, and compares
 **build and sell the product** against **sell the materials now** (the true cost of using your own materials). Shows
 BUILD beats selling / SELL the materials, the job time (runs in the background in a slot), fees, and extra materials to buy.
+
+## Buy a blueprint to use my stock? (`bpbuy`)
+`python -m eve_profit bpbuy` checks every manufacturing blueprint in the game whose materials include stock in your current
+hangar: build with your own materials (valued at their sell-now price), buy the shortfall, sell the product, subtract fees,
+then subtract the blueprint's market price (assumed ME0/TE0, original). Verdict per blueprint: BUY the blueprint and build /
+NO - not worth buying / CANNOT PRICE (no seller in range). Shows missing skills if you synced.

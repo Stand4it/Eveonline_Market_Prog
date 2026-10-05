@@ -388,3 +388,54 @@ class KeepTests(unittest.TestCase):
         res, slots = keep_vs_sell(con, g, Profile(max_jumps=1))
         self.assertEqual(res, [])
         self.assertIn("SELL the materials", format_keep(res, slots))
+
+
+class BpBuyTests(unittest.TestCase):
+    def _world(self, widget_bid, bpo_ask, skills=None):
+        from eve_profit.bpbuy import bp_buy_candidates
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM my_blueprints")
+        con.execute("DELETE FROM orders WHERE type_id IN (34,35,36,90001,90002)")
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(90002,'Mock Widget Blueprint',0.01)")
+        for oid, tid, price in [(9911, 34, 1.0), (9912, 35, 2.0), (9913, 36, 10.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,1,?,100000000,1,'',1)", (oid, tid, price))
+        con.execute("INSERT INTO orders VALUES(9914,90001,60000001,1,10000001,1,?,1000,1,'',1)", (widget_bid,))
+        if bpo_ask:
+            con.execute("INSERT INTO orders VALUES(9915,90002,60000001,1,10000001,0,?,5,1,'',1)", (bpo_ask,))
+        for tid, q in ((34, 100000), (35, 50000), (36, 5000)):
+            con.execute("INSERT INTO inventory VALUES(?,1,?)", (tid, q))
+        con.execute("DELETE FROM skill_reqs"); con.execute("UPDATE prices SET adjusted_price=0")
+        if skills:
+            con.execute("INSERT INTO skill_reqs VALUES(90002,3380,3)")
+            con.execute("INSERT INTO character_skills(skill_id,level) VALUES(3380,1)")
+        return bp_buy_candidates(con, g, Profile(max_jumps=1, cargo_m3=1e6, wallet_isk=1e9, max_runs=10, job_fee_rate=0.0)), con
+
+    def test_cheap_blueprint_is_worth_buying(self):
+        from eve_profit.bpbuy import format_bpbuy
+        (res, scanned), con = self._world(widget_bid=10000.0, bpo_ask=5000.0)
+        self.assertEqual(res[0]["blueprint"], "Mock Widget Blueprint")
+        self.assertGreater(res[0]["net"], 0)
+        self.assertIn("BUY the blueprint and build", format_bpbuy(res, scanned))
+
+    def test_expensive_blueprint_is_not(self):
+        from eve_profit.bpbuy import format_bpbuy
+        (res, scanned), con = self._world(widget_bid=10000.0, bpo_ask=10_000_000.0)
+        self.assertLess(res[0]["net"], 0)
+        self.assertIn("NO - not worth buying", format_bpbuy(res, scanned))
+
+    def test_unpriced_blueprint_is_flagged_and_missing_skills_shown(self):
+        from eve_profit.bpbuy import format_bpbuy
+        (res, scanned), con = self._world(widget_bid=10000.0, bpo_ask=None, skills=True)
+        txt = format_bpbuy(res, scanned)
+        self.assertIn("CANNOT PRICE", txt)
+        (res, scanned), con = self._world(widget_bid=10000.0, bpo_ask=5000.0, skills=True)
+        self.assertIn("YOU LACK SKILLS", format_bpbuy(res, scanned))
+        self.assertIn("Industry 3 (have 1)", format_bpbuy(res, scanned))
+
+    def test_no_stock_nothing_to_check(self):
+        from eve_profit.bpbuy import bp_buy_candidates, format_bpbuy
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        res, scanned = bp_buy_candidates(con, g, Profile(max_jumps=1))
+        self.assertEqual(res, [])
+        self.assertIn("none beats simply selling", format_bpbuy(res, scanned))
