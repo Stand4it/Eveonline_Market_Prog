@@ -174,6 +174,9 @@ def advise(con, p, plan_fn, hours=72.0):
             notes.append(f"{name}: prerequisites not met yet ({len(missing)} missing) - train those first.")
             continue
         gain = _score(plan_fn, con, fx(p)) - base
+        if gain <= 0:
+            notes.append(f"{name}: no measurable ISK/hr gain right now ({why}) - not worth queueing for money.")
+            continue
         prim = attrs.get(ATTR_NAMES.get(row["skill_primary"], ""), 20)
         sec = attrs.get(ATTR_NAMES.get(row["skill_secondary"], ""), 20)
         steps = []
@@ -200,7 +203,8 @@ def advise(con, p, plan_fn, hours=72.0):
         mins = train_minutes(row["skill_rank"], d["have"] + 1, sp_now.get(d["skill_id"], 0), prim, sec)
         stock.append(dict(d, level=d["have"] + 1, minutes=mins, per_day=d["gain"] / max(mins / 1440, 1e-9)))
     stock.sort(key=lambda d: -d["per_day"])
-    return {"steps": chosen, "stock": stock, "unmodelled": NOT_MODELLED, "notes": notes, "base": base, "total_minutes": used}
+    trade_levels = {n: levels.get(sid, 0) for n, sid, _ in STOCK_SKILLS}
+    return {"trade_levels": trade_levels, "steps": chosen, "stock": stock, "unmodelled": NOT_MODELLED, "notes": notes, "base": base, "total_minutes": used}
 
 
 def format_advice(res):
@@ -219,6 +223,10 @@ def format_advice(res):
                   f"   {'skill':<18} {'lvl':>3} {'train':>8} {'+ISK now':>13} {'per training day':>18}"]
         for d in res["stock"]:
             lines.append(f"   {d['skill']:<18} {d['level']:>3} {fmt_minutes(d['minutes']):>8} {d['gain']:>13,.0f} {d['per_day']:>18,.0f}")
+    tl = res.get("trade_levels")
+    if tl:
+        lines += ["", "Your trading skills (levels incl. queue): " + ", ".join(f"{n} {v}" for n, v in tl.items())
+                  + ("   -> all at V: nothing to gain here" if all(v >= 5 for v in tl.values()) else "")]
     lines += ["", "Worth training but not measured by the planner:"] + [f"  - {n}: {w}" for n, w in res["unmodelled"]]
     lines += [""] + [f"NOTE: {n}" for n in res["notes"]]
     return "\n".join(lines)

@@ -141,3 +141,16 @@ class StockSkillTests(unittest.TestCase):
             gains = {d["skill"]: d["gain"] for d in stock_skill_gains(con, p)}
         self.assertGreater(gains["Trade"], 0)
         self.assertGreaterEqual(gains["Retail"], gains["Trade"])                # +8 slots is never worse than +4
+
+
+class ZeroGainAndLevelsTests(unittest.TestCase):
+    def test_zero_gain_skills_are_not_queued_and_trade_levels_are_shown(self):
+        con = setup()
+        con.execute("UPDATE types SET skill_rank=8 WHERE type_id=24625")
+        res = advise(con, Profile(max_jumps=1, cargo_m3=1000, min_profit_isk=1), plan, hours=100)
+        names = [s["skill"] for s in res["steps"]]
+        self.assertTrue(all(s["gain"] > 0 for s in res["steps"]))
+        self.assertNotIn("Advanced Mass Production", names)             # builds are not profitable here => slots add nothing
+        self.assertTrue([n for n in res["notes"] if "no measurable ISK/hr gain" in n])
+        self.assertIn("Broker Relations", res["trade_levels"])
+        self.assertIn("Your trading skills", format_advice(res))
