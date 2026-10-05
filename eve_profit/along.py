@@ -3,6 +3,7 @@ Items that sell best here are sold here (no carrying); the rest are carried, den
 and sold at the best system along the safe route. Unsold items stay in the hangar."""
 from .basis import cost_basis, stack_basis
 from .orders import load_books, sell_into_bids
+from .skills import order_slots
 
 
 def _bids_at(con, location_id):
@@ -68,6 +69,11 @@ def plan_along(con, g, p, dest_name):
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
                          "listing": listing, "list_net": list_net, "advice": "LIST" if list_it else "SELL NOW",
                          "cost": cost, "covered": covered})
+    slots = order_slots(con)
+    listers = sorted([d for d in here if d["advice"] == "LIST"], key=lambda d: -(d["list_net"] - d["net"]))
+    if slots is not None:
+        for d in listers[slots:]:
+            d["advice"] = "SELL NOW"; d["no_slot"] = True        # best gain per slot first; the rest go instantly
     carried.sort(key=lambda d: -(d["net"] / max(d["m3"], 1e-6)))
     room, load = p.cargo_m3, []
     for d in carried:                                   # fill the hold by value per m3
@@ -78,7 +84,7 @@ def plan_along(con, g, p, dest_name):
         load.append(dict(d, sold=units, net=d["net"] * frac, m3=d["m3"] * frac, extra=d["extra"] * frac))
         room -= d["m3"] * frac
     return {"dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
-            "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
+            "slots": slots, "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
 
 
 def format_along(res):
@@ -95,13 +101,16 @@ def format_along(res):
     L.append(f"PLAN: sell {len(now_items)} stacks now for {sum(d['net'] for d in now_items):,.0f} ISK; "
              f"list {len(list_items)} stacks for about {sum(d['list_net'] for d in list_items):,.0f} ISK after fees "
              f"(vs {sum(d['net'] for d in list_items):,.0f} instantly) - listing takes time and an order slot each")
+    if res.get("slots") is not None:
+        L.append(f"Market order slots from your skills: {res['slots']} (minus any orders you already have open - check the "
+                 f"Market Orders window). The LIST stacks below are the best gain per slot; the rest are marked SELL NOW.")
     L.append(f"   {'qty':>10}   {'item':<30} {'sell now':>13} {'listed, after fees*':>20} {'advice':<9} {'you paid':>12}")
     for d in sorted(here, key=lambda d: -max(d['net'], d.get('list_net', 0)))[:20]:
         short = f" (only {d['sold']:,} of {d['qty']:,} have buyers)" if d["sold"] < d["qty"] else ""
         paid = f"{d['cost']:>12,.0f}" if d.get("covered") else f"{'(no record)':>12}"
         vd = f"  ~{d['vol_day']:,.0f}/day on the market" if d.get("vol_day") is not None else ""
         L.append(f"   {d['sold']:>10,} x {d['name']:<30} {d['net']:>13,.0f} {d.get('list_net', 0):>20,.0f} "
-                 f"{d.get('advice', ''):<9} {paid}{short}{vd}")
+                 f"{d.get('advice', ''):<9} {paid}{short}{vd}" + ("  (no free slot)" if d.get("no_slot") else ""))
     L.append("   * after the broker fee and sales tax, assuming you list at the cheapest existing sell order; others may undercut you.")
     if res.get("losses"):
         L += ["", "DO NOT SELL AT A LOSS - these would sell below what you paid on this whole route:"]

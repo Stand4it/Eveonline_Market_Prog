@@ -21,6 +21,18 @@ def explain(con, miss):
     return ", ".join(f"{skill_name(con, s)} {need} (have {h})" for s, need, h in miss)
 
 
+TRADE, RETAIL, WHOLESALE, TYCOON = 3443, 3444, 16596, 18580
+
+
+def order_slots(con):
+    """Max open market orders from skills: 5 + 4/Trade + 8/Retail + 16/Wholesale + 32/Tycoon (verify in game:
+    Market Orders window). None if skills were never synced. Does NOT subtract orders you already have open."""
+    lv = have(con)
+    if not lv:
+        return None
+    return 5 + 4 * lv.get(TRADE, 0) + 8 * lv.get(RETAIL, 0) + 16 * lv.get(WHOLESALE, 0) + 32 * lv.get(TYCOON, 0)
+
+
 def free_slots(p):
     return max(0, p.mfg_slots_total - p.mfg_slots_used)
 

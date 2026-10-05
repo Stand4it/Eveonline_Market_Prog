@@ -243,3 +243,37 @@ class AdviceTests(unittest.TestCase):
         txt = format_along(res)
         self.assertIn("PLAN: sell 1 stacks now", txt)
         self.assertIn("~10/day on the market", txt)
+
+
+class SlotTests(unittest.TestCase):
+    def test_order_slots_formula_and_unknown(self):
+        from eve_profit.skills import order_slots
+        con, g, far = setup()
+        self.assertIsNone(order_slots(con))                                   # skills not synced
+        con.executemany("INSERT INTO character_skills(skill_id,level) VALUES(?,?)",
+                        [(3443, 5), (3444, 2), (16596, 1)])
+        self.assertEqual(order_slots(con), 5 + 4 * 5 + 8 * 2 + 16 * 1)
+
+    def test_only_best_gain_per_slot_are_listed(self):
+        from eve_profit.along import format_along, plan_along
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory"); con.execute("DELETE FROM orders WHERE type_id IN (34,35,36)")
+        con.execute("INSERT INTO character_skills(skill_id,level) VALUES(3443,0)")      # => 5 slots
+        for k, tid in enumerate((34, 35, 36)):
+            pass
+        # three items, all worth listing; give them very different gains, with only 1 slot forced via monkeypatch
+        for oid, tid, buy, price in [(9601, 34, 1, 1.0), (9602, 34, 0, 10.0), (9603, 35, 1, 1.0), (9604, 35, 0, 100.0),
+                                     (9605, 36, 1, 1.0), (9606, 36, 0, 1000.0)]:
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,1,10000001,?,?,10000000,1,'',1)", (oid, tid, buy, price))
+        for tid in (34, 35, 36):
+            con.execute("INSERT INTO inventory VALUES(?,1,100)", (tid,))
+        from unittest import mock
+        with mock.patch("eve_profit.along.order_slots", return_value=2):
+            res = plan_along(con, g, Profile(cargo_m3=5000, current_location_id=60000001), g.name[far])
+        adv = {d["name"]: d["advice"] for d in res["sell_here"]}
+        self.assertEqual(adv["Mexallon"], "LIST")                              # biggest gain
+        self.assertEqual(adv["Pyerite"], "LIST")
+        self.assertEqual(adv["Tritanium"], "SELL NOW")                         # smallest gain lost the last slot
+        txt = format_along(res)
+        self.assertIn("Market order slots from your skills: 2", txt)
+        self.assertIn("(no free slot)", txt)
