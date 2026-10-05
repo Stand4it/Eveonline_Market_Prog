@@ -100,10 +100,16 @@ def login(client_id, path=TOKEN_FILE, open_browser=True, post=None):
         def log_message(self, *a):
             pass
 
-    srv = http.server.HTTPServer(("127.0.0.1", CALLBACK_PORT), H)
+    try:
+        srv = http.server.HTTPServer(("127.0.0.1", CALLBACK_PORT), H)
+    except OSError:
+        raise RuntimeError(f"Port {CALLBACK_PORT} is busy (an earlier login still running?). "
+                           f"Close other eve_profit windows and retry.")
     threading.Thread(target=srv.handle_request, daemon=True).start()
     url = auth_url(client_id, state, challenge)
-    print("Open this URL if the browser does not start:\n" + url)
+    print("Opening your browser to log in. If it does not open, paste this URL into it:\n" + url)
+    print("Waiting for you to click Authorize in the browser (Ctrl+C to cancel, gives up after 5 minutes)...",
+          flush=True)
     if open_browser:
         webbrowser.open(url)
     deadline = time.time() + 300

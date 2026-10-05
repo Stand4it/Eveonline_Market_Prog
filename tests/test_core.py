@@ -35,6 +35,22 @@ class T(unittest.TestCase):
         self.assertEqual([x.isk_per_hour for x in o],
                          sorted([x.isk_per_hour for x in o], reverse=True))
 
+    def test_client_id_validation_and_priority(self):
+        from eve_profit.cli import resolve_client_id
+        good = "1bcbf467858d46c29b98c19f5cf383c7"
+        old = os.getcwd()
+        os.chdir(self.d)
+        try:
+            os.environ["EVE_CLIENT_ID"] = "paste-client-id-here"           # stale placeholder in env
+            self.assertEqual(resolve_client_id(good), good)                # explicit wins
+            with self.assertRaises(SystemExit):
+                resolve_client_id("")                                      # placeholder alone is rejected
+            open("client_id.txt", "w").write(good + "\n")
+            self.assertEqual(resolve_client_id(""), good)                  # file beats bad env
+        finally:
+            os.environ.pop("EVE_CLIENT_ID", None)
+            os.chdir(old)
+
     def test_regions_near(self):
         from eve_profit.cli import regions_near
         self.assertEqual(regions_near(self.con, Profile()), [10000001])

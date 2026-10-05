@@ -9,6 +9,24 @@ from .config import Profile, default_db_path
 from .planner import format_plan, plan
 
 
+def resolve_client_id(explicit=""):
+    """Priority: --client-id, then client_id.txt, then env EVE_CLIENT_ID. Placeholders/typos are
+    rejected: a real CCP client id is 32 hex characters."""
+    import re
+    cands = [explicit]
+    if os.path.exists("client_id.txt"):
+        cands.append(open("client_id.txt").read().strip())
+    cands.append(os.environ.get("EVE_CLIENT_ID", ""))
+    for c in cands:
+        if c and re.fullmatch(r"[0-9a-fA-F]{32}", c.strip()):
+            return c.strip()
+    bad = [c for c in cands if c]
+    if bad:
+        raise SystemExit(f"Client ID '{bad[0]}' is not valid (expected 32 letters/digits). Put the real one in "
+                         f"client_id.txt and clear any old setting:  Remove-Item Env:EVE_CLIENT_ID")
+    return ""
+
+
 def regions_near(con, p):
     """Region ids of every system within 2x your jump radius (so cross-border trades are seen)."""
     from .graph import Graph
@@ -39,10 +57,7 @@ def main(argv=None):
     ap.add_argument("--hours", type=float, default=0)
     ap.add_argument("--top", type=int, default=12)
     a = ap.parse_args(argv)
-    if not a.client_id:
-        a.client_id = os.environ.get("EVE_CLIENT_ID", "")
-        if not a.client_id and os.path.exists("client_id.txt"):
-            a.client_id = open("client_id.txt").read().strip()
+    a.client_id = resolve_client_id(a.client_id)
 
     con = db.connect(a.db)
     p = Profile.load(a.profile)
