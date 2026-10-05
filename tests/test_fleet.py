@@ -77,3 +77,22 @@ class StockTests(unittest.TestCase):
         self.assertIn("Odd Skin x5", txt)
         self.assertIn("2 stacks", txt)
         self.assertIn("inside your ship's cargo", txt)
+
+
+class LoadTests(unittest.TestCase):
+    def test_load_prefers_dense_value_and_respects_cargo(self):
+        from eve_profit.stock import best_loads, format_loads
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        # Tritanium 0.01 m3 (cheap per m3) vs a 5 m3 item with a much better price per m3 is the Widget (16000/5)
+        con.execute("INSERT INTO inventory VALUES(34,1,2000000)")        # 20,000 m3 of Tritanium
+        con.execute("INSERT INTO inventory VALUES(36,1,100000)")         # Mexallon 1,000 m3, pricier per m3
+        p = Profile(max_jumps=2, cargo_m3=5000, wallet_isk=1e9)
+        loads = best_loads(con, g, p)
+        self.assertTrue(loads)
+        d = loads[0]
+        self.assertLessEqual(d["used"], 5000 + 1e-6)
+        dens = [v / u for _, u, v in d["items"]]                          # both items are 0.01 m3, so ISK/unit = ISK/m3 order
+        self.assertEqual(dens, sorted(dens, reverse=True))                # densest value is loaded first
+        self.assertIn("Best hold-loads", format_loads(loads))
+        self.assertFalse([w for w in d["waypoints"] if g.is_red(w)])
