@@ -69,7 +69,7 @@ def find_trades(con, g, p):
                     f"sell @ {g.name[b]}",
                     profit, l1 + l2, jumps, secs / 3600,
                     _names(g, r1.path) + " | " + _names(g, r2.path),
-                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid], "stops": stops},
+                    {"type_id": tid, "units": units, "cost": cost, "m3": units * vol[tid], "stops": stops, "from_sys": a, "to_sys": b},
                     waypoints=r1.path[1:] + r2.path[1:]))
     return out
 

@@ -37,7 +37,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -134,6 +134,15 @@ def _run(a):
         from .mock import load_mock
         load_mock(con)
         print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "explain":
+        from .explain import explain_trade
+        from .graph import Graph
+        opps = plan(con, p, max(a.top, a.pick), save=False)
+        if len(opps) < a.pick:
+            raise SystemExit("No such opportunity; run scan first")
+        print(format_plan([opps[a.pick - 1]]))
+        print()
+        print(explain_trade(con, Graph(con), p, opps[a.pick - 1]))
     elif a.cmd == "diag":
         from .diag import diagnose
         print(diagnose(con, p))

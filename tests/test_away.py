@@ -68,3 +68,16 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExplainTests(unittest.TestCase):
+    def test_explain_matches_the_ranked_trade(self):
+        from eve_profit.explain import explain_trade
+        con, g = setup()
+        p = Profile(max_jumps=3, cargo_m3=5000, wallet_isk=1e9, min_profit_isk=1)
+        o = next(o for o in plan(con, p, 100000, False) if o.kind == "trade" and "from_sys" in o.detail)
+        txt = explain_trade(con, g, p, o)
+        self.assertIn("BUY in", txt)
+        self.assertIn(f"{o.detail['units']:,} units, pay", txt)
+        self.assertIn("Wallet left after buying", txt)
+        self.assertIn("supports trades", explain_trade(con, g, p, type("O", (), {"kind": "mine", "detail": {}})()))

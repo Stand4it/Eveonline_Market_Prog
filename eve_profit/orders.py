@@ -49,7 +49,7 @@ def sell_into_bids(bids, units, tax):
     return sold, net
 
 
-def walk_trade(asks, bids, max_units, wallet, tax):
+def walk_trade(asks, bids, max_units, wallet, tax, trace=None):
     """Buy from asks, sell into bids while each marginal unit stays profitable.
     -> (units, cost, net_revenue)."""
     ai = bi = 0
@@ -67,6 +67,8 @@ def walk_trade(asks, bids, max_units, wallet, tax):
             bi += 1
             b_left = bids[bi][1] if bi < len(bids) else 0
             continue
+        if trace is not None:
+            trace.append((take, ap, bp))
         units += take
         cost += take * ap
         rev += take * bp * (1 - tax)
