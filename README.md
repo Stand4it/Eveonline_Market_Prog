@@ -188,3 +188,5 @@ If you see `[timing]` lines, clear the setting:  Remove-Item Env:EVE_PROFIT_TIMI
 
 ## A second character, from scratch (`--char`)
 `python -m eve_profit login --char fresh` then `sync --char fresh`, `now --char fresh`, etc. Each name gets its own `tokens_NAME.json`, `profile_NAME.json` and `eve_profit_NAME.db` (the map and item data are copied once from the main database), so your main character is never touched. At the browser login screen choose the new character.
+
+`python -m eve_profit chars` lists the main character and every `--char` you have set up (skill points, blueprints, wallet, ship, location) and points at the least built up one.
