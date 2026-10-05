@@ -66,7 +66,10 @@ def format_best(name, qty, rows, here_name):
         L.append(f"   {d['net']:>14,.0f} {d['avg']:>10,.2f} {d['units']:>9,} {d['system']:<14} {d['sec']:>4.1f} {jumps:>6} {mins:>5}  {gain}{warn}")
     L.append("")
     best = rows[0]
-    if local is not None and best["system"] != here_name and best["net"] > local["net"] * 1.05:
+    if local is not None and best["system"] != here_name and best["net"] > local["net"] * 1.05 and best["minutes"] is None:
+        L.append(f"=> {best['system']} pays {best['net'] - local['net']:,.0f} ISK more ({(best['net'] / local['net'] - 1) * 100:.0f}%) "
+                 f"but there is no safe route from here (red/yellow/hot systems in the way), so ignore it: sell in {here_name}.")
+    elif local is not None and best["system"] != here_name and best["net"] > local["net"] * 1.05:
         L.append(f"=> {best['system']} pays {best['net'] - local['net']:,.0f} ISK more than {here_name} "
                  f"({(best['net'] / local['net'] - 1) * 100:.0f}%). Worth the trip only if that beats what you'd earn in the ~"
                  f"{(best['minutes'] or 0) * 2:.0f} min round trip: ISK/hr = {(best['net'] - local['net']) / max((best['minutes'] or 1) / 30, 0.1):,.0f} (one way + back).")
