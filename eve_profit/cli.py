@@ -88,6 +88,9 @@ def main(argv=None):
         a.char = pick(a.client_id, os.path.dirname(a.db) or ".")
     if a.char:
         _use_character(a, ap)
+        if not os.path.exists(a.profile) and a.cmd not in ("login", "sync", "chars", "init", "profile"):
+            print("[first time for this character: syncing it now]")
+            a.sync = True
 
     kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
             "sde": "setup", "mock": "setup"}.get(a.cmd)
@@ -143,6 +146,11 @@ def _run(a):
         p.away_mode = True
     from .combat import seed_defaults
     seed_defaults(con)
+    NEEDS_SYSTEM = ("stock", "next", "along", "day", "sellplan", "bestprice", "check", "explain", "keep", "bpbuy", "fleet", "go", "zkill")
+    if a.cmd in NEEDS_SYSTEM and not a.sync and con.execute("SELECT COUNT(*) FROM systems WHERE name=? COLLATE NOCASE",
+                                                            (p.current_system,)).fetchone()[0] == 0:
+        raise SystemExit(f"This character's profile has no known location ('{p.current_system}'). "
+                         f"Run:  python -m eve_profit sync   (log in first with:  python -m eve_profit login)")
     if a.sync and a.cmd not in ("login", "sync", "init", "mock", "sde", "universe", "esimap"):
         from . import sso
         from .character import sync_character

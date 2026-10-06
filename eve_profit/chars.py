@@ -37,6 +37,11 @@ def compare(main_db, main_profile="profile.json"):
     L = [f"{'character':<12} {'skill pts':>12} {'skills':>6} {'BPs':>4} {'wallet ISK':>14}  {'ship':<22} where"]
     for r in rows:
         L.append(f"{r['label']:<12} {r['sp']:>12,.0f} {r['skills']:>6} {r['bps']:>4} {r['wallet']:>14,.0f}  {r['ship']:<22} {r['where']}")
+    L.append("")
+    L.append("Logins the tool knows (token files):")
+    from .active import known
+    for k in known():
+        L.append(f"   {k['name'] or '?':<22} id {k['id']:<12} file {k['path']}   label '{k['label']}'")
     low = rows[0]
     L.append("")
     if len(rows) == 1:
