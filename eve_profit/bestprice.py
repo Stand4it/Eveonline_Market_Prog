@@ -52,6 +52,20 @@ def best_prices(con, g, p, esi, type_id, qty, top=6, log=lambda *_: None):
     return out[:top * 3], cur
 
 
+def add_asks(esi, rows, type_id, here_name, top=8):
+    """Adds the lowest SELL order ('ask') in each listed system, so you can see where LISTING would pay most."""
+    regions = {d["region"] for d in rows[:top]} | {d["region"] for d in rows if d["system"] == here_name}
+    asks = {}
+    for rid in regions:
+        try:
+            for o in esi.paged(f"/markets/{rid}/orders/", order_type="sell", type_id=type_id):
+                k = (o.get("system_id"))
+                asks[k] = min(asks.get(k, o["price"]), o["price"])
+        except Exception:
+            continue
+    return asks
+
+
 def format_best(name, qty, rows, here_name):
     if not rows:
         return f"No buy orders for {name} anywhere (or ESI returned nothing). Try again later."
