@@ -196,3 +196,6 @@ Log each character in once with `python -m eve_profit login` (pick the character
 
 ## Combat numbers (`combatfit`)
 `python -m eve_profit combatfit --dps 450 --ehp 60000 --tank 200 --value 30000000` (numbers from Pyfa for the fit you fly; add `--ship "Vexor"` for a hull you are not in). Combat, salvage and mission activities are then ranked against trading and building by ISK/hr, and only offered when the win margin is high. Payouts have no public API: record real runs with `log --activity NAME --isk X --hours Y` and after 3 runs the tool uses your real ISK/hr instead of its guess.
+
+## `journey`: plan the whole trip (stock + trades + close-out)
+`python -m eve_profit journey --to Jita --live` plans one trip from where you are: pick up your stock that lies on or near the safe route, buy goods that sell for more further along, sell on the way, and close out the rest at the destination area (any market within 4 jumps of it). Side trips are priced as time (default: an hour of your time is worth 6M ISK) and are skipped when they don't pay. Items that would sell below what you paid are held back. `--detour N` sets how many jumps off the route to look (default 2). `--live` refreshes the markets of every region on the way first (slow the first time).

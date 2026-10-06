@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -76,6 +76,7 @@ def main(argv=None):
     ap.add_argument("--tank", type=float, default=0, help="combatfit: sustained repair per second from Pyfa")
     ap.add_argument("--value", type=float, default=0, help="combatfit: ship + fit value in ISK (what you lose if it dies)")
     ap.add_argument("--char", default="", help="separate character: own login, profile and database (e.g. --char fresh)")
+    ap.add_argument("--detour", type=int, default=2, help="journey: how many jumps off the route to look for goods and buyers")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -296,6 +297,21 @@ def _run(a):
         if a.to:
             p.current_system = a.to
         print(format_keep(*keep_vs_sell(con, Graph(con), p)))
+    elif a.cmd == "journey":
+        from .graph import Graph
+        from .journey import format_journey, journey_regions, plan_journey
+        if not a.to:
+            raise SystemExit('usage: journey --to Jita [--detour 2] [--live]')
+        g = Graph(con)
+        if a.live:
+            from .esi import ESI, refresh_orders
+            regs = journey_regions(g, p, a.to, a.detour)
+            print(f"Refreshing the markets along the route ({len(regs)} regions; the big hubs take a while)...", flush=True)
+            print("Fetched orders:", refresh_orders(con, ESI(), regs, a.max_pages))
+        try:
+            print(format_journey(plan_journey(con, g, p, a.to, a.detour)))
+        except (ValueError, KeyError) as e:
+            raise SystemExit(f"Cannot plan that trip: {e} (check the system name; 'no safe route' means every way is red or too long)")
     elif a.cmd == "combatfit":
         if not (a.dps and a.ehp):
             raise SystemExit('usage: combatfit [--ship "Vexor"] --dps 450 --ehp 60000 [--tank 200] [--value 30000000]\n'
