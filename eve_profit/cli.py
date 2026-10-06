@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -70,6 +70,11 @@ def main(argv=None):
     ap.add_argument("--item", default="", help="bestprice: item name or type id")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
+    ap.add_argument("--ship", default="", help="combatfit: hull name (default: the ship you are in)")
+    ap.add_argument("--dps", type=float, default=0, help="combatfit: damage per second from Pyfa")
+    ap.add_argument("--ehp", type=float, default=0, help="combatfit: effective HP from Pyfa")
+    ap.add_argument("--tank", type=float, default=0, help="combatfit: sustained repair per second from Pyfa")
+    ap.add_argument("--value", type=float, default=0, help="combatfit: ship + fit value in ISK (what you lose if it dies)")
     ap.add_argument("--char", default="", help="separate character: own login, profile and database (e.g. --char fresh)")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
@@ -268,6 +273,20 @@ def _run(a):
         if a.to:
             p.current_system = a.to
         print(format_keep(*keep_vs_sell(con, Graph(con), p)))
+    elif a.cmd == "combatfit":
+        if not (a.dps and a.ehp):
+            raise SystemExit('usage: combatfit [--ship "Vexor"] --dps 450 --ehp 60000 [--tank 200] [--value 30000000]\n'
+                             "   Read the numbers off Pyfa (DPS, effective HP, sustained tank) for the fit you fly.")
+        ship = a.ship or p.ship_name
+        st = {"combat_dps": a.dps, "ship_ehp": a.ehp, "ship_tank_dps": a.tank, "ship_value_isk": a.value}
+        p.ships[ship] = {**p.ships.get(ship, {}), **st}
+        if ship == p.ship_name:
+            p.combat_dps, p.ship_ehp, p.ship_tank_dps = a.dps, a.ehp, a.tank
+            if a.value:
+                p.fit_value_isk = a.value
+        p.save(a.profile)
+        print(f"Saved combat numbers for {ship}: {a.dps:,.0f} DPS, {a.ehp:,.0f} EHP, {a.tank:,.0f} tank/s. "
+              f"Combat is now ranked against everything else by ISK/hr (only where the win margin is high).")
     elif a.cmd == "now":
         _now(a)
     elif a.cmd == "chars":

@@ -193,3 +193,6 @@ If you see `[timing]` lines, clear the setting:  Remove-Item Env:EVE_PROFIT_TIMI
 
 ## No `--char` needed (automatic character)
 Log each character in once with `python -m eve_profit login` (pick the character at the browser screen; it is filed automatically). After that every command finds the character you are playing: the one that is online now, else the last one used. Each has its own database (`E:\EveProfit\eve_profit_<name>.db`) and profile. `--char NAME` (label, id or part of the name) still overrides. Logins made before the online permission was added need one more `login` so the tool can see who is online.
+
+## Combat numbers (`combatfit`)
+`python -m eve_profit combatfit --dps 450 --ehp 60000 --tank 200 --value 30000000` (numbers from Pyfa for the fit you fly; add `--ship "Vexor"` for a hull you are not in). Combat, salvage and mission activities are then ranked against trading and building by ISK/hr, and only offered when the win margin is high. Payouts have no public API: record real runs with `log --activity NAME --isk X --hours Y` and after 3 runs the tool uses your real ISK/hr instead of its guess.
