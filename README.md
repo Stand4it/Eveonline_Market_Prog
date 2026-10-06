@@ -208,3 +208,6 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 
 ## Measure ISK/hr automatically (`start` / `stop`)
 `python -m eve_profit start --activity "Level 1 security mission"` before you begin, `python -m eve_profit stop` when you finish (add `--isk N` for loot or salvage you sell yourself). The tool reads your wallet journal (bounties, mission rewards and time bonuses, discovery rewards, insurance) for that time window and logs ISK and hours for you. After 3 runs of the same activity the planner uses your measured ISK/hr instead of its guess.
+
+## `trainplan`: what to train now, next, and after that
+`python -m eve_profit trainplan --hours 24` lists skills in order for THIS character, using its real skills and queue: safe money first (Trade, Accounting, Broker Relations, hauler, Retail), then combat basics, exploration, mining. Prerequisites are added automatically so each line can be trained at its turn. `skills` prints the same plan after its ISK/hr-measured advice.

@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -450,6 +450,18 @@ def _run(a):
             print(f"Fetched training ranks for {got} skills from ESI.")
         print("Testing each skill by re-running the planner (this can take a minute or two)...")
         print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
+        from .trainplan import format_trainplan, plan_training
+        print("\n" + format_trainplan(plan_training(con, a.hours or 72)))
+    elif a.cmd == "trainplan":
+        from .advisor import fill_skill_info
+        from .esi import ESI
+        from .trainplan import GOALS, format_trainplan, plan_training
+        try:
+            fill_skill_info(con, ESI(), [r[0] for n, _, _ in GOALS for r in [con.execute(
+                "SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (n,)).fetchone() or (None,)] if r])
+        except Exception:
+            pass
+        print(format_trainplan(plan_training(con, a.hours or 24)))
     elif a.cmd == "fleet":
         from .fleet import describe_fleet
         from .graph import Graph
