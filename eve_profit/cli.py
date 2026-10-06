@@ -77,6 +77,8 @@ def main(argv=None):
     ap.add_argument("--value", type=float, default=0, help="combatfit: ship + fit value in ISK (what you lose if it dies)")
     ap.add_argument("--char", default="", help="separate character: own login, profile and database (e.g. --char fresh)")
     ap.add_argument("--detour", type=int, default=2, help="journey: how many jumps off the route to look for goods and buyers")
+    ap.add_argument("--max-age", type=int, default=15, help="--live: skip regions downloaded less than this many minutes ago")
+    ap.add_argument("--quick", action="store_true", help="journey --live: refresh only the items you own along the route (seconds, not minutes)")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -304,10 +306,23 @@ def _run(a):
             raise SystemExit('usage: journey --to Jita [--detour 2] [--live]')
         g = Graph(con)
         if a.live:
-            from .esi import ESI, refresh_orders
+            from .esi import ESI, refresh_item, refresh_orders, region_age_min
             regs = journey_regions(g, p, a.to, a.detour)
-            print(f"Refreshing the markets along the route ({len(regs)} regions; the big hubs take a while)...", flush=True)
-            print("Fetched orders:", refresh_orders(con, ESI(), regs, a.max_pages))
+            if a.quick:
+                tids = [r[0] for r in con.execute("SELECT DISTINCT type_id FROM inventory")]
+                print(f"Quick refresh: {len(tids)} items you own x {len(regs)} regions...", flush=True)
+                esi, n = ESI(), 0
+                for tid in tids:
+                    try:
+                        n += refresh_item(con, esi, regs, tid)
+                    except Exception as e:
+                        print(f"   item {tid} skipped: {type(e).__name__}")
+                print("Fetched orders:", n)
+            else:
+                stale = [r for r in regs if (region_age_min(con, r) is None or region_age_min(con, r) >= a.max_age)]
+                print(f"Refreshing the markets along the route: {len(stale)} of {len(regs)} regions are stale "
+                      f"(older than {a.max_age} min); the rest are reused. Big hubs take a while; Ctrl+C keeps what is done.", flush=True)
+                print("Fetched orders:", refresh_orders(con, ESI(), regs, a.max_pages, a.max_age))
         try:
             print(format_journey(plan_journey(con, g, p, a.to, a.detour)))
         except (ValueError, KeyError) as e:
@@ -483,7 +498,7 @@ def _run(a):
                 print(f"Contacting ESI for market orders in regions {regions} "
                       f"(first page can take up to ~30 s; Ctrl+C to stop)...", flush=True)
                 from .esi import refresh_orders
-                print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages))
+                print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages, a.max_age))
                 from .contracts import refresh_contracts
                 from .graph import Graph
                 g0 = Graph(con)

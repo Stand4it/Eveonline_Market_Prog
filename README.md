@@ -202,3 +202,6 @@ Log each character in once with `python -m eve_profit login` (pick the character
 
 ## `compare`: list here, or make the trip? (ISK per active minute)
 `python -m eve_profit compare --to Jita` takes the stock in your hangar and prices four plans: **A** sell it all now here, **B** list what pays >15% more and instant-sell the rest, **C** the `journey` trip with everything (pickups, trades on the way, close-out), **D** list the stacks that sell fast here and take the trip with the rest. For each: total ISK, active minutes, ISK per active minute, the *extra ISK per extra minute* over plan A, and when the cash arrives. "Fast" uses real daily volume from market history and assumes you get about 30% of it. The BEST line is the plan with the most ISK whose extra minutes pay more than your time is worth (6M ISK/hr by default).
+
+### Caching and speed
+Orders live in the SQLite database. `--live` skips regions downloaded in the last `--max-age` minutes (default 15; ESI itself caches 5 minutes), and each region is saved as it arrives, so Ctrl+C keeps what is done. `journey --live --quick` refreshes only the items you own along the route (seconds instead of minutes).

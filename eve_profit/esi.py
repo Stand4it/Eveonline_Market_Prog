@@ -83,11 +83,23 @@ class ESI:
         return self.get("/status/")[0]
 
 
-def refresh_orders(con, esi, region_ids, max_pages=None):
-    """Replace order book for the given regions + update kill counts + missing types."""
+def region_age_min(con, rid):
+    """Minutes since this region's orders were last downloaded (None = never)."""
+    t = con.execute("SELECT MAX(fetched_at) FROM orders WHERE region_id=?", (rid,)).fetchone()[0]
+    return None if t is None else (time.time() - t) / 60.0
+
+
+def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0):
+    """Replace order book for the given regions + update kill counts + missing types.
+    max_age (minutes): skip regions downloaded more recently than that. Each region is saved as soon as it
+    arrives, so Ctrl+C keeps everything downloaded so far."""
     now = time.time()
     n = 0
     for rid in region_ids:
+        age = region_age_min(con, rid)
+        if max_age and age is not None and age < max_age:
+            print(f"  region {rid}: already fresh ({age:.0f} min old), skipped", flush=True)
+            continue
         rows = esi.region_orders(rid, max_pages, log=lambda m: print(m, flush=True))
         con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
         con.executemany(
@@ -95,6 +107,7 @@ def refresh_orders(con, esi, region_ids, max_pages=None):
             [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid,
               int(o["is_buy_order"]), o["price"], o["volume_remain"], o.get("min_volume", 1),
               o.get("issued", ""), now) for o in rows])
+        con.commit()
         n += len(rows)
     con.execute("DELETE FROM system_kills")
     con.executemany("INSERT INTO system_kills VALUES(?,?,?,?)",

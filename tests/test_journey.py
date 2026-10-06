@@ -62,3 +62,32 @@ class JourneyTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RefreshTests(unittest.TestCase):
+    def test_fresh_regions_are_skipped_and_each_region_is_saved_as_it_arrives(self):
+        from eve_profit.esi import refresh_orders, region_age_min
+        con, g, path = world()
+
+        class E:
+            def __init__(self):
+                self.regions = []
+
+            def region_orders(self, rid, max_pages=None, log=None):
+                self.regions.append(rid)
+                return [{"order_id": 9000 + rid, "type_id": 34, "location_id": 60000001, "system_id": 1,
+                         "is_buy_order": True, "price": 5.0, "volume_remain": 10}]
+
+            def system_kills(self):
+                return []
+
+            def get(self, path, **kw):
+                return [], 1
+
+        e = E()
+        refresh_orders(con, e, [10000001, 10000002])
+        self.assertEqual(e.regions, [10000001, 10000002])
+        self.assertLess(region_age_min(con, 10000002), 1)
+        e2 = E()
+        refresh_orders(con, e2, [10000001, 10000002], max_age=15)
+        self.assertEqual(e2.regions, [])                                  # both fresh: nothing downloaded
