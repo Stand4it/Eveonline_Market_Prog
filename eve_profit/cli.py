@@ -79,6 +79,7 @@ def main(argv=None):
     ap.add_argument("--detour", type=int, default=2, help="journey: how many jumps off the route to look for goods and buyers")
     ap.add_argument("--max-age", type=int, default=15, help="--live: skip regions downloaded less than this many minutes ago")
     ap.add_argument("--quick", action="store_true", help="journey --live: refresh only the items you own along the route (seconds, not minutes)")
+    ap.add_argument("--paused", type=float, default=0, help="stop: minutes you were away from the activity (not counted)")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -226,7 +227,7 @@ def _run(a):
             esi = ESI()
             esi.token, _ = sso.get_token(a.client_id)
             try:
-                print(stop(con, esi, a.isk, ship=p.ship_name))
+                print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused))
             except ValueError as e:
                 raise SystemExit(str(e))
     elif a.cmd == "log":
