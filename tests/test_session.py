@@ -49,3 +49,28 @@ class SummaryTests(unittest.TestCase):
         self.assertIn("Level 1 security mission", txt)
         self.assertEqual(txt.count("Level 2 security mission"), 2)       # one line per ship
         self.assertIn("Nothing timed yet", summary(db.connect(os.path.join(tempfile.mkdtemp(), "e.db"))))
+
+
+class LootTests(unittest.TestCase):
+    def test_loot_value_uses_best_market_net_of_travel_time_and_adds_hours(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.loot import gains, value_loot
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        con.execute("DELETE FROM orders WHERE type_id=34")
+        near = [s for s, r in g.reach(1, 2).items() if r.jumps == 1][0]
+        con.execute("INSERT INTO orders VALUES(990001,34,60000001,1,10000001,1,1.0,10000000,1,'',1)")        # bid here 1.0
+        con.execute("INSERT INTO orders VALUES(990002,34,?,?,10000001,1,5.0,10000000,1,'',1)", (60000000 + near, near))   # 5.0 one jump away
+        p = Profile(current_system="Home", secs_per_jump=45)
+        rows = gains({"34:1": 10}, {"34:1": 1010})
+        self.assertEqual(rows, [(34, 1, 1000)])
+        big = value_loot(con, g, p, [(34, 1, 100000)])
+        self.assertEqual(big["where"], g.name[near])                       # worth the side trip
+        self.assertGreater(big["value"], 100000 * 1.0)
+        self.assertGreater(big["travel_hours"], 0)
+        small = value_loot(con, g, p, [(34, 1, 10)])
+        self.assertIsNone(small["where"])                                  # not worth leaving for
+        self.assertEqual(small["travel_hours"], 0)

@@ -213,3 +213,6 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 `python -m eve_profit trainplan --hours 24` lists skills in order for THIS character, using its real skills and queue: safe money first (Trade, Accounting, Broker Relations, hauler, Retail), then combat basics, exploration, mining. Prerequisites are added automatically so each line can be trained at its turn. `skills` prints the same plan after its ISK/hr-measured advice.
 
 `python -m eve_profit activities` lists everything you have timed with `start`/`stop`: runs, ISK/hr and hours, one line per activity name and ship. Name each agent level and career separately (`"Soldier of Fortune L1"`, `"Level 2 security mission"`); `stop` also records the ship and your total skill points with each run so later levels and hulls are never mixed up.
+
+### Loot counts too (`start` / `stop`)
+`start` takes a snapshot of the items in your station hangars; `stop` re-reads them and values what you gained at what it would really sell for: either where you are, or at ONE nearby market if the extra ISK beats the time of the round trip (valued at 6M ISK/hr), and that travel time is added to the mission's hours. Move loot from your ship's cargo into the Item Hangar first (the program cannot see inside the ship). Use `--no-loot` to skip it.

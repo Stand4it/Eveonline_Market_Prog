@@ -26,15 +26,15 @@ def summarize_journal(entries, since_ts, until_ts=None):
     return sum(by.values()), by
 
 
-def start(con, activity, char_id, now=None):
+def start(con, activity, char_id, now=None, snap=None):
     now = now or time.time()
     con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)",
-                (json.dumps({"activity": activity, "t": now, "char": char_id}),))
+                (json.dumps({"activity": activity, "t": now, "char": char_id, "snap": snap}),))
     con.commit()
     return f"Started timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   (add --isk N for loot you sell yourself)"
 
 
-def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None):
+def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None):
     row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
     if not row:
         raise ValueError("no session running: start one with  start --activity \"NAME\"")
@@ -44,6 +44,9 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None):
     isk, by = summarize_journal(entries, s["t"], now)
     isk += extra_isk
     hours = max((now - s["t"]) / 3600.0 - paused_min / 60.0, 1 / 60.0)
+    if loot:
+        isk += loot["value"]
+        hours += loot["travel_hours"]
     sp = con.execute("SELECT SUM(sp) FROM character_skills").fetchone()[0] or None
     con.execute("INSERT INTO activity_log(activity,isk,hours,ts,ship,sp) VALUES(?,?,?,?,?,?)",
                 (s["activity"], isk, hours, now, ship, sp))
@@ -51,6 +54,9 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None):
     con.commit()
     lines = [f"'{s['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / hours:,.0f} ISK/hr (logged)."]
     lines += [f"   {k:<34} {v:>14,.0f}" for k, v in sorted(by.items(), key=lambda kv: -kv[1])]
+    if loot:
+        from .loot import describe
+        lines += describe(loot)
     if extra_isk:
         lines.append(f"   {'(your --isk for loot/salvage)':<34} {extra_isk:>14,.0f}")
     if not by and not extra_isk:
