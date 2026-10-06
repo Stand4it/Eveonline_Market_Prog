@@ -205,3 +205,6 @@ Log each character in once with `python -m eve_profit login` (pick the character
 
 ### Caching and speed
 Orders live in the SQLite database. `--live` skips regions downloaded in the last `--max-age` minutes (default 15; ESI itself caches 5 minutes), and each region is saved as it arrives, so Ctrl+C keeps what is done. `journey --live --quick` refreshes only the items you own along the route (seconds instead of minutes).
+
+## Measure ISK/hr automatically (`start` / `stop`)
+`python -m eve_profit start --activity "Level 1 security mission"` before you begin, `python -m eve_profit stop` when you finish (add `--isk N` for loot or salvage you sell yourself). The tool reads your wallet journal (bounties, mission rewards and time bonuses, discovery rewards, insurance) for that time window and logs ISK and hours for you. After 3 runs of the same activity the planner uses your measured ISK/hr instead of its guess.
