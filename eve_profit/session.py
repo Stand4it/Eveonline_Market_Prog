@@ -34,7 +34,7 @@ def start(con, activity, char_id, now=None):
     return f"Started timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   (add --isk N for loot you sell yourself)"
 
 
-def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0):
+def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None):
     row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
     if not row:
         raise ValueError("no session running: start one with  start --activity \"NAME\"")
@@ -44,7 +44,9 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0):
     isk, by = summarize_journal(entries, s["t"], now)
     isk += extra_isk
     hours = max((now - s["t"]) / 3600.0 - paused_min / 60.0, 1 / 60.0)
-    con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES(?,?,?,?)", (s["activity"], isk, hours, now))
+    sp = con.execute("SELECT SUM(sp) FROM character_skills").fetchone()[0] or None
+    con.execute("INSERT INTO activity_log(activity,isk,hours,ts,ship,sp) VALUES(?,?,?,?,?,?)",
+                (s["activity"], isk, hours, now, ship, sp))
     con.execute("DELETE FROM meta WHERE key='session'")
     con.commit()
     lines = [f"'{s['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / hours:,.0f} ISK/hr (logged)."]
@@ -56,3 +58,17 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0):
                      "so use  log --activity NAME --isk N --hours H  to enter it by hand).")
     lines.append("After 3 logged runs of the same activity the planner uses your real ISK/hr instead of its guess.")
     return "\n".join(lines)
+
+
+def summary(con):
+    """Every activity you have timed: runs, ISK/hr overall and per ship, so levels and hulls are never mixed up."""
+    rows = con.execute("SELECT activity, COALESCE(ship,'?') AS ship, COUNT(*) n, SUM(isk) isk, SUM(hours) h "
+                       "FROM activity_log GROUP BY activity, ship ORDER BY activity, ship").fetchall()
+    if not rows:
+        return ("Nothing timed yet. Use  start --activity \"Level 1 security mission\"  ...  stop  "
+                "(name each agent level and career separately, e.g. \"Soldier of Fortune L1\", \"Level 2 security mission\").")
+    L = [f"{'activity':<38} {'ship':<14} {'runs':>4} {'ISK/hr':>14} {'total ISK':>14} {'hours':>7}"]
+    for r in rows:
+        L.append(f"{r['activity']:<38} {r['ship']:<14} {r['n']:>4} {r['isk'] / max(r['h'], 1e-9):>14,.0f} {r['isk']:>14,.0f} {r['h']:>7.1f}")
+    L.append("The planner uses the real ISK/hr once an activity name has 3 runs (names must match its activity list to be used).")
+    return "\n".join(L)

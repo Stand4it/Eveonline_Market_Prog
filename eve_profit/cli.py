@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -226,7 +226,7 @@ def _run(a):
             esi = ESI()
             esi.token, _ = sso.get_token(a.client_id)
             try:
-                print(stop(con, esi, a.isk))
+                print(stop(con, esi, a.isk, ship=p.ship_name))
             except ValueError as e:
                 raise SystemExit(str(e))
     elif a.cmd == "log":
@@ -452,6 +452,9 @@ def _run(a):
         print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
         from .trainplan import format_trainplan, plan_training
         print("\n" + format_trainplan(plan_training(con, a.hours or 72)))
+    elif a.cmd == "activities":
+        from .session import summary
+        print(summary(con))
     elif a.cmd == "trainplan":
         from .advisor import fill_skill_info
         from .esi import ESI

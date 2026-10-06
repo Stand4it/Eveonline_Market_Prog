@@ -211,3 +211,5 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 
 ## `trainplan`: what to train now, next, and after that
 `python -m eve_profit trainplan --hours 24` lists skills in order for THIS character, using its real skills and queue: safe money first (Trade, Accounting, Broker Relations, hauler, Retail), then combat basics, exploration, mining. Prerequisites are added automatically so each line can be trained at its turn. `skills` prints the same plan after its ISK/hr-measured advice.
+
+`python -m eve_profit activities` lists everything you have timed with `start`/`stop`: runs, ISK/hr and hours, one line per activity name and ship. Name each agent level and career separately (`"Soldier of Fortune L1"`, `"Level 2 security mission"`); `stop` also records the ship and your total skill points with each run so later levels and hulls are never mixed up.

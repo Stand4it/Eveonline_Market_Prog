@@ -128,7 +128,8 @@ def connect(path: str) -> sqlite3.Connection:
                           ("character_skills", "sp", "REAL NOT NULL DEFAULT 0"),
                           ("activities", "agent_level", "INTEGER NOT NULL DEFAULT 0"),
                           ("activities", "lp_per_hour", "REAL NOT NULL DEFAULT 0"),
-                          ("activities", "min_standing", "REAL NOT NULL DEFAULT 0")):
+                          ("activities", "min_standing", "REAL NOT NULL DEFAULT 0"),
+                          ("activity_log", "ship", "TEXT"), ("activity_log", "sp", "REAL")):
         try:
             con.execute(f"ALTER TABLE {tbl} ADD COLUMN {col} {ddl}")
         except sqlite3.OperationalError:
