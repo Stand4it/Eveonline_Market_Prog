@@ -256,6 +256,229 @@ def _run(a):
                 print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused, loot=loot))
             except ValueError as e:
                 raise SystemExit(str(e))
+    elif a.cmd == "log":
+        if not (a.activity and a.hours > 0):
+            raise SystemExit('usage: log --activity "<name>" --isk <earned> --hours <spent>')
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES(?,?,?,?)",
+                    (a.activity, a.isk, a.hours, time.time()))
+        con.commit()
+        print("Logged. Planner will use your real average after 3 runs.")
+    elif a.cmd == "mock":
+        from .mock import load_mock
+        load_mock(con)
+        print("Mock universe + market loaded into", a.db)
+    elif a.cmd == "day":
+        from .graph import Graph
+        from .schedule import build_day, format_day
+        print(format_day(build_day(con, Graph(con), p, a.hours or 8.0, a.cash, include_stock=not a.no_stock)))
+    elif a.cmd == "sellplan":
+        from .esi import ESI
+        from .graph import Graph
+        from .sellplan import format_sellplan, sell_plan
+        g = Graph(con)
+        world = {}
+        if a.world:
+            from .bestprice import best_prices
+            esi = ESI()
+            held = con.execute("SELECT i.type_id,i.quantity FROM inventory i WHERE i.system_id=? ORDER BY i.quantity DESC",
+                               (g.id_of(p.current_system),)).fetchall()
+            first = sell_plan(con, g, p, a.to or None)["rows"][:a.world]       # the biggest stacks only
+            ids = {r["name"]: r for r in first}
+            for r in held:
+                nm = con.execute("SELECT name FROM types WHERE type_id=?", (r["type_id"],)).fetchone()[0]
+                if nm in ids:
+                    print(f"Checking every market for {nm}...", flush=True)
+                    world[r["type_id"]] = best_prices(con, g, p, esi, r["type_id"], r["quantity"])[0]
+        print(format_sellplan(sell_plan(con, g, p, a.to or None, world)))
+    elif a.cmd == "bestprice":
+        from .bestprice import best_prices, format_best, resolve_type
+        from .esi import ESI
+        from .graph import Graph
+        if not a.item:
+            raise SystemExit('usage: bestprice --item "Zydrine" [--qty 25393]')
+        g = Graph(con)
+        tid, nm, _ = resolve_type(con, a.item)
+        held = con.execute("SELECT quantity FROM inventory WHERE type_id=? AND system_id=?", (tid, g.id_of(p.current_system))).fetchone()
+        qty = a.qty or (held[0] if held else 1)
+        print(f"Asking ESI for buy orders of {nm} in every region (about a minute)...", flush=True)
+        rows, _ = best_prices(con, g, p, ESI(), tid, qty, log=lambda m: print(m, flush=True))
+        print(format_best(nm, qty, rows, p.current_system))
+        from .bestprice import add_asks
+        asks = add_asks(ESI(), rows, tid, p.current_system)
+        sysid = {g.name[k]: k for k in asks}
+        here_ask = asks.get(g.id_of(p.current_system))
+        net = lambda price: qty * price * (1 - p.sales_tax - p.broker_fee)
+        print("\nIf you LIST instead (lowest sell order now, you still wait for a buyer; after tax and broker fee):")
+        seen = set()
+        for d in rows[:8]:
+            sid = next((k for k, v in g.name.items() if v == d["system"]), None)
+            if sid in asks and d["system"] not in seen:
+                seen.add(d["system"])
+                tag = "  <- here" if d["system"] == p.current_system else ""
+                print(f"   {d['system']:<14} lowest ask {asks[sid]:>16,.0f}   you would get about {net(asks[sid]):>16,.0f}{tag}")
+        if here_ask:
+            print(f"   (here {p.current_system}: listing ~{net(here_ask):,.0f} vs selling instantly here {rows and next((d['net'] for d in rows if d['system'] == p.current_system), 0):,.0f})")
+    elif a.cmd == "update":
+        from .update import check_update, remember
+        status, build = check_update(con)
+        if status == "new":
+            print(f"NEW GAME DATA (build {build}): a patch has changed items/blueprints/skills.\n"
+                  f"   Reload and re-check:  python -m eve_profit universe --force\n"
+                  f"   then:  python -m eve_profit scan --live   python -m eve_profit bpbuy   python -m eve_profit skills")
+        elif status == "first":
+            remember(con, build)
+            print(f"Recorded the current game data build ({build}). Run `update` again after each patch.")
+        else:
+            print(f"Game data is up to date (build {build}).")
+    elif a.cmd == "bpbuy":
+        from .bpbuy import bp_buy_candidates, format_bpbuy
+        from .graph import Graph
+        if a.to:
+            p.current_system = a.to           # evaluate the stock parked in that system, priced there
+        print(format_bpbuy(*bp_buy_candidates(con, Graph(con), p)))
+    elif a.cmd == "keep":
+        from .graph import Graph
+        from .keep import format_keep, keep_vs_sell
+        if a.to:
+            p.current_system = a.to
+        print(format_keep(*keep_vs_sell(con, Graph(con), p)))
+    elif a.cmd == "journey":
+        from .graph import Graph
+        from .journey import format_journey, journey_regions, plan_journey
+        if not a.to:
+            raise SystemExit('usage: journey --to Jita [--detour 2] [--live]')
+        g = Graph(con)
+        if a.live:
+            from .esi import ESI, refresh_item, refresh_orders, region_age_min
+            regs = journey_regions(g, p, a.to, a.detour)
+            if a.quick:
+                tids = [r[0] for r in con.execute("SELECT DISTINCT type_id FROM inventory")]
+                print(f"Quick refresh: {len(tids)} items you own x {len(regs)} regions...", flush=True)
+                esi, n = ESI(), 0
+                for tid in tids:
+                    try:
+                        n += refresh_item(con, esi, regs, tid)
+                    except Exception as e:
+                        print(f"   item {tid} skipped: {type(e).__name__}")
+                print("Fetched orders:", n)
+            else:
+                stale = [r for r in regs if (region_age_min(con, r) is None or region_age_min(con, r) >= a.max_age)]
+                print(f"Refreshing the markets along the route: {len(stale)} of {len(regs)} regions are stale "
+                      f"(older than {a.max_age} min); the rest are reused. Big hubs take a while; Ctrl+C keeps what is done.", flush=True)
+                print("Fetched orders:", refresh_orders(con, ESI(), regs, a.max_pages, a.max_age))
+        try:
+            print(format_journey(plan_journey(con, g, p, a.to, a.detour)))
+        except (ValueError, KeyError) as e:
+            raise SystemExit(f"Cannot plan that trip: {e} (check the system name; 'no safe route' means every way is red or too long)")
+    elif a.cmd == "compare":
+        from .compare import compare, format_compare
+        from .esi import ESI
+        from .graph import Graph
+        if not a.to:
+            raise SystemExit("usage: compare --to Jita [--detour 2]   (needs a synced character and fresh prices)")
+        try:
+            print(format_compare(compare(con, Graph(con), p, ESI(), a.to, a.detour)))
+        except (ValueError, KeyError) as e:
+            raise SystemExit(f"Cannot compare: {e}")
+    elif a.cmd == "combatfit":
+        if not (a.dps and a.ehp):
+            raise SystemExit('usage: combatfit [--ship "Vexor"] --dps 450 --ehp 60000 [--tank 200] [--value 30000000]\n'
+                             "   Read the numbers off Pyfa (DPS, effective HP, sustained tank) for the fit you fly.")
+        ship = a.ship or p.ship_name
+        st = {"combat_dps": a.dps, "ship_ehp": a.ehp, "ship_tank_dps": a.tank, "ship_value_isk": a.value}
+        p.ships[ship] = {**p.ships.get(ship, {}), **st}
+        if ship == p.ship_name:
+            p.combat_dps, p.ship_ehp, p.ship_tank_dps = a.dps, a.ehp, a.tank
+            if a.value:
+                p.fit_value_isk = a.value
+        p.save(a.profile)
+        print(f"Saved combat numbers for {ship}: {a.dps:,.0f} DPS, {a.ehp:,.0f} EHP, {a.tank:,.0f} tank/s. "
+              f"Combat is now ranked against everything else by ISK/hr (only where the win margin is high).")
+    elif a.cmd == "now":
+        _now(a)
+    elif a.cmd == "chars":
+        from .chars import compare
+        print(compare(a.db if not a.char else default_db_path(), "profile.json"))
+    elif a.cmd == "next":
+        from .graph import Graph
+        from .nextstep import next_action
+        print(next_action(con, Graph(con), p))
+    elif a.cmd == "zkill":
+        from .esi import ESI
+        from .zkill import ZKill, refresh_gank_map
+        print("Fetching recent hauler losses from zKillboard (about 1 request per second)...")
+        print(refresh_gank_map(con, ZKill(), ESI(), regions_near(con, p)))
+        from .graph import Graph
+        g = Graph(con)
+        top = sorted(g.gank.items(), key=lambda kv: -kv[1])[:10]
+        for s, n in top:
+            print(f"   {g.name[s]:<14} {n} hauler losses in 7 days  (sec {g.sec[s]:.1f})")
+    elif a.cmd == "fit":
+        from .fit import describe_fit
+        print(describe_fit(con, p))
+    elif a.cmd == "along":
+        from .along import format_along, plan_along
+        from .graph import Graph
+        if not a.to:
+            raise SystemExit('usage: along --to "<destination system>"')
+        g = Graph(con)
+        res = plan_along(con, g, p, a.to)
+        if any(d.get("advice") == "LIST" for d in res["sell_here"]):
+            try:
+                from .along import attach_history
+                from .esi import ESI
+                attach_history(ESI(), res, g.region[g.id_of(p.current_system)])
+            except Exception as e:
+                print("(could not fetch market history:", e, ")")
+        print(format_along(res))
+    elif a.cmd == "stock":
+        from .graph import Graph
+        from .stock import stock_report
+        print(stock_report(con, Graph(con), p, max(a.top, 25)))
+    elif a.cmd == "check":
+        from .esi import ESI, refresh_item
+        from .explain import explain_trade
+        from .graph import Graph
+        opps = plan(con, p, max(a.top, a.pick), save=False)
+        if len(opps) < a.pick or opps[a.pick - 1].kind != "trade":
+            raise SystemExit("check works on a ranked trade; run scan, then check --pick N")
+        o = opps[a.pick - 1]
+        g = Graph(con)
+        regions = sorted({g.region[o.detail["from_sys"]], g.region[o.detail["to_sys"]]})
+        print(f"Asking ESI for fresh orders of this item in regions {regions}...", flush=True)
+        print(f"Fresh orders stored: {refresh_item(con, ESI(), regions, o.detail['type_id'])}")
+        fresh = [x for x in plan(con, p, 10000, save=False) if x.kind == "trade"
+                 and x.detail.get("type_id") == o.detail["type_id"]
+                 and x.detail.get("from_sys") == o.detail["from_sys"] and x.detail.get("to_sys") == o.detail["to_sys"]]
+        if not fresh:
+            print("\nAFTER REFRESH THIS TRADE NO LONGER MAKES MONEY. Do not buy.")
+        else:
+            print(format_plan([fresh[0]]))
+            print()
+            print(explain_trade(con, g, p, fresh[0]))
+    elif a.cmd == "explain":
+        from .explain import explain_trade
+        from .graph import Graph
+        opps = plan(con, p, max(a.top, a.pick), save=False)
+        if len(opps) < a.pick:
+            raise SystemExit("No such opportunity; run scan first")
+        print(format_plan([opps[a.pick - 1]]))
+        print()
+        print(explain_trade(con, Graph(con), p, opps[a.pick - 1]))
+    elif a.cmd == "diag":
+        from .diag import diagnose
+        print(diagnose(con, p))
+    elif a.cmd == "skills":
+        from .advisor import advise, format_advice
+        from .advisor import candidate_skill_ids, fill_skill_info
+        from .esi import ESI
+        got = fill_skill_info(con, ESI(), candidate_skill_ids(con, p))
+        if got:
+            print(f"Fetched training ranks for {got} skills from ESI.")
+        print("Testing each skill by re-running the planner (this can take a minute or two)...")
+        print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
+        from .trainplan import format_trainplan, plan_training
+        print("\n" + format_trainplan(plan_training(con, a.hours or 72)))
     elif a.cmd == "activities":
         from .session import summary
         print(summary(con))
