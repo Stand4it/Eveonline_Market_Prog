@@ -39,7 +39,7 @@ def _ok(pos, a, b):
     return a != b and pos[a] < pos[b]            # (position on the route, side-trip length): the order you visit them
 
 
-def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR):
+def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR, skip=()):
     route, near = _geometry(g, p, dest_name, detour)
     path, pos = route.path, near
     sells, buys = load_books(con, set(near))
@@ -62,10 +62,13 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR):
         return (2 * pos[s][1] * p.jump_seconds / 60.0 + DOCK_MIN) * per_min
 
     stock_net = 0.0
+    taken = set()                                # (type_id, system) stock stacks this trip actually moves or sells
     held, carried, in_place = [], [], []
     ids = ",".join(str(int(s)) for s in near) or "0"
     for r in con.execute(f"SELECT type_id,system_id,quantity FROM inventory WHERE system_id IN ({ids})").fetchall():
         tid, a, qty = r["type_id"], r["system_id"], r["quantity"]
+        if (tid, a) in skip:
+            continue
         best = None
         for b, bids in buys.get(tid, {}).items():
             if not (b == a or _ok(pos, a, b)):
@@ -87,6 +90,7 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR):
             continue
         stop(d["from"])["sell"].append((d["name"], d["sold"], d["net"]))
         stock_net += d["net"]
+        taken.add((d["tid"], d["from"]))
     carried.sort(key=lambda d: -(d["net"] / max(d["m3"], 1e-6)))
     left_behind = []
     for d in carried:
@@ -101,6 +105,7 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR):
         stop(d["from"])["pick"].append((d["name"], units, 0.0))
         stop(d["at"])["sell"].append((d["name"], units, d["net"] * f))
         stock_net += d["net"] * f
+        taken.add((d["tid"], d["from"]))
 
     cands = []                                    # trades: buy at a (asks), sell at b (bids) further along
     for tid, asks_by in sells.items():
@@ -144,7 +149,7 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR):
     return {"route": [g.name[s] for s in path], "jumps": route.jumps, "extra_jumps": jumps - route.jumps,
             "stops": [(g.name[s], pos[s][1], stops[s]) for s in order], "stock_net": stock_net, "trade_profit": trade_profit,
             "total": total, "hours": hours, "isk_hr": total / hours if hours else 0.0, "used_m3": p.cargo_m3 - room,
-            "cargo_m3": p.cargo_m3, "held": held, "left_behind": left_behind, "dest": dest_name, "path_ids": path}
+            "taken": taken, "cargo_m3": p.cargo_m3, "held": held, "left_behind": left_behind, "dest": dest_name, "path_ids": path}
 
 
 def format_journey(res, limit=8):

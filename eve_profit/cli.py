@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -312,6 +312,16 @@ def _run(a):
             print(format_journey(plan_journey(con, g, p, a.to, a.detour)))
         except (ValueError, KeyError) as e:
             raise SystemExit(f"Cannot plan that trip: {e} (check the system name; 'no safe route' means every way is red or too long)")
+    elif a.cmd == "compare":
+        from .compare import compare, format_compare
+        from .esi import ESI
+        from .graph import Graph
+        if not a.to:
+            raise SystemExit("usage: compare --to Jita [--detour 2]   (needs a synced character and fresh prices)")
+        try:
+            print(format_compare(compare(con, Graph(con), p, ESI(), a.to, a.detour)))
+        except (ValueError, KeyError) as e:
+            raise SystemExit(f"Cannot compare: {e}")
     elif a.cmd == "combatfit":
         if not (a.dps and a.ehp):
             raise SystemExit('usage: combatfit [--ship "Vexor"] --dps 450 --ehp 60000 [--tank 200] [--value 30000000]\n'
