@@ -35,7 +35,7 @@ class Profile:
     mining_yield_m3_s: float = 0.0    # 0 = cannot mine
     minable_ores: list = field(default_factory=list)
     accounting_level: int = 4         # sales tax reduction
-    sales_tax_base: float = 0.045     # verify in-game; Stage 3 reads skills
+    sales_tax_base: float = 0.075     # base before Accounting; in-game check: Accounting V shows 3.37% (7.5% x 0.45)
     industry_level: int = 5           # skill 3380: -4% build time/level
     adv_industry_level: int = 3       # skill 3388: -3% build time/level
     mfg_slots_total: int = 1          # 1 + Mass Production + Advanced Mass Production (sync sets)
@@ -89,6 +89,8 @@ class Profile:
             with open(path) as f:
                 data = json.load(f)
             known = {k: v for k, v in data.items() if k in cls.__dataclass_fields__}
+            if known.get("sales_tax_base") in (0.045, 0.05):        # old default, wrong since the in-game check
+                known["sales_tax_base"] = 0.075
             return cls(**known)
         return cls()
 
