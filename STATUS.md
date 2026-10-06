@@ -56,3 +56,9 @@ at a time) | `keep` (build vs sell owned materials) | `bpbuy` (buy a blueprint t
    `bpbuy`, `skills`.
 7. Multi-character (Dahldaberg02, Dahldaberg3) as helper pilots; corp assets/blueprints if the corp is active.
 8. Reactions, invention/T2, PI, exploration/abyssal loot valuation, market-making (order-based station trading).
+
+## Where we are (latest)
+Built: `now` (one-command next step), `journey` / `compare` (trip and list-vs-trip by ISK per active minute), automatic character pick (online one), `trainplan` (what to train now/next), `start`/`stop`/`activities` (measured ISK/hr from the wallet journal, with loot valued net of travel time), `combatfit`, caching (skip fresh regions, save per region).
+Not yet verified on live data: `journey`, `compare`, loot valuation in `stop`, `stop` payouts from the real wallet journal.
+Next ideas: career-agent activities in the planner; scale measured level-1 results to higher levels by ship and skill points; training suggestions that improve the model; patient buy orders for away time; auto-snapshot of the hangar for loot; reprocess-or-sell check; ship shopping advisor.
+Lesson: after any edit to `cli.py`, run the tests: `tests/test_cli_dispatch.py` catches a command that lost its branch.
