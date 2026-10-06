@@ -1,6 +1,7 @@
 """Command line: python -m eve_profit <command>"""
 import argparse
 import os
+import sys
 import random
 import time
 
@@ -468,16 +469,33 @@ def _now(a):
     import io
     t0 = time.time()
 
+    class Progress(io.StringIO):
+        """Keeps the stage output for later but shows the slow download progress lines as they happen."""
+        SHOW = ("  region ", "Fetched", "Contracts", "LP stores", "zKillboard", "Structures", "Contacting")
+        _line = ""
+
+        def write(self, text):
+            super().write(text)
+            self._line += text
+            while "\n" in self._line:
+                line, self._line = self._line.split("\n", 1)
+                if line.startswith(self.SHOW):
+                    sys.__stdout__.write("   " + line.strip() + "\n")
+                    sys.__stdout__.flush()
+            return len(text)
+
     def stage(label, cmd, **kw):
         b = copy.copy(a)
         b.cmd, b.sync = cmd, False
         for k, v in kw.items():
             setattr(b, k, v)
         print(f"[{label}] ...", flush=True)
-        buf = io.StringIO()
+        buf = Progress()
         try:
             with contextlib.redirect_stdout(buf):
                 _run(b)
+        except KeyboardInterrupt:
+            print("   stopped with Ctrl+C: carrying on with the data already stored")
         except SystemExit as e:
             print(f"   skipped: {e}")
         except Exception as e:                  # one failed stage must not stop the rest

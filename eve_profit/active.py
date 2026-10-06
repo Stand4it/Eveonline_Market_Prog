@@ -83,7 +83,9 @@ def pick(client_id, state_dir, say=print):
         why = "online now"
     else:
         choice = next((k for k in ks if k["label"] == last), ks[0])
-        why = "none detected online (or login lacks the online permission): using the one you used last"
+        names = ", ".join(k["name"] or k["label"] or "main" for k in ks)
+        why = (f"cannot tell who is online, using the one you used last. Logged-in characters: {names}. "
+               f"Run `login` while playing the one you want (also adds the online permission)")
     remember(state_dir, choice["label"])
     say(f"[playing as {choice['name'] or choice['label'] or 'main'}: {why}]  (override with --char NAME)")
     return choice["label"]
