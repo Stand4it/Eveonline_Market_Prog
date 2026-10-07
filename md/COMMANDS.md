@@ -213,5 +213,11 @@ FIXLAST  -  correct the last timed run (--add-min N, --isk N)
 AGENTS  -  agents we know: open offers, your runs with them, agents near you by level, standings
    example: python -m eve_profit agents
 
+BUY  -  where to BUY an item cheapest near you (for agent jobs: acquire these goods)
+   --item         bestprice: item name or type id
+   --qty          bestprice: quantity (default: what you hold here, else 1)
+   --radius       buy: how many jumps around you to look for sellers
+   example: python -m eve_profit buy --item "Cap Booster 25" --qty 20
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```

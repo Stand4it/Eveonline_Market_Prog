@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -84,6 +84,7 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
+    ap.add_argument("--radius", type=int, default=10, help="buy: how many jumps around you to look for sellers")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -508,6 +509,15 @@ def _run(a):
             print("\nWHERE THE NOTES AND THE CODE DISAGREE:" if diffs else "\nNotes and code agree.")
             for x in diffs:
                 print("  - " + x)
+    elif a.cmd == "buy":
+        from .bestprice import resolve_type
+        from .buyprice import best_buys, format_buys
+        from .esi import ESI
+        from .graph import Graph
+        if not a.item:
+            raise SystemExit('usage: buy --item "Cap Booster 25" --qty 20 [--radius 10]')
+        tid, nm, _ = resolve_type(con, a.item)
+        print(format_buys(nm, a.qty or 1, best_buys(con, Graph(con), p, ESI(), regions_near(con, p), tid, a.qty or 1, a.radius), p.current_system))
     elif a.cmd == "agents":
         from .agents_view import report
         from .graph import Graph

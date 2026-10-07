@@ -27,6 +27,7 @@ COMMAND_HELP = {
     "pause": "freeze the running timer", "resume": "unfreeze it", "trainplan": "what to train now/next", "activities": "all timed runs",
     "status": "where data is stored, row counts", "docs": "refresh md/STATE.md and md/COMMANDS.md; --check shows doc/code drift",
     "fixlast": "correct the last timed run (--add-min N, --isk N)",
+    "buy": "where to BUY an item cheapest near you (for agent jobs: acquire these goods)",
     "agents": "agents we know: open offers, your runs with them, agents near you by level, standings",
 }
 
@@ -39,7 +40,7 @@ CMD_OPTS = {
     "next": ["--sync"], "keep": ["--to"], "bpbuy": ["--to"], "bestprice": ["--item", "--qty"], "sellplan": ["--to", "--world"],
     "day": ["--hours", "--cash", "--no-stock"], "now": ["--fast"], "combatfit": ["--dps", "--ehp", "--tank", "--value", "--ship"],
     "journey": ["--to", "--live", "--quick", "--detour", "--max-age"], "compare": ["--to", "--detour"], "start": ["--activity", "--no-loot"],
-    "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk", "--activity"],
+    "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk", "--activity"], "buy": ["--item", "--qty", "--radius"],
 }
 EXAMPLES = {
     "now": "python -m eve_profit now --fast", "next": "python -m eve_profit next", "scan": "python -m eve_profit scan --live",
@@ -48,7 +49,7 @@ EXAMPLES = {
     "journey": "python -m eve_profit journey --to Jita --live --quick", "compare": "python -m eve_profit compare --to Jita",
     "go": "python -m eve_profit go --pick 1 --send", "trainplan": "python -m eve_profit trainplan --hours 24", "skills": "python -m eve_profit skills --hours 72",
     "combatfit": 'python -m eve_profit combatfit --ship "Vexor" --dps 450 --ehp 60000 --tank 200 --value 30000000',
-    "fixlast": 'python -m eve_profit fixlast --activity "step 2 Soldier" --isk 180000', "agents": "python -m eve_profit agents", "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
+    "fixlast": 'python -m eve_profit fixlast --activity "step 2 Soldier" --isk 180000', "agents": "python -m eve_profit agents", "buy": 'python -m eve_profit buy --item "Cap Booster 25" --qty 20', "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
     "log": 'python -m eve_profit log --activity "Level 2 security mission" --isk 8000000 --hours 1', "day": "python -m eve_profit day --hours 8",
     "sellplan": "python -m eve_profit sellplan --world 5", "login": "python -m eve_profit login", "sync": "python -m eve_profit sync",
 }

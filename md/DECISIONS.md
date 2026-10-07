@@ -16,3 +16,4 @@
 - 2026-10-07: dual couriers done; added Arnelin step 6 (20 Cap Booster 25: acquire/buy, 166k+233k taxed), Beradaillot step 6 (1 Civilian Armor Repairer; grants Broker Relations book; ISK reward not yet seen) and a combined offer; one_way flag for jobs where you are already at the far end.
 - 2026-10-07: fixlast --activity NAME fixes an older run (e.g. add the ISK a run missed because the wallet journal lagged). Dual couriers measured: 364,010 ISK in 38 min = 574k ISK/hr (estimate was 31 min).
 - 2026-10-07: fixed a bug where a loop variable p replaced the Profile inside offers ranking (trade extras would have crashed silently); agent_steps checklist now built from agent_offers.json with timer_name per offer.
+- 2026-10-07: new `buy` command (buyprice.py): cheapest places to BUY an item near you (sell orders), for 'acquire these goods' agent jobs. bestprice is for SELLING (buy orders) and answered the wrong question for Cap Booster 25.

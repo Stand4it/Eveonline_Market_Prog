@@ -213,3 +213,23 @@ class AgentStepsScriptTests(unittest.TestCase):
         self.assertTrue(names)
         self.assertTrue(all(n.startswith("Agent L1") for n in names))
         self.assertEqual(len(names), len(set(names)) + names.count("Agent L1 step 1 Enforcer cash flow") - 1 if names.count("Agent L1 step 1 Enforcer cash flow") > 1 else len(names))
+
+
+class BuyPriceTests(unittest.TestCase):
+    def test_cheapest_full_order_and_nearest_are_found(self):
+        from eve_profit.buyprice import best_buys, format_buys
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        near = [s for s, r in g.reach(1, 3).items() if r.jumps == 1][0]
+        con.execute("DELETE FROM orders WHERE type_id=34")
+        con.execute("INSERT INTO orders VALUES(995001,34,60000001,1,10000001,0,100.0,50,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(995002,34,?,?,10000001,0,80.0,500,1,'',1)", (60000000 + near, near))
+        rows = best_buys(con, g, Profile(current_system="Home", secs_per_jump=45), None, [], 34, 100, refresh=False)
+        self.assertEqual(rows[0]["system"], g.name[near])                  # a full order beats a partial one
+        self.assertTrue(rows[0]["full"])
+        self.assertFalse([r for r in rows if r["system"] == "Home"][0]["full"])
+        self.assertIn("Cheapest", format_buys("Tritanium", 100, rows, "Home"))
