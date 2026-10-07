@@ -103,11 +103,13 @@ def main(argv=None):
 
     kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
             "sde": "setup", "mock": "setup"}.get(a.cmd)
+    from .pretty import pretty_output
     if not kind:
-        return _run(a)
+        with pretty_output():
+            return _run(a)
     from .lock import AlreadyRunning, single_instance
     try:
-        with single_instance(f"{a.db}.{kind}.lock", kind):
+        with single_instance(f"{a.db}.{kind}.lock", kind), pretty_output():
             return _run(a)
     except AlreadyRunning as e:
         raise SystemExit(str(e))

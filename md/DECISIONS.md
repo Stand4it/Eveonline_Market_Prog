@@ -19,3 +19,4 @@
 - 2026-10-07: new `buy` command (buyprice.py): cheapest places to BUY an item near you (sell orders), for 'acquire these goods' agent jobs. bestprice is for SELLING (buy orders) and answered the wrong question for Cap Booster 25.
 - 2026-10-07: Beradaillot step 6 rewards seen (Nanofiber + 204,000 ISK bonus); combined offer bonus 437,000; repairer cost 20,000, boosters 350 each.
 - 2026-10-07: `next` output reformatted: boxed sections (SKILLS / AGENT MISSIONS / AGENT OFFERS / TRADING), one offer per block with its items and trades on separate lines.
+- 2026-10-07: skills in `next`: QUEUE NOW only skills already trained (no purchase); book trip shown as a decision with lost agent income + Accounting payback. New eve_profit/pretty.py wraps every command's stdout: blank line + rule under headings.

@@ -89,6 +89,18 @@ def book_list(con, g, p, res, hours=None):
     return out
 
 
+def trainable_now(con, res):
+    """Plan steps you can queue TODAY without buying anything: the skill already has a row in your skills (its book is trained),
+    so the next level is just a click. A level-1 step of a skill you never trained needs the book first, so it is not here."""
+    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    out = []
+    for st in res["steps"]:
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
+        if row and row[0] in owned:
+            out.append(st)
+    return out
+
+
 def format_books(books, wallet):
     if not books:
         return ""

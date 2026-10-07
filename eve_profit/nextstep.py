@@ -213,18 +213,40 @@ def skill_note(con, g, p, min_hours=8.0):
     if hours >= min_hours:
         return ""
     try:
-        from .trainplan import book_list, plan_training
+        from .trainplan import book_list, plan_training, trainable_now
         res = plan_training(con, 24)
-        first = res["steps"][0] if res["steps"] else None
+        now_steps = trainable_now(con, res)
         books = book_list(con, g, p, res, hours=1)
     except Exception:                                                   # noqa: BLE001
-        first, books = None, []
-    L = [f"SKILL QUEUE: only {hours:.1f} h left. Fill it before you leave:  python -m eve_profit trainplan --hours 24"]
-    if first:
-        L.append(f"   first in your plan: {first['skill']} {first['level']} ({first['minutes'] / 60:.1f} h) - {first['why']}")
+        now_steps, books = [], []
+    L = [f"SKILL QUEUE: only {hours:.1f} h left. Fill it before you leave."]
+    if now_steps:
+        st = now_steps[0]
+        L.append(f"   QUEUE NOW (no purchase needed): {st['skill']} {st['level']} ({st['minutes'] / 60:.1f} h) - {st['why']}")
+        L.append("   (in game: Skills > find it > + / Train Now; the full ordered list: python -m eve_profit trainplan --hours 24)")
+    else:
+        L.append("   Nothing in your plan can be queued without a new skill book (see below).")
     for name, price, where, jumps in books[:1]:
-        L.append(f"   BUY THE BOOK FIRST: {name} " + (f"~{price:,.0f} ISK at {where} ({jumps} jumps)" if price else "(no seller found nearby)"))
+        rate = _agent_rate(con)
+        trip_min = 2 * jumps * p.jump_seconds / 60.0 + 4
+        L.append(f"   BOOK TRIP, decide: {name} " + (f"~{price:,.0f} ISK at {where} ({jumps} jumps)" if price else "(no seller found nearby)"))
+        if price:
+            lost = rate * trip_min / 60.0
+            L.append(f"      a special trip is ~{trip_min:.0f} min = ~{lost:,.0f} ISK of agent income lost, plus the book.")
+            if name == "Accounting":
+                per = 0.075 * 0.11
+                L.append(f"      Accounting I only cuts sales tax by {per * 100:.2f}% of what you SELL: it repays {price + lost:,.0f} ISK after "
+                         f"~{(price + lost) / per / 1e6:,.0f}M ISK of sales. Not worth a trip while you earn from agents.")
+            L.append(f"      => buy it only when a mission or trade already takes you to {where}, or once you trade/sell real volume.")
     return "\n".join(L)
+
+
+def _agent_rate(con):
+    try:
+        r = con.execute("SELECT SUM(isk), SUM(hours) FROM activity_log WHERE activity LIKE ?", (AGENT_PREFIX + "%",)).fetchone()
+        return (r[0] / r[1]) if r and r[1] else 0.0
+    except Exception:                                                   # noqa: BLE001
+        return 0.0
 
 
 def next_action(con, g, p):
