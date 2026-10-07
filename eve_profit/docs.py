@@ -30,6 +30,88 @@ COMMAND_HELP = {
 }
 
 
+CMD_OPTS = {
+    "scan": ["--live", "--away", "--max-age", "--regions", "--max-pages", "--top"], "plan": ["--top"], "watch": ["--live", "--interval", "--away"],
+    "profile": ["--system", "--cargo"], "login": ["--char", "--client-id"], "sync": ["--char"], "log": ["--activity", "--isk", "--hours"],
+    "go": ["--pick", "--send", "--away", "--top"], "universe": ["--force", "--sde-file", "--sde-url", "--depth"], "esimap": ["--depth"],
+    "sde": ["--sde-file", "--sde-url"], "skills": ["--hours"], "explain": ["--pick"], "check": ["--pick"], "stock": ["--top"], "along": ["--to"],
+    "next": ["--sync"], "keep": ["--to"], "bpbuy": ["--to"], "bestprice": ["--item", "--qty"], "sellplan": ["--to", "--world"],
+    "day": ["--hours", "--cash", "--no-stock"], "now": ["--fast"], "combatfit": ["--dps", "--ehp", "--tank", "--value", "--ship"],
+    "journey": ["--to", "--live", "--quick", "--detour", "--max-age"], "compare": ["--to", "--detour"], "start": ["--activity", "--no-loot"],
+    "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk"],
+}
+EXAMPLES = {
+    "now": "python -m eve_profit now --fast", "next": "python -m eve_profit next", "scan": "python -m eve_profit scan --live",
+    "start": 'python -m eve_profit start --activity "Agent L1 step 4 Arabeton"', "stop": "python -m eve_profit stop --add-min 5",
+    "pause": "python -m eve_profit pause", "resume": "python -m eve_profit resume", "bestprice": 'python -m eve_profit bestprice --item "Zydrine" --qty 25000',
+    "journey": "python -m eve_profit journey --to Jita --live --quick", "compare": "python -m eve_profit compare --to Jita",
+    "go": "python -m eve_profit go --pick 1 --send", "trainplan": "python -m eve_profit trainplan --hours 24", "skills": "python -m eve_profit skills --hours 72",
+    "combatfit": 'python -m eve_profit combatfit --ship "Vexor" --dps 450 --ehp 60000 --tank 200 --value 30000000',
+    "fixlast": "python -m eve_profit fixlast --add-min 5", "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
+    "log": 'python -m eve_profit log --activity "Level 2 security mission" --isk 8000000 --hours 1', "day": "python -m eve_profit day --hours 8",
+    "sellplan": "python -m eve_profit sellplan --world 5", "login": "python -m eve_profit login", "sync": "python -m eve_profit sync",
+}
+OPT_FALLBACK = {"--db": "database file (default E:\\EveProfit\\eve_profit.db)", "--profile": "profile file (default profile.json)",
+                "--max-pages": "limit pages per region (testing)", "--top": "how many rows to show", "--hours": "hours to plan / training hours to show",
+                "--pick": "which ranked task (1 = best)", "--isk": "ISK amount", "--activity": "name of the activity (use the same name each time)",
+                "--to": "destination (or system) name", "--item": "item name or type id", "--qty": "quantity", "--send": "really set waypoints in the game client",
+                "--interval": "seconds between scans", "--depth": "jumps around your system", "--force": "reload even if already loaded",
+                "--sde-file": "local game-data file to import", "--sde-url": "download game data from this address", "--regions": "region ids, comma separated",
+                "--system": "set your current system", "--cargo": "set your cargo m3", "--world": "also check the N biggest stacks in every region",
+                "--cash": "extra ISK you expect to have", "--no-stock": "leave out selling/listing stock", "--ship": "ship hull name",
+                "--dps": "damage per second (from Pyfa)", "--ehp": "effective HP (from Pyfa)", "--tank": "sustained repair per second", "--value": "ship + fit value in ISK",
+                "--detour": "jumps off the route to look", "--quick": "refresh only the items you own", "--paused": "minutes you were away (not counted)",
+                "--add-min": "minutes of work to add", "--no-loot": "do not value picked-up items", "--fast": "skip the market re-scan", "--check": "show where notes and code disagree",
+                "--quiet": "write files, print nothing", "--away": "unattended mode: long safe autopilot hauls only", "--max-age": "skip regions fresher than this many minutes",
+                "--live": "use real ESI market data", "--sync": "refresh your character data first", "--char": "which character (label, id or part of the name)",
+                "--client-id": "EVE app client id (else client_id.txt)"}
+GLOBAL_OPTS = ["--db", "--profile", "--char", "--sync", "--client-id"]
+
+
+def option_help():
+    s = open(os.path.join(ROOT, "eve_profit", "cli.py"), encoding="utf-8").read()
+    out = {}
+    for m in re.finditer(r'add_argument\("(--[\w-]+)"([^\n]*)', s):
+        h = re.search(r'help="([^"]*)"', m.group(2))
+        out[m.group(1)] = h.group(1) if h else ""
+    return out
+
+
+def reference_lines(commands):
+    oh = option_help()
+    L = ["EVE PROFIT - EVERY COMMAND AND ITS OPTIONS", "=" * 44,
+         "Run each as:  python -m eve_profit <command> [options]   (in PowerShell, from the repo folder)", "",
+         "OPTIONS THAT WORK WITH EVERY COMMAND:"]
+    L += [f"   {o:<14} {oh.get(o) or OPT_FALLBACK.get(o, '')}" for o in GLOBAL_OPTS] + [""]
+    for c in commands:
+        L.append(f"{c.upper()}  -  {COMMAND_HELP.get(c, '(no description yet)')}")
+        for o in CMD_OPTS.get(c, []):
+            L.append(f"   {o:<14} {oh.get(o) or OPT_FALLBACK.get(o, '')}")
+        L.append(f"   example: {EXAMPLES.get(c, 'python -m eve_profit ' + c)}")
+        L.append("")
+    L.append("Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.")
+    return L
+
+
+def write_docx(path, lines):
+    import zipfile
+    from xml.sax.saxutils import escape
+    paras = []
+    for l in lines:
+        bold = l and not l.startswith(" ") and (l.isupper() or l[:1].isupper() and "  -  " in l)
+        run = ("<w:rPr><w:b/></w:rPr>" if bold else "") + '<w:t xml:space="preserve">' + escape(l) + "</w:t>"
+        paras.append("<w:p><w:r>" + run + "</w:r></w:p>")
+    doc = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'
+           + "".join(paras) + "</w:body></w:document>")
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+                   '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+                   '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>')
+        z.writestr("_rels/.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                   '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>')
+        z.writestr("word/document.xml", doc)
+
+
 def code_commands():
     s = open(os.path.join(ROOT, "eve_profit", "cli.py"), encoding="utf-8").read()
     return re.findall(r'"(\w+)"', re.search(r'choices=\[([^\]]*)\]', s).group(1))
@@ -93,9 +175,10 @@ def write(d):
         L.append("\nLatest timed runs:")
         L += [f"- {time.strftime('%m-%d %H:%M', time.localtime(r['ts']))} {r['activity']}: {r['isk']:,.0f} ISK in {r['hours'] * 60:.0f} min ({r['isk'] / max(r['hours'], 1e-9):,.0f} ISK/hr) {r['ship'] or ''}" for r in d["runs"]]
     open(os.path.join(MD, "LOCAL_STATE.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
-    C = ["# COMMANDS (auto-generated; run each as `python -m eve_profit <command>`)", ""]
-    C += [f"- `{c}` - {COMMAND_HELP.get(c, '(no description yet)')}" for c in d["commands"]]
-    C += ["", "Scripts: `python scripts/agent_steps.py [next|list|done|skip|back|reset]` - Level 1 agent checklist."]
+    ref = reference_lines(d["commands"])
+    C = ["# COMMANDS (auto-generated; also md/COMMANDS.txt for Notepad and md/COMMANDS.docx for Word)", "", "```"] + ref + ["```"]
+    open(os.path.join(MD, "COMMANDS.txt"), "w", encoding="utf-8").write("\n".join(ref) + "\n")
+    write_docx(os.path.join(MD, "COMMANDS.docx"), ref)
     open(os.path.join(MD, "COMMANDS.md"), "w", encoding="utf-8").write("\n".join(C) + "\n")
 
 

@@ -1,6 +1,3 @@
-# COMMANDS (auto-generated; also md/COMMANDS.txt for Notepad and md/COMMANDS.docx for Word)
-
-```
 EVE PROFIT - EVERY COMMAND AND ITS OPTIONS
 ============================================
 Run each as:  python -m eve_profit <command> [options]   (in PowerShell, from the repo folder)
@@ -210,4 +207,3 @@ FIXLAST  -  correct the last timed run (--add-min N, --isk N)
    example: python -m eve_profit fixlast --add-min 5
 
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
-```

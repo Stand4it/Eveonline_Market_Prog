@@ -120,3 +120,17 @@ class FixLastAndDocsTests(unittest.TestCase):
         self.assertIn("in 60 min", msg)
         self.assertIn("600,000 ISK/hr", msg)
         self.assertEqual([c for c in docs.code_commands() if c not in docs.COMMAND_HELP], [])
+
+
+class CommandReferenceTests(unittest.TestCase):
+    def test_reference_lists_every_command_with_options_and_docx_opens(self):
+        import zipfile
+        from eve_profit import docs
+        lines = docs.reference_lines(docs.code_commands())
+        text = "\n".join(lines)
+        for c in docs.code_commands():
+            self.assertIn(c.upper() + "  -  ", text)
+        self.assertIn("--add-min", text)
+        path = os.path.join(tempfile.mkdtemp(), "c.docx")
+        docs.write_docx(path, lines)
+        self.assertIn("word/document.xml", zipfile.ZipFile(path).namelist())
