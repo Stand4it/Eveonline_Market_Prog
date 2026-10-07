@@ -177,12 +177,25 @@ def offers_ranked(con, g=None, p=None):
     rows = offers_rows(con, g, p)
     if not rows:
         return ""
-    L = ["BEST AGENT OFFERS RIGHT NOW - net ISK per hour incl. travel (cash after tax + loot - buys; times are estimates, ? = estimated price):"]
+    L = ["BEST AGENT OFFERS RIGHT NOW (net ISK/hr incl. travel; ? = estimated price)"]
     for i, (rate, net, minutes, o, tags) in enumerate(rows, 1):
-        where = "" if not o.get("jumps") else f"  [AT {o['where']}]"
-        extra = ("  (" + "; ".join(tags) + ")") if tags else ""
-        L.append(f"  {i}. {rate:>9,.0f} ISK/hr  net {net:>9,.0f} in ~{minutes:.0f} min  {o['agent']} {o['mission']}{where}{extra}")
-    return "\n".join(L)
+        L.append(f"  #{i}  {rate:>9,.0f} ISK/hr   net {net:,.0f} ISK in ~{minutes:.0f} min")
+        L.append(f"      {o['agent']}")
+        L.append(f"      {o['mission']}")
+        if o.get("jumps"):
+            L.append(f"      at: {o['where']}")
+        for t in tags:
+            if t.startswith("+ TRADES ON THE WAY: "):
+                L.append("      + trades on the way:")
+                L += ["          " + x.strip() for x in t[len("+ TRADES ON THE WAY: "):].split(" | ")]
+            else:
+                L.append(f"      - {t}")
+        L.append("")
+    return "\n".join(L).rstrip()
+
+
+def _section(title, body):
+    return f"{'=' * 70}\n {title}\n{'=' * 70}\n{body}" if body else ""
 
 
 def skill_note(con, g, p, min_hours=8.0):
@@ -215,19 +228,22 @@ def skill_note(con, g, p, min_hours=8.0):
 
 
 def next_action(con, g, p):
-    text = _next_action_core(con, g, p)
+    core = _next_action_core(con, g, p)
+    parts = []
     sk = skill_note(con, g, p)
     if sk:
-        text = sk + "\n\n" + text
+        parts.append(_section("SKILLS", sk))
     note = agent_note(con, g, p)
+    if note:
+        parts.append(_section("AGENT MISSIONS - measured", note))
     try:
         ranked = offers_ranked(con, g, p)
     except Exception:                                                   # noqa: BLE001
         ranked = ""
     if ranked:
-        note = (note + "\n\n" if note else "") + ranked
-    if note:
-        text = note + "\n\n" + text
+        parts.append(_section("AGENT OFFERS", ranked))
+    parts.append(_section("TRADING / HAULING", core))
+    text = "\n\n".join(x for x in parts if x)
     if getattr(p, "home_location_type", "") == "structure" or (getattr(p, "current_location_id", 0) or 0) > 10 ** 12:
         text += "\n\n" + HOME_NOTE
     return text

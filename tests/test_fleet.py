@@ -330,7 +330,7 @@ class NextStepTests(unittest.TestCase):
         self.assertIn("STEP: SELL NOW", txt)
         self.assertIn("Tritanium", txt)
         self.assertNotIn("Mexallon", txt)                                   # one thing at a time
-        self.assertLess(len(txt.splitlines()), 20)
+        self.assertLess(len(txt.split("TRADING / HAULING")[-1].splitlines()), 20)
         self.assertIn("python -m eve_profit now", txt)
 
     def test_then_list_one_item_then_trade(self):
