@@ -9,3 +9,5 @@
 - Measured: Arabeton step 3 (warp disruptor) paid 96,000 + 95,230 time bonus + 4,800 bounty = 196,030 in 28 min (417k ISK/hr), untaxed.
   The TIME BONUS SHRINKS the longer a mission takes (107k expected at ~12 min, 95k paid at ~23+ min), and the 12-min estimate was too short for a first run:
   use ~25 min for a first attempt at a new mission type, then your measured time.
+- The checklist (`scripts/agent_steps.py`) is now BUILT from `agent_offers.json` (open offers, best ISK/hr first); each offer has a `timer_name`. State stores timer names, not numbers. After editing offers, nothing else needs updating.
+- `fixlast --activity "part of name" --isk N` adds missed ISK to an older run (the wallet journal lags a few minutes).

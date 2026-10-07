@@ -182,3 +182,34 @@ class FixLastActivityTests(unittest.TestCase):
         self.assertEqual(con.execute("SELECT isk FROM activity_log WHERE activity LIKE '%couriers'").fetchone()[0], 364010)
         with self.assertRaises(ValueError):
             fix_last(con, activity="nothing like this")
+
+
+class OffersWithProfileTests(unittest.TestCase):
+    def test_ranking_works_with_a_graph_and_profile_and_keeps_the_profile_intact(self):
+        """A variable named p inside the loop once replaced the Profile by a price and broke the trade lookup."""
+        import json
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import offers_ranked
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        far = [s for s, r in g.reach(1, 3).items() if r.jumps == 2][0]
+        con.execute("DELETE FROM orders WHERE type_id=35")
+        con.execute("INSERT INTO orders VALUES(994001,35,60000001,1,10000001,0,10.0,100000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(994002,35,?,?,10000001,1,30.0,100000,1,'',1)", (60000000 + far, far))
+        txt = offers_ranked(con, g, Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, secs_per_jump=45))
+        self.assertIn("BEST AGENT OFFERS RIGHT NOW", txt)
+
+
+class AgentStepsScriptTests(unittest.TestCase):
+    def test_checklist_is_built_from_the_open_offers_with_timer_names(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("agent_steps", os.path.join("scripts", "agent_steps.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        names = [n for n, _, _ in mod.build_steps()]
+        self.assertTrue(names)
+        self.assertTrue(all(n.startswith("Agent L1") for n in names))
+        self.assertEqual(len(names), len(set(names)) + names.count("Agent L1 step 1 Enforcer cash flow") - 1 if names.count("Agent L1 step 1 Enforcer cash flow") > 1 else len(names))

@@ -128,13 +128,13 @@ def trade_extras(con, g, p, o):
     return isk, mins, lines
 
 
-def offers_ranked(con, g=None, p=None):
+def offers_rows(con, g=None, p=None):
     """Rank the Level 1 agent offers in agent_offers.json by NET ISK per HOUR: (cash after tax + loot at market - items to buy) / (task time + travel both ways)."""
     import json
     from pathlib import Path
     f = Path(__file__).resolve().parents[1] / "agent_offers.json"
     if not f.exists():
-        return ""
+        return []
     d = json.loads(f.read_text(encoding="utf-8"))
     tax, per_jump = d.get("tax", 0.11), d.get("min_per_jump", 3.0)
 
@@ -154,13 +154,13 @@ def offers_ranked(con, g=None, p=None):
         cash = (o.get("isk", 0) + o.get("bonus", 0)) * ((1 - tax) if o.get("taxed", True) else 1.0)
         loot, cost, tags = 0.0, 0.0, []
         for it in o.get("loot", []):
-            p, src = price(it["item"], it.get("est", 0))
-            loot += p * it["qty"]
-            tags.append(f"{it['qty']:,} x {it['item']} ~{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
+            pr, src = price(it["item"], it.get("est", 0))
+            loot += pr * it["qty"]
+            tags.append(f"{it['qty']:,} x {it['item']} ~{pr * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
         for it in o.get("cost", []):
-            p, src = price(it["item"], it.get("est", 0))
-            cost += p * it["qty"]
-            tags.append(f"buy {it['qty']:,} x {it['item']} -{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
+            pr, src = price(it["item"], it.get("est", 0))
+            cost += pr * it["qty"]
+            tags.append(f"buy {it['qty']:,} x {it['item']} -{pr * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
         net = cash + loot - cost
         minutes = (o.get("task_min", 10) + (1 if o.get("one_way") else 2) * o.get("jumps", 0) * per_jump
                    + (2 if o.get("jumps", 0) else 0))
@@ -170,6 +170,13 @@ def offers_ranked(con, g=None, p=None):
             tags = tags + ["+ TRADES ON THE WAY: " + " | ".join(ex_lines)]
         rows.append((net * 60.0 / minutes, net, minutes, o, tags))
     rows.sort(key=lambda r: -r[0])
+    return rows
+
+
+def offers_ranked(con, g=None, p=None):
+    rows = offers_rows(con, g, p)
+    if not rows:
+        return ""
     L = ["BEST AGENT OFFERS RIGHT NOW - net ISK per hour incl. travel (cash after tax + loot - buys; times are estimates, ? = estimated price):"]
     for i, (rate, net, minutes, o, tags) in enumerate(rows, 1):
         where = "" if not o.get("jumps") else f"  [AT {o['where']}]"

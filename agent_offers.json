@@ -62,7 +62,8 @@
    "task_min": 25,
    "jumps": 0,
    "available": true,
-   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)"
+   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)",
+   "timer_name": "Agent L1 step 3 Explorer data site"
   },
   {
    "agent": "Arabeton Spilmottin (Soldier of Fortune)",
@@ -103,7 +104,8 @@
    "task_min": 10,
    "jumps": 0,
    "available": false,
-   "where": "Rotonos IV Moon 2 (no offer showing in the agent list right now)"
+   "where": "Rotonos IV Moon 2 (no offer showing in the agent list right now)",
+   "timer_name": "Agent L1 step 1 Enforcer cash flow"
   },
   {
    "agent": "Emps Metyt (Mining, Axiosere)",
@@ -125,7 +127,8 @@
    "available": true,
    "where": "Axiosere VII - Astral Mining Inc. Mining Outpost (1 jump from Rotonos)",
    "to_system": "Axiosere",
-   "m3": 0
+   "m3": 0,
+   "timer_name": "Agent L1 step 1 Mining augumene"
   },
   {
    "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
@@ -196,7 +199,8 @@
    "task_min": 25,
    "jumps": 0,
    "available": true,
-   "where": "Rotonos (this system)"
+   "where": "Rotonos (this system)",
+   "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need"
   },
   {
    "agent": "Ormelace Vaille (Enforcer)",
@@ -222,7 +226,8 @@
    "jumps": 0,
    "available": true,
    "where": "Rotonos (this system)",
-   "note": "bounties from the kills are extra (about 5k per pirate so far); no ISK reward shown, only items; standing 0.82"
+   "note": "bounties from the kills are extra (about 5k per pirate so far); no ISK reward shown, only items; standing 0.82",
+   "timer_name": "Agent L1 step 1 Enforcer cash flow"
   },
   {
    "agent": "Arnelin Ygegnere (Industrialist - Producer)",
@@ -247,7 +252,8 @@
    "m3": 20,
    "available": true,
    "to_system": "Rotonos",
-   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)",
+   "timer_name": "Agent L1 step 6 Industrialist cap boosters"
   },
   {
    "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
@@ -278,7 +284,8 @@
    "m3": 5,
    "available": true,
    "to_system": "Rotonos",
-   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)",
+   "timer_name": "Agent L1 step 6 Entrepreneur armor repairer"
   },
   {
    "agent": "BOTH in ONE trip (Arnelin 20 Cap Booster 25 + Beradaillot Civilian Armor Repairer)",
@@ -315,7 +322,8 @@
    "m3": 25,
    "available": true,
    "to_system": "Rotonos",
-   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)",
+   "timer_name": "Agent L1 step 6 both (cap boosters + armor repairer)"
   }
  ],
  "min_per_jump": 3.0

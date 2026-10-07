@@ -15,3 +15,4 @@
 - 2026-10-07: agent jobs that need a trip (to_system, m3 in agent_offers.json) now also look for profitable trades on the way there and back with the spare hold (nextstep.trade_extras via journey); the extra ISK and minutes are added to that offer's ISK/hr.
 - 2026-10-07: dual couriers done; added Arnelin step 6 (20 Cap Booster 25: acquire/buy, 166k+233k taxed), Beradaillot step 6 (1 Civilian Armor Repairer; grants Broker Relations book; ISK reward not yet seen) and a combined offer; one_way flag for jobs where you are already at the far end.
 - 2026-10-07: fixlast --activity NAME fixes an older run (e.g. add the ISK a run missed because the wallet journal lagged). Dual couriers measured: 364,010 ISK in 38 min = 574k ISK/hr (estimate was 31 min).
+- 2026-10-07: fixed a bug where a loop variable p replaced the Profile inside offers ranking (trade extras would have crashed silently); agent_steps checklist now built from agent_offers.json with timer_name per offer.

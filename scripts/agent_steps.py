@@ -20,23 +20,37 @@ import sys
 from pathlib import Path
 
 STATE = Path(__file__).with_name("agent_steps_state.json")
-STEPS = [
-    ("Agent L1 step 3 Entrepreneur tritanium",
-     "Beradaillot Audates (Industrialist - Entrepreneur) step 3: 333 Tritanium hand-in -> 212k bonus (DONE 05:45, paid 188,680 net)",
-     []),
-    ("Agent L1 step 5 Industrialist courier",
-     "Arnelin Ygegnere (Industrialist - Producer) step 5: courier the Crates of Electronic Parts (40 m3) to Repute IV - AIR Laboratories (4 jumps) -> Expanded Cargohold I + 224k bonus (net ~199k); check whether you must fly back",
-     []),
-    ("Agent L1 step 5 Entrepreneur courier",
-     "Beradaillot Audates (Industrialist - Entrepreneur) step 5: courier the Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories (4 jumps, SAME place as Arnelin's courier) -> Expanded Cargohold I + 185k bonus (net ~165k); accept it TOGETHER with Arnelin's courier and make one trip",
-     []),
-    ("Agent L1 step 3 Soldier of Fortune warp disruptor",
-     "Arabeton Spilmottin (Soldier of Fortune) step 3: find the fleeing pirate, fit/use the granted Civilian Warp Disruptor on him (kill the escorts, NOT the primary target) -> 96k + 107k bonus (~203k, untaxed so far)",
-     []),
-    ("Agent L1 step 3 Explorer data site",
-     "Rounaminck Folle (Explorer) step 3 of 5 'Data Site Scanning': with the Civilian Data Analyzer fitted (Beradaillot's mission grants it) and Core Scanner Probes, scan down the Data site, hack the container, bring back the Proof of Discovery: Data -> 103k + 111k bonus (net ~190k)",
-     []),
-]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+DB = "E:/EveProfit/eve_profit_dahl.db"
+
+
+def build_steps():
+    """The checklist is built from agent_offers.json (open offers only, best ISK/hr first), so it never goes stale.
+    -> [(timer name, text, [])]. The timer name is the offer's `timer_name`."""
+    try:
+        import sqlite3
+        from eve_profit.nextstep import offers_rows
+        con = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
+        con.row_factory = sqlite3.Row
+        rows = offers_rows(con)
+        con.close()
+    except Exception:                                           # noqa: BLE001 - no DB / old code: fall back to file order
+        import json
+        rows = []
+        try:
+            for o in json.loads((Path(__file__).resolve().parents[1] / "agent_offers.json").read_text(encoding="utf-8"))["offers"]:
+                if o.get("available", True):
+                    rows.append((0, 0, 0, o, []))
+        except (OSError, ValueError):
+            pass
+    out = []
+    for rate, net, minutes, o, tags in rows:
+        name = o.get("timer_name") or ("Agent L1 " + o["agent"].split(" (")[0])
+        out.append((name, f"{o['agent']} {o['mission']}  [~{net:,.0f} ISK net, ~{minutes:.0f} min, ~{rate:,.0f} ISK/hr]", []))
+    return out
+
+
+STEPS = build_steps()
 os.system("")                                                   # switches on ANSI colours in the Windows console
 G, Y, C, B, D, X = "\033[92m", "\033[93m", "\033[96m", "\033[1m", "\033[2m", "\033[0m"
 
@@ -57,7 +71,11 @@ def clip(text):
 def load():
     try:
         d = json.loads(STATE.read_text(encoding="utf-8"))
-        return d if isinstance(d.get("done"), list) else {"done": []}
+        if not isinstance(d.get("done"), list):
+            return {"done": []}
+        d["done"] = [x for x in d["done"] if isinstance(x, str)]        # older versions stored mission numbers: those no longer apply
+        d["ignore"] = [x for x in d.get("ignore", []) if isinstance(x, str)]
+        return d
     except (OSError, ValueError):
         return {"done": []}
 
@@ -70,26 +88,30 @@ DB = "E:/EveProfit/eve_profit_dahl.db"
 
 
 def logged_done(since):
-    """Missions whose timer was stopped (= a row in the activity log with that exact name) after the list was last reset."""
+    """Timer names that were stopped (= a row in the activity log with that exact name) after the list was last reset."""
     import sqlite3
     try:
         con = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
         names = {r[0] for r in con.execute("SELECT activity FROM activity_log WHERE ts > ?", (since,))}
         con.close()
     except sqlite3.Error:
-        return []
-    return [n for n, (act, _, _) in enumerate(STEPS, 1) if act in names]
+        return set()
+    return {act for act, _, _ in STEPS if act in names}
+
+
+def todo_list(done):
+    return [n for n, (act, _, _) in enumerate(STEPS, 1) if act not in done]
 
 
 def show_list(done):
-    print(f"{B}Level 1 agent missions:{X}")
+    print(f"{B}Level 1 agent missions (open offers, best ISK/hr first; built from agent_offers.json):{X}")
     for n, (act, text, _) in enumerate(STEPS, 1):
-        mark = f"{G}[x]{X}" if n in done else "[ ]"
+        mark = f"{G}[x]{X}" if act in done else "[ ]"
         print(f" {mark} {n}. {text}")
 
 
 def show_next(done):
-    todo = [n for n in range(1, len(STEPS) + 1) if n not in done]
+    todo = todo_list(done)
     if not todo:
         print(f"{G}{B}All listed missions are ticked off.{X} Screenshot each agent's new offer and send it to Claude to refresh this list.")
         print(f"{D}Results so far:  python -m eve_profit activities{X}")
@@ -100,8 +122,8 @@ def show_next(done):
     print(f"{G}{B}NEXT MISSION ({n} of {len(STEPS)}):{X} {G}{text}{X}")
     print(f"\n{C}{B}1) START THE TIMER{X}{C} {'(copied to your clipboard - paste it)' if clip(start) else ''}{X}")
     print(f"{B}{start}{X}")
-    for s in subs:
-        print(f"{D}   also time the buy/sell part:  python -m eve_profit start --activity \"{s}\"   ...   python -m eve_profit stop{X}")
+    for sub in subs:
+        print(f"{D}   also time the buy/sell part:  python -m eve_profit start --activity \"{sub}\"   ...   python -m eve_profit stop{X}")
     print(f"\n{C}{B}2) DO THE MISSION, then STOP THE TIMER{X}")
     print(f"{B}python -m eve_profit stop{X}")
     print(f"\n{D}(When you stop the timer the mission is ticked off automatically - run next again to see the one after it.){X}")
@@ -115,36 +137,32 @@ def main():
     s = load()
     s.setdefault("since", time.time())
     s.setdefault("ignore", [])
-    done = sorted((set(s["done"]) | set(logged_done(s["since"]))) - set(s["ignore"]))
+    done = (set(s["done"]) | logged_done(s["since"])) - set(s["ignore"])
     if cmd == "reset":
         save({"done": [], "since": time.time()})
-        done = []
+        done = set()
         print(f"{Y}all ticks cleared{X}\n")
-    elif cmd in ("back", "undo"):                               # un-tick the most recent mission, even one that was ticked from the timer log
-        if done:
-            n = done.pop()
-            s["done"] = [x for x in s["done"] if x != n]
-            s["ignore"] = sorted(set(s["ignore"]) | {n})
+    elif cmd in ("back", "undo"):                               # re-open the most recently ticked mission
+        ticked = [act for act, _, _ in STEPS if act in done]
+        if ticked:
+            name = ticked[-1]
+            s["done"] = [x for x in s["done"] if x != name]
+            s["ignore"] = sorted(set(s["ignore"]) | {name})
             save(s)
-            print(f"{Y}went back: mission {n} is open again{X}\n")
+            done.discard(name)
+            print(f"{Y}went back: '{name}' is open again{X}\n")
         else:
             print(f"{Y}nothing to go back to{X}\n")
-    elif cmd == "skip":                                         # tick off the current mission with no timer (already done, or timed by hand)
-        todo = [n for n in range(1, len(STEPS) + 1) if n not in done]
-        if todo:
-            n = todo[0]
-            s["done"] = sorted(set(s["done"]) | {n})
-            s["ignore"] = [x for x in s["ignore"] if x != n]
+    elif cmd in ("skip", "done"):                               # tick off a mission with no timer (already done, or timed by hand)
+        todo = todo_list(done)
+        n = int(sys.argv[2]) if cmd == "done" and len(sys.argv) > 2 else (todo[0] if todo else None)
+        if n and 1 <= n <= len(STEPS):
+            name = STEPS[n - 1][0]
+            s["done"] = sorted(set(s["done"]) | {name})
+            s["ignore"] = [x for x in s["ignore"] if x != name]
             save(s)
-            done = sorted(set(done) | {n})
-            print(f"{Y}skipped mission {n}{X}\n")
-    elif cmd == "done":
-        todo = [n for n in range(1, len(STEPS) + 1) if n not in done]
-        n = int(sys.argv[2]) if len(sys.argv) > 2 else (todo[0] if todo else None)
-        if n and n not in done and 1 <= n <= len(STEPS):
-            done.append(n)
-            save(s)
-            print(f"{Y}ticked off mission {n}{X}\n")
+            done.add(name)
+            print(f"{Y}ticked off mission {n}: {name}{X}\n")
     elif cmd == "list":
         show_list(done)
         return
