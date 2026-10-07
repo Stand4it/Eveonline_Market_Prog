@@ -6,3 +6,6 @@
   `stop --add-min N` or `fixlast --add-min N` add minutes you worked while paused.
 - Taxes seen: Industrialist and Explorer step 2+ taxed 11% (corp tax); Soldier of Fortune and step 1 payouts untaxed.
 - Measured so far: ~0.95-1.0M ISK/hr for L1 agent steps vs ~147k ISK/hr for the best trade in Rotonos.
+- Measured: Arabeton step 3 (warp disruptor) paid 96,000 + 95,230 time bonus + 4,800 bounty = 196,030 in 28 min (417k ISK/hr), untaxed.
+  The TIME BONUS SHRINKS the longer a mission takes (107k expected at ~12 min, 95k paid at ~23+ min), and the 12-min estimate was too short for a first run:
+  use ~25 min for a first attempt at a new mission type, then your measured time.

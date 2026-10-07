@@ -7,7 +7,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 156 | commands in code: 43
 Open agent offers (agent_offers.json):
 - Arnelin Ygegnere: step 5: courier 1 Crates of Electronic Parts (40 m3) from th
 - Rounaminck Folle: step 3 of 5: Data Site Scanning (needs Civilian Data Analyze
-- Arabeton Spilmottin: step 3: warp-disrupt the fleeing pirate with the granted Civ
 - Emps Metyt: step 1: Augumene Allergen (333 ore)
 - Beradaillot Audates: step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - 
 - BOTH COURIERS in ONE trip: accept both, fly once to Repute IV - AIR Laboratories (4 jum
