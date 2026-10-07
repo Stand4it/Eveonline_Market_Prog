@@ -1,7 +1,7 @@
 # HANDOFF - read this first after any restart or context loss
 
 Repo `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f` (never push elsewhere; no PRs unless asked).
-Pure-stdlib Python 3 (user's PC: Windows, Python 3.13, PowerShell). 153 tests: `python -m unittest discover -s tests`.
+Pure-stdlib Python 3 (user's PC: Windows, Python 3.13, PowerShell). 155 tests: `python -m unittest discover -s tests`.
 The cloud sandbox cannot reach ESI/zKill/most sites; only the user's PC runs live commands and pastes output back.
 Database `E:\EveProfit\eve_profit[_label].db`, profiles `profile[_label].json`, logins `tokens[_label].json` (all git-ignored).
 
@@ -29,6 +29,17 @@ journey --to Jita [--live] [--quick] [--detour N] | bestprice --item NAME_OR_ID 
 scan [--live] [--away] [--max-age 15] | skills --hours 72 | trainplan --hours 24 | start --activity NAME | stop [--isk N] [--paused MIN] [--no-loot] |
 activities | status (where everything is stored, row counts, PowerShell history path) | log --activity N --isk X --hours H | combatfit --dps --ehp --tank --value [--ship] | chars | login | sync | fleet | fit | zkill |
 along --to X | keep | bpbuy | update | universe | diag.
+
+## Agent missions (built in a separate session on the user's PC; merged here from branch `agent-missions-local`)
+- `scripts/agent_steps.py [next|list|done|skip|back|reset]`: Level-1 agent checklist (never touches timers; copies the START command to the clipboard).
+  State `scripts/agent_steps_state.json`; DB path inside is `E:/EveProfit/eve_profit_dahl.db` (character Stand4it Dahl).
+- `agent_offers.json`: the open L1 agent offers, entered from screenshots (isk, bonus, taxed?, loot, cost, task_min, jumps, available).
+  Edit it after each new screenshot; `next` ranks offers by NET ISK/hr incl. travel ("BEST AGENT OFFERS RIGHT NOW").
+- Timed runs named `Agent L1 ...` feed "AGENT MISSIONS (measured)"; when >= 1.2x the best trade, `next` says DO AGENT MISSIONS FIRST.
+- `pause` / `resume` freeze the `start` timer (no login needed); `stop --paused N` also works. Measured so far: ~0.95-1.0M ISK/hr
+  for L1 agent steps vs ~147k ISK/hr best trade. NOTE: `stop` shows 0 ISK if run before the wallet journal updates (wait ~2 min).
+- Repo moved: GitHub now redirects to `Stand4it/Eveonline_Market_Prog` (owner capitalised); the old URL still works.
+- NEVER `git add -A` on the user's PC: tokens_*.json / profile_*.json live there (now in .gitignore).
 
 ## Key behaviours/assumptions
 - Sales tax = 7.5% x (1 - 0.11 x Accounting); broker fee = 3% - 0.3% x Broker Relations (verify in the sell window). Listing must beat
