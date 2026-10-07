@@ -27,7 +27,7 @@ Database `E:\EveProfit\eve_profit[_label].db`, profiles `profile[_label].json`, 
 now [--fast] (sync+scan+next step+worldwide price check) | next | stock | sellplan | day --hours 8 | compare --to Jita |
 journey --to Jita [--live] [--quick] [--detour N] | bestprice --item NAME_OR_ID [--qty N] | check --pick N | go --pick N [--send] [--away] |
 scan [--live] [--away] [--max-age 15] | skills --hours 72 | trainplan --hours 24 | start --activity NAME | stop [--isk N] [--paused MIN] [--no-loot] |
-activities | log --activity N --isk X --hours H | combatfit --dps --ehp --tank --value [--ship] | chars | login | sync | fleet | fit | zkill |
+activities | status (where everything is stored, row counts, PowerShell history path) | log --activity N --isk X --hours H | combatfit --dps --ehp --tank --value [--ship] | chars | login | sync | fleet | fit | zkill |
 along --to X | keep | bpbuy | update | universe | diag.
 
 ## Key behaviours/assumptions

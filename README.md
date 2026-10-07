@@ -219,3 +219,6 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 
 ### Home station (early-game task)
 `sync` reads your home (clone) station. If it is a player-owned structure, `now`/`next` add an EARLY-GAME TASK: owners can charge docking fees and market taxes, so move your home to a free NPC station near a trade hub (Clone Bay > Set Home Station). Reading the home station needs the clones permission: run `login` once more to grant it.
+
+## Where is everything? (`status`)
+`python -m eve_profit status` shows this character's database path and size, how many rows of each kind it holds (orders, hangar, skills, trades, standings, loyalty points, agents, timed runs), the last market download, your latest timed runs, every character database on disk, and where PowerShell saved every command you typed.
