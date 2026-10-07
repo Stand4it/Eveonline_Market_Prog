@@ -1,8 +1,8 @@
-# EVE Profit Planner - status (updated 2026-10-06)
+# EVE Profit Planner - status (updated 2026-10-07). READ HANDOFF.md FIRST.
 
-Repo: `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f`. 83 unit tests pass.
+Repo: `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f`. 153 unit tests pass.
 Runs on the user's Windows PC (`C:\Users\Martin Dahl\Documents\eveonline_market_prog`), database `E:\EveProfit\eve_profit.db`.
-Character: Stand Dahldaberg (Mammoth, Hek). Other characters: Dahldaberg02, Dahldaberg3 (not yet supported).
+Characters: Stand Dahldaberg (main), Dahldaberg02, Dahldaberg3, Stand4it Dahl (new experiment). Multi-character is supported (see HANDOFF.md).
 
 ## Verified on real data (user's PC)
 - Python 3.13, tests, E: database, mock demo (separate `E:\EveProfit\mock.db`).
