@@ -1,7 +1,7 @@
 # EVE Profit Planner - status (updated 2026-10-07). READ md/START_HERE.md FIRST.
 
 Repo: `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f`. tests (count: see STATE.md) pass.
-Runs on the user's Windows PC (`C:\Users\Martin Dahl\Documents\eveonline_market_prog`), database `E:\EveProfit\eve_profit.db`.
+Runs on the user's Windows PC (`C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline`), database `E:\EveProfit\eve_profit.db`.
 Characters: Stand Dahldaberg (main), Dahldaberg02, Dahldaberg3, Stand4it Dahl (new experiment). Multi-character is supported (see md/START_HERE.md).
 
 ## Verified on real data (user's PC)

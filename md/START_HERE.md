@@ -3,6 +3,8 @@
 Repo `stand4it/eveonline_market_prog`, branch `claude/dreamy-edison-n9n32f` (never push elsewhere; no PRs unless asked).
 Pure-stdlib Python 3 (user's PC: Windows, Python 3.13, PowerShell). tests (count: see STATE.md): `python -m unittest discover -s tests`.
 The cloud sandbox cannot reach ESI/zKill/most sites; only the user's PC runs live commands and pastes output back.
+Project folder on the user's PC: `C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline` (moved from `...\Documents\eveonline_market_prog` on 2026-10-07; the scripts use relative paths, so nothing else changed).
+WARNING: that folder is inside OneDrive: `tokens*.json` (login keys) sync to the user's cloud; `.git` inside OneDrive can hit sync conflicts (pause OneDrive while running git if errors appear).
 Database `E:\EveProfit\eve_profit[_label].db`, profiles `profile[_label].json`, logins `tokens[_label].json` (all git-ignored).
 
 ## RESTART PROTOCOL (do this every time a session starts or Claude was killed)

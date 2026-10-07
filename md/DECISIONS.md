@@ -6,3 +6,4 @@
 - 2026-10-07: per-PC facts (timer, runs) moved to git-ignored md/LOCAL_STATE.md so md/STATE.md is identical on every machine (no conflicts on pull).
 - 2026-10-07: Arabeton step 3 done (196,030 ISK, 28 min). Estimates for first-time missions must use ~2x the guessed minutes; time bonus falls with time.
 - 2026-10-07: md/COMMANDS.txt (Notepad) and md/COMMANDS.docx (Word) generated from the code with every option and an example per command.
+- 2026-10-07: Project folder on the PC moved to C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline (GitHub unchanged; the cloud copy is independent of local paths).
