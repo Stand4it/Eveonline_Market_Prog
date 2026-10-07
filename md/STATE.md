@@ -4,8 +4,6 @@
 Branch `claude/dreamy-edison-n9n32f` | tests defined: 156 | commands in code: 43
 
 
-No timer running.
-
 Open agent offers (agent_offers.json):
 - Arnelin Ygegnere: step 5: courier 1 Crates of Electronic Parts (40 m3) from th
 - Rounaminck Folle: step 3 of 5: Data Site Scanning (needs Civilian Data Analyze

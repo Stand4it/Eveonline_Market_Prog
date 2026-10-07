@@ -13,3 +13,4 @@ client_id*.txt
 *.db-shm
 *.lock
 active.json
+md/LOCAL_STATE.md
