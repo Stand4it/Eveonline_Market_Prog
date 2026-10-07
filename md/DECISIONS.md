@@ -20,3 +20,4 @@
 - 2026-10-07: Beradaillot step 6 rewards seen (Nanofiber + 204,000 ISK bonus); combined offer bonus 437,000; repairer cost 20,000, boosters 350 each.
 - 2026-10-07: `next` output reformatted: boxed sections (SKILLS / AGENT MISSIONS / AGENT OFFERS / TRADING), one offer per block with its items and trades on separate lines.
 - 2026-10-07: skills in `next`: QUEUE NOW only skills already trained (no purchase); book trip shown as a decision with lost agent income + Accounting payback. New eve_profit/pretty.py wraps every command's stdout: blank line + rule under headings.
+- 2026-10-07: missions CANNOT be accepted remotely (game error): offers now carry `agent_system`; `next` adds the walk from your current system to the agent (+2 min) and says FIRST go to X. `jumps` in agent_offers.json = agent -> mission target (0 when the drop-off is the agent's own station). `fixlast --delete` removes a mistaken timed run.

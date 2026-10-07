@@ -164,6 +164,16 @@ def offers_rows(con, g=None, p=None):
         net = cash + loot - cost
         minutes = (o.get("task_min", 10) + (1 if o.get("one_way") else 2) * o.get("jumps", 0) * per_jump
                    + (2 if o.get("jumps", 0) else 0))
+        walk = 0
+        if o.get("agent_system") and g is not None and p is not None:
+            try:
+                r_ = g.route(g.id_of(p.current_system), g.id_of(o["agent_system"]), 60, p.avoid_yellow)
+                walk = r_.jumps if r_ else 0
+            except Exception:                                           # noqa: BLE001
+                walk = 0
+        if walk:
+            minutes += walk * per_jump + 2
+            tags = tags + [f"FIRST go to {o['agent_system']} ({walk} jumps, ~{walk * per_jump + 2:.0f} min): missions cannot be accepted remotely"]
         ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
         if ex_isk > 0:
             net, minutes = net + ex_isk, minutes + ex_min

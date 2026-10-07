@@ -40,7 +40,7 @@ CMD_OPTS = {
     "next": ["--sync"], "keep": ["--to"], "bpbuy": ["--to"], "bestprice": ["--item", "--qty"], "sellplan": ["--to", "--world"],
     "day": ["--hours", "--cash", "--no-stock"], "now": ["--fast"], "combatfit": ["--dps", "--ehp", "--tank", "--value", "--ship"],
     "journey": ["--to", "--live", "--quick", "--detour", "--max-age"], "compare": ["--to", "--detour"], "start": ["--activity", "--no-loot"],
-    "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk", "--activity"], "buy": ["--item", "--qty", "--radius"],
+    "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk", "--activity", "--delete"], "buy": ["--item", "--qty", "--radius"],
 }
 EXAMPLES = {
     "now": "python -m eve_profit now --fast", "next": "python -m eve_profit next", "scan": "python -m eve_profit scan --live",

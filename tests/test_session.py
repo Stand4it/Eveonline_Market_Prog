@@ -183,6 +183,14 @@ class FixLastActivityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             fix_last(con, activity="nothing like this")
 
+    def test_delete_removes_a_mistaken_run(self):
+        from eve_profit.session import fix_last
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 5 couriers',364010,0.6,1)")
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 6 both',0,0.02,2)")
+        self.assertIn("Deleted", fix_last(con, delete=True))
+        self.assertEqual(con.execute("SELECT COUNT(*) FROM activity_log").fetchone()[0], 1)
+
 
 class OffersWithProfileTests(unittest.TestCase):
     def test_ranking_works_with_a_graph_and_profile_and_keeps_the_profile_intact(self):
