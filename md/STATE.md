@@ -10,3 +10,5 @@ Open agent offers (agent_offers.json):
 - Emps Metyt: step 1: Augumene Allergen (333 ore)
 - Beradaillot Audates: step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - 
 - BOTH COURIERS in ONE trip: accept both, fly once to Repute IV - AIR Laboratories (4 jum
+- Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
+- Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th

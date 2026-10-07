@@ -11,3 +11,4 @@
 - 2026-10-07: trainplan now lists SKILL BOOKS TO BUY first (never-trained skills, priced at the cheapest nearby sell order); next/now remind when the skill queue is under 8 h.
 - 2026-10-07: COMMANDS.docx is written with fixed zip timestamps so regenerating it never changes the file (it caused a git pull conflict on the PC).
 - 2026-10-07: new `agents` command: career agents with open offers, timed runs, agents near you by level, standings.
+- 2026-10-07: added Arabeton step 4 (A Friend in Need, bonus 97,000 untaxed, repair not shoot) and Ormelace step 1 (Cash Flow for Capsuleers, items only: 75mm Gatling Rail I + 2,000 Antimatter) to agent_offers.json; first-time missions estimated at 25 min.
