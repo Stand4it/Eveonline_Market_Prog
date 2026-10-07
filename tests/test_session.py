@@ -108,3 +108,15 @@ class AgentOffersTests(unittest.TestCase):
         txt = agent_note(con, g, p)
         self.assertIn("AGENT MISSIONS (measured)", txt)
         self.assertIn("1,000,000 ISK/hr", txt)
+
+
+class FixLastAndDocsTests(unittest.TestCase):
+    def test_fixlast_adds_minutes_and_docs_cover_every_command(self):
+        from eve_profit import docs
+        from eve_profit.session import fix_last
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('x',600000,0.5,1)")
+        msg = fix_last(con, add_min=30, add_isk=0)
+        self.assertIn("in 60 min", msg)
+        self.assertIn("600,000 ISK/hr", msg)
+        self.assertEqual([c for c in docs.code_commands() if c not in docs.COMMAND_HELP], [])

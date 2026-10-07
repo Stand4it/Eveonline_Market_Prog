@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -81,6 +81,9 @@ def main(argv=None):
     ap.add_argument("--quick", action="store_true", help="journey --live: refresh only the items you own along the route (seconds, not minutes)")
     ap.add_argument("--paused", type=float, default=0, help="stop: minutes you were away from the activity (not counted)")
     ap.add_argument("--no-loot", action="store_true", help="start/stop: do not value the items you picked up")
+    ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
+    ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
+    ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -259,7 +262,7 @@ def _run(a):
                 from .loot import gains, snapshot, value_loot
                 loot = value_loot(con, Graph(con), p, gains(before, snapshot(con)))
             try:
-                print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused, loot=loot))
+                print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused - a.add_min, loot=loot))
             except ValueError as e:
                 raise SystemExit(str(e))
     elif a.cmd == "log":
@@ -485,6 +488,22 @@ def _run(a):
         print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
         from .trainplan import format_trainplan, plan_training
         print("\n" + format_trainplan(plan_training(con, a.hours or 72)))
+    elif a.cmd == "fixlast":
+        from .session import fix_last
+        try:
+            print(fix_last(con, a.add_min, a.isk))
+        except ValueError as e:
+            raise SystemExit(str(e))
+    elif a.cmd == "docs":
+        from . import docs
+        d = docs.gather(con, a.db)
+        docs.write(d)
+        if not a.quiet:
+            print("Wrote md/STATE.md and md/COMMANDS.md")
+            diffs = docs.check(d)
+            print("\nWHERE THE NOTES AND THE CODE DISAGREE:" if diffs else "\nNotes and code agree.")
+            for x in diffs:
+                print("  - " + x)
     elif a.cmd == "status":
         from .status import report
         print(report(con, a.db, a.profile))

@@ -1,0 +1,47 @@
+# COMMANDS (auto-generated; run each as `python -m eve_profit <command>`)
+
+- `init` - create the database
+- `mock` - load an offline demo market
+- `sde` - import game data from a file
+- `scan` - rank everything you can do now (add --live to download prices)
+- `plan` - same as scan, no download
+- `watch` - keep re-scanning
+- `profile` - set system/cargo in the profile
+- `login` - log a character in (once per character)
+- `sync` - read skills, wallet, assets, location from the game
+- `log` - enter a timed run by hand
+- `go` - send the route of a ranked task to the game client
+- `universe` - load the map and items
+- `esimap` - build a map from ESI around you
+- `fleet` - list parked ships
+- `skills` - ISK/hr-measured skill advice + training plan
+- `diag` - check the game data
+- `explain` - why an item ranks where it does
+- `check` - re-check live prices of a ranked task
+- `stock` - value of everything you own
+- `along` - sell on the way to a destination
+- `fit` - what is fitted to your ship
+- `zkill` - refresh the hauler-loss map
+- `next` - ONE next step (agent offers, sell/list, best trade)
+- `keep` - build or sell your materials
+- `bpbuy` - buy a blueprint to use your stock?
+- `update` - has a game patch changed the data?
+- `bestprice` - best buyers for one item anywhere
+- `sellplan` - sell/list/carry/detour/haul per stack
+- `day` - chain the best tasks for N hours
+- `now` - sync + scan + next step + price check
+- `chars` - compare your characters
+- `combatfit` - set real DPS/EHP/tank for combat
+- `journey` - plan a whole trip with pickups and trades
+- `compare` - list here or make the trip?
+- `start` - start timing an activity
+- `stop` - stop timing, read payouts and loot, log it
+- `trainplan` - what to train now/next
+- `activities` - all timed runs
+- `status` - where data is stored, row counts
+- `pause` - freeze the running timer
+- `resume` - unfreeze it
+- `docs` - refresh md/STATE.md and md/COMMANDS.md; --check shows doc/code drift
+- `fixlast` - correct the last timed run (--add-min N, --isk N)
+
+Scripts: `python scripts/agent_steps.py [next|list|done|skip|back|reset]` - Level 1 agent checklist.

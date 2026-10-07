@@ -111,3 +111,15 @@ def resume(con, now=None):
     s["paused_min"] = s.get("paused_min", 0.0) + gone
     _save(con, s)
     return f"RESUMED '{s['activity']}'. Paused {gone:.0f} min this time ({s['paused_min']:.0f} min in total, not counted). Finish, then run  python -m eve_profit stop"
+
+
+def fix_last(con, add_min=0.0, add_isk=0.0):
+    """Correct the most recent timed run, e.g. the minutes you worked while the timer was paused."""
+    r = con.execute("SELECT id,activity,isk,hours FROM activity_log ORDER BY ts DESC, id DESC LIMIT 1").fetchone()
+    if not r:
+        raise ValueError("no timed run saved yet")
+    isk, hours = r["isk"] + add_isk, r["hours"] + add_min / 60.0
+    con.execute("UPDATE activity_log SET isk=?, hours=? WHERE id=?", (isk, hours, r["id"]))
+    con.commit()
+    return (f"Updated '{r['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / max(hours, 1e-9):,.0f} ISK/hr "
+            f"(was {r['isk']:,.0f} ISK in {r['hours'] * 60:.0f} min).")

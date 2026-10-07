@@ -8,7 +8,7 @@ Ranks what to do *right now* (haul trades, sell stock, mine) by risk-adjusted **
 
 Linux/Mac: `scripts/run.sh mock|scan|live`. Edit `profile.json` for ship, cargo m3, system, mining yield.
 DB path override: env `EVE_PROFIT_DB`. Safety: sec<0.5 never routed; 0.5-0.6 & recently-kill-hot systems penalised.
-See ROADMAP.md.
+See md/ROADMAP.md.
 
 ## EVE login (Stage 3)
 1. https://developers.eveonline.com -> Create application, type *Authentication & API Access*.
@@ -222,3 +222,6 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 
 ## Where is everything? (`status`)
 `python -m eve_profit status` shows this character's database path and size, how many rows of each kind it holds (orders, hangar, skills, trades, standings, loyalty points, agents, timed runs), the last market download, your latest timed runs, every character database on disk, and where PowerShell saved every command you typed.
+
+## Notes that survive a restart (`docs`, `fixlast`)
+All project notes live in `md/` (start with `md/START_HERE.md`). `python -m eve_profit docs --check` rewrites `md/STATE.md` and `md/COMMANDS.md` from the code and lists every place the notes and the code disagree. `python -m eve_profit fixlast --add-min 5` adds minutes (and `--isk N` ISK) to the last timed run; `stop --add-min 5` does the same while it is still running.

@@ -1,0 +1,5 @@
+# Decisions log (append only; newest last)
+- 2026-10-07: Loot counts in ISK/hr (value at best market net of round-trip travel time at 6M ISK/hr; trip hours added).
+- 2026-10-07: Character is auto-picked by who is online; per-character DB/profile/tokens.
+- 2026-10-07: Agent-missions work was found only on the user's PC; saved to branch agent-missions-local and merged. Lesson: ask for `git status` early.
+- 2026-10-07: Notes moved into md/; `python -m eve_profit docs --check` shows where notes and code disagree; CLAUDE.md + SessionStart hook load START_HERE on every session.

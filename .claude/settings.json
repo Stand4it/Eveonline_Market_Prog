@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {"hooks": [{"type": "command", "command": "python3 -m eve_profit docs --quiet; cat md/START_HERE.md md/STATE.md"}]}
+    ]
+  }
+}
