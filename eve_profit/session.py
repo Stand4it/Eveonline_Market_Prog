@@ -43,7 +43,8 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
     entries = esi.paged(f"/characters/{s['char']}/wallet/journal/")
     isk, by = summarize_journal(entries, s["t"], now)
     isk += extra_isk
-    hours = max((now - s["t"]) / 3600.0 - paused_min / 60.0, 1 / 60.0)
+    total_paused = paused_min + s.get("paused_min", 0.0) + ((now - s["pause_t"]) / 60.0 if s.get("pause_t") else 0.0)   # pauses made with `pause`/`resume` + --paused
+    hours = max((now - s["t"]) / 3600.0 - total_paused / 60.0, 1 / 60.0)
     if loot:
         isk += loot["value"]
         hours += loot["travel_hours"]
@@ -78,3 +79,35 @@ def summary(con):
         L.append(f"{r['activity']:<38} {r['ship']:<14} {r['n']:>4} {r['isk'] / max(r['h'], 1e-9):>14,.0f} {r['isk']:>14,.0f} {r['h']:>7.1f}")
     L.append("The planner uses the real ISK/hr once an activity name has 3 runs (names must match its activity list to be used).")
     return "\n".join(L)
+
+
+def _load(con):
+    row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
+    if not row:
+        raise ValueError("no session running: start one with  start --activity \"NAME\"")
+    return json.loads(row[0])
+
+
+def _save(con, s):
+    con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)", (json.dumps(s),))
+    con.commit()
+
+
+def pause(con, now=None):
+    """Freeze the running timer (needs no login): the time until `resume` is not counted."""
+    s = _load(con)
+    if s.get("pause_t"):
+        return f"'{s['activity']}' is already paused. Run  python -m eve_profit resume  when you are back."
+    s["pause_t"] = now or time.time()
+    _save(con, s)
+    return f"PAUSED '{s['activity']}'. The clock is stopped. Run  python -m eve_profit resume  when you are back in game."
+
+
+def resume(con, now=None):
+    s = _load(con)
+    if not s.get("pause_t"):
+        return f"'{s['activity']}' is not paused (timer is running)."
+    gone = ((now or time.time()) - s.pop("pause_t")) / 60.0
+    s["paused_min"] = s.get("paused_min", 0.0) + gone
+    _save(con, s)
+    return f"RESUMED '{s['activity']}'. Paused {gone:.0f} min this time ({s['paused_min']:.0f} min in total, not counted). Finish, then run  python -m eve_profit stop"

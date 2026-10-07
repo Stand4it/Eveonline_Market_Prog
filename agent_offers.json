@@ -1,0 +1,171 @@
+{
+ "_help": "Level 1 agent offers currently open (from screenshots). isk = cash reward, bonus = time-bonus ISK, taxed = 11% corp tax applies (Rounaminck step 1 paid untaxed; step 2 unknown so treated as taxed). loot = items you receive (priced from the scanned market, else 'est' per unit). cost = items you must buy to finish. granted = items given on accept (not counted). Edit this file after each new screenshot. task_min = your time at the agent's station for the task; jumps = jumps from Rotonos to the agent (travel counted both ways at min_per_jump minutes per jump); available=false hides an agent with no current offer. Verified payouts: Rounaminck step 2 paid 119,000+123,000 with 11% tax each (net 215,380); Beradaillot step 3 bonus 212,000 -23,320 tax (net 188,680). Rounaminck step 1 was untaxed. Arnelin step 3 (afterburner) DONE; Arnelin now at step 4. Arabeton, Ormelace, Emps and Rounaminck(step 3) unchanged. Arnelin step 4 (Tritanium) DONE; Arnelin now offers the 4-jump courier (step 5). Beradaillot step 4 (listening post) DONE; she now offers a courier to the same station as Arnelin's courier - combine them. Arabeton step 1 (The Swap) DONE 10:23 and paid 98,000 + 97,000 with NO tax. Arabeton step 2 assumed untaxed too (verify). Explorer step 1 and Soldier step 1 were untaxed; Industrialist and Explorer step 2+ were taxed 11%. Arabeton step 2 (Maulus) DONE 10:38 paid 88,000+92,000 untaxed. Arabeton is now at step 3 (96,000 + 107,000, assumed untaxed). Also: AIR Career Program rewards paid 212,500 untaxed at 10:26 - check that window for more tasks.",
+ "tax": 0.11,
+ "offers": [
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
+   "isk": 0,
+   "bonus": 185000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": false,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 5: courier 1 Crates of Electronic Parts (40 m3) from this station to Repute IV - AIR Laboratories, 4 jumps (travel counted both ways in case you must return; one way only ~15 min)",
+   "isk": 0,
+   "bonus": 224000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "1MN Afterburner I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": true,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)"
+  },
+  {
+   "agent": "Rounaminck Folle (Explorer)",
+   "mission": "step 3 of 5: Data Site Scanning (needs Civilian Data Analyzer fitted + Core Scanner Probes) (Civilian Data Analyzer already granted by Beradaillot's listening-post mission)",
+   "isk": 103000,
+   "bonus": 111000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 25,
+   "jumps": 0,
+   "available": true,
+   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)"
+  },
+  {
+   "agent": "Arabeton Spilmottin (Soldier of Fortune)",
+   "mission": "step 3: warp-disrupt the fleeing pirate with the granted Civilian Warp Disruptor (kill escorts, NOT the primary target)",
+   "isk": 96000,
+   "bonus": 107000,
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [
+    "Civilian Warp Disruptor"
+   ],
+   "task_min": 12,
+   "jumps": 0,
+   "available": true,
+   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)"
+  },
+  {
+   "agent": "Ormelace Vaille (Enforcer)",
+   "mission": "step 1: Cash Flow for Capsuleers",
+   "isk": 0,
+   "bonus": 0,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "75mm Gatling Rail I",
+     "qty": 1,
+     "est": 8000
+    },
+    {
+     "item": "Antimatter Charge S",
+     "qty": 2000,
+     "est": 30
+    }
+   ],
+   "cost": [],
+   "granted": [],
+   "task_min": 10,
+   "jumps": 0,
+   "available": false,
+   "where": "Rotonos IV Moon 2 (no offer showing in the agent list right now)"
+  },
+  {
+   "agent": "Emps Metyt (Mining, Axiosere)",
+   "mission": "step 1: Augumene Allergen (333 ore)",
+   "isk": 36000,
+   "bonus": 26000,
+   "taxed": true,
+   "loot": [],
+   "cost": [
+    {
+     "item": "Augumene",
+     "qty": 333,
+     "est": 60
+    }
+   ],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 1,
+   "available": true,
+   "where": "Axiosere VII - Astral Mining Inc. Mining Outpost (1 jump from Rotonos)"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
+   "isk": 0,
+   "bonus": 185000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": true,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)"
+  },
+  {
+   "agent": "BOTH COURIERS in ONE trip (Arnelin crates + Beradaillot data chip)",
+   "mission": "accept both, fly once to Repute IV - AIR Laboratories (4 jumps), hand in both: 40.1 m3 fits your 135 m3 hold",
+   "isk": 0,
+   "bonus": 409000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 2,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "1MN Afterburner I",
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 5,
+   "jumps": 4,
+   "available": true,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)"
+  }
+ ],
+ "min_per_jump": 3.0
+}

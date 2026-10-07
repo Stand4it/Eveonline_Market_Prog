@@ -55,7 +55,11 @@ def refresh_gank_map(con, zk, esi, region_ids, max_lookups=150, per_region=200, 
     groups = ",".join(map(str, HAULER_GROUPS))
     for rid in region_ids:
         log(f"  zKillboard: hauler losses in region {rid}...")
-        rows = zk.get(f"losses/groupID/{groups}/regionID/{rid}/pastSeconds/{WINDOW_S}")[:per_region]
+        rows = zk.get(f"losses/groupID/{groups}/regionID/{rid}/pastSeconds/{WINDOW_S}")
+        if not isinstance(rows, list):          # zKillboard answered with an error object (rate limit etc.), not a list
+            log(f"  zKillboard: no usable answer for region {rid}, skipped")
+            continue
+        rows = rows[:per_region]
         listed += len(rows)
         for k in rows:
             kid, h = k.get("killmail_id"), (k.get("zkb") or {}).get("hash")

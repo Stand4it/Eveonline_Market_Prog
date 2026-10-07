@@ -74,3 +74,37 @@ class LootTests(unittest.TestCase):
         small = value_loot(con, g, p, [(34, 1, 10)])
         self.assertIsNone(small["where"])                                  # not worth leaving for
         self.assertEqual(small["travel_hours"], 0)
+
+
+class PauseTests(unittest.TestCase):
+    def test_pause_and_resume_remove_the_time_away(self):
+        from eve_profit.session import pause, resume
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        t0 = 1_800_000_000
+        iso = lambda t: __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime(t))
+        start(con, "Agent L1 step 1 test", 7, now=t0)
+        self.assertIn("PAUSED", pause(con, now=t0 + 600))
+        self.assertIn("already paused", pause(con, now=t0 + 700))
+        self.assertIn("RESUMED", resume(con, now=t0 + 3000))               # 40 min away
+        entries = [{"date": iso(t0 + 100), "ref_type": "agent_mission_reward", "amount": 1_000_000}]
+        msg = stop(con, FakeESI(entries), now=t0 + 4200)                    # 70 min wall clock - 40 away = 30
+        self.assertIn("in 30 min", msg)
+        with self.assertRaises(ValueError):
+            pause(con)
+
+
+class AgentOffersTests(unittest.TestCase):
+    def test_note_says_not_measured_yet_then_ranks_measured_agent_runs(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import agent_note
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile()
+        self.assertIn("not measured yet", agent_note(con, g, p))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 1 x',1000000,1.0,1)")
+        txt = agent_note(con, g, p)
+        self.assertIn("AGENT MISSIONS (measured)", txt)
+        self.assertIn("1,000,000 ISK/hr", txt)
