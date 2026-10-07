@@ -257,22 +257,27 @@
   },
   {
    "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-   "mission": "step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian Armor Repairer (5 m3) and bring it to Rotonos IV - Moon 2 - CAS (4 jumps). GRANTS the Broker Relations skill book. ISK rewards NOT SEEN (screenshot cut off)",
+   "mission": "step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian Armor Repairer (5 m3) and bring it to Rotonos IV - Moon 2 - CAS (4 jumps). GRANTS the Broker Relations skill book. Rewards: 1 Nanofiber (item) + bonus 204,000 ISK (no plain ISK)",
    "isk": 0,
-   "bonus": 0,
+   "bonus": 204000,
    "taxed": true,
    "loot": [
     {
      "item": "Broker Relations",
      "qty": 1,
      "est": 20000
+    },
+    {
+     "item": "Nanofiber",
+     "qty": 1,
+     "est": 10000
     }
    ],
    "cost": [
     {
      "item": "Civilian Armor Repairer",
      "qty": 1,
-     "est": 3000
+     "est": 20000
     }
    ],
    "granted": [
@@ -289,27 +294,32 @@
   },
   {
    "agent": "BOTH in ONE trip (Arnelin 20 Cap Booster 25 + Beradaillot Civilian Armor Repairer)",
-   "mission": "accept both, buy the 20 boosters + 1 repairer, carry 25 m3 to Rotonos IV - CAS (same drop-off, 4 jumps), hand in both; Beradaillot's ISK reward not yet seen",
+   "mission": "accept both, buy the 20 boosters + 1 repairer, carry 25 m3 to Rotonos IV - CAS (same drop-off, 4 jumps), hand in both",
    "isk": 166000,
-   "bonus": 233000,
+   "bonus": 437000,
    "taxed": true,
    "loot": [
     {
      "item": "Broker Relations",
      "qty": 1,
      "est": 20000
+    },
+    {
+     "item": "Nanofiber",
+     "qty": 1,
+     "est": 10000
     }
    ],
    "cost": [
     {
      "item": "Cap Booster 25",
      "qty": 20,
-     "est": 800
+     "est": 350
     },
     {
      "item": "Civilian Armor Repairer",
      "qty": 1,
-     "est": 3000
+     "est": 20000
     }
    ],
    "granted": [
