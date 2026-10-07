@@ -1,5 +1,5 @@
 {
- "_help": "Level 1 agent offers currently open (from screenshots). isk = cash reward, bonus = time-bonus ISK, taxed = 11% corp tax applies (Rounaminck step 1 paid untaxed; step 2 unknown so treated as taxed). loot = items you receive (priced from the scanned market, else 'est' per unit). cost = items you must buy to finish. granted = items given on accept (not counted). Edit this file after each new screenshot. task_min = your time at the agent's station for the task; jumps = jumps from Rotonos to the agent (travel counted both ways at min_per_jump minutes per jump); available=false hides an agent with no current offer. Verified payouts: Rounaminck step 2 paid 119,000+123,000 with 11% tax each (net 215,380); Beradaillot step 3 bonus 212,000 -23,320 tax (net 188,680). Rounaminck step 1 was untaxed. Arnelin step 3 (afterburner) DONE; Arnelin now at step 4. Arabeton, Ormelace, Emps and Rounaminck(step 3) unchanged. Arnelin step 4 (Tritanium) DONE; Arnelin now offers the 4-jump courier (step 5). Beradaillot step 4 (listening post) DONE; she now offers a courier to the same station as Arnelin's courier - combine them. Arabeton step 1 (The Swap) DONE 10:23 and paid 98,000 + 97,000 with NO tax. Arabeton step 2 assumed untaxed too (verify). Explorer step 1 and Soldier step 1 were untaxed; Industrialist and Explorer step 2+ were taxed 11%. Arabeton step 2 (Maulus) DONE 10:38 paid 88,000+92,000 untaxed. Arabeton is now at step 3 (96,000 + 107,000, assumed untaxed). Also: AIR Career Program rewards paid 212,500 untaxed at 10:26 - check that window for more tasks. Arabeton step 3 (warp disruptor) DONE: paid 96,000 + 95,230 time bonus (bonus shrinks with time; it took ~23 min active, so expect ~95k not 107k at that pace) + 4,800 bounty, untaxed; measured 417k ISK/hr over 28 min incl. 5 min worked while paused. Arabeton now has a new step 4 offer (needs screenshot). 10-07 screenshots: Arabeton step 4 (A Friend in Need): reward item Remote ... + bonus 97,000 ISK untaxed, standing 2.12, granted Civilian Small Remote Armor Repairer. Ormelace step 1 (Cash Flow for Capsuleers): rewards 75mm Gatling Rail I + 2,000 Antimatter (ammo), no ISK, standing 0.82. task_min 25 = first-time estimate (twice the guess; the time bonus shrinks with time). Fields to_system (system name of the destination) and m3 (cargo the job uses) let `next` also look for profitable trades on the way there and back.",
+ "_help": "Level 1 agent offers currently open (from screenshots). isk = cash reward, bonus = time-bonus ISK, taxed = 11% corp tax applies (Rounaminck step 1 paid untaxed; step 2 unknown so treated as taxed). loot = items you receive (priced from the scanned market, else 'est' per unit). cost = items you must buy to finish. granted = items given on accept (not counted). Edit this file after each new screenshot. task_min = your time at the agent's station for the task; jumps = jumps from Rotonos to the agent (travel counted both ways at min_per_jump minutes per jump); available=false hides an agent with no current offer. Verified payouts: Rounaminck step 2 paid 119,000+123,000 with 11% tax each (net 215,380); Beradaillot step 3 bonus 212,000 -23,320 tax (net 188,680). Rounaminck step 1 was untaxed. Arnelin step 3 (afterburner) DONE; Arnelin now at step 4. Arabeton, Ormelace, Emps and Rounaminck(step 3) unchanged. Arnelin step 4 (Tritanium) DONE; Arnelin now offers the 4-jump courier (step 5). Beradaillot step 4 (listening post) DONE; she now offers a courier to the same station as Arnelin's courier - combine them. Arabeton step 1 (The Swap) DONE 10:23 and paid 98,000 + 97,000 with NO tax. Arabeton step 2 assumed untaxed too (verify). Explorer step 1 and Soldier step 1 were untaxed; Industrialist and Explorer step 2+ were taxed 11%. Arabeton step 2 (Maulus) DONE 10:38 paid 88,000+92,000 untaxed. Arabeton is now at step 3 (96,000 + 107,000, assumed untaxed). Also: AIR Career Program rewards paid 212,500 untaxed at 10:26 - check that window for more tasks. Arabeton step 3 (warp disruptor) DONE: paid 96,000 + 95,230 time bonus (bonus shrinks with time; it took ~23 min active, so expect ~95k not 107k at that pace) + 4,800 bounty, untaxed; measured 417k ISK/hr over 28 min incl. 5 min worked while paused. Arabeton now has a new step 4 offer (needs screenshot). 10-07 screenshots: Arabeton step 4 (A Friend in Need): reward item Remote ... + bonus 97,000 ISK untaxed, standing 2.12, granted Civilian Small Remote Armor Repairer. Ormelace step 1 (Cash Flow for Capsuleers): rewards 75mm Gatling Rail I + 2,000 Antimatter (ammo), no ISK, standing 0.82. task_min 25 = first-time estimate (twice the guess; the time bonus shrinks with time). Fields to_system (system name of the destination) and m3 (cargo the job uses) let `next` also look for profitable trades on the way there and back. 10-07 later: dual couriers DONE. New: Arnelin step 6 (20 Cap Booster 25, 166,000 + 233,000 taxed, grants the blueprint) and Beradaillot step 6 'Balancing the Books' (1 Civilian Armor Repairer, grants the Broker Relations skill book; ISK rewards not visible in the screenshot). one_way:true = you are already 4 jumps from the drop-off, so travel is counted once. Standing 3.28 with both.",
  "tax": 0.11,
  "offers": [
   {
@@ -45,7 +45,7 @@
    ],
    "task_min": 3,
    "jumps": 4,
-   "available": true,
+   "available": false,
    "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
    "to_system": "Repute",
    "m3": 40.0
@@ -146,7 +146,7 @@
    ],
    "task_min": 3,
    "jumps": 4,
-   "available": true,
+   "available": false,
    "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
    "to_system": "Repute",
    "m3": 0.1
@@ -171,7 +171,7 @@
    ],
    "task_min": 5,
    "jumps": 4,
-   "available": true,
+   "available": false,
    "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
    "to_system": "Repute",
    "m3": 40.1
@@ -223,6 +223,99 @@
    "available": true,
    "where": "Rotonos (this system)",
    "note": "bounties from the kills are extra (about 5k per pirate so far); no ISK reward shown, only items; standing 0.82"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 6: acquire 20 x Cap Booster 25 (20 m3) and bring them to Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps from where you are; buying them is allowed: only holding them counts)",
+   "isk": 166000,
+   "bonus": 233000,
+   "taxed": true,
+   "loot": [],
+   "cost": [
+    {
+     "item": "Cap Booster 25",
+     "qty": 20,
+     "est": 800
+    }
+   ],
+   "granted": [
+    "Cap Booster 25 Blueprint"
+   ],
+   "task_min": 10,
+   "jumps": 4,
+   "one_way": true,
+   "m3": 20,
+   "available": true,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian Armor Repairer (5 m3) and bring it to Rotonos IV - Moon 2 - CAS (4 jumps). GRANTS the Broker Relations skill book. ISK rewards NOT SEEN (screenshot cut off)",
+   "isk": 0,
+   "bonus": 0,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Broker Relations",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Civilian Armor Repairer",
+     "qty": 1,
+     "est": 3000
+    }
+   ],
+   "granted": [
+    "Broker Relations (skill book)"
+   ],
+   "task_min": 8,
+   "jumps": 4,
+   "one_way": true,
+   "m3": 5,
+   "available": true,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
+  },
+  {
+   "agent": "BOTH in ONE trip (Arnelin 20 Cap Booster 25 + Beradaillot Civilian Armor Repairer)",
+   "mission": "accept both, buy the 20 boosters + 1 repairer, carry 25 m3 to Rotonos IV - CAS (same drop-off, 4 jumps), hand in both; Beradaillot's ISK reward not yet seen",
+   "isk": 166000,
+   "bonus": 233000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Broker Relations",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Cap Booster 25",
+     "qty": 20,
+     "est": 800
+    },
+    {
+     "item": "Civilian Armor Repairer",
+     "qty": 1,
+     "est": 3000
+    }
+   ],
+   "granted": [
+    "Cap Booster 25 Blueprint",
+    "Broker Relations (skill book)"
+   ],
+   "task_min": 14,
+   "jumps": 4,
+   "one_way": true,
+   "m3": 25,
+   "available": true,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps)"
   }
  ],
  "min_per_jump": 3.0

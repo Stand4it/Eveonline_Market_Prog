@@ -5,10 +5,10 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 160 | commands in code: 44
 
 
 Open agent offers (agent_offers.json):
-- Arnelin Ygegnere: step 5: courier 1 Crates of Electronic Parts (40 m3) from th
 - Rounaminck Folle: step 3 of 5: Data Site Scanning (needs Civilian Data Analyze
 - Emps Metyt: step 1: Augumene Allergen (333 ore)
-- Beradaillot Audates: step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - 
-- BOTH COURIERS in ONE trip: accept both, fly once to Repute IV - AIR Laboratories (4 jum
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
 - Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
+- Arnelin Ygegnere: step 6: acquire 20 x Cap Booster 25 (20 m3) and bring them t
+- Beradaillot Audates: step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian
+- BOTH in ONE trip: accept both, buy the 20 boosters + 1 repairer, carry 25 m3 t

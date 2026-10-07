@@ -106,7 +106,8 @@ def trade_extras(con, g, p, o):
     there = dataclasses.replace(p, cargo_m3=room, current_system=dest)
     isk = mins = 0.0
     lines = []
-    for label, prof, to in (("going", here, dest), ("coming back", there, p.current_system)):
+    legs = [("going", here, dest)] + ([] if o.get("one_way") else [("coming back", there, p.current_system)])
+    for label, prof, to in legs:
         try:
             r = plan_journey(con, g, prof, to, detour=1)
         except Exception:                                               # noqa: BLE001 (no safe route / unknown system)
@@ -161,7 +162,8 @@ def offers_ranked(con, g=None, p=None):
             cost += p * it["qty"]
             tags.append(f"buy {it['qty']:,} x {it['item']} -{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
         net = cash + loot - cost
-        minutes = o.get("task_min", 10) + 2 * o.get("jumps", 0) * per_jump + (2 if o.get("jumps", 0) else 0)
+        minutes = (o.get("task_min", 10) + (1 if o.get("one_way") else 2) * o.get("jumps", 0) * per_jump
+                   + (2 if o.get("jumps", 0) else 0))
         ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
         if ex_isk > 0:
             net, minutes = net + ex_isk, minutes + ex_min
