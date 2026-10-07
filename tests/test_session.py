@@ -134,3 +134,18 @@ class CommandReferenceTests(unittest.TestCase):
         path = os.path.join(tempfile.mkdtemp(), "c.docx")
         docs.write_docx(path, lines)
         self.assertIn("word/document.xml", zipfile.ZipFile(path).namelist())
+
+
+class AgentsViewTests(unittest.TestCase):
+    def test_report_lists_known_agents_runs_and_levels(self):
+        from eve_profit.agents_view import report
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 1 x',1000000,1.0,1)")
+        txt = report(con, Graph(con), Profile(current_system="Home"))
+        self.assertIn("CAREER AGENTS", txt)
+        self.assertIn("Agent L1 step 1 x", txt)
+        self.assertIn("MISSION AGENTS NEAR YOU BY LEVEL", txt)

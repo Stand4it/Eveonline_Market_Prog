@@ -209,5 +209,8 @@ FIXLAST  -  correct the last timed run (--add-min N, --isk N)
    --isk          ISK amount
    example: python -m eve_profit fixlast --add-min 5
 
+AGENTS  -  agents we know: open offers, your runs with them, agents near you by level, standings
+   example: python -m eve_profit agents
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```

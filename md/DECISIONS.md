@@ -10,3 +10,4 @@
 - 2026-10-07: folder move to OneDrive done and verified by the user; local-only logs and the stray client-id file are git-ignored.
 - 2026-10-07: trainplan now lists SKILL BOOKS TO BUY first (never-trained skills, priced at the cheapest nearby sell order); next/now remind when the skill queue is under 8 h.
 - 2026-10-07: COMMANDS.docx is written with fixed zip timestamps so regenerating it never changes the file (it caused a git pull conflict on the PC).
+- 2026-10-07: new `agents` command: career agents with open offers, timed runs, agents near you by level, standings.

@@ -27,6 +27,7 @@ COMMAND_HELP = {
     "pause": "freeze the running timer", "resume": "unfreeze it", "trainplan": "what to train now/next", "activities": "all timed runs",
     "status": "where data is stored, row counts", "docs": "refresh md/STATE.md and md/COMMANDS.md; --check shows doc/code drift",
     "fixlast": "correct the last timed run (--add-min N, --isk N)",
+    "agents": "agents we know: open offers, your runs with them, agents near you by level, standings",
 }
 
 
@@ -47,7 +48,7 @@ EXAMPLES = {
     "journey": "python -m eve_profit journey --to Jita --live --quick", "compare": "python -m eve_profit compare --to Jita",
     "go": "python -m eve_profit go --pick 1 --send", "trainplan": "python -m eve_profit trainplan --hours 24", "skills": "python -m eve_profit skills --hours 72",
     "combatfit": 'python -m eve_profit combatfit --ship "Vexor" --dps 450 --ehp 60000 --tank 200 --value 30000000',
-    "fixlast": "python -m eve_profit fixlast --add-min 5", "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
+    "fixlast": "python -m eve_profit fixlast --add-min 5", "agents": "python -m eve_profit agents", "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
     "log": 'python -m eve_profit log --activity "Level 2 security mission" --isk 8000000 --hours 1', "day": "python -m eve_profit day --hours 8",
     "sellplan": "python -m eve_profit sellplan --world 5", "login": "python -m eve_profit login", "sync": "python -m eve_profit sync",
 }
