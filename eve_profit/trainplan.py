@@ -65,6 +65,42 @@ def plan_training(con, hours=24.0, goals=GOALS):
     return {"steps": out, "unknown": sorted(set(unknown)), "have_attrs": bool(attrs), "hours": hours}
 
 
+def book_list(con, g, p, res, hours=None):
+    """Skill books to BUY first: skills in the plan you have never trained (no row in your skills = no book trained yet).
+    Priced at the cheapest sell order within 10 jumps. -> [(skill, price, system, jumps)]; price None = no seller found."""
+    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    reach = g.reach(g.id_of(p.current_system), 10, p.avoid_yellow) if p.current_system in {g.name[s] for s in g.name} else {}
+    limit = (hours or res["hours"]) * 60
+    out, seen = [], set()
+    for st in res["steps"]:
+        if st["cum"] - st["minutes"] >= limit and out:
+            break
+        if st["level"] != 1 or st["skill"] in seen:
+            continue
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
+        if not row or row[0] in owned:
+            continue
+        seen.add(st["skill"])
+        best = None
+        for sysid, price in con.execute("SELECT system_id,MIN(price) FROM orders WHERE type_id=? AND is_buy=0 GROUP BY system_id", (row[0],)):
+            if sysid in reach and (best is None or price < best[0]):
+                best = (price, sysid)
+        out.append((st["skill"], best[0] if best else None, g.name[best[1]] if best else "", reach[best[1]].jumps if best else 0))
+    return out
+
+
+def format_books(books, wallet):
+    if not books:
+        return ""
+    total = sum(b[1] for b in books if b[1])
+    L = ["", "BUY THESE SKILL BOOKS FIRST (you have never trained them, so you probably do not own the book; skip any you already have):"]
+    for name, price, where, jumps in books:
+        L.append(f"   {name:<26} " + (f"~{price:>10,.0f} ISK at {where} ({jumps} jumps)" if price else "no seller found nearby: check the market in game"))
+    L.append(f"   total about {total:,.0f} ISK; your wallet {wallet:,.0f} ISK" + ("" if total <= wallet else "  <- NOT ENOUGH: buy the first ones only"))
+    L.append("   Market > Skills (or search the name) > Buy. Then queue them, and spend your unallocated skill points on the first ones.")
+    return "\n".join(L)
+
+
 def format_trainplan(res):
     limit = res["hours"] * 60
     L = ["TRAINING PLAN for this character (default order: safe money first, then combat basics, exploration, mining):", ""]

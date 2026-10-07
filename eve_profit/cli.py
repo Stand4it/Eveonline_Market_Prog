@@ -487,7 +487,11 @@ def _run(a):
         print("Testing each skill by re-running the planner (this can take a minute or two)...")
         print(format_advice(advise(con, p, plan, a.hours or 72)))   # --hours N = training hours to plan
         from .trainplan import format_trainplan, plan_training
-        print("\n" + format_trainplan(plan_training(con, a.hours or 72)))
+        res = plan_training(con, a.hours or 72)
+        print("\n" + format_trainplan(res))
+        from .graph import Graph
+        from .trainplan import book_list, format_books
+        print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
     elif a.cmd == "fixlast":
         from .session import fix_last
         try:
@@ -519,7 +523,11 @@ def _run(a):
                 "SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (n,)).fetchone() or (None,)] if r])
         except Exception:
             pass
-        print(format_trainplan(plan_training(con, a.hours or 24)))
+        res = plan_training(con, a.hours or 24)
+        print(format_trainplan(res))
+        from .graph import Graph
+        from .trainplan import book_list, format_books
+        print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
     elif a.cmd == "fleet":
         from .fleet import describe_fleet
         from .graph import Graph

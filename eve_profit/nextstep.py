@@ -138,8 +138,40 @@ def offers_ranked(con):
     return "\n".join(L)
 
 
+def skill_note(con, g, p, min_hours=8.0):
+    """Remind the user when the skill queue is short or empty, and name the first thing to train (plus its book if unowned)."""
+    import calendar
+    import time as _t
+    try:
+        rows = [r[0] for r in con.execute("SELECT finish_date FROM skill_queue ORDER BY position") if r[0]]
+        if not con.execute("SELECT COUNT(*) FROM character_skills").fetchone()[0]:
+            return ""                                                   # never synced: nothing to say
+        end = max((calendar.timegm(_t.strptime(x.rstrip("Z")[:19], "%Y-%m-%dT%H:%M:%S")) for x in rows), default=0)
+        hours = max(0.0, (end - _t.time()) / 3600.0)
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    if hours >= min_hours:
+        return ""
+    try:
+        from .trainplan import book_list, plan_training
+        res = plan_training(con, 24)
+        first = res["steps"][0] if res["steps"] else None
+        books = book_list(con, g, p, res, hours=1)
+    except Exception:                                                   # noqa: BLE001
+        first, books = None, []
+    L = [f"SKILL QUEUE: only {hours:.1f} h left. Fill it before you leave:  python -m eve_profit trainplan --hours 24"]
+    if first:
+        L.append(f"   first in your plan: {first['skill']} {first['level']} ({first['minutes'] / 60:.1f} h) - {first['why']}")
+    for name, price, where, jumps in books[:1]:
+        L.append(f"   BUY THE BOOK FIRST: {name} " + (f"~{price:,.0f} ISK at {where} ({jumps} jumps)" if price else "(no seller found nearby)"))
+    return "\n".join(L)
+
+
 def next_action(con, g, p):
     text = _next_action_core(con, g, p)
+    sk = skill_note(con, g, p)
+    if sk:
+        text = sk + "\n\n" + text
     note = agent_note(con, g, p)
     try:
         ranked = offers_ranked(con)

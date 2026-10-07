@@ -8,3 +8,4 @@
 - 2026-10-07: md/COMMANDS.txt (Notepad) and md/COMMANDS.docx (Word) generated from the code with every option and an example per command.
 - 2026-10-07: Project folder on the PC moved to C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline (GitHub unchanged; the cloud copy is independent of local paths).
 - 2026-10-07: folder move to OneDrive done and verified by the user; local-only logs and the stray client-id file are git-ignored.
+- 2026-10-07: trainplan now lists SKILL BOOKS TO BUY first (never-trained skills, priced at the cheapest nearby sell order); next/now remind when the skill queue is under 8 h.

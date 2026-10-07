@@ -32,3 +32,22 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BookTests(unittest.TestCase):
+    def test_untrained_skills_get_a_buy_book_line_with_the_cheapest_nearby_price(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.trainplan import book_list, format_books
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id,skill_rank,skill_primary,skill_secondary) VALUES(900,'Accounting',0.01,1,1,165,166)")
+        con.execute("INSERT INTO orders VALUES(991001,900,60000001,1,10000001,0,250000.0,5,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(991002,900,60000001,1,10000001,0,300000.0,5,1,'',1)")
+        res = plan_training(con, 100, goals=[("Accounting", 2, "tax")])
+        books = book_list(con, Graph(con), Profile(current_system="Home"), res)
+        self.assertEqual([(b[0], b[1]) for b in books], [("Accounting", 250000.0)])
+        self.assertIn("BUY THESE SKILL BOOKS FIRST", format_books(books, 4_000_000))
+        con.execute("INSERT INTO character_skills(skill_id,level,sp) VALUES(900,1,250)")
+        self.assertEqual(book_list(con, Graph(con), Profile(current_system="Home"), res), [])      # already trained: book owned
