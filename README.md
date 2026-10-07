@@ -216,3 +216,6 @@ Orders live in the SQLite database. `--live` skips regions downloaded in the las
 
 ### Loot counts too (`start` / `stop`)
 `start` takes a snapshot of the items in your station hangars; `stop` re-reads them and values what you gained at what it would really sell for: either where you are, or at ONE nearby market if the extra ISK beats the time of the round trip (valued at 6M ISK/hr), and that travel time is added to the mission's hours. Move loot from your ship's cargo into the Item Hangar first (the program cannot see inside the ship). Use `--no-loot` to skip it.
+
+### Home station (early-game task)
+`sync` reads your home (clone) station. If it is a player-owned structure, `now`/`next` add an EARLY-GAME TASK: owners can charge docking fees and market taxes, so move your home to a free NPC station near a trade hub (Clone Bay > Set Home Station). Reading the home station needs the clones permission: run `login` once more to grant it.

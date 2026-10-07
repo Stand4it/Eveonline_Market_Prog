@@ -487,3 +487,16 @@ class OpportunityCostTests(unittest.TestCase):
         self.assertGreater(d["sell_instead"], 0)          # materials are NOT free just because Home has no buyer
         self.assertLess(d["gain"], 0)                     # selling them at the neighbour beats building a 2,000 product
         self.assertLess(d["net"], 0)
+
+
+class HomeNoteTests(unittest.TestCase):
+    def test_structure_home_gets_the_move_home_task_and_npc_home_does_not(self):
+        from eve_profit.graph import Graph
+        from eve_profit.nextstep import next_action
+        con, g, far = setup()
+        con.execute("DELETE FROM inventory")
+        npc = next_action(con, g, Profile(home_location_type="station", current_location_id=60000001))
+        self.assertNotIn("EARLY-GAME TASK", npc)
+        struct = next_action(con, g, Profile(home_location_type="structure"))
+        self.assertIn("EARLY-GAME TASK", struct)
+        self.assertIn("Set Home Station", struct)

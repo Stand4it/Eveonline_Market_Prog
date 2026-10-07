@@ -6,7 +6,7 @@ from .planner import plan
 AFTER = "Then run:  python -m eve_profit now"
 
 
-def next_action(con, g, p):
+def _next_action_core(con, g, p):
     res = plan_along(con, g, p, p.current_system)
     here = res["sell_here"]
     where = p.current_system
@@ -53,3 +53,15 @@ def next_action(con, g, p):
         L.append(AFTER)
         return "\n".join(L)
     return "No clear action. Refresh data:  python -m eve_profit scan --live   then   python -m eve_profit next"
+
+
+HOME_NOTE = ("EARLY-GAME TASK: your home station is a player-owned structure. Owners can charge docking fees and market taxes there. "
+             "Move your home to a free NPC station near a trade hub: dock at an NPC station that has a Clone Bay, open the "
+             "Clone Bay window and choose Set Home Station. (NPC stations charge no extra tax; you still pay the normal sales tax and broker fee.)")
+
+
+def next_action(con, g, p):
+    text = _next_action_core(con, g, p)
+    if getattr(p, "home_location_type", "") == "structure" or (getattr(p, "current_location_id", 0) or 0) > 10 ** 12:
+        text += "\n\n" + HOME_NOTE
+    return text

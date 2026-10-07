@@ -99,6 +99,12 @@ def sync_character(con, esi, cid, profile):
     else:                    # universe not loaded yet: ask ESI for the name
         profile.current_system = esi.get(f"/universe/systems/{loc['solar_system_id']}/")[0]["name"]
     profile.current_location_id = loc.get("station_id") or loc.get("structure_id") or 0
+    try:                                         # home station: needs the clones permission (log in again to grant it)
+        home = esi.get(f"/characters/{cid}/clones/")[0].get("home_location") or {}
+        profile.home_location_id = home.get("location_id", 0)
+        profile.home_location_type = home.get("location_type", "")
+    except Exception:
+        pass
     profile.ship_name = ship.get("ship_name", profile.ship_name)
     profile.ship_type_id = ship["ship_type_id"]
     cap = next((a["value"] for a in _type(esi, ship["ship_type_id"]).get("dogma_attributes", [])
