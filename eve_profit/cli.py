@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "pause", "resume", "trainplan", "activities"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -215,6 +215,12 @@ def _run(a):
               else "Dry run. Add --send to set waypoints in your game client.")
         for n, k in route_alerts(g, o.waypoints):
             print(f"ALERT {k}: {n}")
+    elif a.cmd in ("pause", "resume"):
+        from .session import pause, resume
+        try:
+            print((pause if a.cmd == "pause" else resume)(con))
+        except ValueError as e:
+            raise SystemExit(str(e))
     elif a.cmd in ("start", "stop"):
         from . import sso
         from .esi import ESI

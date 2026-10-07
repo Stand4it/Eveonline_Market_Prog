@@ -60,8 +60,95 @@ HOME_NOTE = ("EARLY-GAME TASK: your home station is a player-owned structure. Ow
              "Clone Bay window and choose Set Home Station. (NPC stations charge no extra tax; you still pay the normal sales tax and broker fee.)")
 
 
+AGENT_PREFIX = "Agent L1"
+
+
+def agent_note(con, g, p):
+    """One block about timed agent-mission runs (activity names starting 'Agent L1'): measured ISK/hr vs the best ranked opportunity."""
+    try:
+        rows = con.execute("SELECT activity, COUNT(*), SUM(isk), SUM(hours) FROM activity_log WHERE activity LIKE ? GROUP BY activity",
+                           (AGENT_PREFIX + "%",)).fetchall()
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    rows = [r for r in rows if r[3] and r[3] > 0]
+    if not rows:
+        return ("AGENT MISSIONS (not measured yet): Level 1 agents often pay more than trading early on. Time one run with\n"
+                "   python -m eve_profit start --activity \"Agent L1 step 1 NAME\"   ...do it...   python -m eve_profit stop")
+    runs = sum(r[1] for r in rows)
+    isk = sum(r[2] for r in rows)
+    hours = sum(r[3] for r in rows)
+    rate = isk / hours
+    best = 0.0
+    try:
+        opps = plan(con, p, 30, False)
+        best = opps[0].isk_per_hour if opps else 0.0
+    except Exception:                                                   # noqa: BLE001
+        pass
+    L = [f"AGENT MISSIONS (measured): {rate:,.0f} ISK/hr over {runs} timed run(s), {isk:,.0f} ISK in {hours:.1f} h"
+         + (f"  |  best ranked trade/haul: {best:,.0f} ISK/hr" if best else "")]
+    for r in sorted(rows, key=lambda r: -(r[2] / r[3]))[:3]:
+        L.append(f"   {r[0]}: {r[2] / r[3]:,.0f} ISK/hr ({r[1]} run(s))")
+    if best and rate >= 1.2 * best:
+        L.insert(0, ">>> DO AGENT MISSIONS FIRST: they beat everything ranked below. Next: python scripts/agent_steps.py next  <<<")
+    return "\n".join(L)
+
+
+def offers_ranked(con):
+    """Rank the Level 1 agent offers in agent_offers.json by NET ISK per HOUR: (cash after tax + loot at market - items to buy) / (task time + travel both ways)."""
+    import json
+    from pathlib import Path
+    f = Path(__file__).resolve().parents[1] / "agent_offers.json"
+    if not f.exists():
+        return ""
+    d = json.loads(f.read_text(encoding="utf-8"))
+    tax, per_jump = d.get("tax", 0.11), d.get("min_per_jump", 3.0)
+
+    def price(item, est):
+        try:
+            r = con.execute("SELECT MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0", (item,)).fetchone()
+            if r and r[0]:
+                return float(r[0]), "mkt"
+        except Exception:                                               # noqa: BLE001
+            pass
+        return float(est), "est"
+
+    rows = []
+    for o in d["offers"]:
+        if not o.get("available", True):
+            continue
+        cash = (o.get("isk", 0) + o.get("bonus", 0)) * ((1 - tax) if o.get("taxed", True) else 1.0)
+        loot, cost, tags = 0.0, 0.0, []
+        for it in o.get("loot", []):
+            p, src = price(it["item"], it.get("est", 0))
+            loot += p * it["qty"]
+            tags.append(f"{it['qty']:,} x {it['item']} ~{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
+        for it in o.get("cost", []):
+            p, src = price(it["item"], it.get("est", 0))
+            cost += p * it["qty"]
+            tags.append(f"buy {it['qty']:,} x {it['item']} -{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
+        net = cash + loot - cost
+        minutes = o.get("task_min", 10) + 2 * o.get("jumps", 0) * per_jump + (2 if o.get("jumps", 0) else 0)
+        rows.append((net * 60.0 / minutes, net, minutes, o, tags))
+    rows.sort(key=lambda r: -r[0])
+    L = ["BEST AGENT OFFERS RIGHT NOW - net ISK per hour incl. travel (cash after tax + loot - buys; times are estimates, ? = estimated price):"]
+    for i, (rate, net, minutes, o, tags) in enumerate(rows, 1):
+        where = "" if not o.get("jumps") else f"  [AT {o['where']}]"
+        extra = ("  (" + "; ".join(tags) + ")") if tags else ""
+        L.append(f"  {i}. {rate:>9,.0f} ISK/hr  net {net:>9,.0f} in ~{minutes:.0f} min  {o['agent']} {o['mission']}{where}{extra}")
+    return "\n".join(L)
+
+
 def next_action(con, g, p):
     text = _next_action_core(con, g, p)
+    note = agent_note(con, g, p)
+    try:
+        ranked = offers_ranked(con)
+    except Exception:                                                   # noqa: BLE001
+        ranked = ""
+    if ranked:
+        note = (note + "\n\n" if note else "") + ranked
+    if note:
+        text = note + "\n\n" + text
     if getattr(p, "home_location_type", "") == "structure" or (getattr(p, "current_location_id", 0) or 0) > 10 ** 12:
         text += "\n\n" + HOME_NOTE
     return text
