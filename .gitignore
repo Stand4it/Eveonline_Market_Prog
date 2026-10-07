@@ -6,3 +6,10 @@ data/
 profile.json
 tokens.json
 client_id.txt
+tokens*.json
+profile*.json
+client_id*.txt
+*.db-wal
+*.db-shm
+*.lock
+active.json
