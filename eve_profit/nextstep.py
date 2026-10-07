@@ -93,7 +93,41 @@ def agent_note(con, g, p):
     return "\n".join(L)
 
 
-def offers_ranked(con):
+def trade_extras(con, g, p, o):
+    """For an agent job that needs a trip (offer has to_system): trades worth doing on the way there and back with the spare hold.
+    -> (extra ISK, extra minutes, [text lines]) or (0, 0, [])."""
+    import dataclasses
+    from .journey import DOCK_MIN, plan_journey
+    dest = o.get("to_system")
+    if not (dest and g is not None and p is not None):
+        return 0.0, 0.0, []
+    room = max(0.0, p.cargo_m3 - float(o.get("m3", 0.0)))
+    here = dataclasses.replace(p, cargo_m3=room)
+    there = dataclasses.replace(p, cargo_m3=room, current_system=dest)
+    isk = mins = 0.0
+    lines = []
+    for label, prof, to in (("going", here, dest), ("coming back", there, p.current_system)):
+        try:
+            r = plan_journey(con, g, prof, to, detour=1)
+        except Exception:                                               # noqa: BLE001 (no safe route / unknown system)
+            continue
+        if r["trade_profit"] <= 0:
+            continue
+        extra_min = max(0.0, r["hours"] * 60 - r["jumps"] * p.jump_seconds / 60.0 - 2 * DOCK_MIN)
+        isk += r["trade_profit"]
+        mins += extra_min
+        bought = {b[0] for st in r["stops"] for b in st[2]["buy"]}
+        for sysname, _, acts in r["stops"]:
+            for name, q, cost in acts["buy"][:2]:
+                lines.append(f"{label}: buy {q:,} x {name} at {sysname} (-{cost:,.0f})")
+            for name, q, rev in acts["sell"][:2]:
+                if name in bought:
+                    lines.append(f"{label}: sell {q:,} x {name} at {sysname} (+{rev:,.0f})")
+        lines.append(f"{label}: trades add {r['trade_profit']:,.0f} ISK for about {extra_min:.0f} more min")
+    return isk, mins, lines
+
+
+def offers_ranked(con, g=None, p=None):
     """Rank the Level 1 agent offers in agent_offers.json by NET ISK per HOUR: (cash after tax + loot at market - items to buy) / (task time + travel both ways)."""
     import json
     from pathlib import Path
@@ -128,6 +162,10 @@ def offers_ranked(con):
             tags.append(f"buy {it['qty']:,} x {it['item']} -{p * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
         net = cash + loot - cost
         minutes = o.get("task_min", 10) + 2 * o.get("jumps", 0) * per_jump + (2 if o.get("jumps", 0) else 0)
+        ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
+        if ex_isk > 0:
+            net, minutes = net + ex_isk, minutes + ex_min
+            tags = tags + ["+ TRADES ON THE WAY: " + " | ".join(ex_lines)]
         rows.append((net * 60.0 / minutes, net, minutes, o, tags))
     rows.sort(key=lambda r: -r[0])
     L = ["BEST AGENT OFFERS RIGHT NOW - net ISK per hour incl. travel (cash after tax + loot - buys; times are estimates, ? = estimated price):"]
@@ -174,7 +212,7 @@ def next_action(con, g, p):
         text = sk + "\n\n" + text
     note = agent_note(con, g, p)
     try:
-        ranked = offers_ranked(con)
+        ranked = offers_ranked(con, g, p)
     except Exception:                                                   # noqa: BLE001
         ranked = ""
     if ranked:

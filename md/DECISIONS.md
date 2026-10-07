@@ -12,3 +12,4 @@
 - 2026-10-07: COMMANDS.docx is written with fixed zip timestamps so regenerating it never changes the file (it caused a git pull conflict on the PC).
 - 2026-10-07: new `agents` command: career agents with open offers, timed runs, agents near you by level, standings.
 - 2026-10-07: added Arabeton step 4 (A Friend in Need, bonus 97,000 untaxed, repair not shoot) and Ormelace step 1 (Cash Flow for Capsuleers, items only: 75mm Gatling Rail I + 2,000 Antimatter) to agent_offers.json; first-time missions estimated at 25 min.
+- 2026-10-07: agent jobs that need a trip (to_system, m3 in agent_offers.json) now also look for profitable trades on the way there and back with the spare hold (nextstep.trade_extras via journey); the extra ISK and minutes are added to that offer's ISK/hr.

@@ -149,3 +149,23 @@ class AgentsViewTests(unittest.TestCase):
         self.assertIn("CAREER AGENTS", txt)
         self.assertIn("Agent L1 step 1 x", txt)
         self.assertIn("MISSION AGENTS NEAR YOU BY LEVEL", txt)
+
+
+class TradeExtrasTests(unittest.TestCase):
+    def test_a_trip_job_gets_trades_on_the_way_added_to_its_value(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import trade_extras
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        far = [s for s, r in g.reach(1, 3).items() if r.jumps == 2][0]
+        con.execute("DELETE FROM orders WHERE type_id=35")
+        con.execute("INSERT INTO orders VALUES(993001,35,60000001,1,10000001,0,10.0,100000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(993002,35,?,?,10000001,1,30.0,100000,1,'',1)", (60000000 + far, far))
+        p = Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, secs_per_jump=45)
+        isk, mins, lines = trade_extras(con, g, p, {"to_system": g.name[far], "m3": 40})
+        self.assertGreater(isk, 0)
+        self.assertTrue(any("buy" in l for l in lines))
+        self.assertEqual(trade_extras(con, g, p, {}), (0.0, 0.0, []))
