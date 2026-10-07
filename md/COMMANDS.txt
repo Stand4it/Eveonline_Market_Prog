@@ -204,7 +204,8 @@ DOCS  -  refresh md/STATE.md and md/COMMANDS.md; --check shows doc/code drift
 FIXLAST  -  correct the last timed run (--add-min N, --isk N)
    --add-min      stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)
    --isk          ISK amount
-   example: python -m eve_profit fixlast --add-min 5
+   --activity     name of the activity (use the same name each time)
+   example: python -m eve_profit fixlast --activity "step 2 Soldier" --isk 180000
 
 AGENTS  -  agents we know: open offers, your runs with them, agents near you by level, standings
    example: python -m eve_profit agents

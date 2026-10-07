@@ -169,3 +169,16 @@ class TradeExtrasTests(unittest.TestCase):
         self.assertGreater(isk, 0)
         self.assertTrue(any("buy" in l for l in lines))
         self.assertEqual(trade_extras(con, g, p, {}), (0.0, 0.0, []))
+
+
+class FixLastActivityTests(unittest.TestCase):
+    def test_fix_a_named_older_run(self):
+        from eve_profit.session import fix_last
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 2 Soldier maulus',0,0.5,1)")
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 5 couriers',364010,0.6,2)")
+        msg = fix_last(con, add_isk=180000, activity="step 2 Soldier")
+        self.assertIn("180,000 ISK in 30 min", msg)
+        self.assertEqual(con.execute("SELECT isk FROM activity_log WHERE activity LIKE '%couriers'").fetchone()[0], 364010)
+        with self.assertRaises(ValueError):
+            fix_last(con, activity="nothing like this")

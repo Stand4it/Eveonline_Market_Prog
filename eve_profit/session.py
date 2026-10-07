@@ -113,11 +113,16 @@ def resume(con, now=None):
     return f"RESUMED '{s['activity']}'. Paused {gone:.0f} min this time ({s['paused_min']:.0f} min in total, not counted). Finish, then run  python -m eve_profit stop"
 
 
-def fix_last(con, add_min=0.0, add_isk=0.0):
-    """Correct the most recent timed run, e.g. the minutes you worked while the timer was paused."""
-    r = con.execute("SELECT id,activity,isk,hours FROM activity_log ORDER BY ts DESC, id DESC LIMIT 1").fetchone()
+def fix_last(con, add_min=0.0, add_isk=0.0, activity=""):
+    """Correct the most recent timed run (or the most recent whose name contains `activity`), e.g. the minutes you worked
+    while the timer was paused, or the ISK a run missed because the wallet journal had not updated yet."""
+    if activity:
+        r = con.execute("SELECT id,activity,isk,hours FROM activity_log WHERE activity LIKE ? ORDER BY ts DESC, id DESC LIMIT 1",
+                        (f"%{activity}%",)).fetchone()
+    else:
+        r = con.execute("SELECT id,activity,isk,hours FROM activity_log ORDER BY ts DESC, id DESC LIMIT 1").fetchone()
     if not r:
-        raise ValueError("no timed run saved yet")
+        raise ValueError("no timed run saved yet" if not activity else f"no timed run with '{activity}' in its name")
     isk, hours = r["isk"] + add_isk, r["hours"] + add_min / 60.0
     con.execute("UPDATE activity_log SET isk=?, hours=? WHERE id=?", (isk, hours, r["id"]))
     con.commit()
