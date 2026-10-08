@@ -183,13 +183,114 @@ def offers_rows(con, g=None, p=None):
     return rows
 
 
-def offers_ranked(con, g=None, p=None):
+TOP_OFFERS = 5                 # never show more than this many offers
+UNMEASURED_BONUS = 1.3         # an unmeasured career ranks as if it paid 30% more: doing it builds the model
+MIN_BOOK_PRICE = 1000.0        # sell orders below this are junk, not a real skill book price
+
+
+def career_of(o):
+    """Career path of an offer: the 'career' field, else the word(s) in brackets after the agent name ('Industrialist - Producer' -> Industrialist)."""
+    if o.get("career"):
+        return o["career"]
+    ag = o["agent"]
+    if ag.startswith("BOTH"):
+        return "Industrialist"
+    if "(" in ag:
+        return ag[ag.index("(") + 1:].rstrip(")").split(" - ")[0].split(",")[0].strip()
+    return ag
+
+
+def measured_careers(con):
+    """Careers with at least one timed run whose name mentions them (e.g. 'Agent L1 step 2 Industrialist Venture')."""
+    try:
+        names = [r[0].lower() for r in con.execute("SELECT activity FROM activity_log WHERE activity LIKE ? AND hours>0", (AGENT_PREFIX + "%",))]
+    except Exception:                                                   # noqa: BLE001
+        return set()
+    keys = {"industrialist": "Industrialist", "explorer": "Explorer", "soldier": "Soldier of Fortune", "enforcer": "Enforcer",
+            "mining": "Mining", "entrepreneur": "Industrialist", "courier": "Industrialist"}
+    return {c for n in names for k, c in keys.items() if k in n}
+
+
+def pick_offers(rows, measured, limit=TOP_OFFERS):
+    """Best offer of EACH career path first (every career gets tried), then the best of the rest, at most `limit`.
+    Unmeasured careers get a bonus so they are tried (that is how the model learns). -> [(row, career, is_measured)]"""
+    scored = []
+    for r in rows:
+        c = career_of(r[3])
+        scored.append((r[0] * (1.0 if c in measured else UNMEASURED_BONUS), r, c))
+    scored.sort(key=lambda x: -x[0])
+    chosen, seen = [], set()
+    for sc, r, c in scored:                                             # one per career
+        if c not in seen:
+            seen.add(c)
+            chosen.append((sc, r, c))
+    for x in scored:                                                    # then fill with the next best
+        if len(chosen) >= limit:
+            break
+        if x not in chosen and not x[1][3].get("agent", "").startswith("BOTH"):     # a combined offer repeats its parts
+            chosen.append(x)
+    chosen = sorted(chosen, key=lambda x: -x[0])[:limit]
+    return [(r, c, c in measured) for _, r, c in chosen]
+
+
+def book_sellers(con, g, p, reach_jumps=10):
+    """Skill books in your training plan that you have never trained, with every system that sells one (cheapest order there):
+    {system name: [(skill, price)]}. Includes books for LATER in the plan: buy them whenever you are there anyway."""
+    try:
+        from .trainplan import plan_training
+        res = plan_training(con, 24)
+        owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+        if not owned:
+            return {}
+    except Exception:                                                   # noqa: BLE001
+        return {}
+    out, seen = {}, set()
+    for st in res["steps"]:
+        if st["level"] != 1 or st["skill"] in seen:
+            continue
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
+        if not row or row[0] in owned:
+            continue
+        seen.add(st["skill"])
+        for sysid, price in con.execute("SELECT system_id,MIN(price) FROM orders WHERE type_id=? AND is_buy=0 AND price>=? GROUP BY system_id",
+                                        (row[0], MIN_BOOK_PRICE)):
+            if sysid in g.name:
+                out.setdefault(g.name[sysid], []).append((st["skill"], float(price)))
+    return out
+
+
+def book_tag(sellers, system, wallet, reserve=100_000.0):
+    """'BUY THE SKILL BOOK ...' line for a system, or '' when none is sold there or you cannot afford it."""
+    L = []
+    for skill, price in sorted(sellers.get(system, []), key=lambda x: x[1]):
+        if price <= wallet - reserve:
+            L.append(f"WHILE AT {system}: buy the {skill} skill book (~{price:,.0f} ISK) and INJECT it (Inventory > right-click > Inject Skill), then queue it")
+    return L
+
+
+def books_here_note(con, g, p):
+    try:
+        lines = book_tag(book_sellers(con, g, p), p.current_system, p.wallet_isk)
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    return "\n".join("BUY NOW - " + l for l in lines)
+
+
+def offers_ranked(con, g=None, p=None, limit=TOP_OFFERS):
     rows = offers_rows(con, g, p)
     if not rows:
         return ""
-    L = ["BEST AGENT OFFERS RIGHT NOW (net ISK/hr incl. travel; ? = estimated price)"]
-    for i, (rate, net, minutes, o, tags) in enumerate(rows, 1):
-        L.append(f"  #{i}  {rate:>9,.0f} ISK/hr   net {net:,.0f} ISK in ~{minutes:.0f} min")
+    measured = measured_careers(con)
+    picked = pick_offers(rows, measured, limit)
+    try:
+        sellers = book_sellers(con, g, p) if g is not None and p is not None else {}
+    except Exception:                                                   # noqa: BLE001
+        sellers = {}
+    L = [f"TOP {len(picked)} AGENT OFFERS - one per career path first, unmeasured careers favoured (they teach the model). "
+         f"Net ISK/hr incl. travel; ? = estimated price"]
+    for i, ((rate, net, minutes, o, tags), career, known) in enumerate(picked, 1):
+        L.append(f"  #{i}  {rate:>9,.0f} ISK/hr   net {net:,.0f} ISK in ~{minutes:.0f} min   [{career}: "
+                 + ("measured" if known else "NOT MEASURED YET - doing it builds the model") + "]")
         L.append(f"      {o['agent']}")
         L.append(f"      {o['mission']}")
         if o.get("jumps"):
@@ -200,7 +301,14 @@ def offers_ranked(con, g=None, p=None):
                 L += ["          " + x.strip() for x in t[len("+ TRADES ON THE WAY: "):].split(" | ")]
             else:
                 L.append(f"      - {t}")
+        if g is not None and p is not None:
+            for sysname in dict.fromkeys(x for x in (p.current_system, o.get("agent_system"), o.get("to_system")) if x):
+                for line in book_tag(sellers, sysname, p.wallet_isk):
+                    L.append(f"      * {line}")
         L.append("")
+    hidden = len(rows) - len(picked)
+    if hidden > 0:
+        L.append(f"  ({hidden} lower-ranked offers hidden; all of them: python -m eve_profit agents)")
     return "\n".join(L).rstrip()
 
 
@@ -262,7 +370,7 @@ def _agent_rate(con):
 def next_action(con, g, p):
     core = _next_action_core(con, g, p)
     parts = []
-    sk = skill_note(con, g, p)
+    sk = "\n\n".join(x for x in (books_here_note(con, g, p), skill_note(con, g, p)) if x)
     if sk:
         parts.append(_section("SKILLS", sk))
     note = agent_note(con, g, p)

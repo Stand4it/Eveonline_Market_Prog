@@ -208,7 +208,7 @@ class OffersWithProfileTests(unittest.TestCase):
         con.execute("INSERT INTO orders VALUES(994001,35,60000001,1,10000001,0,10.0,100000,1,'',1)")
         con.execute("INSERT INTO orders VALUES(994002,35,?,?,10000001,1,30.0,100000,1,'',1)", (60000000 + far, far))
         txt = offers_ranked(con, g, Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, secs_per_jump=45))
-        self.assertIn("BEST AGENT OFFERS RIGHT NOW", txt)
+        self.assertIn("AGENT OFFERS", txt)
 
 
 class AgentStepsScriptTests(unittest.TestCase):
@@ -241,3 +241,28 @@ class BuyPriceTests(unittest.TestCase):
         self.assertTrue(rows[0]["full"])
         self.assertFalse([r for r in rows if r["system"] == "Home"][0]["full"])
         self.assertIn("Cheapest", format_buys("Tritanium", 100, rows, "Home"))
+
+
+class PickOffersTests(unittest.TestCase):
+    def _row(self, rate, agent):
+        return (rate, rate, 20.0, {"agent": agent, "mission": "m"}, [])
+
+    def test_one_per_career_first_and_unmeasured_favoured(self):
+        from eve_profit.nextstep import career_of, pick_offers
+        rows = [self._row(900, "A (Industrialist - Producer)"), self._row(800, "B (Industrialist - Entrepreneur)"),
+                self._row(700, "C (Explorer)"), self._row(300, "D (Enforcer)"), self._row(200, "E (Mining, Axiosere)")]
+        self.assertEqual(career_of(rows[4][3]), "Mining")
+        got = pick_offers(rows, {"Industrialist"}, limit=3)
+        careers = [c for _, c, _ in got]
+        self.assertEqual(len(got), 3)
+        self.assertEqual(len(set(careers)), 3)                          # three different careers, not two Industrialist
+        self.assertIn("Explorer", careers)
+        full = pick_offers(rows, set(), limit=5)
+        self.assertEqual(len(full), 5)
+
+    def test_book_tag_only_when_sold_here_and_affordable(self):
+        from eve_profit.nextstep import book_tag
+        sellers = {"Bourynes": [("Accounting", 5_000_000.0)]}
+        self.assertEqual(book_tag(sellers, "Rotonos", 9e6), [])
+        self.assertEqual(book_tag(sellers, "Bourynes", 1e6), [])
+        self.assertIn("INJECT", book_tag(sellers, "Bourynes", 9e6)[0])
