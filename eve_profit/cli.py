@@ -105,13 +105,28 @@ def main(argv=None):
     kind = {"watch": "watch", "login": "login", "sync": "setup", "universe": "setup", "esimap": "setup",
             "sde": "setup", "mock": "setup"}.get(a.cmd)
     from .pretty import pretty_output
+    stamped = a.cmd in ("scan", "now", "sync", "journey", "compare", "update")
+
+    def run():
+        """Commands that fetch live data print the date and time they started and finished (first and last line)."""
+        import time as _time
+        t0 = _time.time()
+        if stamped:
+            print(f"=== {a.cmd} STARTED  {_time.strftime('%Y-%m-%d %H:%M:%S')} ===")
+        try:
+            return _run(a)
+        finally:
+            if stamped:
+                took = _time.time() - t0
+                print(f"=== {a.cmd} FINISHED {_time.strftime('%Y-%m-%d %H:%M:%S')}  (took {int(took // 60)} min {int(took % 60)} s) ===")
+
     if not kind:
         with pretty_output():
-            return _run(a)
+            return run()
     from .lock import AlreadyRunning, single_instance
     try:
         with single_instance(f"{a.db}.{kind}.lock", kind), pretty_output():
-            return _run(a)
+            return run()
     except AlreadyRunning as e:
         raise SystemExit(str(e))
 
