@@ -29,3 +29,4 @@
 - 2026-10-08: `next` may print ONE CHAIN ('TODAY'S CHAIN [1/n]...'): sell/list here + book/skill + the best agent mission as ordered sub-steps (fly to agent, accept A AND B, start timer, buy via `buy`, trades on the way, deliver, wait 2 min, stop). Offers can list `agents` for combined missions.
 - 2026-10-08: every command except sync prints bold ##### START <cmd> / END <cmd> bars with blank lines around its output (pretty_output(title)).
 - 2026-10-08: user asked whether to sell 2 Miner I needed for the Venture; answer: keep (rebuy ~13.9k each vs 2.9k instant sale). Added keep-list idea to BACKLOG.
+- 2026-10-08: keep_items.json = names never advised for sale/list (default: Miner I for the Venture). Implemented in along.plan_along; edit the file to add more.

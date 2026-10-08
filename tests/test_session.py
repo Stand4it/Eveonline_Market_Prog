@@ -311,3 +311,19 @@ class ChainTests(unittest.TestCase):
         self.assertIn("python -m eve_profit stop", txt)
         self.assertEqual(_chain(["one"]), "one")
         self.assertIn("[2/2]", _chain(["a", "b"]))
+
+
+class KeepListTests(unittest.TestCase):
+    def test_kept_items_are_never_advised_for_sale(self):
+        from eve_profit.along import keep_names, plan_along
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        self.assertIn("miner i", keep_names())
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(777001,'Miner I',5,1)")
+        con.execute("INSERT INTO orders VALUES(995001,777001,60000001,1,10000001,1,1450.0,10,1,'',1)")
+        con.execute("INSERT INTO inventory VALUES(777001,1,2)")
+        res = plan_along(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, current_location_id=60000001), "Home")
+        self.assertNotIn("Miner I", [d["name"] for d in res["sell_here"]])

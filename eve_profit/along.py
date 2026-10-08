@@ -27,6 +27,17 @@ def _bids_at(con, location_id):
     return out
 
 
+def keep_names():
+    """Item names from keep_items.json that are never advised for sale (gear you plan to use)."""
+    import json
+    import os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "keep_items.json")
+    try:
+        return {n.lower() for n in json.load(open(f, encoding="utf-8")).get("keep", [])}
+    except (OSError, ValueError):
+        return set()
+
+
 def plan_along(con, g, p, dest_name, slots_override=None):
     cur = g.id_of(p.current_system)
     route = g.route(cur, g.id_of(dest_name), 60, p.avoid_yellow)
@@ -42,9 +53,12 @@ def plan_along(con, g, p, dest_name, slots_override=None):
     far = g.reach(cur, max(p.max_jumps * 5, 10), p.avoid_yellow)       # where a loss-making item could go instead
     _, far_buys = load_books(con, set(far))
     here, carried, losses = [], [], []
+    keep = keep_names()
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
+        if str(name.get(tid, "")).lower() in keep:
+            continue                                        # on the keep list: you will use it, rebuying costs more
         opts = []
         for i, s in enumerate(path):
             bids = dock_bids.get(tid, []) if (i == 0 and dock_bids is not None) else buys.get(tid, {}).get(s, [])

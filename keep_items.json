@@ -1,0 +1,4 @@
+{
+ "keep": ["Miner I"],
+ "why": "Items the tool must NEVER advise selling or listing (gear your ships/missions need; rebuying costs more than the sale pays). Add names here, exact item names. Miner I: 2 turrets for the Venture (instant sale 2,897 vs rebuy ~13,900 each)."
+}
