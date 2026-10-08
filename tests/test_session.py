@@ -327,3 +327,21 @@ class KeepListTests(unittest.TestCase):
         con.execute("INSERT INTO inventory VALUES(777001,1,2)")
         res = plan_along(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, current_location_id=60000001), "Home")
         self.assertNotIn("Miner I", [d["name"] for d in res["sell_here"]])
+
+    def test_upgrade_is_advised_only_when_affordable(self):
+        from eve_profit.along import plan_along
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(777001,'Miner I',5,1)")
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(777002,'Miner II',5,1)")
+        con.execute("INSERT INTO orders VALUES(995001,777001,60000001,1,10000001,0,13900.0,10,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(995002,777002,60000001,1,10000001,0,60000.0,10,1,'',1)")
+        con.execute("INSERT INTO inventory VALUES(777001,1,2)")
+        g = Graph(con)
+        rich = plan_along(con, g, Profile(current_system="Home", wallet_isk=20e6, current_location_id=60000001), "Home")
+        self.assertEqual([u["upgrade"] for u in rich["upgrades"]], ["Miner II"])
+        poor = plan_along(con, g, Profile(current_system="Home", wallet_isk=1e6, current_location_id=60000001), "Home")
+        self.assertEqual(poor["upgrades"], [])

@@ -1,4 +1,7 @@
 {
- "keep": ["Miner I"],
- "why": "Items the tool must NEVER advise selling or listing (gear your ships/missions need; rebuying costs more than the sale pays). Add names here, exact item names. Miner I: 2 turrets for the Venture (instant sale 2,897 vs rebuy ~13,900 each)."
+ "why": "GEAR POLICY. 'keep' = items the tool never advises selling/listing because you will use or need to replace them. Each entry: item (exact name), qty (how many to keep), upgrade (optional better item: when you can afford it, `next` says SELL the old and BUY the upgrade). auto_keep_fitted = also keep spares of whatever is fitted on your active ship (replacement after a loss). Remote buying: place a BUY order at the station you want it delivered to (Marketing/Procurement skills set the range) and leave it stowed in that station's hangar until needed - check in game, the tool cannot place orders.",
+ "auto_keep_fitted": true,
+ "keep": [
+  {"item": "Miner I", "qty": 2, "upgrade": "Miner II"}
+ ]
 }

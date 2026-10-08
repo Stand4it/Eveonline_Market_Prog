@@ -30,3 +30,4 @@
 - 2026-10-08: every command except sync prints bold ##### START <cmd> / END <cmd> bars with blank lines around its output (pretty_output(title)).
 - 2026-10-08: user asked whether to sell 2 Miner I needed for the Venture; answer: keep (rebuy ~13.9k each vs 2.9k instant sale). Added keep-list idea to BACKLOG.
 - 2026-10-08: keep_items.json = names never advised for sale/list (default: Miner I for the Venture). Implemented in along.plan_along; edit the file to add more.
+- 2026-10-08: GEAR POLICY in keep_items.json: keep entries {item, qty, upgrade}; auto_keep_fitted keeps spares of what is fitted on the active ship (replacement after a loss). When wallet allows (out-of-pocket <= 10% of wallet and >= 2M left) `next` adds STEP: UPGRADE GEAR (sell old, buy better via `buy`, stow in a station hangar; remote = BUY order at that station, verify in game). BACKLOG: reserve ISK = rebuy cost of current fit; combat spares.

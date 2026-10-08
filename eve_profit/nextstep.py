@@ -435,16 +435,36 @@ def _chain(steps):
     return "\n".join(L).rstrip()
 
 
+def _upgrade_step(con, g, p):
+    try:
+        from .along import plan_along
+        ups = plan_along(con, g, p, p.current_system).get("upgrades", [])
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    if not ups:
+        return ""
+    L = ["STEP: UPGRADE GEAR (you can now afford a better one; the old one is not needed)"]
+    for u in ups[:2]:
+        L.append(f"   sell {u['qty']} x {u['item']} (about {u['sell_net']:,.0f} ISK listed), buy {u['qty']} x {u['upgrade']} (about {u['new_cost']:,.0f} ISK): "
+                 f"costs you only {u['out_of_pocket']:,.0f} ISK")
+        L.append(f'   python -m eve_profit buy --item "{u["upgrade"]}" --qty {u["qty"]}')
+    L.append("   Keep the new one stowed in a station hangar until needed. You can buy it remotely by placing a BUY order at that station (check range in game).")
+    return "\n".join(L)
+
+
 def next_action(con, g, p, full=False):
     """KISS: ONE task or ONE chain of tasks that belong together, in order: sell stock here / list one item here, buy a skill book sold
     here, queue a skill, then the best agent mission (if it beats the best trade) else the best trade. `next --all` = everything."""
     if full:
         return next_action_all(con, g, p)
     core = _next_action_core(con, g, p)
+    upg = _upgrade_step(con, g, p)
     home = ("\n\n" + HOME_NOTE) if (getattr(p, "home_location_type", "") == "structure" or (getattr(p, "current_location_id", 0) or 0) > 10 ** 12) else ""
     steps, selling = [], core.startswith(("STEP: SELL NOW", "STEP: LIST"))
     if selling:
         steps.append(core.rsplit("\n" + AFTER, 1)[0] if AFTER in core else core)
+    if upg:
+        steps.append(upg)
     book = books_here_note(con, g, p)
     if book:
         steps.append("STEP: BUY A SKILL BOOK HERE\n   " + book.splitlines()[0].replace("BUY NOW - ", ""))

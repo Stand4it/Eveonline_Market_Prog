@@ -27,15 +27,57 @@ def _bids_at(con, location_id):
     return out
 
 
-def keep_names():
-    """Item names from keep_items.json that are never advised for sale (gear you plan to use)."""
+def keep_rules(con=None):
+    """{lower item name: {"qty": n or None, "upgrade": name or None}} from keep_items.json, plus (auto_keep_fitted) whatever is
+    fitted on your active ship: spares of those are what you need after a loss."""
     import json
     import os
     f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "keep_items.json")
     try:
-        return {n.lower() for n in json.load(open(f, encoding="utf-8")).get("keep", [])}
+        d = json.load(open(f, encoding="utf-8"))
     except (OSError, ValueError):
-        return set()
+        return {}
+    rules = {}
+    for e in d.get("keep", []):
+        e = {"item": e} if isinstance(e, str) else e
+        rules[e["item"].lower()] = {"qty": e.get("qty"), "upgrade": e.get("upgrade"), "item": e["item"]}
+    if d.get("auto_keep_fitted") and con is not None:
+        try:
+            for (n,) in con.execute("SELECT DISTINCT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id"):
+                rules.setdefault(n.lower(), {"qty": None, "upgrade": None, "item": n})
+        except Exception:                                               # noqa: BLE001
+            pass
+    return rules
+
+
+def keep_names(con=None):
+    return set(keep_rules(con))
+
+
+def gear_upgrades(con, g, p, held, rules):
+    """For kept items with an `upgrade`: sell the old, buy the better one when the out-of-pocket cost is small next to your wallet.
+    held = {lower name: (type_id, qty)}. -> [{item, qty, upgrade, sell_net, new_cost, out_of_pocket}]"""
+    out = []
+    for key, rule in rules.items():
+        up = rule.get("upgrade")
+        if not up or key not in held:
+            continue
+        tid, qty = held[key]
+        n = min(qty, rule["qty"]) if rule.get("qty") else qty
+        up_row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (up,)).fetchone()
+        if not up_row:
+            continue
+        cur = g.id_of(p.current_system)
+        new_ask = regional_ask(con, g, up_row[0], cur)
+        old_ask = regional_ask(con, g, tid, cur)
+        if not new_ask:
+            continue
+        sell_net = n * (old_ask or 0.0) * (1 - p.broker_fee - p.sales_tax)       # listed at the regional ask
+        new_cost = n * new_ask
+        pocket = new_cost - sell_net
+        if pocket <= 0.10 * p.wallet_isk and p.wallet_isk - pocket >= 2_000_000:
+            out.append({"item": rule["item"], "qty": n, "upgrade": up, "sell_net": sell_net, "new_cost": new_cost, "out_of_pocket": pocket})
+    return out
 
 
 def plan_along(con, g, p, dest_name, slots_override=None):
@@ -53,11 +95,13 @@ def plan_along(con, g, p, dest_name, slots_override=None):
     far = g.reach(cur, max(p.max_jumps * 5, 10), p.avoid_yellow)       # where a loss-making item could go instead
     _, far_buys = load_books(con, set(far))
     here, carried, losses = [], [], []
-    keep = keep_names()
+    keep = keep_names(con)
+    held_gear = {}
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
         if str(name.get(tid, "")).lower() in keep:
+            held_gear[str(name.get(tid, "")).lower()] = (tid, qty)
             continue                                        # on the keep list: you will use it, rebuying costs more
         opts = []
         for i, s in enumerate(path):
@@ -117,7 +161,8 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         gk = getattr(g, "gank", {}).get(s, 0)
         watch.append({"name": g.name[s], "sec": g.sec[s], "kills": ships, "gank": gk,
                       "level": "DANGER" if g.is_hot(s) else ("CAUTION" if (g.is_yellow(s) or ships or gk) else "ok")})
-    return {"watch": watch, "dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
+    upgrades = gear_upgrades(con, g, p, held_gear, keep_rules(con))
+    return {"upgrades": upgrades, "watch": watch, "dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
             "slots": slots, "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
 
 
