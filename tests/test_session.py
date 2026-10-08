@@ -345,3 +345,13 @@ class KeepListTests(unittest.TestCase):
         self.assertEqual([u["upgrade"] for u in rich["upgrades"]], ["Miner II"])
         poor = plan_along(con, g, Profile(current_system="Home", wallet_isk=1e6, current_location_id=60000001), "Home")
         self.assertEqual(poor["upgrades"], [])
+
+
+class RebuyNoteTests(unittest.TestCase):
+    def test_note_only_for_building_materials_and_says_which_way_it_cuts(self):
+        from eve_profit.nextstep import rebuy_note
+        self.assertEqual(rebuy_note({"used_in": 0, "rebuy": 100.0, "net": 50.0}), "")
+        cheap = rebuy_note({"used_in": 3, "rebuy": 9036.0, "net": 12210.0, "list_net": 0.0})
+        self.assertIn("selling now and rebuying later is fine", cheap)
+        dear = rebuy_note({"used_in": 3, "rebuy": 27800.0, "net": 2897.0, "list_net": 0.0})
+        self.assertIn("MORE", dear)

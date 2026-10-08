@@ -6,6 +6,17 @@ from .planner import plan
 AFTER = "Then run:  python -m eve_profit now"
 
 
+def rebuy_note(d):
+    """One line when the item is a building material: what rebuying it later would cost against what you get now."""
+    if not d.get("used_in") or not d.get("rebuy"):
+        return ""
+    get_now = max(d.get("list_net", 0.0), d["net"])
+    diff = d["rebuy"] - get_now
+    verdict = ("selling now and rebuying later is fine (rebuy costs about the same or less)" if diff <= 0.1 * max(get_now, 1)
+               else f"rebuying later costs {diff:,.0f} ISK MORE than you get now: hold it if you will build soon")
+    return f"   needed later? it is a material in {d['used_in']} blueprint(s): rebuy ~{d['rebuy']:,.0f} vs {get_now:,.0f} now -> {verdict}"
+
+
 def _next_action_core(con, g, p):
     res = plan_along(con, g, p, p.current_system)
     here = res["sell_here"]
@@ -17,6 +28,8 @@ def _next_action_core(con, g, p):
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         for d in sells[:8]:
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} ~{d['net']:>12,.0f}")
+            if rebuy_note(d):
+                L.append(rebuy_note(d))
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
         big = sells[0]
@@ -34,6 +47,8 @@ def _next_action_core(con, g, p):
              f"   {d['qty']:,} x {d['name']}",
              f"   price each: {price:,.2f}  (the cheapest sell order in this whole region right now; match or undercut by the smallest step)",
              f"   you receive about {d['list_net']:,.0f} ISK after fees (instant sale would give {d['net']:,.0f})"]
+        if rebuy_note(d):
+            L.append(rebuy_note(d))
         if slots is not None:
             L.append(f"   uses 1 of your ~{slots} market order slots")
         L.append("   In game: right-click the item in your hangar > Sell this item > choose 'Create sell order'.")

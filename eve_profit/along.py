@@ -27,6 +27,16 @@ def _bids_at(con, location_id):
     return out
 
 
+def _material_use(con, tid):
+    """(number of blueprints that use this item as a material, how many of YOUR blueprints do)."""
+    try:
+        n = con.execute("SELECT COUNT(*) FROM bp_materials WHERE material_id=?", (tid,)).fetchone()[0]
+        own = con.execute("SELECT COUNT(*) FROM bp_materials m JOIN my_blueprints b ON b.blueprint_id=m.blueprint_id WHERE m.material_id=?", (tid,)).fetchone()[0]
+        return n, own
+    except Exception:                                                   # noqa: BLE001
+        return 0, 0
+
+
 def keep_rules(con=None):
     """{lower item name: {"qty": n or None, "upgrade": name or None}} from keep_items.json, plus (auto_keep_fitted) whatever is
     fitted on your active ship: spares of those are what you need after a loss."""
@@ -103,6 +113,7 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         if str(name.get(tid, "")).lower() in keep:
             held_gear[str(name.get(tid, "")).lower()] = (tid, qty)
             continue                                        # on the keep list: you will use it, rebuying costs more
+        used_in, own_use = _material_use(con, tid)
         opts = []
         for i, s in enumerate(path):
             bids = dock_bids.get(tid, []) if (i == 0 and dock_bids is not None) else buys.get(tid, {}).get(s, [])
@@ -140,7 +151,11 @@ def plan_along(con, g, p, dest_name, slots_override=None):
             list_it = listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
                          "listing": listing, "list_net": list_net, "advice": "LIST" if list_it else "SELL NOW",
-                         "cost": cost, "covered": covered})
+                         "cost": cost, "covered": covered, "used_in": used_in, "own_use": own_use,
+                         "rebuy": (ask or 0.0) * qty})
+    for d in list(here):                                    # dumping a building material you own a blueprint for, when rebuying costs 2x more: hold it (see `keep`)
+        if d["advice"] == "SELL NOW" and d["own_use"] and d["rebuy"] > 2.0 * d["net"]:
+            here.remove(d)
     slots = slots_override if slots_override is not None else order_slots(con)
     listers = sorted([d for d in here if d["advice"] == "LIST"], key=lambda d: -(d["list_net"] - d["net"]))
     if slots is not None:
