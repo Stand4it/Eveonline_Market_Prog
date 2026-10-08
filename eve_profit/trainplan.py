@@ -101,6 +101,31 @@ def trainable_now(con, res):
     return out
 
 
+def format_top3(con, g, p, res):
+    """Two short lists at the top of `trainplan`: the 3 best skills for you (book or not) and the 3 you can queue RIGHT NOW."""
+    books = {n: (price, where, jumps) for n, price, where, jumps in book_list(con, g, p, res, hours=10 ** 6)}
+    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+
+    def have(st):
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
+        return bool(row and row[0] in owned)
+
+    def line(i, st):
+        b = books.get(st["skill"])
+        if have(st) or not b or st["level"] != 1:
+            tag = "you can queue it now" if have(st) else "needs its book first (bought for an earlier level)"
+        else:
+            tag = (f"BOOK NEEDED: ~{b[0]:,.0f} ISK at {b[1]} ({b[2]} jumps)" if b[0] else "BOOK NEEDED: no seller found nearby")
+        return f" {i}. {st['skill']} {st['level']}  ({fmt_minutes(st['minutes'])})  {st['why']}  [{tag}]"
+
+    L = ["TOP 3 RECOMMENDED (best for you, whether or not you own the book):"]
+    L += [line(i, st) for i, st in enumerate(res["steps"][:3], 1)] or [" (nothing planned)"]
+    now = trainable_now(con, res)[:3]
+    L += ["", "TOP 3 YOU CAN TRAIN RIGHT NOW (no purchase needed):"]
+    L += [line(i, st) for i, st in enumerate(now, 1)] or [" (none: every skill in your plan needs a new book - buy the first one above)"]
+    return "\n".join(L)
+
+
 def format_books(books, wallet):
     if not books:
         return ""

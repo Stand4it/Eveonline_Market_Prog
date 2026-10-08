@@ -51,3 +51,9 @@ class BookTests(unittest.TestCase):
         self.assertIn("BUY THESE SKILL BOOKS FIRST", format_books(books, 4_000_000))
         con.execute("INSERT INTO character_skills(skill_id,level,sp) VALUES(900,1,250)")
         self.assertEqual(book_list(con, Graph(con), Profile(current_system="Home"), res), [])      # already trained: book owned
+
+        from eve_profit.trainplan import format_top3
+        out = format_top3(con, Graph(con), Profile(current_system="Home"), res)
+        self.assertIn("TOP 3 RECOMMENDED", out)
+        self.assertIn("TOP 3 YOU CAN TRAIN RIGHT NOW", out)
+        self.assertIn("you can queue it now", out)                                                # Accounting is owned now

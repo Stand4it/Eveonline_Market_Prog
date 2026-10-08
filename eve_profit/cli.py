@@ -556,8 +556,10 @@ def _run(a):
         except Exception:
             pass
         res = plan_training(con, a.hours or 24)
-        print(format_trainplan(res))
         from .graph import Graph
+        from .trainplan import format_top3
+        print(format_top3(con, Graph(con), p, res) + "\n")
+        print(format_trainplan(res))
         from .trainplan import book_list, format_books
         print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
     elif a.cmd == "fleet":
