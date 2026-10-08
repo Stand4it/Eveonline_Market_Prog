@@ -4,3 +4,4 @@
 3. Training suggestions that improve the model (explore/exploit); auto hangar snapshot for loot value.
 4. Ship shopping advisor; patient buy orders for away time; reprocess-or-sell; character contracts; reactions/T2/PI.
 5. Unverified on live data: journey, compare, home-station read, trainplan.
+- Keep-list: do not advise selling/listing items a ship or mission you plan needs (e.g. 2 x Miner I for the Venture: instant sale 2,897 vs rebuy ~13,900 each). Compare sell price vs rebuy price before any SELL/LIST step.
