@@ -340,7 +340,11 @@
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
    "timer_name": "Agent L1 step 6 both (cap boosters + armor repairer)",
-   "agent_system": "Rotonos"
+   "agent_system": "Rotonos",
+   "agents": [
+    "Arnelin Ygegnere",
+    "Beradaillot Audates"
+   ]
   }
  ],
  "min_per_jump": 3.0,

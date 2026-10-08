@@ -387,51 +387,89 @@ def next_action_all(con, g, p):
     return text
 
 
-DONE = "When done:  python -m eve_profit sync   then   python -m eve_profit next"
+DONE = "When done:  python -m eve_profit sync   then   python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"
 
 
 def _agent_step(con, g, p):
-    """The ONE best agent offer as a short step, with its rate; None if there is no offer."""
+    """The ONE best agent offer as an ordered chain of sub-steps (go, accept, time, buy, deliver, stop); (None, 0) if no offer."""
     rows = offers_rows(con, g, p)
     if not rows:
         return None, 0.0
     (rate, net, minutes, o, tags), career, known = pick_offers(rows, measured_careers(con), 1)[0]
-    L = [f"STEP: AGENT MISSION - {o['agent']}", f"   {o['mission']}",
+    agents = o.get("agents") or [o["agent"]]
+    n = 0
+    L = [f"AGENT MISSION: {o['agent']}",
+         f"   {o['mission']}",
          f"   about {net:,.0f} ISK net in ~{minutes:.0f} min = {rate:,.0f} ISK/hr   [{career}" + ("" if known else ", not measured yet: builds the model") + "]"]
+
+    def add(text):
+        nonlocal n
+        n += 1
+        L.append(f"   {n}. {text}")
+    for t in tags:
+        if t.startswith("FIRST go to "):
+            add(t.replace("FIRST go to ", "Fly to ", 1))
+    add("Accept " + (" AND ".join(agents) if len(agents) > 1 else agents[0]) + "'s mission" + ("s" if len(agents) > 1 else "") + " in person (cannot be done remotely).")
+    if o.get("timer_name"):
+        add(f'Start the timer:  python -m eve_profit start --activity "{o["timer_name"]}"')
+    for it in o.get("cost", []):
+        add(f"Buy {it['qty']:,} x {it['item']}:  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
     for t in tags:
         if t.startswith("+ TRADES ON THE WAY: "):
-            L += ["   on the way: " + x.strip() for x in t[len("+ TRADES ON THE WAY: "):].split(" | ")]
-        else:
-            L.append(f"   - {t}")
-    if o.get("timer_name"):
-        L += ["   Start the timer AFTER you accept the mission:", f'   python -m eve_profit start --activity "{o["timer_name"]}"']
+            for x in t[len("+ TRADES ON THE WAY: "):].split(" | "):
+                add("On the way: " + x.strip())
+    add(f"Hand in / deliver at {o.get('where') or 'the agent'}" + (f" ({o['to_system']})" if o.get("to_system") else "") + " and complete the mission.")
+    add("Wait 2 minutes for the wallet journal, then:  python -m eve_profit stop")
     return "\n".join(L), rate
 
 
+def _chain(steps):
+    """One step = print it as is; several = a numbered chain to do in this order."""
+    steps = [x for x in steps if x]
+    if len(steps) == 1:
+        return steps[0]
+    L = [f"TODAY'S CHAIN - {len(steps)} parts, do them in this order, then sync and next:", ""]
+    for i, t in enumerate(steps, 1):
+        L.append(f"[{i}/{len(steps)}] {t}")
+        L.append("")
+    return "\n".join(L).rstrip()
+
+
 def next_action(con, g, p, full=False):
-    """KISS: print exactly ONE step. Order: sell stock / list one item here, buy a skill book sold here, queue a skill, the best agent
-    mission (if it beats the best trade), else the best trade. `next --all` prints the long version."""
+    """KISS: ONE task or ONE chain of tasks that belong together, in order: sell stock here / list one item here, buy a skill book sold
+    here, queue a skill, then the best agent mission (if it beats the best trade) else the best trade. `next --all` = everything."""
     if full:
         return next_action_all(con, g, p)
     core = _next_action_core(con, g, p)
     home = ("\n\n" + HOME_NOTE) if (getattr(p, "home_location_type", "") == "structure" or (getattr(p, "current_location_id", 0) or 0) > 10 ** 12) else ""
-    if core.startswith(("STEP: SELL NOW", "STEP: LIST")):
-        return core
+    steps, selling = [], core.startswith(("STEP: SELL NOW", "STEP: LIST"))
+    if selling:
+        steps.append(core.rsplit("\n" + AFTER, 1)[0] if AFTER in core else core)
     book = books_here_note(con, g, p)
     if book:
-        return "STEP: BUY A SKILL BOOK HERE\n   " + book.splitlines()[0].replace("BUY NOW - ", "") + "\n" + DONE + home
+        steps.append("STEP: BUY A SKILL BOOK HERE\n   " + book.splitlines()[0].replace("BUY NOW - ", ""))
     sk = skill_note(con, g, p)
     queue = [l.strip() for l in sk.splitlines() if "QUEUE NOW" in l]
     if queue:
-        return "STEP: QUEUE A SKILL (takes 30 seconds, free)\n   " + queue[0].replace("QUEUE NOW (no purchase needed): ", "") + "\n" + DONE + home
+        steps.append("STEP: QUEUE A SKILL (takes 30 seconds, free)\n   " + queue[0].replace("QUEUE NOW (no purchase needed): ", ""))
     agent, rate = _agent_step(con, g, p)
-    best_trade = 0.0
+    trade_text = None
     if agent:
+        best_trade = 0.0
         try:
             opps = plan(con, p, 30, False)
             best_trade = opps[0].isk_per_hour if opps else 0.0
         except Exception:                                               # noqa: BLE001
             pass
         if rate >= best_trade:
-            return agent + "\n" + DONE + home
-    return core + "\n(more detail: python -m eve_profit next --all)" + home
+            steps.append(agent)
+        elif not selling:
+            trade_text = core
+    elif not selling:
+        trade_text = core
+    if trade_text:
+        steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
+    out = _chain(steps) + "\n\n" + DONE
+    if not selling or len(steps) > 1:
+        out += "\n(more detail: python -m eve_profit next --all)"
+    return out + home

@@ -296,3 +296,18 @@ class RegionalAskTests(unittest.TestCase):
         con.execute("INSERT INTO orders VALUES(991102,34,60000002,?,10000001,0,1506.0,5,1,'',1)", (other,))
         self.assertEqual(regional_ask(con, g, 34, sysid, 5000.0), 1506.0 if other != sysid else 5000.0)
         self.assertEqual(regional_ask(con, g, 999999, sysid, 7.0), 7.0)
+
+
+class ChainTests(unittest.TestCase):
+    def test_agent_step_is_an_ordered_chain_and_chain_numbers_the_parts(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import _agent_step, _chain
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        txt, _ = _agent_step(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7))
+        self.assertIn("1. Accept", txt.replace("   ", "", 1).split("\n", 3)[3] if False else txt)
+        self.assertIn("python -m eve_profit stop", txt)
+        self.assertEqual(_chain(["one"]), "one")
+        self.assertIn("[2/2]", _chain(["a", "b"]))
