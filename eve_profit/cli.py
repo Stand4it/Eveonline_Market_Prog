@@ -84,6 +84,7 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
+    ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
     ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
     ap.add_argument("--radius", type=int, default=10, help="buy: how many jumps around you to look for sellers")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
@@ -430,7 +431,7 @@ def _run(a):
     elif a.cmd == "next":
         from .graph import Graph
         from .nextstep import next_action
-        print(next_action(con, Graph(con), p))
+        print(next_action(con, Graph(con), p, full=a.all))
     elif a.cmd == "zkill":
         from .esi import ESI
         from .zkill import ZKill, refresh_gank_map

@@ -210,6 +210,18 @@ class OffersWithProfileTests(unittest.TestCase):
         txt = offers_ranked(con, g, Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, secs_per_jump=45))
         self.assertIn("AGENT OFFERS", txt)
 
+    def test_next_prints_exactly_one_step(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import next_action
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        out = next_action(con, g, Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, secs_per_jump=45))
+        self.assertEqual(out.count("STEP:"), 1)
+        self.assertNotIn("AGENT OFFERS", out)
+
 
 class AgentStepsScriptTests(unittest.TestCase):
     def test_checklist_is_built_from_the_open_offers_with_timer_names(self):

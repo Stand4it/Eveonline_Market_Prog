@@ -37,7 +37,7 @@ CMD_OPTS = {
     "profile": ["--system", "--cargo"], "login": ["--char", "--client-id"], "sync": ["--char"], "log": ["--activity", "--isk", "--hours"],
     "go": ["--pick", "--send", "--away", "--top"], "universe": ["--force", "--sde-file", "--sde-url", "--depth"], "esimap": ["--depth"],
     "sde": ["--sde-file", "--sde-url"], "skills": ["--hours"], "explain": ["--pick"], "check": ["--pick"], "stock": ["--top"], "along": ["--to"],
-    "next": ["--sync"], "keep": ["--to"], "bpbuy": ["--to"], "bestprice": ["--item", "--qty"], "sellplan": ["--to", "--world"],
+    "next": ["--sync", "--all"], "keep": ["--to"], "bpbuy": ["--to"], "bestprice": ["--item", "--qty"], "sellplan": ["--to", "--world"],
     "day": ["--hours", "--cash", "--no-stock"], "now": ["--fast"], "combatfit": ["--dps", "--ehp", "--tank", "--value", "--ship"],
     "journey": ["--to", "--live", "--quick", "--detour", "--max-age"], "compare": ["--to", "--detour"], "start": ["--activity", "--no-loot"],
     "stop": ["--isk", "--paused", "--add-min", "--no-loot"], "trainplan": ["--hours"], "docs": ["--check", "--quiet"], "fixlast": ["--add-min", "--isk", "--activity", "--delete"], "buy": ["--item", "--qty", "--radius"],

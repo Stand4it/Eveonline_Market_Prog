@@ -111,6 +111,7 @@ ZKILL  -  refresh the hauler-loss map
 
 NEXT  -  ONE next step (agent offers, sell/list, best trade)
    --sync         refresh your character data (assets, wallet, location) first
+   --all          next: print everything (offers, skills, trades), not just the one step
    example: python -m eve_profit next
 
 KEEP  -  build or sell your materials
