@@ -355,3 +355,17 @@ class RebuyNoteTests(unittest.TestCase):
         self.assertIn("selling now and rebuying later is fine", cheap)
         dear = rebuy_note({"used_in": 3, "rebuy": 27800.0, "net": 2897.0, "list_net": 0.0})
         self.assertIn("MORE", dear)
+
+
+class BonusTests(unittest.TestCase):
+    def test_career_bonus_and_market_lines(self):
+        from eve_profit.bonus import market_lines, offer_bonus
+        progs = [{"name": "P", "kind": "career_missions", "careers": ["Soldier of Fortune"], "reward_isk": 25000, "career_points": 10},
+                 {"name": "M", "market": True, "target_isk": 100, "progress_isk": 0},
+                 {"name": "Done", "market": True, "target": 5, "progress": 5},
+                 {"name": "Unsafe", "market": True, "safe": False, "target": 5, "progress": 0}]
+        self.assertEqual(offer_bonus("Soldier of Fortune", progs)[0], 25000)
+        self.assertEqual(offer_bonus("Explorer", progs)[0], 0)
+        lines = market_lines(progs)
+        self.assertEqual(len(lines), 1)
+        self.assertIn("'M'", lines[0])

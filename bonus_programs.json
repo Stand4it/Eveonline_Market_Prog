@@ -1,0 +1,16 @@
+{
+ "why": "Bonus programs/events that pay extra for things you do anyway. Edit progress from screenshots. `next` adds the reward to matching agent offers and lists market goals on sell/trade steps. reward_isk = ISK value of ONE completion (? = guessed), market = counts when you trade/sell on the market, careers = agent offers (by career) that complete it, safe = false means it needs null-sec/Pochven/PvP: never routed.",
+ "programs": [
+  {"name": "AIR Career Program - Soldier of Fortune path", "kind": "career_missions", "careers": ["Soldier of Fortune"],
+   "reward_isk": 25000, "reward_guess": false, "career_points": 10, "progress": "missions 1-3 of 10 done (35/750 career points)",
+   "note": "Mission 1 pays 25,000 ISK + 10 career points. Later mission rewards not seen yet; assumed the same."},
+  {"name": "AIR reward bundle: Earn 100,000 ISK on the Market", "kind": "market_goal", "market": true, "target_isk": 100000, "progress_isk": 0,
+   "reward_isk": 0, "reward_guess": true, "note": "Bundle contents unknown (0x items shown). Counts ISK EARNED on the market."},
+  {"name": "AIR reward bundle: Earn 50,000 ISK on the Market", "kind": "market_goal", "market": true, "target_isk": 50000, "progress_isk": 0,
+   "reward_isk": 0, "reward_guess": true, "note": "Same: any market profit counts."},
+  {"name": "Crimson Harvest: Items traded", "kind": "event_goal", "market": true, "target": 150, "progress": 0, "reward_isk": 0, "reward_guess": true,
+   "note": "Trading 150 items counts. Safe: do it with normal market trades."},
+  {"name": "Crimson Harvest: Tetrimon/Pochven kills, node hacks, Criterion of Fitness", "kind": "event_goal", "safe": false,
+   "note": "Needs Pochven/null-sec PvE or PvP. Not routed (stay safe, new character)."}
+ ]
+}

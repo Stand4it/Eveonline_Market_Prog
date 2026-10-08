@@ -187,6 +187,11 @@ def offers_rows(con, g=None, p=None):
         if walk:
             minutes += walk * per_jump + 2
             tags = tags + [f"FIRST go to {o['agent_system']} ({walk} jumps, ~{walk * per_jump + 2:.0f} min): missions cannot be accepted remotely"]
+        from .bonus import offer_bonus
+        b_isk, b_txt = offer_bonus(career_of(o))
+        if b_isk:
+            net += b_isk
+            tags = tags + [f"BONUS PROGRAM: {b_txt}"]
         ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
         if ex_isk > 0:
             net, minutes = net + ex_isk, minutes + ex_min
@@ -504,6 +509,11 @@ def next_action(con, g, p, full=False):
         trade_text = core
     if trade_text:
         steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
+    if selling or trade_text:
+        from .bonus import market_lines
+        bl = market_lines()
+        if bl:
+            steps[0 if selling else -1] += "\n" + "\n".join(bl)
     out = _chain(steps) + "\n\n" + DONE
     if not selling or len(steps) > 1:
         out += "\n(more detail: python -m eve_profit next --all)"
