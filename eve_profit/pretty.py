@@ -45,12 +45,25 @@ class Pretty:
         return getattr(self.out, name)
 
 
+BAR = "#" * 70
+
+
 class pretty_output:
+    """Wrap stdout. With a title (the command name) the output is framed by bold bars and blank lines so you can see where it starts and ends."""
+
+    def __init__(self, title=None):
+        self.title = title
+
     def __enter__(self):
         self.old = sys.stdout
+        if self.title:
+            self.old.write(f"\n\n{BAR}\n{BAR}\n##  START  {self.title}\n{BAR}\n\n")
         sys.stdout = Pretty(self.old)
         return self
 
     def __exit__(self, *exc):
         sys.stdout.flush()
         sys.stdout = self.old
+        if self.title:
+            self.old.write(f"\n{BAR}\n##  END  {self.title}\n{BAR}\n{BAR}\n\n\n")
+            self.old.flush()
