@@ -6,6 +6,19 @@ from .orders import load_books, sell_into_bids
 from .skills import order_slots
 
 
+def regional_ask(con, g, tid, system, local_ask=None):
+    """The price a new sell order must match to sell: the CHEAPEST sell order anywhere in this region (players search by region, so a
+    5,000 ISK order next door does not sell while 1,506 ISK orders sit one jump away). Falls back to the local ask."""
+    reg = g.region.get(system)
+    ids = [s for s, r in g.region.items() if r == reg] if reg is not None else [system]
+    q = ",".join(str(int(x)) for x in ids)
+    r = con.execute(f"SELECT MIN(price) FROM orders WHERE type_id=? AND is_buy=0 AND system_id IN ({q})", (tid,)).fetchone()
+    best = r[0] if r and r[0] else None
+    if best is None:
+        return local_ask
+    return min(best, local_ask) if local_ask else best
+
+
 def _bids_at(con, location_id):
     out = {}
     for r in con.execute("SELECT type_id,price,volume_remain,min_volume FROM orders WHERE location_id=? AND is_buy=1 "
@@ -63,7 +76,8 @@ def plan_along(con, g, p, dest_name, slots_override=None):
                             "m3": best[3] * (vol.get(tid, 0) or 0.0001), "extra": best[0] - (local[0] if local else 0)})
         elif local:
             asks = sells.get(tid, {}).get(cur, [])
-            listing = qty * asks[0][0] if asks else 0.0
+            ask = regional_ask(con, g, tid, cur, asks[0][0] if asks else None)       # buyers search the whole region: the cheapest ask there sets the price
+            listing = qty * ask if ask else 0.0
             list_net = listing * (1 - p.broker_fee - p.sales_tax)
             list_it = listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,

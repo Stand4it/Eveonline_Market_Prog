@@ -266,3 +266,21 @@ class PickOffersTests(unittest.TestCase):
         self.assertEqual(book_tag(sellers, "Rotonos", 9e6), [])
         self.assertEqual(book_tag(sellers, "Bourynes", 1e6), [])
         self.assertIn("INJECT", book_tag(sellers, "Bourynes", 9e6)[0])
+
+
+class RegionalAskTests(unittest.TestCase):
+    def test_listing_price_is_the_cheapest_ask_in_the_region_not_the_local_one(self):
+        from eve_profit.along import regional_ask
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        sysid = next(iter(g.region))
+        mates = [x for x, r in g.region.items() if r == g.region[sysid]]
+        other = mates[-1]
+        con.execute("DELETE FROM orders WHERE type_id=34 AND is_buy=0")
+        con.execute("INSERT INTO orders VALUES(991101,34,60000001,?,10000001,0,5000.0,5,1,'',1)", (sysid,))
+        con.execute("INSERT INTO orders VALUES(991102,34,60000002,?,10000001,0,1506.0,5,1,'',1)", (other,))
+        self.assertEqual(regional_ask(con, g, 34, sysid, 5000.0), 1506.0 if other != sysid else 5000.0)
+        self.assertEqual(regional_ask(con, g, 999999, sysid, 7.0), 7.0)

@@ -28,13 +28,11 @@ def _next_action_core(con, g, p):
     listers = [d for d in here if d["advice"] == "LIST"]
     if listers:
         d = max(listers, key=lambda d: d["list_net"] - d["net"])
-        ask = con.execute("SELECT price FROM orders WHERE type_id=? AND system_id=? AND is_buy=0 ORDER BY price ASC LIMIT 1",
-                          (d["tid"], g.id_of(where))).fetchone()
-        price = ask[0] if ask else d["listing"] / max(d["qty"], 1)
+        price = d["listing"] / max(d["qty"], 1)
         slots = res.get("slots")
         L = [f"STEP: LIST 1 item in {where}",
              f"   {d['qty']:,} x {d['name']}",
-             f"   price each: {price:,.2f}  (the cheapest sell order right now; match or undercut by the smallest step)",
+             f"   price each: {price:,.2f}  (the cheapest sell order in this whole region right now; match or undercut by the smallest step)",
              f"   you receive about {d['list_net']:,.0f} ISK after fees (instant sale would give {d['net']:,.0f})"]
         if slots is not None:
             L.append(f"   uses 1 of your ~{slots} market order slots")
