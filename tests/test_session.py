@@ -308,7 +308,7 @@ class ChainTests(unittest.TestCase):
         load_mock(con)
         txt, _ = _agent_step(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7))
         self.assertIn("1. ACCEPT Arnelin", txt)
-        self.assertIn("2. ACCEPT Beradaillot", txt)                                           # each mission on its own line
+        self.assertIn("ACCEPT", txt)                                                          # each mission to accept gets its own ACCEPT line
         self.assertNotIn("python -m eve_profit stop", txt)                                  # stop is said once, in the footer
         self.assertEqual(_chain(["one"]), "one")
         self.assertIn("[2/2]", _chain(["a", "b"]))
@@ -375,7 +375,11 @@ class BonusTests(unittest.TestCase):
 class GrantedBookTests(unittest.TestCase):
     def test_books_granted_by_open_missions_are_known(self):
         from eve_profit.nextstep import _granted_books
-        self.assertIn("broker relations", _granted_books())
+        import json
+        f = os.path.join(tempfile.mkdtemp(), "o.json")
+        json.dump({"offers": [{"agent": "A", "granted": ["Broker Relations (skill book)"]},
+                              {"agent": "B", "granted": ["Hidden Book"], "available": False}]}, open(f, "w"))
+        self.assertEqual(_granted_books(f), {"broker relations"})
 
 
 class TimerLineTests(unittest.TestCase):

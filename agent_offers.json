@@ -254,7 +254,7 @@
    "jumps": 0,
    "one_way": true,
    "m3": 20,
-   "available": true,
+   "available": false,
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
    "timer_name": "Agent L1 step 6 Industrialist cap boosters",
@@ -292,7 +292,7 @@
    "jumps": 0,
    "one_way": true,
    "m3": 5,
-   "available": true,
+   "available": false,
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
    "timer_name": "Agent L1 step 6 Entrepreneur armor repairer",
@@ -336,7 +336,7 @@
    "jumps": 0,
    "one_way": true,
    "m3": 25,
-   "available": true,
+   "available": false,
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
    "timer_name": "Agent L1 step 6 both (cap boosters + armor repairer)",
@@ -357,6 +357,101 @@
      "grants": "Broker Relations skill book: inject it and queue it"
     }
    ]
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 7: transport 20 x Cap Booster 25 (20 m3, pick them up from your hangar here) to Tiberis VII - Moon 1 - President Bureau, 1 jump",
+   "isk": 0,
+   "bonus": 138000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Damage Control I",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [],
+   "granted": [],
+   "task_min": 5,
+   "jumps": 1,
+   "m3": 20,
+   "available": true,
+   "agent_system": "Rotonos",
+   "to_system": "Tiberis",
+   "where": "Tiberis VII - Moon 1 - President Bureau (1 jump from Rotonos)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 7 Industrialist cap booster courier"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 7: scan down the ancient (relic) site in Rotonos with the granted Civilian Relic Analyzer (needs Core Scanner Probes; Serpentis ships there), bring 1 x Datacore - Elementary Civilian Tech (1 m3) back to Rotonos IV - CAS",
+   "isk": 0,
+   "bonus": 178000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "1MN Afterburner I",
+     "qty": 1,
+     "est": 5000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Relic Analyzer"
+   ],
+   "task_min": 25,
+   "jumps": 0,
+   "m3": 1,
+   "available": true,
+   "agent_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 7 Entrepreneur relic site"
+  },
+  {
+   "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
+   "mission": "accept both at Rotonos IV; do the 1-jump courier to Tiberis, then the relic site in Rotonos, hand in both",
+   "isk": 0,
+   "bonus": 316000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Damage Control I",
+     "qty": 1,
+     "est": 20000
+    },
+    {
+     "item": "1MN Afterburner I",
+     "qty": 1,
+     "est": 5000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Relic Analyzer"
+   ],
+   "task_min": 30,
+   "jumps": 1,
+   "m3": 21,
+   "available": true,
+   "agent_system": "Rotonos",
+   "to_system": "Tiberis",
+   "where": "Tiberis VII (courier, 1 jump) then Rotonos site and Rotonos IV CAS",
+   "career": "Industrialist",
+   "accept": [
+    {
+     "agent": "Arnelin Ygegnere",
+     "task": "transport 20 x Cap Booster 25 to Tiberis VII - President Bureau (1 jump)",
+     "grants": "Damage Control I on completion"
+    },
+    {
+     "agent": "Beradaillot Audates",
+     "task": "relic site in Rotonos, bring back 1 x Datacore - Elementary Civilian Tech",
+     "grants": "Civilian Relic Analyzer now; 1MN Afterburner I on completion"
+    }
+   ],
+   "timer_name": "Agent L1 step 7 both (courier + relic site)"
   }
  ],
  "min_per_jump": 3.0,

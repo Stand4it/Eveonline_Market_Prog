@@ -251,11 +251,11 @@ def pick_offers(rows, measured, limit=TOP_OFFERS):
     return [(r, c, c in measured) for _, r, c in chosen]
 
 
-def _granted_books():
+def _granted_books(f=None):
     """Lower-case names of skill books that open agent missions grant on acceptance (agent_offers.json 'granted')."""
     import json
     from pathlib import Path
-    f = Path(__file__).resolve().parents[1] / "agent_offers.json"
+    f = Path(f) if f else Path(__file__).resolve().parents[1] / "agent_offers.json"
     try:
         offers = json.loads(f.read_text(encoding="utf-8")).get("offers", [])
     except (OSError, ValueError):
