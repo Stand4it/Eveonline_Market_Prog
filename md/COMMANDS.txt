@@ -177,6 +177,7 @@ START  -  start timing an activity
 STOP  -  stop timing, read payouts and loot, log it
    --isk          ISK amount
    --paused       stop: minutes you were away from the activity (not counted)
+   --minutes      stop: minutes you really worked (use after falling asleep or leaving); replaces the clock time
    --add-min      stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)
    --no-loot      start/stop: do not value the items you picked up
    example: python -m eve_profit stop --add-min 5

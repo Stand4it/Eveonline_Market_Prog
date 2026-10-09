@@ -26,15 +26,21 @@ def summarize_journal(entries, since_ts, until_ts=None):
     return sum(by.values()), by
 
 
+def _clock(t):
+    """Local date and time of a timestamp, e.g. '2026-10-09 03:17 (local PC time)'."""
+    return time.strftime("%Y-%m-%d %H:%M", time.localtime(t)) + " (local PC time)"
+
+
 def start(con, activity, char_id, now=None, snap=None):
     now = now or time.time()
     con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)",
                 (json.dumps({"activity": activity, "t": now, "char": char_id, "snap": snap}),))
     con.commit()
-    return f"Started timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   (add --isk N for loot you sell yourself)"
+    return (f"Started {_clock(now)}: timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   "
+            f"(add --isk N for loot you sell yourself; fell asleep or left? use --minutes N for the minutes you really worked)")
 
 
-def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None):
+def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None, work_min=None):
     row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
     if not row:
         raise ValueError("no session running: start one with  start --activity \"NAME\"")
@@ -44,7 +50,10 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
     isk, by = summarize_journal(entries, s["t"], now)
     isk += extra_isk
     total_paused = paused_min + s.get("paused_min", 0.0) + ((now - s["pause_t"]) / 60.0 if s.get("pause_t") else 0.0)   # pauses made with `pause`/`resume` + --paused
+    clock_min = (now - s["t"]) / 60.0
     hours = max((now - s["t"]) / 3600.0 - total_paused / 60.0, 1 / 60.0)
+    if work_min:
+        hours = max(work_min / 60.0, 1 / 60.0)                    # you told us how long you really worked (asleep, away, AFK)
     if loot:
         isk += loot["value"]
         hours += loot["travel_hours"]
@@ -53,7 +62,9 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
                 (s["activity"], isk, hours, now, ship, sp))
     con.execute("DELETE FROM meta WHERE key='session'")
     con.commit()
-    lines = [f"'{s['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / hours:,.0f} ISK/hr (logged)."]
+    lines = [f"'{s['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / hours:,.0f} ISK/hr (logged).",
+             f"   started {_clock(s['t'])}, stopped {_clock(now)}: {clock_min:,.0f} min on the clock, {hours * 60:,.0f} min counted"
+             + (" (your --minutes)" if work_min else "")]
     lines += [f"   {k:<34} {v:>14,.0f}" for k, v in sorted(by.items(), key=lambda kv: -kv[1])]
     if loot:
         from .loot import describe

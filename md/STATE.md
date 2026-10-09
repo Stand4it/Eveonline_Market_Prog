@@ -10,5 +10,4 @@ Open agent offers (agent_offers.json):
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
 - Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
 - Beradaillot Audates: step 7: scan down the ancient (relic) site in Rotonos with t
-- Arnelin Ygegnere: step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 
-- Arnelin Ygegnere: step 9 (name not seen; 9 of 10 presumed): decoy mining in Ro
+- Arnelin Ygegnere: step 10 of 10 'Making Mountains of Molehills' (FINAL): acqui

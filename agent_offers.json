@@ -474,7 +474,7 @@
    "jumps": 0,
    "m3": 500,
    "one_way": true,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
@@ -494,12 +494,41 @@
    "task_min": 22,
    "jumps": 0,
    "m3": 3,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "where": "objective site in Rotonos, then Rotonos IV - Moon 2 - CAS",
    "career": "Industrialist",
    "needs": "a ship with a mining laser (3 x Miner I) AND something to kill L1 pirates (guns or drones); low but real risk of losing the ship: do not use the Imicus you salvage with",
    "timer_name": "Agent L1 step 9 Industrialist decoy mining"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 10 of 10 'Making Mountains of Molehills' (FINAL): acquire 1 x Navitas (PACKAGED frigate, 2,500 m3) for Rotonos IV - CAS. You are granted the Navitas Blueprint on accepting: buy a Navitas if the market has one, or BUILD it. 2,500 m3 does not fit your Imicus (400 m3): buy/build it AT Rotonos. REWARDS: a module/item + ISK; amounts NOT SEEN (screenshot cut off): send the bottom of the window",
+   "isk": 0,
+   "bonus": 0,
+   "taxed": true,
+   "loot": [],
+   "cost": [
+    {
+     "item": "Navitas",
+     "qty": 1,
+     "est": 400000
+    }
+   ],
+   "granted": [
+    "Navitas Blueprint"
+   ],
+   "task_min": 20,
+   "jumps": 0,
+   "m3": 2500,
+   "one_way": true,
+   "available": true,
+   "agent_system": "Rotonos",
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
+   "career": "Industrialist",
+   "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
+   "timer_name": "Agent L1 step 10 Industrialist Navitas"
   }
  ],
  "min_per_jump": 3.0,
