@@ -251,6 +251,23 @@ def pick_offers(rows, measured, limit=TOP_OFFERS):
     return [(r, c, c in measured) for _, r, c in chosen]
 
 
+def _granted_books():
+    """Lower-case names of skill books that open agent missions grant on acceptance (agent_offers.json 'granted')."""
+    import json
+    from pathlib import Path
+    f = Path(__file__).resolve().parents[1] / "agent_offers.json"
+    try:
+        offers = json.loads(f.read_text(encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        return set()
+    out = set()
+    for o in offers:
+        if o.get("available", True):
+            for x in o.get("granted", []):
+                out.add(x.replace("(skill book)", "").strip().lower())
+    return out
+
+
 def book_sellers(con, g, p, reach_jumps=10):
     """Skill books in your training plan that you have never trained, with every system that sells one (cheapest order there):
     {system name: [(skill, price)]}. Includes books for LATER in the plan: buy them whenever you are there anyway."""
@@ -263,9 +280,10 @@ def book_sellers(con, g, p, reach_jumps=10):
     except Exception:                                                   # noqa: BLE001
         return {}
     out, seen = {}, set()
+    granted = _granted_books()
     for st in res["steps"]:
-        if st["level"] != 1 or st["skill"] in seen:
-            continue
+        if st["level"] != 1 or st["skill"] in seen or st["skill"].lower() in granted:
+            continue                                                    # an open mission GIVES this book when you accept it: never buy it
         row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
         if not row or row[0] in owned:
             continue

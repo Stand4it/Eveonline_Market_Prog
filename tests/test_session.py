@@ -369,3 +369,9 @@ class BonusTests(unittest.TestCase):
         lines = market_lines(progs)
         self.assertEqual(len(lines), 1)
         self.assertIn("'M'", lines[0])
+
+
+class GrantedBookTests(unittest.TestCase):
+    def test_books_granted_by_open_missions_are_known(self):
+        from eve_profit.nextstep import _granted_books
+        self.assertIn("broker relations", _granted_books())
