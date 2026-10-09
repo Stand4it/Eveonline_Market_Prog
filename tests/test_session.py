@@ -309,7 +309,7 @@ class ChainTests(unittest.TestCase):
         txt, _ = _agent_step(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7))
         self.assertIn("1. ACCEPT Arnelin", txt)
         self.assertIn("2. ACCEPT Beradaillot", txt)                                           # each mission on its own line
-        self.assertIn("python -m eve_profit stop", txt)
+        self.assertNotIn("python -m eve_profit stop", txt)                                  # stop is said once, in the footer
         self.assertEqual(_chain(["one"]), "one")
         self.assertIn("[2/2]", _chain(["a", "b"]))
 
@@ -385,3 +385,4 @@ class TimerLineTests(unittest.TestCase):
         self.assertEqual(_name_of("STEP: SELL NOW in Rotonos - about 5 ISK"), "Market sell stock Rotonos")
         self.assertEqual(_name_of("STEP: TRADE (best)\n   Buy 14 x Foo @ A, sell @ B"), "Trade Buy 14 x Foo @ A, sell @ B")
         self.assertIn('start --activity "X"', _timer("X"))
+        self.assertNotIn("stop", _timer("X"))

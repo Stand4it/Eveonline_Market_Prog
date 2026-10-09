@@ -425,7 +425,7 @@ def next_action_all(con, g, p):
     return text
 
 
-DONE = "When done:  python -m eve_profit sync   then   python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"
+DONE = "When done:  python -m eve_profit stop   (agent missions: wait 2 minutes first)   then   python -m eve_profit sync   then   python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"
 
 
 def _unit_price(con, item, est):
@@ -470,13 +470,12 @@ def _agent_step(con, g, p):
             for x in t[len("+ TRADES ON THE WAY: "):].split(" | "):
                 add("On the way: " + x.strip())
     add(f"Hand in / deliver at {o.get('where') or 'the agent'}" + (f" ({o['to_system']})" if o.get("to_system") else "") + " and complete the mission.")
-    add("Wait 2 minutes for the wallet journal, then:  python -m eve_profit stop")
     return "\n".join(L), rate
 
 
 def _timer(name):
     """Every step ends with the command that times it, so each run is classified for the ISK/hr model."""
-    return f'   Time it:  python -m eve_profit start --activity "{name}"    (when done:  python -m eve_profit stop)'
+    return f'   Time it:  python -m eve_profit start --activity "{name}"'
 
 
 def _name_of(step):

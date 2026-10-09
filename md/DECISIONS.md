@@ -38,3 +38,4 @@
 - 2026-10-09: sell/buy lines: one item per line 'QTY x NAME @ unit each = total' (SELL NOW) and 'BUY QTY x NAME (about X each): command' (agent chain).
 - 2026-10-09: combined agent offers carry an `accept` list (agent, task, grants): each mission to accept is its own numbered line, with what it grants (e.g. inject the Broker Relations book).
 - 2026-10-09: every `next` step ends with 'Time it: start --activity "<name>"  (when done: stop)'; names are stable per kind (Market sell stock X, Market list ITEM, Trade ..., Skills queue/buy book, Gear upgrade, Agent L1 ...) so runs classify for the ISK/hr model.
+- 2026-10-09: removed the extra stop lines: each step keeps ONE 'Time it: start --activity ...' line; 'stop' appears once in the footer (When done: stop, then sync, then next).
