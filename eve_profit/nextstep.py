@@ -27,7 +27,7 @@ def _next_action_core(con, g, p):
         total = sum(d["net"] for d in sells)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         for d in sells[:8]:
-            L.append(f"   {d['sold']:>9,} x {d['name']:<34} ~{d['net']:>12,.0f}")
+            L.append(f"   {d['sold']:>9,} x {d['name']:<34} @ {d['net'] / max(d['sold'], 1):>12,.2f} each = ~{d['net']:>12,.0f}")
             if rebuy_note(d):
                 L.append(rebuy_note(d))
         if len(sells) > 8:
@@ -428,6 +428,17 @@ def next_action_all(con, g, p):
 DONE = "When done:  python -m eve_profit sync   then   python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"
 
 
+def _unit_price(con, item, est):
+    """Cheapest sell order for an item by name (what you pay now), else the estimate from agent_offers.json."""
+    try:
+        r = con.execute("SELECT MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0", (item,)).fetchone()
+        if r and r[0]:
+            return float(r[0])
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return float(est or 0)
+
+
 def _agent_step(con, g, p):
     """The ONE best agent offer as an ordered chain of sub-steps (go, accept, time, buy, deliver, stop); (None, 0) if no offer."""
     rows = offers_rows(con, g, p)
@@ -451,7 +462,7 @@ def _agent_step(con, g, p):
     if o.get("timer_name"):
         add(f'Start the timer:  python -m eve_profit start --activity "{o["timer_name"]}"')
     for it in o.get("cost", []):
-        add(f"Buy {it['qty']:,} x {it['item']}:  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
+        add(f"BUY  {it['qty']:>6,} x {it['item']}  (about {_unit_price(con, it['item'], it.get('est', 0)):,.0f} each):  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
     for t in tags:
         if t.startswith("+ TRADES ON THE WAY: "):
             for x in t[len("+ TRADES ON THE WAY: "):].split(" | "):
