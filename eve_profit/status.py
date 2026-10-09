@@ -13,6 +13,18 @@ KEY_TABLES = [("orders", "market orders (last scan)"), ("inventory", "your hanga
 def report(con, db_path, profile_path):
     L = [f"Database for this character: {db_path}  ({os.path.getsize(db_path) / 1e6:,.1f} MB)" if os.path.exists(db_path) else f"Database: {db_path} (not found)",
          f"Profile: {profile_path}  ({'found' if os.path.exists(profile_path) else 'not found'})", ""]
+    try:
+        import json
+        r = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
+        if r:
+            sess = json.loads(r[0])
+            mins = (time.time() - sess["t"]) / 60.0
+            L += [f"TIMER RUNNING: '{sess['activity']}' since {time.strftime('%Y-%m-%d %H:%M', time.localtime(sess['t']))} ({mins:,.0f} min on the clock)",
+                  "   wrong one?  python -m eve_profit fixlast --delete is for LOGGED runs; for a running timer just run  start --activity NAME  again (it replaces it, nothing is logged).", ""]
+        else:
+            L += ["No timer running.", ""]
+    except Exception:                                                   # noqa: BLE001
+        pass
     L.append("What is stored:")
     for t, what in KEY_TABLES:
         try:
