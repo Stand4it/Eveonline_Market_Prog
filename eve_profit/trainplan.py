@@ -27,6 +27,17 @@ GOALS = [
 ]
 
 
+def owned_skill_ids(con):
+    """Skills you already have the book for: every skill in your skill list (any level, even 0 = injected) plus everything in your
+    skill queue (a book you injected and queued counts even before the first level finishes)."""
+    ids = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    try:
+        ids |= {r[0] for r in con.execute("SELECT skill_id FROM skill_queue")}
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return ids
+
+
 def _need(con, levels, sid, lvl, out, seen):
     """Append (skill_id, level) steps so skill `sid` reaches `lvl`, prerequisites first."""
     for pre, plvl in con.execute("SELECT skill_id,level FROM type_skills WHERE type_id=?", (sid,)).fetchall():
@@ -68,7 +79,7 @@ def plan_training(con, hours=24.0, goals=GOALS):
 def book_list(con, g, p, res, hours=None):
     """Skill books to BUY first: skills in the plan you have never trained (no row in your skills = no book trained yet).
     Priced at the cheapest sell order within 10 jumps. -> [(skill, price, system, jumps)]; price None = no seller found."""
-    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    owned = owned_skill_ids(con)
     reach = g.reach(g.id_of(p.current_system), 10, p.avoid_yellow) if p.current_system in {g.name[s] for s in g.name} else {}
     limit = (hours or res["hours"]) * 60
     out, seen = [], set()
@@ -92,7 +103,7 @@ def book_list(con, g, p, res, hours=None):
 def trainable_now(con, res):
     """Plan steps you can queue TODAY without buying anything: the skill already has a row in your skills (its book is trained),
     so the next level is just a click. A level-1 step of a skill you never trained needs the book first, so it is not here."""
-    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    owned = owned_skill_ids(con)
     out = []
     for st in res["steps"]:
         row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()
@@ -104,7 +115,7 @@ def trainable_now(con, res):
 def format_top3(con, g, p, res):
     """Two short lists at the top of `trainplan`: the 3 best skills for you (book or not) and the 3 you can queue RIGHT NOW."""
     books = {n: (price, where, jumps) for n, price, where, jumps in book_list(con, g, p, res, hours=10 ** 6)}
-    owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+    owned = owned_skill_ids(con)
 
     def have(st):
         row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (st["skill"],)).fetchone()

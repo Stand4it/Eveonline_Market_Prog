@@ -272,9 +272,9 @@ def book_sellers(con, g, p, reach_jumps=10):
     """Skill books in your training plan that you have never trained, with every system that sells one (cheapest order there):
     {system name: [(skill, price)]}. Includes books for LATER in the plan: buy them whenever you are there anyway."""
     try:
-        from .trainplan import plan_training
+        from .trainplan import owned_skill_ids, plan_training
         res = plan_training(con, 24)
-        owned = {r[0] for r in con.execute("SELECT skill_id FROM character_skills")}
+        owned = owned_skill_ids(con)
         if not owned:
             return {}
     except Exception:                                                   # noqa: BLE001

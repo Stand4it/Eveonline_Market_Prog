@@ -57,3 +57,12 @@ class BookTests(unittest.TestCase):
         self.assertIn("TOP 3 RECOMMENDED", out)
         self.assertIn("TOP 3 YOU CAN TRAIN RIGHT NOW", out)
         self.assertIn("you can queue it now", out)                                                # Accounting is owned now
+
+
+class QueuedBookTests(unittest.TestCase):
+    def test_a_skill_in_the_queue_counts_as_owned(self):
+        from eve_profit.trainplan import owned_skill_ids
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO character_skills(skill_id,level,sp) VALUES(3,1,100)")
+        con.execute("INSERT INTO skill_queue(position,skill_id,level,finish_date) VALUES(0,16622,1,'2026-10-09T10:00:00Z')")
+        self.assertEqual(owned_skill_ids(con), {3, 16622})
