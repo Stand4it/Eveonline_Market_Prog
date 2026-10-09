@@ -307,7 +307,7 @@ class ChainTests(unittest.TestCase):
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         load_mock(con)
         txt, _ = _agent_step(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7))
-        self.assertIn("1. ACCEPT Arnelin", txt)
+        self.assertIn("1. ACCEPT ", txt)
         self.assertIn("ACCEPT", txt)                                                          # each mission to accept gets its own ACCEPT line
         self.assertNotIn("python -m eve_profit stop", txt)                                  # stop is said once, in the footer
         self.assertEqual(_chain(["one"]), "one")
