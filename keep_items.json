@@ -4,12 +4,15 @@
  "keep": [
   {
    "item": "Miner I",
-   "qty": 2,
+   "qty": 3,
    "upgrade": "Miner II"
   },
   {
    "item": "Core Scanner Probe I",
    "qty": 8
   }
+ ],
+ "gear_notes": [
+  "Mining turrets: the best dedicated mining ships fit at most 3 turrets (Venture 2). 3 x Miner I covers any of them, so lower-grade Civilian Miners are surplus and may be sold (verify hardpoints in the in-game fitting window)."
  ]
 }
