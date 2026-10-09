@@ -455,7 +455,7 @@
   },
   {
    "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-   "mission": "step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 x Civilian Gallente Shuttle (PACKAGED, 500 m3) and bring it to Rotonos IV - Moon 2 - CAS (the agent's station). Buy it AT Rotonos if sold there: 500 m3 does not fit your Imicus (400 m3). May also be buildable from the granted blueprint",
+   "mission": "step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 x Civilian Gallente Shuttle (PACKAGED, 500 m3) for Rotonos IV - CAS. NOT SOLD ON THE MARKET (searched in game): BUILD it from the Civilian Gallente Shuttle Blueprint you are granted on accepting (Industry > Manufacturing at Rotonos; materials and build time not seen yet)",
    "isk": 211000,
    "bonus": 248000,
    "taxed": true,
@@ -466,17 +466,11 @@
      "est": 20000
     }
    ],
-   "cost": [
-    {
-     "item": "Civilian Gallente Shuttle",
-     "qty": 1,
-     "est": 10000
-    }
-   ],
+   "cost": [],
    "granted": [
     "Civilian Gallente Shuttle Blueprint"
    ],
-   "task_min": 10,
+   "task_min": 15,
    "jumps": 0,
    "m3": 500,
    "one_way": true,
@@ -485,7 +479,8 @@
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
    "career": "Industrialist",
-   "timer_name": "Agent L1 step 8 Industrialist shuttle"
+   "timer_name": "Agent L1 step 8 Industrialist shuttle",
+   "needs": "build slot + materials (see the blueprint in Industry once accepted); then hand in at Rotonos IV"
   },
   {
    "agent": "Arnelin Ygegnere (Industrialist - Producer)",
