@@ -41,3 +41,4 @@
 - 2026-10-09: removed the extra stop lines: each step keeps ONE 'Time it: start --activity ...' line; 'stop' appears once in the footer (When done: stop, then sync, then next).
 - 2026-10-09: new agent offers step 7 added (Arnelin: courier 20 Cap Booster 25 to Tiberis VII 1 jump, bonus 138k + Damage Control I, ~13 min = ~659k ISK/hr (~11k ISK/min); Beradaillot: relic site in Rotonos with granted Civilian Relic Analyzer, bonus 178k + 1MN Afterburner I, ~25 min = ~392k/hr (~6.5k ISK/min); combined 38 min ~484k/hr). Step 6 offers marked unavailable. Tests no longer depend on the live agent_offers.json.
 - 2026-10-09: Miner I keep qty set to 3 (character holds 3). Civilian Miners (6) are surplus: best mining ships fit <= 3 turrets, so 3 x Miner I covers it; they are not on the keep list so `next`/`stock` may advise selling them.
+- 2026-10-09: START/END bars no longer printed for sync, start, stop, pause, resume (user request).

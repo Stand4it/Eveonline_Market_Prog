@@ -121,7 +121,7 @@ def main(argv=None):
                 took = _time.time() - t0
                 print(f"=== {a.cmd} FINISHED {_time.strftime('%Y-%m-%d %H:%M:%S')}  (took {int(took // 60)} min {int(took % 60)} s) ===")
 
-    title = None if (a.cmd == "sync" or getattr(a, "quiet", False)) else a.cmd      # sync stays plain; the rest get START/END bars
+    title = None if (a.cmd in ("sync", "start", "stop", "pause", "resume") or getattr(a, "quiet", False)) else a.cmd      # sync/start/stop/pause/resume stay plain; the rest get START/END bars
     if not kind:
         with pretty_output(title):
             return run()
