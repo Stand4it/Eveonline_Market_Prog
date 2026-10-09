@@ -43,3 +43,4 @@
 - 2026-10-09: Miner I keep qty set to 3 (character holds 3). Civilian Miners (6) are surplus: best mining ships fit <= 3 turrets, so 3 x Miner I covers it; they are not on the keep list so `next`/`stock` may advise selling them.
 - 2026-10-09: START/END bars no longer printed for sync, start, stop, pause, resume (user request).
 - 2026-10-09: Arnelin step 8 'Making Mountains of Molehills' added (acquire 1 packaged Civilian Gallente Shuttle 500 m3, drop at Rotonos IV CAS; 211k + 248k bonus + Civilian Gallente Shuttle Blueprint): ~419k net in ~10 min (~42k ISK/min, ~2.5M ISK/hr) if buyable. WARNING: 500 m3 > Imicus 400 m3, buy it at Rotonos. Step 7 courier + combined offer closed.
+- 2026-10-09: Arnelin decoy-mining mission added (239k + 237k bonus, mine in Rotonos, kill L1 pirates, bring back Production Assistant; ~424k net in ~22 min est = ~19k ISK/min, ~1.16M ISK/hr). Offers may carry a 'needs' field, printed as NEEDS: in the agent chain.

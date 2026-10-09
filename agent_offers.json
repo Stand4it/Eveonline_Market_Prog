@@ -486,6 +486,25 @@
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
    "career": "Industrialist",
    "timer_name": "Agent L1 step 8 Industrialist shuttle"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 9 (name not seen; 9 of 10 presumed): decoy mining in Rotonos. Fly to the objective site in this system, MINE ore until pirates show up, DESTROY them, bring 1 x Production Assistant (3 m3, dropped there) back to Rotonos IV - CAS. You keep the ore",
+   "isk": 239000,
+   "bonus": 237000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 22,
+   "jumps": 0,
+   "m3": 3,
+   "available": true,
+   "agent_system": "Rotonos",
+   "where": "objective site in Rotonos, then Rotonos IV - Moon 2 - CAS",
+   "career": "Industrialist",
+   "needs": "a ship with a mining laser (3 x Miner I) AND something to kill L1 pirates (guns or drones); low but real risk of losing the ship: do not use the Imicus you salvage with",
+   "timer_name": "Agent L1 step 9 Industrialist decoy mining"
   }
  ],
  "min_per_jump": 3.0,

@@ -11,3 +11,4 @@ Open agent offers (agent_offers.json):
 - Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
 - Beradaillot Audates: step 7: scan down the ancient (relic) site in Rotonos with t
 - Arnelin Ygegnere: step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 
+- Arnelin Ygegnere: step 9 (name not seen; 9 of 10 presumed): decoy mining in Ro

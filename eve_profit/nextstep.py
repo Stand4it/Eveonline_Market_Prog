@@ -458,6 +458,8 @@ def _agent_step(con, g, p):
     for t in tags:
         if t.startswith("FIRST go to "):
             add(t.replace("FIRST go to ", "Fly to ", 1))
+    if o.get("needs"):
+        L.append(f"   NEEDS: {o['needs']}")
     acc = o.get("accept") or [{"agent": a_} for a_ in agents]
     for x in acc:                                                       # each mission on its own line
         add(f"ACCEPT {x['agent']}'s mission in person" + (f": {x['task']}" if x.get("task") else "")
