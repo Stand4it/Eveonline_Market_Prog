@@ -274,7 +274,7 @@ class PickOffersTests(unittest.TestCase):
 
     def test_book_tag_only_when_sold_here_and_affordable(self):
         from eve_profit.nextstep import book_tag
-        sellers = {"Bourynes": [("Accounting", 5_000_000.0)]}
+        sellers = {"Bourynes": [("Accounting", 500_000.0)]}
         self.assertEqual(book_tag(sellers, "Rotonos", 9e6), [])
         self.assertEqual(book_tag(sellers, "Bourynes", 1e6), [])
         self.assertIn("INJECT", book_tag(sellers, "Bourynes", 9e6)[0])
@@ -390,3 +390,7 @@ class TimerLineTests(unittest.TestCase):
         self.assertEqual(_name_of("STEP: TRADE (best)\n   Buy 14 x Foo @ A, sell @ B"), "Trade Buy 14 x Foo @ A, sell @ B")
         self.assertIn('start --activity "X"', _timer("X"))
         self.assertNotIn("stop", _timer("X"))
+
+    def test_a_book_costing_most_of_the_wallet_is_not_suggested(self):
+        from eve_profit.nextstep import book_tag
+        self.assertEqual(book_tag({"Rotonos": [("Accounting", 5_000_000.0)]}, "Rotonos", 6_900_000.0), [])

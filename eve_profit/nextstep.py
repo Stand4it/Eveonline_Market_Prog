@@ -203,6 +203,7 @@ def offers_rows(con, g=None, p=None):
 
 TOP_OFFERS = 5                 # never show more than this many offers
 UNMEASURED_BONUS = 1.3         # an unmeasured career ranks as if it paid 30% more: doing it builds the model
+BOOK_MAX_WALLET_SHARE = 0.10   # a skill book may cost at most this share of your wallet to be suggested
 MIN_BOOK_PRICE = 1000.0        # sell orders below this are junk, not a real skill book price
 
 
@@ -299,7 +300,7 @@ def book_tag(sellers, system, wallet, reserve=100_000.0):
     """'BUY THE SKILL BOOK ...' line for a system, or '' when none is sold there or you cannot afford it."""
     L = []
     for skill, price in sorted(sellers.get(system, []), key=lambda x: x[1]):
-        if price <= wallet - reserve:
+        if price <= BOOK_MAX_WALLET_SHARE * wallet and price <= wallet - reserve:      # never put a big share of your ISK into one book
             L.append(f"WHILE AT {system}: buy the {skill} skill book (~{price:,.0f} ISK) and INJECT it (Inventory > right-click > Inject Skill), then queue it")
     return L
 
