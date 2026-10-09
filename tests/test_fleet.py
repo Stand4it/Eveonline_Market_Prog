@@ -19,6 +19,9 @@ def setup():
     return con, g, far
 
 
+import eve_profit.along as _along
+_along.LIST_MIN_GAIN = 0.0          # these fixtures use tiny ISK amounts; the real 50k floor is tested in test_session.PolicyTests
+
 class T(unittest.TestCase):
     def test_parked_and_variant(self):
         con, g, far = setup()

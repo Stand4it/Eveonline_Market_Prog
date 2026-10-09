@@ -394,3 +394,24 @@ class TimerLineTests(unittest.TestCase):
     def test_a_book_costing_most_of_the_wallet_is_not_suggested(self):
         from eve_profit.nextstep import book_tag
         self.assertEqual(book_tag({"Rotonos": [("Accounting", 5_000_000.0)]}, "Rotonos", 6_900_000.0), [])
+
+
+class ListPolicyTests(unittest.TestCase):
+    def test_min_gain_and_staleness(self):
+        import time
+        from eve_profit import along
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        along.LIST_MIN_GAIN, saved = 50_000.0, along.LIST_MIN_GAIN
+        try:
+            self.assertGreaterEqual(along.list_min_gain(con), 50_000.0)
+        finally:
+            along.LIST_MIN_GAIN = saved
+        g = Graph(con)
+        sysid = next(iter(g.region))
+        old = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 40 * 86400))
+        con.execute("DELETE FROM orders WHERE type_id=34 AND is_buy=0")
+        con.execute("INSERT INTO orders VALUES(997001,34,60000001,?,10000001,0,5000.0,5,1,?,1)", (sysid, old))
+        self.assertGreater(along.ask_age_days(con, g, 34, sysid, 5000.0), 30)

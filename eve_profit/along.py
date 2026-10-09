@@ -6,6 +6,37 @@ from .orders import load_books, sell_into_bids
 from .skills import order_slots
 
 
+LIST_MIN_GAIN = 50_000.0      # a listing must earn at least this much more than selling now (and more than 2 minutes of your measured agent income)
+STALE_ORDER_DAYS = 30        # if the cheapest orders have sat this long, nobody is buying at that price
+
+
+def list_min_gain(con):
+    """Least extra ISK that makes listing (an order slot, a visit to the market window, waiting) worth it: 2 minutes of what you
+    earn doing timed agent missions, never below LIST_MIN_GAIN."""
+    try:
+        r = con.execute("SELECT SUM(isk), SUM(hours) FROM activity_log WHERE activity LIKE 'Agent L1%'").fetchone()
+        per_min = (r[0] / r[1] / 60.0) if r and r[1] else 0.0
+    except Exception:                                                   # noqa: BLE001
+        per_min = 0.0
+    return max(LIST_MIN_GAIN, 2.0 * per_min)
+
+
+def ask_age_days(con, g, tid, system, price):
+    """Age in days of the oldest sell order within 5% of `price` in this region (None if unknown): old orders mean the price does not sell."""
+    import calendar
+    import time as _t
+    reg = g.region.get(system)
+    ids = [x for x, r in g.region.items() if r == reg] if reg is not None else [system]
+    q = ",".join(str(int(x)) for x in ids)
+    ages = []
+    for (iss,) in con.execute(f"SELECT issued FROM orders WHERE type_id=? AND is_buy=0 AND price<=? AND system_id IN ({q})", (tid, price * 1.05)):
+        try:
+            ages.append((_t.time() - calendar.timegm(_t.strptime(iss.rstrip("Z")[:19], "%Y-%m-%dT%H:%M:%S"))) / 86400.0)
+        except Exception:                                               # noqa: BLE001
+            pass
+    return max(ages) if ages else None
+
+
 def regional_ask(con, g, tid, system, local_ask=None):
     """The price a new sell order must match to sell: the CHEAPEST sell order anywhere in this region (players search by region, so a
     5,000 ISK order next door does not sell while 1,506 ISK orders sit one jump away). Falls back to the local ask."""
@@ -148,7 +179,10 @@ def plan_along(con, g, p, dest_name, slots_override=None):
             ask = regional_ask(con, g, tid, cur, asks[0][0] if asks else None)       # buyers search the whole region: the cheapest ask there sets the price
             listing = qty * ask if ask else 0.0
             list_net = listing * (1 - p.broker_fee - p.sales_tax)
-            list_it = listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
+            age = ask_age_days(con, g, tid, cur, ask) if ask else None
+            list_it = (listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
+                       and list_net - local[0] >= list_min_gain(con)         # ... and by enough ISK to pay for your time
+                       and not (age is not None and age > STALE_ORDER_DAYS))  # ... and the price must actually be selling
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
                          "listing": listing, "list_net": list_net, "advice": "LIST" if list_it else "SELL NOW",
                          "cost": cost, "covered": covered, "used_in": used_in, "own_use": own_use,
