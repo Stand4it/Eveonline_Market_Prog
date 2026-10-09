@@ -86,6 +86,19 @@ def _sync_attributes_and_queue(con, esi, cid):
         pass
 
 
+def _sync_orders(con, esi, cid):
+    """Your own open market orders. -> number of orders, or None when the login lacks the orders scope (run `login` once)."""
+    try:
+        rows = esi.get(f"/characters/{cid}/orders/")[0]
+    except Exception:                                                   # noqa: BLE001 (403 = scope missing)
+        return None
+    con.execute("DELETE FROM my_orders")
+    con.executemany("INSERT OR REPLACE INTO my_orders VALUES(?,?,?,?,?,?,?,?)",
+                    [(o["order_id"], o["type_id"], o.get("location_id"), 1 if o.get("is_buy_order") else 0, o["price"],
+                      o["volume_remain"], o.get("volume_total"), o.get("issued")) for o in rows])
+    return len(rows)
+
+
 def sync_character(con, esi, cid, profile):
     """Fills profile (system, ship, cargo, wallet, tax) and inventory. -> summary dict."""
     loc = esi.get(f"/characters/{cid}/location/")[0]
@@ -122,6 +135,7 @@ def sync_character(con, esi, cid, profile):
                     [(s["skill_id"], s["trained_skill_level"], s.get("skillpoints_in_skill", 0)) for s in skills])
     _sync_attributes_and_queue(con, esi, cid)
     n_tx = _sync_transactions(con, esi, cid)
+    n_orders = _sync_orders(con, esi, cid)
     profile.mfg_slots_total = 1 + lv(MASS_PRODUCTION) + lv(ADV_MASS_PRODUCTION)
     jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
     profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1
@@ -192,5 +206,5 @@ def sync_character(con, esi, cid, profile):
     con.commit()
     return {"fitted_items": fit_n, "salvager_fitted": profile.can_salvage, "system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
-            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "transactions": n_tx, "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
+            "blueprints": len(bps), "lp_corps": con.execute("SELECT COUNT(*) FROM lp_balance").fetchone()[0], "mfg_slots": f"{profile.mfg_slots_used}/{profile.mfg_slots_total}", "transactions": n_tx, "open_orders": n_orders if n_orders is not None else "unknown: run  python -m eve_profit login  once to allow reading your orders", "assets_kept": kept, "ships_parked": ships, "assets_skipped": skipped,
             "system_known": bool(row)}

@@ -95,6 +95,9 @@ CREATE TABLE IF NOT EXISTS structures(
   access INTEGER NOT NULL DEFAULT -1, info_at REAL, orders_at REAL);
 CREATE INDEX IF NOT EXISTS ix_str_sys ON structures(system_id);
 CREATE TABLE IF NOT EXISTS char_attrs(attr TEXT PRIMARY KEY, value REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS my_orders(
+  order_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, location_id INTEGER, is_buy INTEGER NOT NULL,
+  price REAL NOT NULL, volume_remain INTEGER NOT NULL, volume_total INTEGER, issued TEXT);
 CREATE TABLE IF NOT EXISTS skill_queue(
   position INTEGER PRIMARY KEY, skill_id INTEGER NOT NULL, level INTEGER NOT NULL, finish_date TEXT);
 CREATE TABLE IF NOT EXISTS transactions(

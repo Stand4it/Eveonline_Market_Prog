@@ -134,7 +134,7 @@ def main(argv=None):
 
 
 CHAR_TABLES = ["inventory", "my_blueprints", "character_skills", "skill_queue", "char_attrs", "standings",
-               "lp_balance", "transactions", "fitted", "my_ships", "opportunities", "activity_log"]
+               "lp_balance", "transactions", "fitted", "my_ships", "my_orders", "opportunities", "activity_log"]
 
 
 def _use_character(a, ap):

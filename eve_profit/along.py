@@ -136,11 +136,17 @@ def plan_along(con, g, p, dest_name, slots_override=None):
     far = g.reach(cur, max(p.max_jumps * 5, 10), p.avoid_yellow)       # where a loss-making item could go instead
     _, far_buys = load_books(con, set(far))
     here, carried, losses = [], [], []
+    try:
+        listed = {r[0] for r in con.execute("SELECT type_id FROM my_orders WHERE is_buy=0")}     # already on the market: never advise listing it again
+    except Exception:                                                   # noqa: BLE001
+        listed = set()
     keep = keep_names(con)
     held_gear = {}
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
+        if tid in listed:
+            continue
         if str(name.get(tid, "")).lower() in keep:
             held_gear[str(name.get(tid, "")).lower()] = (tid, qty)
             continue                                        # on the keep list: you will use it, rebuying costs more
@@ -191,6 +197,11 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         if d["advice"] == "SELL NOW" and d["own_use"] and d["rebuy"] > 2.0 * d["net"]:
             here.remove(d)
     slots = slots_override if slots_override is not None else order_slots(con)
+    if slots is not None and slots_override is None:
+        try:
+            slots = max(0, slots - con.execute("SELECT COUNT(*) FROM my_orders").fetchone()[0])     # orders you already hold use slots
+        except Exception:                                               # noqa: BLE001
+            pass
     listers = sorted([d for d in here if d["advice"] == "LIST"], key=lambda d: -(d["list_net"] - d["net"]))
     if slots is not None:
         for d in listers[slots:]:

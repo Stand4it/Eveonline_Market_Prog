@@ -415,3 +415,19 @@ class ListPolicyTests(unittest.TestCase):
         con.execute("DELETE FROM orders WHERE type_id=34 AND is_buy=0")
         con.execute("INSERT INTO orders VALUES(997001,34,60000001,?,10000001,0,5000.0,5,1,?,1)", (sysid, old))
         self.assertGreater(along.ask_age_days(con, g, 34, sysid, 5000.0), 30)
+
+
+class MyOrdersTests(unittest.TestCase):
+    def test_items_already_listed_are_not_advised_again(self):
+        from eve_profit.along import plan_along
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT INTO orders VALUES(998001,34,60000001,1,10000001,1,5000.0,500,1,'',1)")
+        con.execute("INSERT INTO inventory VALUES(34,1,100)")
+        g, p = Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7, current_location_id=60000001)
+        self.assertIn("Tritanium", [d["name"] for d in plan_along(con, g, p, "Home")["sell_here"]])
+        con.execute("INSERT INTO my_orders VALUES(1,34,60000001,0,4500.0,6,6,'2026-10-09T10:00:00Z')")
+        self.assertNotIn("Tritanium", [d["name"] for d in plan_along(con, g, p, "Home")["sell_here"]])

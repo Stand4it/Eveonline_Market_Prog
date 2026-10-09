@@ -31,6 +31,7 @@ SCOPES = [
     "esi-characters.read_blueprints.v1",
     "esi-industry.read_character_jobs.v1",
     "esi-markets.structure_markets.v1",
+    "esi-markets.read_character_orders.v1",   # your own open orders: so `next` never tells you to list what is already listed
     "esi-universe.read_structures.v1",
     "esi-characters.read_loyalty.v1",
     "esi-characters.read_standings.v1",
