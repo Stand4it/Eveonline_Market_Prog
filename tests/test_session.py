@@ -376,3 +376,12 @@ class GrantedBookTests(unittest.TestCase):
     def test_books_granted_by_open_missions_are_known(self):
         from eve_profit.nextstep import _granted_books
         self.assertIn("broker relations", _granted_books())
+
+
+class TimerLineTests(unittest.TestCase):
+    def test_every_step_gets_a_named_timer(self):
+        from eve_profit.nextstep import _name_of, _timer
+        self.assertEqual(_name_of("STEP: LIST 1 item in Rotonos\n   8 x Core Scanner Probe I"), "Market list Core Scanner Probe I")
+        self.assertEqual(_name_of("STEP: SELL NOW in Rotonos - about 5 ISK"), "Market sell stock Rotonos")
+        self.assertEqual(_name_of("STEP: TRADE (best)\n   Buy 14 x Foo @ A, sell @ B"), "Trade Buy 14 x Foo @ A, sell @ B")
+        self.assertIn('start --activity "X"', _timer("X"))

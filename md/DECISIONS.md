@@ -37,3 +37,4 @@
 - 2026-10-09: next never suggests BUYING a skill book that an open agent mission grants on acceptance (Beradaillot step 6 grants Broker Relations the moment you accept: do the mission, inject, train). Earlier advice to buy it for 4,000 ISK was wrong.
 - 2026-10-09: sell/buy lines: one item per line 'QTY x NAME @ unit each = total' (SELL NOW) and 'BUY QTY x NAME (about X each): command' (agent chain).
 - 2026-10-09: combined agent offers carry an `accept` list (agent, task, grants): each mission to accept is its own numbered line, with what it grants (e.g. inject the Broker Relations book).
+- 2026-10-09: every `next` step ends with 'Time it: start --activity "<name>"  (when done: stop)'; names are stable per kind (Market sell stock X, Market list ITEM, Trade ..., Skills queue/buy book, Gear upgrade, Agent L1 ...) so runs classify for the ISK/hr model.

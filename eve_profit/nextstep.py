@@ -462,8 +462,7 @@ def _agent_step(con, g, p):
     for x in acc:                                                       # each mission on its own line
         add(f"ACCEPT {x['agent']}'s mission in person" + (f": {x['task']}" if x.get("task") else "")
             + (f"   [you get: {x['grants']}]" if x.get("grants") else ""))
-    if o.get("timer_name"):
-        add(f'Start the timer:  python -m eve_profit start --activity "{o["timer_name"]}"')
+    add(f'Start the timer:  python -m eve_profit start --activity "{o.get("timer_name") or "Agent L1 " + o["agent"].split(" (")[0] + " " + o["mission"][:40]}"')
     for it in o.get("cost", []):
         add(f"BUY  {it['qty']:>6,} x {it['item']}  (about {_unit_price(con, it['item'], it.get('est', 0)):,.0f} each):  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
     for t in tags:
@@ -473,6 +472,33 @@ def _agent_step(con, g, p):
     add(f"Hand in / deliver at {o.get('where') or 'the agent'}" + (f" ({o['to_system']})" if o.get("to_system") else "") + " and complete the mission.")
     add("Wait 2 minutes for the wallet journal, then:  python -m eve_profit stop")
     return "\n".join(L), rate
+
+
+def _timer(name):
+    """Every step ends with the command that times it, so each run is classified for the ISK/hr model."""
+    return f'   Time it:  python -m eve_profit start --activity "{name}"    (when done:  python -m eve_profit stop)'
+
+
+def _name_of(step):
+    """Activity name for a step from its first line (kept stable so repeated runs add up)."""
+    first = step.splitlines()[0]
+    lo = first.lower()
+    rest = first.split(":", 1)[-1].strip() if ":" in first else first
+    if lo.startswith("step: sell now"):
+        return "Market sell stock " + rest.replace("SELL NOW in ", "").split(" - ")[0]
+    if lo.startswith("step: list"):
+        item = step.splitlines()[1].strip().split(" x ", 1)[-1] if len(step.splitlines()) > 1 else ""
+        return f"Market list {item}".strip()
+    if lo.startswith("step: buy a skill book"):
+        return "Skills buy book"
+    if lo.startswith("step: queue a skill"):
+        return "Skills queue"
+    if lo.startswith("step: upgrade gear"):
+        return "Gear upgrade"
+    if lo.startswith("step: "):
+        lines = step.splitlines()
+        return (first[6:].split("(")[0].strip().title() + " " + (lines[1].strip()[:40] if len(lines) > 1 else "")).strip()
+    return rest
 
 
 def _chain(steps):
@@ -546,6 +572,7 @@ def next_action(con, g, p, full=False):
         bl = market_lines()
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
+    steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
     out = _chain(steps) + "\n\n" + DONE
     if not selling or len(steps) > 1:
         out += "\n(more detail: python -m eve_profit next --all)"
