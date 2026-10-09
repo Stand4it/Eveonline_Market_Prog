@@ -344,6 +344,18 @@
    "agents": [
     "Arnelin Ygegnere",
     "Beradaillot Audates"
+   ],
+   "accept": [
+    {
+     "agent": "Arnelin Ygegnere",
+     "task": "acquire 20 x Cap Booster 25, bring to Rotonos IV (CAS)",
+     "grants": "Cap Booster 25 Blueprint"
+    },
+    {
+     "agent": "Beradaillot Audates",
+     "task": "acquire 1 x Civilian Armor Repairer, bring to Rotonos IV (CAS)",
+     "grants": "Broker Relations skill book: inject it and queue it"
+    }
    ]
   }
  ],

@@ -458,7 +458,10 @@ def _agent_step(con, g, p):
     for t in tags:
         if t.startswith("FIRST go to "):
             add(t.replace("FIRST go to ", "Fly to ", 1))
-    add("Accept " + (" AND ".join(agents) if len(agents) > 1 else agents[0]) + "'s mission" + ("s" if len(agents) > 1 else "") + " in person (cannot be done remotely).")
+    acc = o.get("accept") or [{"agent": a_} for a_ in agents]
+    for x in acc:                                                       # each mission on its own line
+        add(f"ACCEPT {x['agent']}'s mission in person" + (f": {x['task']}" if x.get("task") else "")
+            + (f"   [you get: {x['grants']}]" if x.get("grants") else ""))
     if o.get("timer_name"):
         add(f'Start the timer:  python -m eve_profit start --activity "{o["timer_name"]}"')
     for it in o.get("cost", []):

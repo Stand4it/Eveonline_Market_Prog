@@ -307,7 +307,8 @@ class ChainTests(unittest.TestCase):
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         load_mock(con)
         txt, _ = _agent_step(con, Graph(con), Profile(current_system="Home", cargo_m3=135, wallet_isk=1e7))
-        self.assertIn("1. Accept", txt.replace("   ", "", 1).split("\n", 3)[3] if False else txt)
+        self.assertIn("1. ACCEPT Arnelin", txt)
+        self.assertIn("2. ACCEPT Beradaillot", txt)                                           # each mission on its own line
         self.assertIn("python -m eve_profit stop", txt)
         self.assertEqual(_chain(["one"]), "one")
         self.assertIn("[2/2]", _chain(["a", "b"]))
