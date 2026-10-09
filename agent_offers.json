@@ -376,7 +376,7 @@
    "task_min": 5,
    "jumps": 1,
    "m3": 20,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "to_system": "Tiberis",
    "where": "Tiberis VII - Moon 1 - President Bureau (1 jump from Rotonos)",
@@ -434,7 +434,7 @@
    "task_min": 30,
    "jumps": 1,
    "m3": 21,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "to_system": "Tiberis",
    "where": "Tiberis VII (courier, 1 jump) then Rotonos site and Rotonos IV CAS",
@@ -452,6 +452,40 @@
     }
    ],
    "timer_name": "Agent L1 step 7 both (courier + relic site)"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 x Civilian Gallente Shuttle (PACKAGED, 500 m3) and bring it to Rotonos IV - Moon 2 - CAS (the agent's station). Buy it AT Rotonos if sold there: 500 m3 does not fit your Imicus (400 m3). May also be buildable from the granted blueprint",
+   "isk": 211000,
+   "bonus": 248000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Civilian Gallente Shuttle Blueprint",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Civilian Gallente Shuttle",
+     "qty": 1,
+     "est": 10000
+    }
+   ],
+   "granted": [
+    "Civilian Gallente Shuttle Blueprint"
+   ],
+   "task_min": 10,
+   "jumps": 0,
+   "m3": 500,
+   "one_way": true,
+   "available": true,
+   "agent_system": "Rotonos",
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 8 Industrialist shuttle"
   }
  ],
  "min_per_jump": 3.0,

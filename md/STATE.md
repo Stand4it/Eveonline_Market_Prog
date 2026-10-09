@@ -9,6 +9,5 @@ Open agent offers (agent_offers.json):
 - Emps Metyt: step 1: Augumene Allergen (333 ore)
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
 - Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
-- Arnelin Ygegnere: step 7: transport 20 x Cap Booster 25 (20 m3, pick them up f
 - Beradaillot Audates: step 7: scan down the ancient (relic) site in Rotonos with t
-- BOTH step 7: accept both at Rotonos IV; do the 1-jump courier to Tiberis,
+- Arnelin Ygegnere: step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 
