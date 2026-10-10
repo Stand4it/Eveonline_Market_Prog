@@ -514,6 +514,8 @@ def _name_of(step):
         return "Skills buy book"
     if lo.startswith("step: queue a skill"):
         return "Skills queue"
+    if lo.startswith("step: haul"):
+        return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):
         return "Gear upgrade"
     if lo.startswith("step: "):
@@ -572,20 +574,35 @@ def next_action(con, g, p, full=False):
     if queue:
         steps.append("STEP: QUEUE A SKILL (takes 30 seconds, free)\n   " + queue[0].replace("QUEUE NOW (no purchase needed): ", ""))
     agent, rate = _agent_step(con, g, p)
-    trade_text = None
+    # ---- the MAIN activity: every candidate scored in ISK per hour, same currency, best one wins -----------------------------------
+    cands = []                                                   # (ISK/hr, label, step text, note)
     if agent:
-        best_trade = 0.0
+        cands.append((rate, "agent mission", agent, "time bonus and model bonus included"))
+    try:
+        from .haul import haul_option, haul_step
+        h = haul_option(con, g, p)
+    except Exception:                                            # noqa: BLE001
+        h = None
+    if h:
+        cands.append((h["rate_hr"], f"haul stock to {h['dest']}", haul_step(h), "sell-now prices at the far market"))
+    best_trade, trade_text = 0.0, None
+    if not selling:
         try:
             opps = plan(con, p, 30, False)
             best_trade = opps[0].isk_per_hour if opps else 0.0
-        except Exception:                                               # noqa: BLE001
-            pass
-        if rate >= best_trade:
-            steps.append(agent)
-        elif not selling:
+        except Exception:                                        # noqa: BLE001
+            best_trade = 0.0
+        if best_trade > 0 or not cands:
+            cands.append((best_trade, "best trade / planned activity", core, "from the last scan"))
             trade_text = core
-    elif not selling:
-        trade_text = core
+    cands.sort(key=lambda c: -c[0])
+    why = ""
+    if cands:
+        steps.append(cands[0][2])
+        trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
+        if len(cands) > 1:
+            why = "WHY THIS ONE (ISK per hour, same yardstick for all): " + "; ".join(
+                f"{'>> ' if i == 0 else ''}{c[1]} {c[0]:,.0f}" for i, c in enumerate(cands[:4]))
     if trade_text:
         steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
     if selling or trade_text:
@@ -594,7 +611,7 @@ def next_action(con, g, p, full=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
-    out = _chain(steps) + "\n\n" + DONE
+    out = _chain(steps) + (("\n\n" + why) if why else "") + "\n\n" + DONE
     if not selling or len(steps) > 1:
         out += "\n(more detail: python -m eve_profit next --all)"
     return out + home

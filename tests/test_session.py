@@ -514,3 +514,34 @@ class HeartbeatTests(unittest.TestCase):
         with Heartbeat(every=5.0, out=quiet):
             pass
         self.assertEqual(quiet.getvalue(), "")
+
+
+class HaulCandidateTests(unittest.TestCase):
+    def _world(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        far = [x for x, r in g.reach(1, 3).items() if r.jumps == 2][0]
+        con.execute("DELETE FROM orders WHERE type_id=34")
+        con.execute("INSERT INTO orders VALUES(999101,34,60000001,1,10000001,1,185.0,100000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(999102,34,?,?,10000001,1,490.0,100000,1,'',1)", (60000000 + far, far))
+        con.execute("INSERT INTO inventory VALUES(34,1,2000)")
+        return con, g, Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+
+    def test_haul_option_finds_the_better_market_and_scores_isk_per_hour(self):
+        from eve_profit.haul import haul_option, haul_step
+        con, g, p = self._world()
+        h = haul_option(con, g, p)
+        self.assertIsNotNone(h)
+        self.assertGreater(h["gain"], 50_000)
+        self.assertGreater(h["rate_hr"], 0)
+        self.assertIn("STEP: HAUL", haul_step(h))
+
+    def test_next_names_the_comparison(self):
+        from eve_profit.nextstep import next_action
+        con, g, p = self._world()
+        out = next_action(con, g, p)
+        self.assertIn("python -m eve_profit start --activity", out)
