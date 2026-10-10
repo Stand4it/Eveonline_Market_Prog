@@ -31,6 +31,21 @@ def _has_skill(con, name):
     return bool(r and r[0][0] >= 1)
 
 
+TRADE_HAIRCUT = 0.5          # count only half of side-trade profit (prices move, thin orders vanish): same as haul.py
+
+
+def _trades(con, g, p, dest, m3=0.0):
+    """Trades worth doing on the way to `dest` and back with the spare hold: (ISK after haircut, extra minutes, lines)."""
+    if g is None or p is None or not dest:
+        return 0.0, 0.0, []
+    try:
+        from .nextstep import trade_extras
+        isk, mins, lines = trade_extras(con, g, p, {"to_system": dest, "m3": m3})
+    except Exception:                                                   # noqa: BLE001
+        return 0.0, 0.0, []
+    return isk * TRADE_HAIRCUT, mins, lines
+
+
 def _far_places(con, mining=None, offers=None):
     """Known places 3+ jumps away that are worth going to anyway: (rate or 0, label, jumps)."""
     out = []
@@ -38,14 +53,14 @@ def _far_places(con, mining=None, offers=None):
         from .nextstep import offers_rows
         for rate, net, minutes, o, tags in offers if offers is not None else offers_rows(con):
             if o.get("jumps", 0) >= 3:
-                out.append((rate, f"{o['agent']} (agent mission, {o['jumps']} jumps)", o["jumps"]))
+                out.append((rate, f"{o['agent']} (agent mission, {o['jumps']} jumps)", o["jumps"], o.get("agent_system")))
     except Exception:                                                   # noqa: BLE001
         pass
     try:
         from .mining_sites import rank_sites
         for s in mining if mining is not None else rank_sites(con):
             if s["jumps"] >= 3:
-                out.append((0.0, f"{s['system']} (mining, {s['jumps']} jumps)", s["jumps"]))
+                out.append((0.0, f"{s['system']} (mining, {s['jumps']} jumps)", s["jumps"], s["system"]))
     except Exception:                                                   # noqa: BLE001
         pass
     out.sort(key=lambda x: -x[0])
@@ -60,8 +75,12 @@ def build_option(con, g=None, p=None):
             res = mb(con, g, p)
             if res:
                 o = res[0]
-                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"], "cash": -o["net"], "jumps_away": 0,
-                        "how": describe(o).replace("\n", "\n      ")}
+                t_isk, t_min, t_lines = _trades(con, g, p, o.get("trip_to"), o.get("m3", 0.0))
+                how = describe(o)
+                if t_isk > 0:
+                    how += f"\n   ON THE TRIP to {o['trip_to']} and back (hold space left over): ~{t_isk:,.0f} ISK of trades (half counted)\n      " + "\n      ".join(t_lines)
+                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_min, "cash": -(o["net"] + t_isk), "jumps_away": 0,
+                        "how": how.replace("\n", "\n      ")}
         except Exception:                                               # noqa: BLE001
             pass
     best = None
@@ -126,15 +145,20 @@ def repair_option(con):
             "why_not": "needs a remote armor repairer AND other players in a fleet to repair 2,500: not solo, not routed"}
 
 
-def jumps_option(con, places=None):
+def jumps_option(con, places=None, g=None, p=None):
     places = _far_places(con) if places is None else places
     dest = places[0][1] if places else "Manifest (epic arc agent, 3 jumps)"
-    return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 3 * PER_JUMP_MIN, "cash": 0.0, "jumps_away": 0,
-            "how": f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)", "dest": dest}
+    sysname = places[0][3] if places and len(places[0]) > 3 else ("Manifest" if not places else None)
+    t_isk, t_min, t_lines = _trades(con, g, p, sysname)
+    how = f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)"
+    if t_isk > 0:
+        how += f"\n      trades on the way there and back: ~{t_isk:,.0f} ISK (half counted)\n         " + "\n         ".join(t_lines)
+    return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 3 * PER_JUMP_MIN + t_min, "cash": -t_isk, "jumps_away": 0,
+            "how": how, "dest": dest}
 
 
 def options(con, places=None, g=None, p=None):
-    return [jumps_option(con, places), build_option(con, g, p), scan_option(con), destroy_option(con), repair_option(con)]
+    return [jumps_option(con, places, g, p), build_option(con, g, p), scan_option(con), destroy_option(con), repair_option(con)]
 
 
 def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):

@@ -756,3 +756,20 @@ class MakeOrBuyTests(unittest.TestCase):
         o = build_option(con, g, p)
         self.assertTrue(o["ok"])
         self.assertIn("Build", o["how"])
+
+
+class TripTradesTests(unittest.TestCase):
+    def test_trip_trades_are_added_to_jumps_and_build_options(self):
+        import eve_profit.nextstep as ns
+        from eve_profit.config import Profile
+        from eve_profit.dailygoals import jumps_option
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        old = ns.trade_extras
+        ns.trade_extras = lambda con, g, p, o: (100000.0, 5.0, [f"going: buy 10 x Foo at {o['to_system']} (-1,000)"])
+        try:
+            o = jumps_option(con, [(0.0, "Yulai (mining, 4 jumps)", 4, "Yulai")], g=object(), p=object())
+        finally:
+            ns.trade_extras = old
+        self.assertEqual(o["cash"], -50000.0)                      # half of the 100,000 counts
+        self.assertIn("trades on the way there and back", o["how"])
+        self.assertEqual(o["minutes"], 9.0 + 5.0)

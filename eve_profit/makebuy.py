@@ -87,7 +87,11 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
         else:
             kind, value, where = "NONE", 0.0, "no buyer in reach"
         cost = spend + hangar_val + fee
-        out.append({"blueprint": bp, "product": name.get(pid, str(pid)), "units": units, "runs": r_, "cash": spend + fee, "cost": cost, "value": value,
+        far_src = max(srcs, key=lambda s_: reach[s_].jumps) if srcs else None
+        trip_to = g.name[far_src] if far_src is not None and reach[far_src].jumps > 0 else None
+        vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
+        m3 = sum(material_qty(m["quantity"], r_, me) * (vol.get(m["material_id"], 0) or 0) for m in mats)
+        out.append({"trip_to": trip_to, "m3": m3, "blueprint": bp,"product": name.get(pid, str(pid)), "units": units, "runs": r_, "cash": spend + fee, "cost": cost, "value": value,
                     "kind": kind, "where": where, "net": value - cost, "minutes": minutes, "buy": buy_lines, "hangar_val": hangar_val,
                     "buy_instead": (rebuy[0], g.name[rebuy[1]]) if (is_keep and rebuy[0]) else None})
     out.sort(key=lambda o: (-o["net"], o["minutes"]))
