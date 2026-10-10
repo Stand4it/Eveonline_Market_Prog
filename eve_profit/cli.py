@@ -84,6 +84,7 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
+    ap.add_argument("--id", type=int, default=0, help="fixlast: the # of the run to change (shown by history); default = the newest")
     ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
     ap.add_argument("--plan", action="store_true", help="next: look ahead: the whole chain of steps, why, and the long view (default is ONE step)")
     ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
@@ -536,7 +537,7 @@ def _run(a):
     elif a.cmd == "fixlast":
         from .session import fix_last
         try:
-            print(fix_last(con, a.add_min, a.isk, a.activity, a.delete))
+            print(fix_last(con, a.add_min, a.isk, a.activity, a.delete, a.id))
         except ValueError as e:
             raise SystemExit(str(e))
     elif a.cmd == "docs":

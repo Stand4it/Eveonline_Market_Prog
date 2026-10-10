@@ -949,3 +949,20 @@ class HistoryTests(unittest.TestCase):
         self.assertIn("Market sell stock Rotonos", lines[3])
         self.assertIn("90,285", lines[3])                             # 451,423 ISK in 5 min
         self.assertIn("ALL TIME: 2 steps", txt)
+
+
+class FixByIdTests(unittest.TestCase):
+    def test_fixlast_can_fix_or_delete_any_row_by_its_history_number(self):
+        from eve_profit.session import fix_last, history
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('old step',0,0.5,1000)")
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('new step',100,0.5,2000)")
+        old_id = con.execute("SELECT id FROM activity_log WHERE activity='old step'").fetchone()[0]
+        self.assertIn(f" {old_id} ", history(con).splitlines()[3])           # the # column
+        fix_last(con, 0, 5000, "", False, old_id)
+        self.assertEqual(con.execute("SELECT isk FROM activity_log WHERE id=?", (old_id,)).fetchone()[0], 5000)
+        self.assertEqual(con.execute("SELECT isk FROM activity_log WHERE activity='new step'").fetchone()[0], 100)
+        fix_last(con, 0, 0, "", True, old_id)
+        self.assertEqual(con.execute("SELECT COUNT(*) FROM activity_log").fetchone()[0], 1)
+        with self.assertRaises(ValueError):
+            fix_last(con, 0, 0, "", False, 9999)

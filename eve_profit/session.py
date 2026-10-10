@@ -115,14 +115,14 @@ def history(con, n=15):
     Steps the wallet cannot measure (queueing a skill) show '-' for the ISK columns."""
     import time as _t
     try:
-        rows = con.execute("SELECT activity, isk, hours, ts, COALESCE(ship,'?') AS ship FROM activity_log ORDER BY ts DESC, id DESC LIMIT ?", (int(n),)).fetchall()
+        rows = con.execute("SELECT id, activity, isk, hours, ts, COALESCE(ship,'?') AS ship FROM activity_log ORDER BY ts DESC, id DESC LIMIT ?", (int(n),)).fetchall()
         total = con.execute("SELECT COUNT(*), COALESCE(SUM(isk),0), COALESCE(SUM(hours),0) FROM activity_log").fetchone()
     except Exception:                                                   # noqa: BLE001
         rows, total = [], (0, 0, 0)
     if not rows:
         return "No completed steps yet. Start one with  start --activity \"NAME\"  and finish it with  stop  (or add one afterwards with  log --activity NAME --isk X --hours H)."
     L = [f"HISTORY of completed steps, newest first (last {len(rows)} of {total[0]}; ISK per minute where a timer measured it)",
-         f"   {'when (PC time)':<15} {'step':<44} {'min':>5} {'ISK':>11} {'ISK/min':>9} {'ISK/hr':>11}  ship"]
+         f"   {'#':>3} {'when (PC time)':<15} {'step':<44} {'min':>5} {'ISK':>11} {'ISK/min':>9} {'ISK/hr':>11}  ship"]
     for r in rows:
         mins = r["hours"] * 60.0
         when = _t.strftime("%m-%d %H:%M", _t.localtime(r["ts"]))
@@ -130,10 +130,10 @@ def history(con, n=15):
             isk, per_min, per_hr = f"{r['isk']:,.0f}", f"{r['isk'] / mins:,.0f}", f"{r['isk'] / r['hours']:,.0f}"
         else:
             isk, per_min, per_hr = ("0" if mins > 0 else "-"), "-", "-"
-        L.append(f"   {when:<15} {r['activity'][:44]:<44} {mins:>5.0f} {isk:>11} {per_min:>9} {per_hr:>11}  {r['ship'].split(' - ')[0]}")
+        L.append(f"   {r['id']:>3} {when:<15} {r['activity'][:44]:<44} {mins:>5.0f} {isk:>11} {per_min:>9} {per_hr:>11}  {r['ship'].split(' - ')[0]}")
     if total[2] > 0:
         L.append(f"   ALL TIME: {total[0]} steps, {total[2]:.1f} h on the clock, {total[1]:,.0f} ISK = {total[1] / total[2]:,.0f} ISK/hr ({total[1] / (total[2] * 60):,.0f} ISK/min)")
-    L.append("   more:  history --n 40   |   by activity and ship:  activities")
+    L.append("   more:  history --n 40   |   by activity and ship:  activities   |   fix a row:  fixlast --id N --isk X   (adds X ISK; add --delete to remove it)")
     return "\n".join(L)
 
 
@@ -169,10 +169,14 @@ def resume(con, now=None):
     return f"RESUMED '{s['activity']}'. Paused {gone:.0f} min this time ({s['paused_min']:.0f} min in total, not counted). Finish, then run  python -m eve_profit stop"
 
 
-def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False):
+def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False, row_id=0):
     """Correct the most recent timed run (or the most recent whose name contains `activity`), e.g. the minutes you worked
     while the timer was paused, or the ISK a run missed because the wallet journal had not updated yet."""
-    if activity:
+    if row_id:                                                          # any row, by the # shown in `history`
+        r = con.execute("SELECT id,activity,isk,hours FROM activity_log WHERE id=?", (row_id,)).fetchone()
+        if not r:
+            raise ValueError(f"no timed run with #{row_id} (see `history`)")
+    elif activity:
         r = con.execute("SELECT id,activity,isk,hours FROM activity_log WHERE activity LIKE ? ORDER BY ts DESC, id DESC LIMIT 1",
                         (f"%{activity}%",)).fetchone()
     else:
