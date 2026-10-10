@@ -5,7 +5,22 @@ from .orders import load_books, sell_into_bids
 FAR_JUMPS = 40     # how far (safe jumps) to look for your own stock
 
 
+def _history(con, total, rows):
+    """Remember the value of your stock over time: snapshot now, compare with the previous one. -> text line"""
+    import time as _t
+    con.execute("CREATE TABLE IF NOT EXISTS stock_history(ts REAL, stacks INTEGER, best_value REAL, here_value REAL)")
+    prev = con.execute("SELECT ts,stacks,best_value,here_value FROM stock_history ORDER BY ts DESC LIMIT 1").fetchone()
+    con.execute("INSERT INTO stock_history VALUES(?,?,?,?)", (_t.time(), len(rows), total, sum(r[8] for r in rows)))
+    con.commit()
+    if not prev:
+        return "First stock snapshot saved: later runs will show how your stock value changes."
+    days = (_t.time() - prev[0]) / 86400.0
+    return (f"Since the last snapshot ({days:.1f} days ago, {prev[1]} stacks worth {prev[2]:,.0f} ISK at best prices): "
+            f"{total - prev[2]:+,.0f} ISK at best prices.")
+
+
 def stock_report(con, g, p, top=25):
+    from .sellplan import is_ore
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     here = g.reach(g.id_of(p.current_system), FAR_JUMPS, p.avoid_yellow)
@@ -14,29 +29,34 @@ def stock_report(con, g, p, top=25):
         tid, sid, qty = inv["type_id"], inv["system_id"], inv["quantity"]
         if sid not in g.adj:
             continue
-        reach = g.reach(sid, p.max_jumps * 2, p.avoid_yellow)
+        reach = g.reach(sid, max(p.max_jumps * 2, 20), p.avoid_yellow)       # every scanned market within reach, near or far
         _, buys = load_books(con, reach)
-        best = None
+        best, local = None, 0.0
         for b, bids in buys.get(tid, {}).items():
             sold, net = sell_into_bids(bids, qty, p.sales_tax)
+            if b == sid:
+                local = net
             if sold and (best is None or net > best[1]):
                 best = (b, net, sold, reach[b].jumps)
         m3 = qty * (vol.get(tid, 0) or 0)
         if best:
             total += best[1]
-            rows.append((best[1], name.get(tid, tid), qty, best[2], f"{g.name[sid]} ({here[sid].jumps}j)" if sid in here else f"{g.name[sid]} (far)", g.name[best[0]], best[3], m3))
+            rows.append((best[1], name.get(tid, tid), qty, best[2], f"{g.name[sid]} ({here[sid].jumps}j)" if sid in here else f"{g.name[sid]} (far)",
+                         g.name[best[0]], best[3], m3, local))
         else:
             unpriced.append((name.get(tid, tid), qty, g.name[sid]))
     rows.sort(reverse=True)
     L = [f"Stock in stations/structures: {len(rows) + len(unpriced)} stacks, "
-         f"{total:,.0f} ISK if sold now into nearby buy orders (after tax).", "",
-         f"{'ISK if sold':>14}  {'item':<34} {'qty':>10} {'sellable':>9} {'m3':>9}  {'where it is (jumps from you)':<26} -> best buyer (jumps)"]
-    for net, n, qty, sold, at, to, j, m3 in rows[:top]:
-        L.append(f"{net:>14,.0f}  {str(n)[:34]:<34} {qty:>10,} {sold:>9,} {m3:>9,.0f}  {at:<26} -> {to} ({j})")
+         f"{total:,.0f} ISK if each is sold at its BEST scanned market (after tax); selling right where it lies pays {sum(r[8] for r in rows):,.0f} ISK.",
+         "Default is SELL NOW into buy orders (a listing can sit up to 90 days). A far market is only worth it when you travel there anyway.", "",
+         f"{'best ISK':>12} {'here ISK':>10}  {'item':<28} {'qty':>9} {'m3':>8}  {'where it is':<22} -> best buyer (jumps)"]
+    for net, n, qty, sold, at, to, j, m3, local in rows[:top]:
+        extra = f"  [ore: use a mining ship's ore hold]" if is_ore(n) and m3 > p.cargo_m3 else ""
+        L.append(f"{net:>12,.0f} {local:>10,.0f}  {str(n)[:28]:<28} {qty:>9,} {m3:>8,.0f}  {at:<22} -> {to} ({j}){extra}")
     if unpriced:
         L += ["", f"No buy orders in range for {len(unpriced)} stacks (e.g. SKINs, special items): " +
               ", ".join(f"{n} x{q:,} @ {s}" for n, q, s in unpriced[:8])]
-    L += ["", format_loads(best_loads(con, g, p))]
+    L += ["", _history(con, total, rows), "", format_loads(best_loads(con, g, p))]
     L += ["", "Note: only items in station/structure hangars are counted. Items inside your ship's cargo or other"
               " containers are not visible to the program - stash them in the hangar, then run `sync`."]
     return "\n".join(L)

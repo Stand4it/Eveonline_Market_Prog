@@ -19,6 +19,30 @@ DOCK_MIN = 2.0               # minutes to dock and sell somewhere on the way
 FALLBACK_RATE = 1_000_000.0  # ISK/hr when the planner finds nothing else to do
 
 
+ORE_HOLDS = {"venture": 5_000, "procurer": 12_000, "retriever": 22_000, "covetor": 7_000, "skiff": 15_000, "mackinaw": 31_000,
+             "hulk": 8_500, "porpoise": 50_000, "orca": 150_000}        # approx m3; verify in your ship's info window
+ORE_WORDS = ("veldspar", "scordite", "pyroxeres", "plagioclase", "omber", "kernite", "jaspet", "hemorphite", "hedbergite",
+             "spodumain", "dark ochre", "gneiss", "crokite", "bistot", "arkonor", "mercoxit")
+
+
+def is_ore(name):
+    n = str(name).lower()
+    return any(w in n for w in ORE_WORDS)
+
+
+def ore_hold_m3(con):
+    """Biggest ore hold among the mining ships you own (parked or flown): ore may be carried in it even when your cargo hold is small."""
+    best = 0
+    try:
+        for (n,) in con.execute("SELECT t.name FROM my_ships s JOIN types t ON t.type_id=s.type_id"):
+            for k, v in ORE_HOLDS.items():
+                if k in n.lower():
+                    best = max(best, v)
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return best
+
+
 def _minutes(p, jumps):
     return jumps * p.jump_seconds / 60.0
 
@@ -50,7 +74,8 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         asks = sells.get(tid, {}).get(cur, [])
         list_net = qty * asks[0][0] * (1 - p.broker_fee - p.sales_tax) if asks else 0.0
         opts = [("SELL NOW here", now, 0.0, "")]
-        if list_net > now * 1.15 and list_net > 0:
+        from . import along as _al
+        if _al.ALLOW_LIST and list_net > now * 1.15 and list_net > 0:
             opts.append(("LIST here (waits)", list_net, 0.0, "needs an order slot; sells over days"))
         for s, rt in reach.items():                        # every system we can reach: on the trip, or a detour
             if s == cur:
@@ -89,8 +114,11 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
     # hold check: carried stacks must fit; densest value per m3 first, the rest sell now
     carry = sorted([x for x in rows if not x["best_label"].startswith(("SELL", "LIST"))], key=lambda x: -(x["best_net"] / max(x["m3"], 1e-6)))
     room = p.cargo_m3
+    ore_room = ore_hold_m3(con)
     for x in carry:
-        if x["m3"] <= room:
+        if is_ore(x["name"]) and x["m3"] <= ore_room:
+            ore_room -= x["m3"]                                   # ore rides in the ore hold of your mining ship
+        elif x["m3"] <= room:
             room -= x["m3"]
         else:
             x["best_label"], x["best_net"], x["mins"], x["extra"], x["gain"] = "SELL NOW here (hold full)", x["now"], 0.0, 0.0, 0.0

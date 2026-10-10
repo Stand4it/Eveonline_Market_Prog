@@ -320,7 +320,7 @@ def _run(a):
                 if nm in ids:
                     print(f"Checking every market for {nm}...", flush=True)
                     world[r["type_id"]] = best_prices(con, g, p, esi, r["type_id"], r["quantity"])[0]
-        print(format_sellplan(sell_plan(con, g, p, a.to or None, world)))
+        print(format_sellplan(sell_plan(con, g, p, a.to or None, world, min_value=0.0), limit=40))
     elif a.cmd == "bestprice":
         from .bestprice import best_prices, format_best, resolve_type
         from .esi import ESI

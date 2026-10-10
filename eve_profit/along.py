@@ -6,6 +6,7 @@ from .orders import load_books, sell_into_bids
 from .skills import order_slots
 
 
+ALLOW_LIST = False           # DEFAULT: sell now into buy orders. A listing can sit for up to 90 days: only used when this is switched on
 LIST_MIN_GAIN = 50_000.0      # a listing must earn at least this much more than selling now (and more than 2 minutes of your measured agent income)
 STALE_ORDER_DAYS = 30        # if the cheapest orders have sat this long, nobody is buying at that price
 
@@ -186,7 +187,7 @@ def plan_along(con, g, p, dest_name, slots_override=None):
             listing = qty * ask if ask else 0.0
             list_net = listing * (1 - p.broker_fee - p.sales_tax)
             age = ask_age_days(con, g, tid, cur, ask) if ask else None
-            list_it = (listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
+            list_it = (ALLOW_LIST and listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
                        and list_net - local[0] >= list_min_gain(con)         # ... and by enough ISK to pay for your time
                        and not (age is not None and age > STALE_ORDER_DAYS))  # ... and the price must actually be selling
             here.append({"tid": tid, "name": name.get(tid, tid), "sold": local[3], "net": local[0], "qty": qty,
