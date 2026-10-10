@@ -67,3 +67,35 @@ class pretty_output:
         if self.title:
             self.old.write(f"\n{BAR}\n##  END  {self.title}\n{BAR}\n{BAR}\n\n\n")
             self.old.flush()
+
+
+MESSAGES = ["still working, all good", "making progress, nothing wrong", "still crunching the numbers, going well",
+            "hang in there, it is moving along", "working through it, everything is fine"]
+
+
+class Heartbeat:
+    """Every `every` seconds a command is still running, print a short positive line so you know it has not hung."""
+
+    def __init__(self, every=30.0, out=None):
+        import threading
+        self.every, self.out, self.stop_flag, self.t0 = every, out, threading.Event(), None
+        self.thread = threading.Thread(target=self._run, daemon=True)
+
+    def _run(self):
+        import time
+        n = 0
+        while not self.stop_flag.wait(self.every):
+            n += 1
+            el = int(time.time() - self.t0)
+            line = f"\n   ... {el // 60}:{el % 60:02d} elapsed - {MESSAGES[(n - 1) % len(MESSAGES)]}\n"
+            (self.out or sys.stdout).write(line)
+            (self.out or sys.stdout).flush()
+
+    def __enter__(self):
+        import time
+        self.t0 = time.time()
+        self.thread.start()
+        return self
+
+    def __exit__(self, *exc):
+        self.stop_flag.set()

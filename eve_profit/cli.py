@@ -116,8 +116,12 @@ def main(argv=None):
         t0 = _time.time()
         if stamped:
             print(f"=== {a.cmd} STARTED  {_time.strftime('%Y-%m-%d %H:%M:%S')} ===")
+        from .pretty import Heartbeat
         try:
-            return _run(a)
+            if a.cmd in ("login", "watch"):                       # these wait for you or loop on purpose
+                return _run(a)
+            with Heartbeat(30.0):                                 # anything slower than 30 s prints a positive line every 30 s
+                return _run(a)
         finally:
             if stamped:
                 took = _time.time() - t0

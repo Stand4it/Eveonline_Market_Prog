@@ -499,3 +499,18 @@ class ScanBudgetTests(unittest.TestCase):
         esi = FakeESI()
         refresh_orders(con, esi, [1, 2, 3], budget_min=0.0005)            # 0.03 s budget: only the first region fits
         self.assertEqual(esi.asked, [1])
+
+
+class HeartbeatTests(unittest.TestCase):
+    def test_a_slow_command_prints_a_progress_line_and_a_fast_one_prints_nothing(self):
+        import io
+        import time as _t
+        from eve_profit.pretty import Heartbeat
+        buf = io.StringIO()
+        with Heartbeat(every=0.05, out=buf):
+            _t.sleep(0.12)
+        self.assertIn("elapsed", buf.getvalue())
+        quiet = io.StringIO()
+        with Heartbeat(every=5.0, out=quiet):
+            pass
+        self.assertEqual(quiet.getvalue(), "")
