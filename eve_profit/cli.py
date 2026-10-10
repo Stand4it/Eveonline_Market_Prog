@@ -576,7 +576,11 @@ def _run(a):
         from .settle import run as settle_run
         esi = ESI()
         esi.token, cid = sso.get_token(a.client_id)
-        print(settle_run(con, esi, cid, a.apply))
+        if a.all:
+            from .settle import show
+            print(show(esi, cid, a.n))
+        else:
+            print(settle_run(con, esi, cid, a.apply))
     elif a.cmd == "history":
         from .session import history
         print(history(con, a.n))

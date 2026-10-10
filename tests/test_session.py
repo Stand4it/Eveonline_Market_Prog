@@ -971,8 +971,8 @@ class FixByIdTests(unittest.TestCase):
 class SettleTests(unittest.TestCase):
     def _journal(self):
         e = lambda i, d, ref, amt, desc="": {"id": i, "date": f"2026-10-10T{d}:00Z", "ref_type": ref, "amount": amt, "description": desc}
-        return [e(1, "09:14", "brokers_fee", -10133, "Market order commission to b"), e(2, "09:14", "market_provider_tax", -24411, "Market Safety Tax"),
-                e(3, "11:46", "brokers_fee", -10133, "Market order commission to b"), e(4, "11:46", "market_provider_tax", -24411, "Market Safety Tax"),
+        return [e(1, "09:14", "brokers_fee", -10133, "Market order commission to b"), e(2, "09:14", "market_safety_tax", -24411, "Market Safety Tax"),
+                e(3, "11:46", "brokers_fee", -10133, "Market order commission to b"), e(4, "11:46", "exordium_fee", -24411, "Exordium Market Tax"),
                 e(5, "14:44", "market_transaction", 488024, "Market: Helsp1 bought stuff"), e(6, "14:44", "transaction_tax", -36601, "Sales tax paid to the SCC"),
                 e(7, "05:14", "agent_mission_reward", 62500, "AIR Career Program Reward")]
 

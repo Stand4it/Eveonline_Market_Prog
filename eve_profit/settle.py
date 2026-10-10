@@ -14,9 +14,17 @@ COST_DESC = ("market order commission", "market safety tax", "sales tax")
 BEFORE_S, AFTER_S, TAX_FOLLOW_S, MAX_OPEN_DAYS = 300, 600, 120, 14
 
 
+NOT_COST = ("agent", "bounty", "corporation", "escrow", "insurance", "contract", "project")
+
+
 def is_cost(e):
+    """A market fee or tax: broker fees, sales tax and the regional market taxes (any negative entry with 'market', 'broker' or 'transaction_tax'
+    in its type or description). Buy-order escrow and mission/corporation taxes are not costs of a sale."""
+    ref = (e.get("ref_type") or "").lower()
     d = (e.get("description") or "").lower()
-    return e.get("amount", 0) < 0 and (e.get("ref_type") in COST_REFS or d.startswith(COST_DESC))
+    if e.get("amount", 0) >= 0 or any(w in ref for w in NOT_COST):
+        return False
+    return ref in COST_REFS or "market" in ref or "broker" in ref or d.startswith(COST_DESC) or "market" in d
 
 
 def is_sale(e):
@@ -125,6 +133,16 @@ def apply(con, props):
         used |= {i for i in pr["ids"] if i is not None}
     con.execute("INSERT OR REPLACE INTO meta VALUES('settled_ids', ?)", (json.dumps(sorted(used)[-3000:]),))
     con.commit()
+
+
+def show(esi, cid, n=40):
+    """The raw market-looking journal entries (id, date, type, amount, description): to see exactly what ESI calls each fee."""
+    entries = esi.paged(f"/characters/{cid}/wallet/journal/")
+    keep = [e for e in entries if is_sale(e) or is_cost(e) or "market" in (e.get("ref_type") or "")]
+    L = [f"{'id':>14} {'date (UTC)':<20} {'ref_type':<28} {'amount':>12}  description"]
+    for e in sorted(keep, key=lambda x: x["date"], reverse=True)[:n]:
+        L.append(f"{e.get('id', 0):>14} {e['date'][:19]:<20} {e.get('ref_type', ''):<28} {e.get('amount', 0):>12,.0f}  {e.get('description', '')[:50]}")
+    return "\n".join(L)
 
 
 def run(con, esi, cid, do_apply=False):
