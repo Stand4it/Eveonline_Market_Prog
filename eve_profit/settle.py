@@ -31,6 +31,20 @@ def is_sale(e):
     return e.get("ref_type") == "market_transaction" and e.get("amount", 0) > 0
 
 
+def with_gaps(entries):
+    """ESI leaves some wallet charges out of the journal (e.g. the 'Exordium Market Tax'), but every entry carries the balance AFTER it.
+    When an entry's balance is lower than the previous entry's balance plus its own amount, the difference is a hidden charge at that time:
+    add it as a synthetic market cost (id 'gap-<id>')."""
+    out = list(entries)
+    es = sorted((e for e in entries if e.get("balance") is not None), key=lambda x: x.get("id", 0))
+    for prev, cur in zip(es, es[1:]):
+        diff = cur["balance"] - (prev["balance"] + cur.get("amount", 0.0))
+        if diff < -1.5:
+            out.append({"id": f"gap-{cur.get('id')}", "date": cur["date"], "ref_type": "market_charge_not_in_journal", "amount": diff,
+                        "description": "hidden market charge (found from the wallet balance gap)"})
+    return out
+
+
 def sell_steps(rows):
     """Selling steps from activity_log rows (id, activity, isk, hours, ts): -> [{id,name,start,end,isk,hours}] oldest first."""
     out = []
@@ -42,6 +56,7 @@ def sell_steps(rows):
 
 def attribute(entries, steps, used=()):
     """-> {step_id: {"income": X, "costs": -Y, "ids": [...], "sales": n, "fees": n}} for the journal entries not in `used`."""
+    used_s = {str(u) for u in used}
     st = {s["id"]: {"income": 0.0, "costs": 0.0, "ids": [], "sales": 0, "fees": 0} for s in steps}
     by_id = {s["id"]: s for s in steps}
     last_sale = None                                                    # (time, step id)
@@ -60,7 +75,7 @@ def attribute(entries, steps, used=()):
                 return s["id"]
         return None
 
-    for e in sorted((x for x in entries if x.get("id") not in set(used) and (is_sale(x) or is_cost(x))), key=lambda x: (_ts(x["date"]), x.get("id", 0))):
+    for e in sorted((x for x in entries if str(x.get("id")) not in used_s and (is_sale(x) or is_cost(x))), key=lambda x: (_ts(x["date"]), str(x.get("id", 0)).zfill(20))):
         t = _ts(e["date"])
         if is_sale(e):
             sid = open_step(t) or window(t)
@@ -88,6 +103,7 @@ def plan(rows, entries, used=()):
     """-> list of proposals: {"step": step, "income","costs","net", "merge": [steps to fold into it]}."""
     steps = sell_steps(rows)
     by_id = {s["id"]: s for s in steps}
+    entries = with_gaps(entries)
     att = attribute(entries, steps, used)
     props = []
     for sid, a in att.items():
@@ -123,14 +139,14 @@ def format_plan(props, apply):
 
 def apply(con, props):
     """Save: replace each step's ISK with its net, add the merged steps' minutes, remove the merged steps, remember the used journal entries."""
-    used = set(json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0]))
+    used = {str(u) for u in json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0])}
     for pr in props:
         s = pr["step"]
         hours = s["hours"] + sum(m["hours"] for m in pr["merge"])
         con.execute("UPDATE activity_log SET isk=?, hours=? WHERE id=?", (pr["net"], hours, s["id"]))
         for m in pr["merge"]:
             con.execute("DELETE FROM activity_log WHERE id=?", (m["id"],))
-        used |= {i for i in pr["ids"] if i is not None}
+        used |= {str(i) for i in pr["ids"] if i is not None}
     con.execute("INSERT OR REPLACE INTO meta VALUES('settled_ids', ?)", (json.dumps(sorted(used)[-3000:]),))
     con.commit()
 
@@ -138,9 +154,9 @@ def apply(con, props):
 def show(esi, cid, n=40):
     """The newest journal entries, unfiltered (id, date, type, amount, description, and whether settle counts it as a sale 'S' or a cost 'C')."""
     entries = esi.paged(f"/characters/{cid}/wallet/journal/")
-    keep = list(entries)                                                # everything, unfiltered: we are looking for what ESI calls the fees we miss
+    keep = with_gaps(entries)                                           # everything, unfiltered: we are looking for what ESI calls the fees we miss
     L = [f"{'id':>14} {'date (UTC)':<20} {'ref_type':<34} {'amount':>12} ?  description"]
-    for e in sorted(keep, key=lambda x: x["date"], reverse=True)[:n]:
+    for e in sorted(keep, key=lambda x: (x["date"], str(x.get("id", 0))), reverse=True)[:n]:
         mark = "S" if is_sale(e) else ("C" if is_cost(e) else " ")
         L.append(f"{e.get('id', 0):>14} {e['date'][:19]:<20} {e.get('ref_type', ''):<34} {e.get('amount', 0):>12,.0f} {mark}  {e.get('description', '')[:50]}")
     return "\n".join(L)

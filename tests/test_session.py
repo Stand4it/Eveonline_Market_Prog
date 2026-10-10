@@ -1002,3 +1002,23 @@ class SettleTests(unittest.TestCase):
         again = plan(con.execute("SELECT id, activity, isk, hours, ts FROM activity_log ORDER BY ts").fetchall(), self._journal(),
                      used=__import__("json").loads(con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone()[0]))
         self.assertEqual(again, [])                                               # nothing is counted twice
+
+
+class SettleGapTests(unittest.TestCase):
+    def test_charges_missing_from_the_journal_are_found_from_the_balance_gaps(self):
+        import calendar
+        import time as _t
+        from eve_profit.settle import plan, with_gaps
+        e = lambda i, d, ref, amt, bal: {"id": i, "date": f"2026-10-10T{d}:00Z", "ref_type": ref, "amount": amt, "balance": bal, "description": ""}
+        journal = [e(7, "05:14", "air_career_program_reward", 62500, 7910702.0),
+                   e(1, "09:14", "brokers_fee", -10133, 7876158.0),                       # 24,411 missing before this one
+                   e(3, "11:46", "brokers_fee", -10133, 7841614.0),                       # and again
+                   e(5, "14:44", "market_transaction", 488024, 8329638.0), e(6, "14:44", "transaction_tax", -36601, 8293037.0)]
+        journal[0]["id"], journal[1]["id"], journal[2]["id"], journal[3]["id"], journal[4]["id"] = 10, 11, 12, 13, 14
+        gaps = [x for x in with_gaps(journal) if str(x["id"]).startswith("gap-")]
+        self.assertEqual(sorted(round(x["amount"]) for x in gaps), [-24411, -24411])
+        utc = lambda hhmm: calendar.timegm(_t.strptime("2026-10-10 " + hhmm, "%Y-%m-%d %H:%M"))
+        rows = [{"id": 2, "activity": "Market sell stock Rotonos", "isk": 0, "hours": 2 / 60.0, "ts": utc("09:15")},
+                {"id": 16, "activity": "Market sell stock Rotonos", "isk": 451423, "hours": 5 / 60.0, "ts": utc("14:45")}]
+        pr = plan(rows, journal)[0]
+        self.assertEqual(round(pr["net"]), 488024 - 36601 - 2 * 10133 - 2 * 24411)       # = what the wallet really changed by
