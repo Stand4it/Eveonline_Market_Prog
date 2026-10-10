@@ -2,7 +2,9 @@
 Science...): runs, hours, ISK/hr and ISK per active minute, which careers are still UNMEASURED, and which to try next.
 Fewer than 3 runs = a guess, not a measurement."""
 KNOWN = ["Industrialist", "Explorer", "Soldier of Fortune", "Enforcer", "Mining", "Trading", "Project Discovery"]
-RULES = [("project discovery", "Project Discovery"), ("industrialist", "Industrialist"), ("entrepreneur", "Industrialist"),
+RULES = [("project discovery", "Project Discovery"), ("mixed", "Agent (several careers mixed)"),
+         ("cap booster", "Industrialist"), ("armor repairer", "Industrialist"), ("shuttle", "Industrialist"), ("navitas", "Industrialist"),
+         ("decoy", "Industrialist"), ("industrialist", "Industrialist"), ("entrepreneur", "Industrialist"),
          ("producer", "Industrialist"), ("courier", "Industrialist"), ("explorer", "Explorer"), ("data site", "Explorer"),
          ("relic", "Explorer"), ("soldier", "Soldier of Fortune"), ("enforcer", "Enforcer"), ("mining", "Mining"), ("mine ", "Mining"),
          ("market", "Trading"), ("trade", "Trading"), ("hauling", "Trading"), ("skills", "Skills")]
@@ -15,6 +17,14 @@ def career_of_activity(name):
         if key in low:
             return career
     return name
+
+
+def _career(o):
+    """Career of an agent offer: its 'career' field, else the word in brackets after the agent name."""
+    if o.get("career"):
+        return o["career"]
+    ag = o["agent"]
+    return ag[ag.index("(") + 1:].rstrip(")").split(" - ")[0].split(",")[0].strip() if "(" in ag else ag
 
 
 def report(con, offers=None):
@@ -39,12 +49,15 @@ def report(con, offers=None):
     L.append("")
     tip = []
     if missing:
-        offer = ""
-        for o in offers or []:
-            if o.get("available", True) and o["agent"].split("(")[-1].rstrip(")").split(" - ")[0].split(",")[0].strip() in missing:
-                offer = f" (open now: {o['agent'].split(' (')[0]} - {o['mission'][:60]})"
-                break
-        tip.append(f"TRY NEXT: {missing[0]}{offer}. An unmeasured career teaches the model more than repeating one you know.")
+        def offer_for(k):
+            for o in offers or []:
+                if o.get("available", True) and _career(o) == k:
+                    return o
+            return None
+        pick = next((k for k in missing if offer_for(k)), missing[0])      # prefer an unmeasured career you can start right now
+        o = offer_for(pick)
+        extra = f" (open now: {o['agent'].split(' (')[0]} - {o['mission'][:60]})" if o else " (no open offer for it right now)"
+        tip.append(f"TRY NEXT: {pick}{extra}. An unmeasured career teaches the model more than repeating one you know.")
     thin = [n for n, c in ranked if c["runs"] < MIN_RUNS]
     if thin:
         tip.append(f"NEEDS MORE RUNS before it can be trusted: {', '.join(thin)}.")

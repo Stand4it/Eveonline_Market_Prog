@@ -27,7 +27,7 @@ class Pretty:
         if line.startswith("====="):
             self._emit(line)
             return
-        if HEAD.match(line) and not self.prev.startswith("=====") and not line.startswith(("STEP:", ">>>")):
+        if len(line) <= 60 and HEAD.match(line) and not self.prev.startswith("=====") and not line.startswith(("STEP:", ">>>")):
             if self.prev.strip():
                 self._emit("")
             self._emit(line)
