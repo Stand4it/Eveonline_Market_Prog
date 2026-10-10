@@ -1022,3 +1022,24 @@ class SettleGapTests(unittest.TestCase):
                 {"id": 16, "activity": "Market sell stock Rotonos", "isk": 451423, "hours": 5 / 60.0, "ts": utc("14:45")}]
         pr = plan(rows, journal)[0]
         self.assertEqual(round(pr["net"]), 488024 - 36601 - 2 * 10133 - 2 * 24411)       # = what the wallet really changed by
+
+
+class SettlePayoutTests(unittest.TestCase):
+    def test_zero_isk_agent_steps_get_the_payouts_the_journal_posted_after_stop(self):
+        import calendar
+        import time as _t
+        from eve_profit.settle import payout_plan
+        utc = lambda d, hhmm: calendar.timegm(_t.strptime(f"2026-10-{d} {hhmm}", "%Y-%m-%d %H:%M"))
+        e = lambda i, d, hh, ref, amt, desc="": {"id": i, "date": f"2026-10-{d}T{hh}Z", "ref_type": ref, "amount": amt, "description": desc}
+        journal = [e(1, "09", "01:26:02", "agent_mission_reward", 187790, "Mission reward from agent Arnelin"),
+                   e(2, "09", "01:26:02", "agent_mission_time_bonus_reward", 220720, "Mission reward bonus from agent Arnelin"),
+                   e(3, "09", "01:26:02", "corporation_account_withdrawal", -44937, "Agent Mission Reward Corporation Tax"),
+                   e(4, "09", "08:14:48", "agent_mission_reward", 239000, "Mission reward from agent Arnelin")]
+        rows = [{"id": 18, "activity": "Agent L1 step 8 Industrialist shuttle", "isk": 0, "hours": 20 / 60.0, "ts": utc("09", "01:26")},
+                {"id": 19, "activity": "Agent L1 step 8 Industrialist shuttle", "isk": 423640, "hours": 54 / 60.0, "ts": utc("09", "08:15")}]
+        out = payout_plan(rows, journal)
+        self.assertEqual(len(out), 1)                                           # only the 0-ISK step; the paid one is left alone
+        self.assertEqual(out[0]["step"]["id"], 18)
+        self.assertEqual(out[0]["gross"], 187790 + 220720)
+        self.assertEqual(out[0]["net"], 187790 + 220720 - 44937)
+        self.assertEqual(payout_plan(rows, journal, used=[1, 2, 3]), [])         # already used entries are never counted twice

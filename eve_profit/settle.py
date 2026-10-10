@@ -7,7 +7,7 @@ Dry run by default: `settle` shows what it would change, `settle --apply` saves 
 import json
 import time
 
-from .session import SALE_WORDS, _ts
+from .session import INCOME_TYPES, SALE_WORDS, _ts
 
 COST_REFS = ("brokers_fee", "transaction_tax", "market_provider_tax")
 COST_DESC = ("market order commission", "market safety tax", "sales tax")
@@ -118,14 +118,53 @@ def plan(rows, entries, used=()):
     return sorted(props, key=lambda x: x["step"]["end"])
 
 
+PAY_BEFORE_S, PAY_AFTER_S = 120, 1800
+
+
+def is_payout(e):
+    """Income the activity itself earned (mission rewards and bonuses, bounties...) or the corporation tax taken from it."""
+    d = (e.get("description") or "").lower()
+    if e.get("amount", 0) > 0:
+        return e.get("ref_type") in INCOME_TYPES
+    return e.get("amount", 0) < 0 and ("corporation tax" in d or "corporation_tax" in (e.get("ref_type") or "")) and "agent" in (d + (e.get("ref_type") or ""))
+
+
+def payout_plan(rows, entries, used=(), skip=()):
+    """Steps saved with 0 ISK because the payout reached the journal after `stop` ran (ESI lag): give each such step the payouts posted
+    from just before it ended until 30 minutes after. -> [{"step": row, "net": X, "gross": G, "tax": T, "ids": [...]}]"""
+    used_s = {str(u) for u in used}
+    zero = [r for r in rows if not r["isk"] and r["hours"] > 0 and r["id"] not in set(skip)]
+    cand = sorted((e for e in entries if is_payout(e) and str(e.get("id")) not in used_s), key=lambda x: (_ts(x["date"]), str(x.get("id", 0)).zfill(20)))
+    taken, out = set(), []
+    for r in sorted(zero, key=lambda r: r["ts"]):
+        lo, hi = r["ts"] - PAY_BEFORE_S, r["ts"] + PAY_AFTER_S
+        mine = [e for e in cand if str(e.get("id")) not in taken and lo <= _ts(e["date"]) <= hi]
+        gross = sum(e["amount"] for e in mine if e["amount"] > 0)
+        tax = sum(e["amount"] for e in mine if e["amount"] < 0)
+        if gross > 0:
+            taken |= {str(e.get("id")) for e in mine}
+            out.append({"step": r, "net": gross + tax, "gross": gross, "tax": tax, "ids": [e.get("id") for e in mine]})
+    return out
+
+
 def _when(t):
     return time.strftime("%m-%d %H:%M", time.localtime(t))
 
 
-def format_plan(props, apply):
-    if not props:
-        return "Nothing to settle: no market sales or fees in your wallet journal that are not already counted."
-    L = ["SETTLE: market sales and fees matched to the step that started them" + ("" if apply else "   (dry run: add --apply to save)")]
+def format_payouts(pays):
+    L = []
+    for q in pays:
+        r = q["step"]
+        L.append(f"   #{r['id']} {r['name'] if 'name' in r.keys() else r['activity']} ({_when(r['ts'])}): payouts {q['gross']:+,.0f}, corporation tax {q['tax']:+,.0f} = {q['net']:+,.0f} ISK"
+                 f"  (was 0; the journal posted them after `stop`)  = {q['net'] / max(r['hours'] * 60, 1e-9):+,.0f} ISK/min")
+    return L
+
+
+def format_plan(props, apply, pays=()):
+    if not props and not pays:
+        return "Nothing to settle: no market sales, fees or late payouts in your wallet journal that are not already counted."
+    L = ["SETTLE: market sales, fees and late payouts matched to the step they belong to" + ("" if apply else "   (dry run: add --apply to save)")]
+    L += format_payouts(pays)
     for pr in props:
         s = pr["step"]
         L.append(f"   #{s['id']} {s['name']} ({_when(s['end'])}): {pr['income']:+,.0f} from {pr['sales']} sale(s), {pr['costs']:+,.0f} in {pr['fees']} fee/tax entries"
@@ -135,6 +174,15 @@ def format_plan(props, apply):
         hrs = s["hours"] + sum(m["hours"] for m in pr["merge"])
         L.append(f"        step total: {hrs * 60:.0f} min, {pr['net']:+,.0f} ISK = {pr['net'] / max(hrs, 1e-9):+,.0f} ISK/hr ({pr['net'] / max(hrs * 60, 1e-9):+,.0f} ISK/min)")
     return "\n".join(L)
+
+
+def apply_payouts(con, pays):
+    used = {str(u) for u in json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0])}
+    for q in pays:
+        con.execute("UPDATE activity_log SET isk=? WHERE id=?", (q["net"], q["step"]["id"]))
+        used |= {str(i) for i in q["ids"] if i is not None}
+    con.execute("INSERT OR REPLACE INTO meta VALUES('settled_ids', ?)", (json.dumps(sorted(used)[-3000:]),))
+    con.commit()
 
 
 def apply(con, props):
@@ -167,6 +215,11 @@ def run(con, esi, cid, do_apply=False):
     entries = esi.paged(f"/characters/{cid}/wallet/journal/")
     used = json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0])
     props = plan(rows, entries, used)
-    if do_apply and props:
-        apply(con, props)
-    return format_plan(props, do_apply and bool(props))
+    skip = {pr["step"]["id"] for pr in props} | {m["id"] for pr in props for m in pr["merge"]}
+    pays = payout_plan(rows, entries, used, skip)
+    if do_apply:
+        if props:
+            apply(con, props)
+        if pays:
+            apply_payouts(con, pays)
+    return format_plan(props, do_apply and bool(props or pays), pays)
