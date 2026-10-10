@@ -1,0 +1,8 @@
+{
+ "why": "ISK-equivalent value of PROGRESS, so next can compare an agent mission, a haul, a trade, or an experiment in one currency (ISK per hour). Edit the numbers if you disagree. 'priors' are guessed ISK/hr for activities you have never timed (replaced by your real runs after 3).",
+ "agent_step": 30000,
+ "new_career_run": 60000,
+ "career_runs_until_measured": 3,
+ "priors_isk_hr": {"Project Discovery": 120000, "Mining": 150000},
+ "prior_minutes": {"Project Discovery": 30, "Mining": 45}
+}

@@ -545,3 +545,17 @@ class HaulCandidateTests(unittest.TestCase):
         con, g, p = self._world()
         out = next_action(con, g, p)
         self.assertIn("python -m eve_profit start --activity", out)
+
+
+class ProgressValueTests(unittest.TestCase):
+    def test_progress_and_experiments(self):
+        from eve_profit.progress import experiment_candidates, progress_isk
+        v = {"agent_step": 30000.0, "new_career_run": 60000.0, "career_runs_until_measured": 3,
+             "priors_isk_hr": {"Mining": 150000.0}, "prior_minutes": {"Mining": 45}}
+        self.assertEqual(progress_isk("Explorer", {}, v), 90000.0)                 # new career: step + model value
+        self.assertEqual(progress_isk("Industrialist", {"Industrialist": 10}, v), 30000.0)
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        got = experiment_candidates(con, {}, v)
+        self.assertEqual(got[0][1], "test Mining")
+        self.assertGreater(got[0][0], 150000.0)                                   # prior + model value
+        self.assertEqual(experiment_candidates(con, {"Mining": 5}, v), [])

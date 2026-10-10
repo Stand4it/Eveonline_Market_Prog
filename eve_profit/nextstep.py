@@ -514,6 +514,8 @@ def _name_of(step):
         return "Skills buy book"
     if lo.startswith("step: queue a skill"):
         return "Skills queue"
+    if lo.startswith("step: test"):
+        return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: haul"):
         return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):
@@ -576,8 +578,26 @@ def next_action(con, g, p, full=False):
     agent, rate = _agent_step(con, g, p)
     # ---- the MAIN activity: every candidate scored in ISK per hour, same currency, best one wins -----------------------------------
     cands = []                                                   # (ISK/hr, label, step text, note)
+    try:
+        from .progress import experiment_candidates, progress_isk, run_counts, values
+        counts, vals = run_counts(con), values()
+    except Exception:                                            # noqa: BLE001
+        counts, vals = {}, None
     if agent:
-        cands.append((rate, "agent mission", agent, "time bonus and model bonus included"))
+        rate_adj = rate
+        try:
+            rows_ = offers_rows(con, g, p)
+            (r_, net_, min_, o_, tags_), career_, known_ = pick_offers(rows_, measured_careers(con), 1)[0]
+            rate_adj = (net_ + progress_isk(career_, counts, vals)) * 60.0 / max(min_, 1.0)
+        except Exception:                                        # noqa: BLE001
+            pass
+        cands.append((rate_adj, "agent mission", agent,
+                      f"{rate:,.0f} cash + progression/model value"))
+    try:
+        for r_, label_, text_ in experiment_candidates(con, counts, vals):
+            cands.append((r_, label_, text_, "never timed: builds the model"))
+    except Exception:                                            # noqa: BLE001
+        pass
     try:
         from .haul import haul_option, haul_step
         h = haul_option(con, g, p)
@@ -602,7 +622,8 @@ def next_action(con, g, p, full=False):
         trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
         if len(cands) > 1:
             why = "WHY THIS ONE (ISK per hour, same yardstick for all): " + "; ".join(
-                f"{'>> ' if i == 0 else ''}{c[1]} {c[0]:,.0f}" for i, c in enumerate(cands[:4]))
+                f"{'>> ' if i == 0 else ''}{c[1]} {c[0]:,.0f}" for i, c in enumerate(cands[:5]))
+            why += "   (cash + the value of progress and of teaching the model; numbers editable in progress_values.json)"
     if trade_text:
         steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
     if selling or trade_text:
