@@ -76,7 +76,7 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
                     break
                 spend += best[1]
                 srcs[best[2]] = srcs.get(best[2], 0) + 1
-                buy_lines.append(f"{rem:,} x {name.get(tid, tid)} at {g.name[best[2]]} (~{best[1]:,.0f})")
+                buy_lines.append(f"{rem:>7,} x {str(name.get(tid, tid)):<16} at {g.name[best[2]]:<12} ~{best[1]:>9,.0f} ISK")
         if not ok:
             return None
         eiv = sum(m["quantity"] * r_ * adj.get(m["material_id"], 0) for m in mats)
@@ -113,26 +113,26 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
 
 
 def describe(o):
-    """One short paragraph for next: the make-or-buy verdict for this build."""
-    L = [f"Build {o['units']} x {o['product']} (Industry > your blueprint, {o['runs']} run{'s' if o['runs'] != 1 else ''}, ~{o['minutes']:.0f} min of your time,"
-         f" then the job runs ~{o.get('job_min', 0):.0f} min in the background: start it FIRST and do the other goal while it runs)"]
+    """The make-or-buy verdict for next, one fact per line."""
+    L = [f"Build {o['units']} x {o['product']}   ({o['runs']} run{'s' if o['runs'] != 1 else ''} of your blueprint, Industry window)",
+         f"   your time   ~{o['minutes']:.0f} min to buy and start it; the job then runs ~{o.get('job_min', 0):.0f} min in the background"]
     if o["buy"]:
-        L.append("   buy first: " + "; ".join(o["buy"]))
+        L.append("   BUY FIRST:")
+        L += ["      " + b for b in o["buy"]]
     else:
-        L.append("   every material is already in your hangar")
-    L.append(f"   cost ~{o['cost']:,.0f} ISK ({o['cash']:,.0f} cash + {o['hangar_val']:,.0f} of hangar stock at sell-now value)")
+        L.append("   materials   all already in your hangar")
+    L.append(f"   cost        ~{o['cost']:,.0f} ISK  ({o['cash']:,.0f} cash + {o['hangar_val']:,.0f} hangar stock at sell-now value)")
     if o["kind"] != "NONE":
-        L.append(f"   then {o['kind']}: worth ~{o['value']:,.0f} ({o['where']}) -> {'+' if o['net'] >= 0 else '-'}{abs(o['net']):,.0f} ISK net")
+        L.append(f"   afterwards  {o['kind']} ~{o['value']:,.0f} ISK ({o['where']}) = {'+' if o['net'] >= 0 else '-'}{abs(o['net']):,.0f} ISK net")
     else:
-        L.append("   no buyer in reach: the build only pays the goal, not the item")
+        L.append("   afterwards  no buyer in reach: only the daily goal pays for this build")
     if o["buy"]:
         eq = o["cash"] / TIME_VALUE_HR * 60.0
-        L.append(f"   BUY vs MINE the materials: buying is ~{o['cash']:,.0f} ISK = only {eq:.1f} min of your time at {TIME_VALUE_HR:,.0f} ISK/hr, so "
-                 + ("BUY them (mining them would take longer than that)" if eq < 15 else "mining them may be cheaper: check a mining run"))
+        L.append(f"   buy or mine the materials?  buying = {eq:.1f} min of your time at {TIME_VALUE_HR:,.0f} ISK/hr -> "
+                 + ("BUY (mining takes longer)" if eq < 15 else "mining may be cheaper: check a mining run"))
     alone = o["net"] * 60.0 / max(o["minutes"], 1.0)
-    L.append(f"   as its own activity: {'+' if alone >= 0 else '-'}{abs(alone):,.0f} ISK per active hour (its value here is the daily goal, not the item)" if o["kind"] == "NONE"
-             else f"   as its own activity: {'+' if alone >= 0 else '-'}{abs(alone):,.0f} ISK per active hour")
+    L.append(f"   alone       {'+' if alone >= 0 else '-'}{abs(alone):,.0f} ISK per active hour" + ("  (its value here is the goal)" if o["kind"] == "NONE" else ""))
     if o["buy_instead"]:
         b, sysn = o["buy_instead"]
-        L.append(f"   BUY instead? the finished item costs ~{b:,.0f} at {sysn}: " + ("build is cheaper" if o["cost"] <= b else "BUYING IS CHEAPER, buy it"))
+        L.append(f"   BUY instead?  the finished item costs ~{b:,.0f} at {sysn}: " + ("build is cheaper" if o["cost"] <= b else "BUYING IS CHEAPER, buy it"))
     return "\n".join(L)

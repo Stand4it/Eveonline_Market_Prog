@@ -738,7 +738,7 @@ class MakeOrBuyTests(unittest.TestCase):
         o = res[0]
         self.assertIn(o["kind"], ("SELL", "KEEP", "NONE"))
         self.assertAlmostEqual(o["net"], o["value"] - o["cost"], places=3)
-        self.assertIn("cost ~", describe(o))
+        self.assertIn("cost        ~", describe(o))
 
     def test_hangar_materials_are_valued_not_free(self):
         from eve_profit.makebuy import options

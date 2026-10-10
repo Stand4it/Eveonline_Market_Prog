@@ -80,7 +80,7 @@ def build_option(con, g=None, p=None):
                 if t_isk > 0:
                     how += f"\n   ON THE TRIP to {o['trip_to']} and back (hold space left over): ~{t_isk:,.0f} ISK of trades (half counted)\n      " + "\n      ".join(t_lines)
                 return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_min, "cash": -(o["net"] + t_isk), "jumps_away": 0, "job_min": o.get("job_min", 0.0),
-                        "how": how.replace("\n", "\n      ")}
+                        "how": how}
         except Exception:                                               # noqa: BLE001
             pass
     best = None
@@ -180,24 +180,31 @@ def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
     return {"best": best, "options": opts, "reward": reward}
 
 
+def _indent(text, pad):
+    return "\n".join(pad + l if i else l for i, l in enumerate(text.split("\n")))
+
+
 def format_plan(pl, progress=None):
     progress = progress or {}
     b = pl["best"]
     if not b:
         return "STEP: AIR DAILY GOALS - no pair of goals is doable right now (see the list below)"
-    a1, a2 = b["pair"]
-    L = [f"STEP: AIR DAILY GOALS - about {pl['reward']:,.0f} ISK for any 2 of the 5 goals (resets daily)",
-         f"   BEST PAIR: {a1['goal']} + {a2['goal']}   ~{b['minutes']:.0f} min of your time (~{b.get('clock', b['minutes']):.0f} min on the clock), ~{b['cash']:,.0f} ISK to do it = ~{b['rate']:,.0f} ISK/hr"]
-    for o in (a1, a2):
-        L.append(f"   DO: {o['goal']} {progress.get(o['goal'], '')}: {o['how']}")
-    L.append("   All five (minutes / ISK to do it):")
+    pair = sorted(b["pair"], key=lambda o: -o.get("job_min", 0.0))      # the one with a background job goes first
+    L = [f"STEP: AIR DAILY GOALS - about {pl['reward']:,.0f} ISK for any 2 of the 5 goals (resets daily)", "",
+         f"   BEST PAIR  {pair[0]['goal']} + {pair[1]['goal']}",
+         f"      {b['minutes']:.0f} min of your time (~{b.get('clock', b['minutes']):.0f} min on the clock)   {b['cash']:,.0f} ISK to do it   = {b['rate']:,.0f} ISK/hr", ""]
+    for n, o in enumerate(pair, 1):
+        L.append(f"   {n}. {o['goal']} ({progress.get(o['goal'], '').strip() or '-'})")
+        L.append("      " + _indent(o["how"], "   "))
+        L.append("")
+    L.append("   ALL FIVE                         your minutes     ISK to do it")
     for o in sorted(pl["options"], key=lambda o: (not o["ok"], o["minutes"])):
-        mark = "<<" if o in b["pair"] else "  "
+        mark = ">>" if o in b["pair"] else "  "
         if o["ok"]:
             c = round(o["cash"]) + 0.0
-            L.append(f"   {mark} {o['goal']:<30} {progress.get(o['goal'], ''):<8} ~{o['minutes']:.0f} min, "
-                     + (f"~{c:,.0f} ISK" if c >= 0 else f"PAYS ITSELF BACK +{-c:,.0f} ISK"))
+            L.append(f"   {mark} {o['goal']:<30} {o['minutes']:>6.0f} min     " + (f"{c:>10,.0f}" if c >= 0 else f"pays back +{-c:,.0f}"))
         else:
-            L.append(f"      {o['goal']:<30} {progress.get(o['goal'], ''):<8} NOT ROUTED: {o['why_not']}")
-    L.append("   Check the Opportunities > AIR Daily Goals window. Items marked (?) are guesses: time it and the model learns.")
+            L.append(f"      {o['goal']:<30} NOT ROUTED: {o['why_not']}")
+    L.append("")
+    L.append("   Check Opportunities > AIR Daily Goals in game. (?) = a guess: time it and the model learns.")
     return "\n".join(L)
