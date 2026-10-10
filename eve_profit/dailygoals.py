@@ -67,12 +67,12 @@ def _far_places(con, mining=None, offers=None):
     return out
 
 
-def build_option(con, g=None, p=None):
+def build_option(con, g=None, p=None, free=None):
     """The best build to start from where you stand (make-or-buy, with what it is worth afterwards). Without a map: the plain cheapest build."""
     if g is not None and p is not None:
         try:
             from .makebuy import describe, options as mb
-            res = mb(con, g, p)
+            res = mb(con, g, p, free=free)
             if res:
                 o = res[0]
                 t_isk, t_min, t_lines = _trades(con, g, p, o.get("trip_to"), o.get("m3", 0.0))
@@ -145,38 +145,69 @@ def repair_option(con):
             "why_not": "needs a remote armor repairer AND other players in a fleet to repair 2,500: not solo, not routed"}
 
 
-def jumps_option(con, places=None, g=None, p=None):
+def _route_ids(g, p, sysname):
+    """System ids on the safe route from where you are to sysname (they are 'free' shopping stops while you travel anyway)."""
+    if g is None or p is None or not sysname:
+        return set()
+    try:
+        r = g.route(g.id_of(p.current_system), g.id_of(sysname), 60, p.avoid_yellow)
+        return set(r.path) if r else set()
+    except Exception:                                                   # noqa: BLE001
+        return set()
+
+
+def jumps_option(con, places=None, g=None, p=None, idx=0):
     places = _far_places(con) if places is None else places
-    dest = places[0][1] if places else "Manifest (epic arc agent, 3 jumps)"
-    sysname = places[0][3] if places and len(places[0]) > 3 else ("Manifest" if not places else None)
+    pl = places[idx] if places and idx < len(places) else None
+    dest = pl[1] if pl else "Manifest (epic arc agent, 3 jumps)"
+    sysname = pl[3] if pl and len(pl) > 3 else ("Manifest" if not places else None)
     t_isk, t_min, t_lines = _trades(con, g, p, sysname)
     how = f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)"
     if t_isk > 0:
         how += f"\n      trades on the way there and back: ~{t_isk:,.0f} ISK (half counted)\n         " + "\n         ".join(t_lines)
     return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 3 * PER_JUMP_MIN + t_min, "cash": -t_isk, "jumps_away": 0,
-            "how": how, "dest": dest}
+            "how": how, "dest": dest, "dest_system": sysname}
 
 
-def options(con, places=None, g=None, p=None):
-    return [jumps_option(con, places, g, p), build_option(con, g, p), scan_option(con), destroy_option(con), repair_option(con)]
+def options(con, places=None, g=None, p=None, idx=0):
+    jumps = jumps_option(con, places, g, p, idx)
+    build = build_option(con, g, p)
+    route = _route_ids(g, p, jumps.get("dest_system"))
+    if route and build.get("ok"):                                       # the same build when you shop on the jumps trip you are making anyway
+        build["with_jumps"] = build_option(con, g, p, free=route)
+    return [jumps, build, scan_option(con), destroy_option(con), repair_option(con)]
 
 
 def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
-    """Best pair of goals by net ISK per hour. free_ride=True when your next task already goes 3+ jumps."""
-    opts = options(con, places, g, p)
-    ok = [o for o in opts if o["ok"]]
-    best = None
-    for a, b in itertools.combinations(ok, 2):
-        minutes = a["minutes"] + b["minutes"]
-        for x, y in ((a, b), (b, a)):                                   # jumps are free when the other goal's trip goes 3+ jumps anyway
-            if x["goal"] == "Complete 3 Jumps" and (y.get("jumps_away", 0) >= 3 or free_ride):
-                minutes = y["minutes"] + JUMPS_FREE_MIN
-        cash = a["cash"] + b["cash"]
-        rate = (reward - cash) * 60.0 / max(minutes, 1.0)
-        if best is None or rate > best["rate"]:
-            jobber = a if a.get("job_min", 0.0) >= b.get("job_min", 0.0) else b
-            clock = max(minutes, jobber["minutes"] + jobber.get("job_min", 0.0))      # the job runs in the background while you do the other goal
-            best = {"pair": (a, b), "minutes": minutes, "cash": cash, "rate": rate, "net": reward - cash, "clock": clock}
+    """Best pair of goals by net ISK per hour. free_ride=True when your next task already goes 3+ jumps.
+    Tries the top few far destinations for the 3 jumps: shopping for the build on the way there is free."""
+    places = _far_places(con) if places is None else places
+    if not any(pl[3:4] == ("Manifest",) for pl in places):
+        places = list(places) + [(0.0, "Manifest (epic arc agent Cassandra Ahfrim, 3 jumps)", 3, "Manifest")]
+    best, first_opts = None, None
+    for idx in range(min(3, len(places))):
+        opts = options(con, places, g, p, idx)
+        first_opts = first_opts or opts
+        ok = [o for o in opts if o["ok"]]
+        for a, b in itertools.combinations(ok, 2):
+            for x, y in ((a, b), (b, a)):                               # shopping on the jumps trip costs no extra travel
+                if x["goal"] == "Complete 3 Jumps" and y["goal"] == "Manufacture an Item" and y.get("with_jumps"):
+                    a, b = (x, y["with_jumps"]) if x is a else (y["with_jumps"], x)
+                    break
+            minutes = a["minutes"] + b["minutes"]
+            for x, y in ((a, b), (b, a)):                               # jumps are free when the other goal's trip goes 3+ jumps anyway
+                if x["goal"] == "Complete 3 Jumps" and (y.get("jumps_away", 0) >= 3 or free_ride):
+                    minutes = y["minutes"] + JUMPS_FREE_MIN
+            cash = a["cash"] + b["cash"]
+            rate = (reward - cash) * 60.0 / max(minutes, 1.0)
+            if best is None or rate > best["rate"]:
+                jobber = a if a.get("job_min", 0.0) >= b.get("job_min", 0.0) else b
+                clock = max(minutes, jobber["minutes"] + jobber.get("job_min", 0.0))      # the job runs in the background while you do the other goal
+                best = {"pair": (a, b), "minutes": minutes, "cash": cash, "rate": rate, "net": reward - cash, "clock": clock}
+    opts = first_opts or []
+    if best:                                                            # the table lists the options of the winning plan
+        names = {o["goal"] for o in best["pair"]}
+        opts = [next((o for o in best["pair"] if o["goal"] == x["goal"]), x) for x in opts]
     return {"best": best, "options": opts, "reward": reward}
 
 

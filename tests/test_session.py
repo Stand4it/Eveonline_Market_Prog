@@ -773,3 +773,26 @@ class TripTradesTests(unittest.TestCase):
         self.assertEqual(o["cash"], -50000.0)                      # half of the 100,000 counts
         self.assertIn("trades on the way there and back", o["how"])
         self.assertEqual(o["minutes"], 9.0 + 5.0)
+
+
+class ShopOnTheRouteTests(unittest.TestCase):
+    def test_materials_on_the_jumps_route_cost_no_extra_travel(self):
+        import eve_profit.nextstep as ns
+        from eve_profit.config import Profile
+        from eve_profit.dailygoals import plan
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        old = ns.trade_extras
+        ns.trade_extras = lambda *a: (0.0, 0.0, [])
+        try:
+            far = plan(con, 445000, places=[(0.0, "Sys02 (mining, 1 jump)", 1, "Sys02")], g=g, p=p)
+            nowhere = plan(con, 445000, places=[(0.0, "Nowhere", 1, None)], g=g, p=p)
+        finally:
+            ns.trade_extras = old
+        txt = " ".join(o["how"] for o in far["best"]["pair"])
+        self.assertIn("(on your route)", txt)
+        self.assertLessEqual(far["best"]["minutes"], nowhere["best"]["minutes"])

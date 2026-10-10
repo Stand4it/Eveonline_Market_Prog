@@ -18,8 +18,10 @@ def _loc_value(minutes):
     return minutes / 60.0 * TIME_VALUE_HR
 
 
-def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
-    """Every blueprint you own that can be built from here, best first. -> list of dicts (empty if nothing)."""
+def options(con, g, p, runs=1, max_jumps=MAX_JUMPS, free=None):
+    """Every blueprint you own that can be built from here, best first. -> list of dicts (empty if nothing).
+    free = system ids you are travelling through anyway (a trip you already planned): buying there costs no extra travel."""
+    free = set(free or ())
     try:
         cur = g.id_of(p.current_system)
     except Exception:                                                   # noqa: BLE001
@@ -41,7 +43,7 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
         top = MAX_RUNS if bp_runs < 0 else min(MAX_RUNS, bp_runs)
         cand = []
         for r_ in range(1, top + 1):
-          o_ = _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_)
+          o_ = _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_, free)
           if o_:
               cand.append(o_)
         if cand:
@@ -50,7 +52,7 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
     return out
 
 
-def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_):
+def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_, free=frozenset()):
     """One blueprint at one run count -> option dict or None."""
     cur = g.id_of(p.current_system)
     if True:
@@ -68,7 +70,7 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
                 for s, asks in sells.get(tid, {}).items():
                     c = buy_cost(asks, rem)
                     if c is not None:
-                        score = c + _loc_value(2 * reach[s].jumps * PER_JUMP_MIN)
+                        score = c + (0.0 if s in free else _loc_value(2 * reach[s].jumps * PER_JUMP_MIN))
                         if best is None or score < best[0]:
                             best = (score, c, s)
                 if not best:
@@ -76,12 +78,12 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
                     break
                 spend += best[1]
                 srcs[best[2]] = srcs.get(best[2], 0) + 1
-                buy_lines.append(f"{rem:>7,} x {str(name.get(tid, tid)):<16} at {g.name[best[2]]:<12} ~{best[1]:>9,.0f} ISK")
+                buy_lines.append(f"{rem:>7,} x {str(name.get(tid, tid)):<16} at {g.name[best[2]]:<12} ~{best[1]:>9,.0f} ISK" + ("   (on your route)" if best[2] in free else ""))
         if not ok:
             return None
         eiv = sum(m["quantity"] * r_ * adj.get(m["material_id"], 0) for m in mats)
         fee = eiv * p.job_fee_rate
-        shop_min = sum(2 * reach[s].jumps * PER_JUMP_MIN + 1 for s in srcs)
+        shop_min = sum((0.0 if s in free else 2 * reach[s].jumps * PER_JUMP_MIN) + 1 for s in srcs)
         minutes = BASE_MIN + shop_min
         # what the finished item is worth afterwards
         sale = (0.0, None)
@@ -101,7 +103,8 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
         else:
             kind, value, where = "NONE", 0.0, "no buyer in reach"
         cost = spend + hangar_val + fee
-        far_src = max(srcs, key=lambda s_: reach[s_].jumps) if srcs else None
+        paid = [s_ for s_ in srcs if s_ not in free]
+        far_src = max(paid, key=lambda s_: reach[s_].jumps) if paid else None
         trip_to = g.name[far_src] if far_src is not None and reach[far_src].jumps > 0 else None
         vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
         m3 = sum(material_qty(m["quantity"], r_, me) * (vol.get(m["material_id"], 0) or 0) for m in mats)
