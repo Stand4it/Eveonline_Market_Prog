@@ -966,3 +966,39 @@ class FixByIdTests(unittest.TestCase):
         self.assertEqual(con.execute("SELECT COUNT(*) FROM activity_log").fetchone()[0], 1)
         with self.assertRaises(ValueError):
             fix_last(con, 0, 0, "", False, 9999)
+
+
+class SettleTests(unittest.TestCase):
+    def _journal(self):
+        e = lambda i, d, ref, amt, desc="": {"id": i, "date": f"2026-10-10T{d}:00Z", "ref_type": ref, "amount": amt, "description": desc}
+        return [e(1, "09:14", "brokers_fee", -10133, "Market order commission to b"), e(2, "09:14", "market_provider_tax", -24411, "Market Safety Tax"),
+                e(3, "11:46", "brokers_fee", -10133, "Market order commission to b"), e(4, "11:46", "market_provider_tax", -24411, "Market Safety Tax"),
+                e(5, "14:44", "market_transaction", 488024, "Market: Helsp1 bought stuff"), e(6, "14:44", "transaction_tax", -36601, "Sales tax paid to the SCC"),
+                e(7, "05:14", "agent_mission_reward", 62500, "AIR Career Program Reward")]
+
+    def test_a_later_sale_goes_to_the_step_that_listed_it_and_the_finishing_step_is_merged(self):
+        import calendar
+        import time as _t
+        from eve_profit.settle import apply, plan
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        utc = lambda hhmm: calendar.timegm(_t.strptime("2026-10-10 " + hhmm, "%Y-%m-%d %H:%M"))
+        con.execute("INSERT INTO activity_log(id,activity,isk,hours,ts) VALUES(2,'Market sell stock Rotonos',0,2/60.0,?)", (utc("09:15"),))
+        con.execute("INSERT INTO activity_log(id,activity,isk,hours,ts) VALUES(16,'Market sell stock Rotonos',451423,5/60.0,?)", (utc("14:45"),))
+        con.execute("INSERT INTO activity_log(id,activity,isk,hours,ts) VALUES(17,'Agent L1 step 9',239000,0.5,?)", (utc("08:00"),))
+        rows = con.execute("SELECT id, activity, isk, hours, ts FROM activity_log ORDER BY ts").fetchall()
+        props = plan(rows, self._journal())
+        self.assertEqual(len(props), 1)
+        pr = props[0]
+        self.assertEqual(pr["step"]["id"], 2)
+        self.assertEqual(pr["income"], 488024)
+        self.assertEqual(pr["costs"], -(10133 + 24411) * 2 - 36601)                # both listings' fees and the sales tax
+        self.assertEqual([m["id"] for m in pr["merge"]], [16])
+        apply(con, props)
+        r = con.execute("SELECT isk, hours FROM activity_log WHERE id=2").fetchone()
+        self.assertEqual(r["isk"], 488024 - 36601 - 69088)
+        self.assertAlmostEqual(r["hours"], 7 / 60.0)                              # 2 min listing + 5 min finishing
+        self.assertIsNone(con.execute("SELECT 1 FROM activity_log WHERE id=16").fetchone())
+        self.assertIsNotNone(con.execute("SELECT 1 FROM activity_log WHERE id=17").fetchone())      # the agent mission is untouched
+        again = plan(con.execute("SELECT id, activity, isk, hours, ts FROM activity_log ORDER BY ts").fetchall(), self._journal(),
+                     used=__import__("json").loads(con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone()[0]))
+        self.assertEqual(again, [])                                               # nothing is counted twice

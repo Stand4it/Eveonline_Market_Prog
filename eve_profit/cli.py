@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -84,6 +84,7 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
+    ap.add_argument("--apply", action="store_true", help="settle: save the proposed changes (default is a dry run)")
     ap.add_argument("--id", type=int, default=0, help="fixlast: the # of the run to change (shown by history); default = the newest")
     ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
     ap.add_argument("--plan", action="store_true", help="next: look ahead: the whole chain of steps, why, and the long view (default is ONE step)")
@@ -569,6 +570,13 @@ def _run(a):
     elif a.cmd == "activities":
         from .session import summary
         print(summary(con))
+    elif a.cmd == "settle":
+        from . import sso
+        from .esi import ESI
+        from .settle import run as settle_run
+        esi = ESI()
+        esi.token, cid = sso.get_token(a.client_id)
+        print(settle_run(con, esi, cid, a.apply))
     elif a.cmd == "history":
         from .session import history
         print(history(con, a.n))

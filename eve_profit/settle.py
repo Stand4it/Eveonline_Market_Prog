@@ -1,0 +1,137 @@
+"""`settle`: match market sales to the step that STARTED them. A listed order sells hours later, long after its step was stopped with 0 ISK.
+The wallet journal holds every broker fee, sales tax and sale with its time, so:
+   * fees paid around a selling step belong to that step (listing it costs money),
+   * a later sale (and the tax paid with it) goes to the EARLIEST selling step that listed something and has not sold yet,
+   * the later step you ran just to finish the sale (cancel, relist, collect) is merged into it: its minutes join the earlier step and it is removed.
+Dry run by default: `settle` shows what it would change, `settle --apply` saves it. Journal entries already used are remembered."""
+import json
+import time
+
+from .session import SALE_WORDS, _ts
+
+COST_REFS = ("brokers_fee", "transaction_tax", "market_provider_tax")
+COST_DESC = ("market order commission", "market safety tax", "sales tax")
+BEFORE_S, AFTER_S, TAX_FOLLOW_S, MAX_OPEN_DAYS = 300, 600, 120, 14
+
+
+def is_cost(e):
+    d = (e.get("description") or "").lower()
+    return e.get("amount", 0) < 0 and (e.get("ref_type") in COST_REFS or d.startswith(COST_DESC))
+
+
+def is_sale(e):
+    return e.get("ref_type") == "market_transaction" and e.get("amount", 0) > 0
+
+
+def sell_steps(rows):
+    """Selling steps from activity_log rows (id, activity, isk, hours, ts): -> [{id,name,start,end,isk,hours}] oldest first."""
+    out = []
+    for r in rows:
+        if any(w in r["activity"].lower() for w in SALE_WORDS):
+            out.append({"id": r["id"], "name": r["activity"], "start": r["ts"] - r["hours"] * 3600.0, "end": r["ts"], "isk": r["isk"], "hours": r["hours"]})
+    return sorted(out, key=lambda s: s["end"])
+
+
+def attribute(entries, steps, used=()):
+    """-> {step_id: {"income": X, "costs": -Y, "ids": [...], "sales": n, "fees": n}} for the journal entries not in `used`."""
+    st = {s["id"]: {"income": 0.0, "costs": 0.0, "ids": [], "sales": 0, "fees": 0} for s in steps}
+    by_id = {s["id"]: s for s in steps}
+    last_sale = None                                                    # (time, step id)
+
+    def window(t):
+        for s in steps:
+            if s["start"] - BEFORE_S <= t <= s["end"] + AFTER_S:
+                return s["id"]
+        return None
+
+    def open_step(t):
+        """Earliest selling step that listed something (paid fees) but has not sold yet, ended before t, within MAX_OPEN_DAYS."""
+        for s in steps:
+            a = st[s["id"]]
+            if a["fees"] and not a["sales"] and s["start"] - BEFORE_S <= t and t - s["end"] <= MAX_OPEN_DAYS * 86400:
+                return s["id"]
+        return None
+
+    for e in sorted((x for x in entries if x.get("id") not in set(used) and (is_sale(x) or is_cost(x))), key=lambda x: (_ts(x["date"]), x.get("id", 0))):
+        t = _ts(e["date"])
+        if is_sale(e):
+            sid = open_step(t) or window(t)
+            if sid is None:
+                continue
+            st[sid]["income"] += e["amount"]
+            st[sid]["sales"] += 1
+            last_sale = (t, sid)
+        else:
+            if last_sale and e.get("ref_type") == "transaction_tax" and 0 <= t - last_sale[0] <= TAX_FOLLOW_S:
+                sid = last_sale[1]
+            else:
+                sid = window(t) or open_step(t)
+                if sid is not None and by_id[sid]["end"] + AFTER_S < t and st[sid]["sales"]:
+                    sid = open_step(t)                                  # that step already sold: a later fee is a new listing
+            if sid is None:
+                continue
+            st[sid]["costs"] += e["amount"]
+            st[sid]["fees"] += 1
+        st[sid]["ids"].append(e.get("id"))
+    return {k: v for k, v in st.items() if v["ids"]}
+
+
+def plan(rows, entries, used=()):
+    """-> list of proposals: {"step": step, "income","costs","net", "merge": [steps to fold into it]}."""
+    steps = sell_steps(rows)
+    by_id = {s["id"]: s for s in steps}
+    att = attribute(entries, steps, used)
+    props = []
+    for sid, a in att.items():
+        s = by_id[sid]
+        merge = []
+        for o in steps:                                                 # a later selling step with no entries of its own that ran while the sale happened
+            if o["id"] != sid and o["id"] not in att and o["end"] > s["end"] and a["sales"]:
+                sale_ts = [_ts(e["date"]) for e in entries if e.get("id") in a["ids"] and is_sale(e)]
+                if any(o["start"] - BEFORE_S <= t <= o["end"] + AFTER_S for t in sale_ts):
+                    merge.append(o)
+        props.append({"step": s, "income": a["income"], "costs": a["costs"], "net": a["income"] + a["costs"], "merge": merge, "ids": a["ids"], "sales": a["sales"], "fees": a["fees"]})
+    return sorted(props, key=lambda x: x["step"]["end"])
+
+
+def _when(t):
+    return time.strftime("%m-%d %H:%M", time.localtime(t))
+
+
+def format_plan(props, apply):
+    if not props:
+        return "Nothing to settle: no market sales or fees in your wallet journal that are not already counted."
+    L = ["SETTLE: market sales and fees matched to the step that started them" + ("" if apply else "   (dry run: add --apply to save)")]
+    for pr in props:
+        s = pr["step"]
+        L.append(f"   #{s['id']} {s['name']} ({_when(s['end'])}): {pr['income']:+,.0f} from {pr['sales']} sale(s), {pr['costs']:+,.0f} in {pr['fees']} fee/tax entries"
+                 f" = {pr['net']:+,.0f} ISK  (was {s['isk']:,.0f})")
+        for m in pr["merge"]:
+            L.append(f"        merge #{m['id']} {m['name']} ({_when(m['end'])}, {m['hours'] * 60:.0f} min, {m['isk']:,.0f} ISK): same sale; its minutes join #{s['id']} and it is removed")
+        hrs = s["hours"] + sum(m["hours"] for m in pr["merge"])
+        L.append(f"        step total: {hrs * 60:.0f} min, {pr['net']:+,.0f} ISK = {pr['net'] / max(hrs, 1e-9):+,.0f} ISK/hr ({pr['net'] / max(hrs * 60, 1e-9):+,.0f} ISK/min)")
+    return "\n".join(L)
+
+
+def apply(con, props):
+    """Save: replace each step's ISK with its net, add the merged steps' minutes, remove the merged steps, remember the used journal entries."""
+    used = set(json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0]))
+    for pr in props:
+        s = pr["step"]
+        hours = s["hours"] + sum(m["hours"] for m in pr["merge"])
+        con.execute("UPDATE activity_log SET isk=?, hours=? WHERE id=?", (pr["net"], hours, s["id"]))
+        for m in pr["merge"]:
+            con.execute("DELETE FROM activity_log WHERE id=?", (m["id"],))
+        used |= {i for i in pr["ids"] if i is not None}
+    con.execute("INSERT OR REPLACE INTO meta VALUES('settled_ids', ?)", (json.dumps(sorted(used)[-3000:]),))
+    con.commit()
+
+
+def run(con, esi, cid, do_apply=False):
+    rows = con.execute("SELECT id, activity, isk, hours, ts FROM activity_log ORDER BY ts").fetchall()
+    entries = esi.paged(f"/characters/{cid}/wallet/journal/")
+    used = json.loads((con.execute("SELECT value FROM meta WHERE key='settled_ids'").fetchone() or ["[]"])[0])
+    props = plan(rows, entries, used)
+    if do_apply and props:
+        apply(con, props)
+    return format_plan(props, do_apply and bool(props))
