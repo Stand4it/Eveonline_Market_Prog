@@ -79,7 +79,7 @@ def build_option(con, g=None, p=None):
                 how = describe(o)
                 if t_isk > 0:
                     how += f"\n   ON THE TRIP to {o['trip_to']} and back (hold space left over): ~{t_isk:,.0f} ISK of trades (half counted)\n      " + "\n      ".join(t_lines)
-                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_min, "cash": -(o["net"] + t_isk), "jumps_away": 0,
+                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_min, "cash": -(o["net"] + t_isk), "jumps_away": 0, "job_min": o.get("job_min", 0.0),
                         "how": how.replace("\n", "\n      ")}
         except Exception:                                               # noqa: BLE001
             pass
@@ -174,7 +174,9 @@ def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
         cash = a["cash"] + b["cash"]
         rate = (reward - cash) * 60.0 / max(minutes, 1.0)
         if best is None or rate > best["rate"]:
-            best = {"pair": (a, b), "minutes": minutes, "cash": cash, "rate": rate, "net": reward - cash}
+            jobber = a if a.get("job_min", 0.0) >= b.get("job_min", 0.0) else b
+            clock = max(minutes, jobber["minutes"] + jobber.get("job_min", 0.0))      # the job runs in the background while you do the other goal
+            best = {"pair": (a, b), "minutes": minutes, "cash": cash, "rate": rate, "net": reward - cash, "clock": clock}
     return {"best": best, "options": opts, "reward": reward}
 
 
@@ -185,7 +187,7 @@ def format_plan(pl, progress=None):
         return "STEP: AIR DAILY GOALS - no pair of goals is doable right now (see the list below)"
     a1, a2 = b["pair"]
     L = [f"STEP: AIR DAILY GOALS - about {pl['reward']:,.0f} ISK for any 2 of the 5 goals (resets daily)",
-         f"   BEST PAIR: {a1['goal']} + {a2['goal']}   ~{b['minutes']:.0f} min, ~{b['cash']:,.0f} ISK to do it = ~{b['rate']:,.0f} ISK/hr"]
+         f"   BEST PAIR: {a1['goal']} + {a2['goal']}   ~{b['minutes']:.0f} min of your time (~{b.get('clock', b['minutes']):.0f} min on the clock), ~{b['cash']:,.0f} ISK to do it = ~{b['rate']:,.0f} ISK/hr"]
     for o in (a1, a2):
         L.append(f"   DO: {o['goal']} {progress.get(o['goal'], '')}: {o['how']}")
     L.append("   All five (minutes / ISK to do it):")

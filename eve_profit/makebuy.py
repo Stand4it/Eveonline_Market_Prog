@@ -11,6 +11,7 @@ PER_JUMP_MIN = 3.0
 TIME_VALUE_HR = 600000.0          # what your own hour is worth when choosing where to shop (ISK/hr)
 BASE_MIN = 4.0                    # minutes to start a build job once the materials are in the hangar
 MAX_JUMPS = 6
+MAX_RUNS = 10
 
 
 def _loc_value(minutes):
@@ -37,9 +38,22 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
         mats = con.execute("SELECT material_id,quantity FROM bp_materials WHERE blueprint_id=?", (bp,)).fetchall()
         if not prod or not mats:
             continue
-        r_ = runs if bp_runs < 0 else min(runs, bp_runs)
-        if r_ < 1:
-            continue
+        top = MAX_RUNS if bp_runs < 0 else min(MAX_RUNS, bp_runs)
+        cand = []
+        for r_ in range(1, top + 1):
+          o_ = _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_)
+          if o_:
+              cand.append(o_)
+        if cand:
+            out.append(max(cand, key=lambda o: (o["net"], -o["runs"])))
+    out.sort(key=lambda o: (-o["net"], o["minutes"]))
+    return out
+
+
+def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, prod, mats, r_):
+    """One blueprint at one run count -> option dict or None."""
+    cur = g.id_of(p.current_system)
+    if True:
         pid, units = prod["product_id"], prod["quantity"] * r_
         spend, hangar_val, buy_lines, srcs, ok = 0.0, 0.0, [], {}, True
         for m in mats:
@@ -64,7 +78,7 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
                 srcs[best[2]] = srcs.get(best[2], 0) + 1
                 buy_lines.append(f"{rem:,} x {name.get(tid, tid)} at {g.name[best[2]]} (~{best[1]:,.0f})")
         if not ok:
-            continue
+            return None
         eiv = sum(m["quantity"] * r_ * adj.get(m["material_id"], 0) for m in mats)
         fee = eiv * p.job_fee_rate
         shop_min = sum(2 * reach[s].jumps * PER_JUMP_MIN + 1 for s in srcs)
@@ -91,16 +105,17 @@ def options(con, g, p, runs=1, max_jumps=MAX_JUMPS):
         trip_to = g.name[far_src] if far_src is not None and reach[far_src].jumps > 0 else None
         vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
         m3 = sum(material_qty(m["quantity"], r_, me) * (vol.get(m["material_id"], 0) or 0) for m in mats)
-        out.append({"trip_to": trip_to, "m3": m3, "blueprint": bp,"product": name.get(pid, str(pid)), "units": units, "runs": r_, "cash": spend + fee, "cost": cost, "value": value,
+        from .manufacturing import build_seconds
+        job_min = build_seconds(prod["base_time"], r_, te, p) / 60.0
+        return ({"trip_to": trip_to, "m3": m3, "job_min": job_min, "blueprint": bp, "product": name.get(pid, str(pid)), "units": units, "runs": r_, "cash": spend + fee, "cost": cost, "value": value,
                     "kind": kind, "where": where, "net": value - cost, "minutes": minutes, "buy": buy_lines, "hangar_val": hangar_val,
                     "buy_instead": (rebuy[0], g.name[rebuy[1]]) if (is_keep and rebuy[0]) else None})
-    out.sort(key=lambda o: (-o["net"], o["minutes"]))
-    return out
 
 
 def describe(o):
     """One short paragraph for next: the make-or-buy verdict for this build."""
-    L = [f"Build {o['units']} x {o['product']} (Industry > your blueprint, {o['runs']} run, ~{o['minutes']:.0f} min of your time)"]
+    L = [f"Build {o['units']} x {o['product']} (Industry > your blueprint, {o['runs']} run{'s' if o['runs'] != 1 else ''}, ~{o['minutes']:.0f} min of your time,"
+         f" then the job runs ~{o.get('job_min', 0):.0f} min in the background: start it FIRST and do the other goal while it runs)"]
     if o["buy"]:
         L.append("   buy first: " + "; ".join(o["buy"]))
     else:
@@ -110,6 +125,13 @@ def describe(o):
         L.append(f"   then {o['kind']}: worth ~{o['value']:,.0f} ({o['where']}) -> {'+' if o['net'] >= 0 else '-'}{abs(o['net']):,.0f} ISK net")
     else:
         L.append("   no buyer in reach: the build only pays the goal, not the item")
+    if o["buy"]:
+        eq = o["cash"] / TIME_VALUE_HR * 60.0
+        L.append(f"   BUY vs MINE the materials: buying is ~{o['cash']:,.0f} ISK = only {eq:.1f} min of your time at {TIME_VALUE_HR:,.0f} ISK/hr, so "
+                 + ("BUY them (mining them would take longer than that)" if eq < 15 else "mining them may be cheaper: check a mining run"))
+    alone = o["net"] * 60.0 / max(o["minutes"], 1.0)
+    L.append(f"   as its own activity: {'+' if alone >= 0 else '-'}{abs(alone):,.0f} ISK per active hour (its value here is the daily goal, not the item)" if o["kind"] == "NONE"
+             else f"   as its own activity: {'+' if alone >= 0 else '-'}{abs(alone):,.0f} ISK per active hour")
     if o["buy_instead"]:
         b, sysn = o["buy_instead"]
         L.append(f"   BUY instead? the finished item costs ~{b:,.0f} at {sysn}: " + ("build is cheaper" if o["cost"] <= b else "BUYING IS CHEAPER, buy it"))
