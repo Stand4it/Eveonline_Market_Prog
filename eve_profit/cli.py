@@ -86,7 +86,7 @@ def main(argv=None):
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
     ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
     ap.add_argument("--minutes", type=float, default=0, help="stop: minutes you really worked (use after falling asleep or leaving); replaces the clock time")
-    ap.add_argument("--budget", type=float, default=5.0, help="scan --live: stop downloading new regions after this many minutes (default 5; 0 = no limit)")
+    ap.add_argument("--budget", type=float, default=6.0, help="scan --live: stop downloading new regions after this many minutes (default 6; 0 = no limit)")
     ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
     ap.add_argument("--radius", type=int, default=10, help="buy: how many jumps around you to look for sellers")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")

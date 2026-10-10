@@ -24,7 +24,7 @@ SDE  -  import game data from a file
    example: python -m eve_profit sde
 
 SCAN  -  rank everything you can do now (add --live to download prices)
-   --budget       scan --live: stop downloading new regions after this many minutes (default 5; 0 = no limit)
+   --budget       scan --live: stop downloading new regions after this many minutes (default 6; 0 = no limit)
    --live         use real ESI market data
    --away         unattended mode: long safe autopilot hauls only
    --max-age      --live: skip regions downloaded less than this many minutes ago
