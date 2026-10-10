@@ -616,7 +616,15 @@ def next_action(con, g, p, full=False):
     except Exception:                                            # noqa: BLE001
         h = None
     if h:
-        cands.append((h["rate_hr"], f"haul stock to {h['dest']}", haul_step(h), "sell-now prices at the far market"))
+        h_rate = h["rate_hr"]
+        try:                                                     # gear you need anyway that is cheaper on the route is part of what the trip earns
+            from .tripplus import needs_saving
+            sv = needs_saving(con, g, p, h["dest"])
+            if sv > 0 and h.get("minutes"):
+                h_rate = (h["gain"] + sv) * 60.0 / h["minutes"]
+        except Exception:                                        # noqa: BLE001
+            pass
+        cands.append((h_rate, f"haul stock to {h['dest']}", haul_step(h), "sell-now prices at the far market"))
     best_trade, trade_text = 0.0, None
     if not selling:
         try:

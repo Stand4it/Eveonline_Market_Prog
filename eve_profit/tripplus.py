@@ -23,7 +23,7 @@ def _agents(g, path):
         return []
 
 
-def cheap_needs(con, g, p, path, min_save=0.20, min_isk=3000.0):
+def cheap_needs_pairs(con, g, p, path, min_save=0.20, min_isk=3000.0):
     """Gear you keep but are short of (keep_items.json qty) that sells >=20% cheaper somewhere on the route than in your own system."""
     out = []
     here = g.id_of(p.current_system)
@@ -50,8 +50,21 @@ def cheap_needs(con, g, p, path, min_save=0.20, min_isk=3000.0):
             continue
         save = ((local - prices[s_best]) * short) if local else 0.0
         if (local and prices[s_best] <= local * (1 - min_save) and save >= min_isk):
-            out.append(f"need anyway: {short:,} x {rule['item']} is ~{prices[s_best]:,.0f} each at {g.name[s_best]} on the route (here {local:,.0f}): buy there, saves ~{save:,.0f} ISK")
+            out.append((f"need anyway: {short:,} x {rule['item']} is ~{prices[s_best]:,.0f} each at {g.name[s_best]} on the route (here {local:,.0f}): buy there, saves ~{save:,.0f} ISK", save))
     return out
+
+
+def cheap_needs(con, g, p, path, **kw):
+    return [l for l, _ in cheap_needs_pairs(con, g, p, path, **kw)]
+
+
+def needs_saving(con, g, p, dest):
+    """ISK saved by buying the gear you lack on the way to dest (counts in the ISK/hr ranking of that trip)."""
+    path = _route(g, p, dest)
+    try:
+        return sum(s for _, s in cheap_needs_pairs(con, g, p, path)) if path else 0.0
+    except Exception:                                                   # noqa: BLE001
+        return 0.0
 
 
 def extras(con, g, p, dest, m3=0.0):

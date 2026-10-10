@@ -10,7 +10,7 @@ Database `E:\EveProfit\eve_profit[_label].db`, profiles `profile[_label].json`, 
 ## RESTART PROTOCOL (do this every time a session starts or Claude was killed)
 1. `git pull`, then read this file and `md/STATE.md` (auto: branch, uncommitted files, running timer, latest runs, open agent offers).
 2. Run `python -m eve_profit docs --check`: it refreshes STATE/COMMANDS and lists where the notes and the code disagree. Fix the notes.
-3. Other notes: `md/RULES.md` (how to work with the user), `md/CHARACTERS.md`, `md/AGENTS.md`, `md/BACKLOG.md`, `md/DECISIONS.md` (dated log), `md/COMMANDS.md`.
+3. THE VISION and the planner layers: `md/ROADMAP.md` (bottom). Other notes: `md/RULES.md` (how to work with the user), `md/CHARACTERS.md`, `md/AGENTS.md`, `md/BACKLOG.md`, `md/DECISIONS.md` (dated log), `md/COMMANDS.md`.
 4. After every change: run tests, `python -m eve_profit docs`, add a line to `md/DECISIONS.md`, commit and push. Never leave work only on the PC.
 The user's PC may hold work that never reached GitHub (it happened once: agent missions). Ask for `git status` and have them push a branch.
 
