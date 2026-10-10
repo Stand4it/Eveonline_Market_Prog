@@ -440,3 +440,18 @@ class DailyGoalTests(unittest.TestCase):
                                                   {"goal": "Complete 3 Jumps", "progress": "0/3", "keywords": ["jump"]}]}]
         self.assertEqual(daily_goal_hits("Scan down the relic site", progs), ["Scan 5 Signatures (0/5)"])
         self.assertEqual(daily_goal_hits("nothing relevant", progs), [])
+
+
+class CareersTests(unittest.TestCase):
+    def test_runs_are_grouped_by_career_and_unmeasured_ones_are_suggested(self):
+        from eve_profit.careers import career_of_activity, report
+        self.assertEqual(career_of_activity("Agent L1 step 7 Entrepreneur relic site"), "Industrialist")
+        self.assertEqual(career_of_activity("Agent L1 step 3 Explorer data site"), "Explorer")
+        self.assertEqual(career_of_activity("Mining Venture Rotonos belt (freelance)"), "Mining")
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Agent L1 step 5 Industrialist courier',300000,0.5,1)")
+        out = report(con, [{"agent": "Rounaminck Folle (Explorer)", "mission": "data site", "available": True}])
+        self.assertIn("Industrialist", out)
+        self.assertIn("600,000", out)
+        self.assertIn("TRY NEXT: Explorer", out)
+        self.assertIn("1 run(s): needs 2 more", out)

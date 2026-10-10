@@ -222,5 +222,8 @@ BUY  -  where to BUY an item cheapest near you (for agent jobs: acquire these go
    --radius       buy: how many jumps around you to look for sellers
    example: python -m eve_profit buy --item "Cap Booster 25" --qty 20
 
+CAREERS  -  ISK/hr per career path from your timed runs; which to try next
+   example: python -m eve_profit careers
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```

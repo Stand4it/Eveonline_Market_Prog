@@ -19,7 +19,7 @@ COMMAND_HELP = {
     "esimap": "build a map from ESI around you", "fleet": "list parked ships", "skills": "ISK/hr-measured skill advice + training plan",
     "diag": "check the game data", "explain": "why an item ranks where it does", "check": "re-check live prices of a ranked task",
     "stock": "value of everything you own", "along": "sell on the way to a destination", "fit": "what is fitted to your ship",
-    "zkill": "refresh the hauler-loss map", "next": "ONE next step (agent offers, sell/list, best trade)", "keep": "build or sell your materials",
+    "zkill": "refresh the hauler-loss map", "careers": "ISK/hr per career path from your timed runs; which to try next", "next": "ONE next step (agent offers, sell/list, best trade)", "keep": "build or sell your materials",
     "bpbuy": "buy a blueprint to use your stock?", "update": "has a game patch changed the data?", "bestprice": "best buyers for one item anywhere",
     "sellplan": "sell/list/carry/detour/haul per stack", "day": "chain the best tasks for N hours", "now": "sync + scan + next step + price check",
     "chars": "compare your characters", "combatfit": "set real DPS/EHP/tank for combat", "journey": "plan a whole trip with pickups and trades",
@@ -49,7 +49,7 @@ EXAMPLES = {
     "journey": "python -m eve_profit journey --to Jita --live --quick", "compare": "python -m eve_profit compare --to Jita",
     "go": "python -m eve_profit go --pick 1 --send", "trainplan": "python -m eve_profit trainplan --hours 24", "skills": "python -m eve_profit skills --hours 72",
     "combatfit": 'python -m eve_profit combatfit --ship "Vexor" --dps 450 --ehp 60000 --tank 200 --value 30000000',
-    "fixlast": 'python -m eve_profit fixlast --activity "step 2 Soldier" --isk 180000', "agents": "python -m eve_profit agents", "buy": 'python -m eve_profit buy --item "Cap Booster 25" --qty 20', "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
+    "careers": "python -m eve_profit careers", "fixlast": 'python -m eve_profit fixlast --activity "step 2 Soldier" --isk 180000', "agents": "python -m eve_profit agents", "buy": 'python -m eve_profit buy --item "Cap Booster 25" --qty 20', "docs": "python -m eve_profit docs --check", "status": "python -m eve_profit status",
     "log": 'python -m eve_profit log --activity "Level 2 security mission" --isk 8000000 --hours 1', "day": "python -m eve_profit day --hours 8",
     "sellplan": "python -m eve_profit sellplan --world 5", "login": "python -m eve_profit login", "sync": "python -m eve_profit sync",
 }

@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -514,6 +514,15 @@ def _run(a):
         from .graph import Graph
         from .trainplan import book_list, format_books
         print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
+    elif a.cmd == "careers":
+        import json as _json
+        from pathlib import Path as _P
+        from .careers import report as careers_report
+        try:
+            offers = _json.loads((_P(__file__).resolve().parents[1] / "agent_offers.json").read_text(encoding="utf-8")).get("offers", [])
+        except (OSError, ValueError):
+            offers = []
+        print(careers_report(con, offers))
     elif a.cmd == "fixlast":
         from .session import fix_last
         try:
