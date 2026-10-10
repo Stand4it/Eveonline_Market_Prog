@@ -161,7 +161,7 @@ def format_payouts(pays):
     L = []
     for q in pays:
         r = q["step"]
-        L.append(f"   #{r['id']} {r['name'] if 'name' in r.keys() else r['activity']} ({_when(r['ts'])}): payouts {q['gross']:+,.0f}, corporation tax {q['tax']:+,.0f} = {q['net']:+,.0f} ISK"
+        L.append(f"   #{r['id']} {r['name'] if 'name' in r.keys() else r['activity']} ({_when(r['ts'])}): payouts {q['gross']:+,.0f}" + (f", corporation tax {q['tax']:+,.0f}" if q['tax'] else " (ESI already takes the corporation tax off)") + f" = {q['net']:+,.0f} ISK"
                  f"  (was 0; the journal posted them after `stop`)  = {q['net'] / max(r['hours'] * 60, 1e-9):+,.0f} ISK/min")
     return L
 
