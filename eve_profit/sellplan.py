@@ -72,7 +72,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         local_bids = dock.get(tid, []) if dock is not None else buys.get(tid, {}).get(cur, [])
         sold0, now = sell_into_bids(local_bids, qty, p.sales_tax)
         asks = sells.get(tid, {}).get(cur, [])
-        list_net = qty * asks[0][0] * (1 - p.broker_fee - p.sales_tax) if asks else 0.0
+        list_net = qty * asks[0][0] * (1 - p.broker_fee - p.listing_tax - p.sales_tax) if asks else 0.0
         opts = [("SELL NOW here", now, 0.0, "")]
         from . import along as _al
         if _al.ALLOW_LIST and list_net > now * 1.15 and list_net > 0:

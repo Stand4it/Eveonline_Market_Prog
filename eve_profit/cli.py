@@ -347,7 +347,7 @@ def _run(a):
         asks = add_asks(ESI(), rows, tid, p.current_system)
         sysid = {g.name[k]: k for k in asks}
         here_ask = asks.get(g.id_of(p.current_system))
-        net = lambda price: qty * price * (1 - p.sales_tax - p.broker_fee)
+        net = lambda price: qty * price * (1 - p.sales_tax - p.broker_fee - p.listing_tax)
         print("\nIf you LIST instead (lowest sell order now, you still wait for a buyer; after tax and broker fee):")
         seen = set()
         for d in rows[:8]:

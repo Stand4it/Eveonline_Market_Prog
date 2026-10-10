@@ -30,7 +30,7 @@ def _stacks(con, g, p, min_value=100_000.0):
         sold, net = sell_into_bids(bids, qty, p.sales_tax)
         asks = sells.get(tid, {}).get(cur, [])
         listing = qty * asks[0][0] if asks else 0.0
-        list_net = listing * (1 - p.broker_fee - p.sales_tax)
+        list_net = listing * (1 - p.broker_fee - p.listing_tax - p.sales_tax)
         if max(net, list_net) < min_value:
             continue
         out.append({"tid": tid, "name": name.get(tid, tid), "qty": qty, "sold": sold, "net": net, "list_net": list_net,

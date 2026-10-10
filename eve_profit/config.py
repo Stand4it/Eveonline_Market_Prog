@@ -57,6 +57,7 @@ class Profile:
     salvage_wreck_seconds: float = 25.0
     use_structures: bool = True       # scan player-structure markets (needs login + docking access)
     structure_ids: list = field(default_factory=list)   # extra structure ids to always scan (e.g. your home citadel)
+    listing_tax: float = 0.05         # "Exordium Market Tax" (Market Safety Tax): 5.0% of the order value, charged when you LIST (seen 2026-10-10, not in the ESI journal); instant sales never pay it. Assumed for every region until verified elsewhere
     broker_fee: float = 0.03          # NPC station base; sync lowers it with Broker Relations (~0.3% per level, verify)
     structure_sales_tax: float = 0.01  # extra tax set by structure owners; varies per structure - verify
     away_mode: bool = False           # unattended: long autopilot hauls on strictly safe routes (or run with --away)

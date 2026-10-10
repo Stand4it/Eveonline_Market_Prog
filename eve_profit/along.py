@@ -114,7 +114,7 @@ def gear_upgrades(con, g, p, held, rules):
         old_ask = regional_ask(con, g, tid, cur)
         if not new_ask:
             continue
-        sell_net = n * (old_ask or 0.0) * (1 - p.broker_fee - p.sales_tax)       # listed at the regional ask
+        sell_net = n * (old_ask or 0.0) * (1 - p.broker_fee - p.listing_tax - p.sales_tax)       # listed at the regional ask
         new_cost = n * new_ask
         pocket = new_cost - sell_net
         if pocket <= 0.10 * p.wallet_isk and p.wallet_isk - pocket >= 2_000_000:
@@ -185,7 +185,7 @@ def plan_along(con, g, p, dest_name, slots_override=None):
             asks = sells.get(tid, {}).get(cur, [])
             ask = regional_ask(con, g, tid, cur, asks[0][0] if asks else None)       # buyers search the whole region: the cheapest ask there sets the price
             listing = qty * ask if ask else 0.0
-            list_net = listing * (1 - p.broker_fee - p.sales_tax)
+            list_net = listing * (1 - p.broker_fee - p.listing_tax - p.sales_tax)
             age = ask_age_days(con, g, tid, cur, ask) if ask else None
             list_it = (ALLOW_LIST and listing > 0 and list_net > local[0] * 1.15            # listing must beat instant by >15% to be worth the wait
                        and list_net - local[0] >= list_min_gain(con)         # ... and by enough ISK to pay for your time
