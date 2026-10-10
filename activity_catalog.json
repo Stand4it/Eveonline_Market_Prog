@@ -1,5 +1,5 @@
 {
- "why": "The map of EVERYTHING a player can do for ISK or progression, each with a prior ISK/hr range [low, high] (guesses from common knowledge, replaced by your own timed runs), what unlocks it, and how to test it. `models` shows which are modeled; `next` offers an unmodeled, unlocked one every 4th step and immediately when something new unlocks. Add entries as new features appear.",
+ "why": "The map of EVERYTHING a player can do for ISK or progression, each with a prior ISK/hr range [low, high] (guesses from common knowledge, replaced by your own timed runs), what unlocks it, and how to test it. `models` shows which are modeled; `next` offers an unmodeled, unlocked one every 4th step and immediately when something new unlocks. Add entries as new features appear. Agency > Agents & Missions read 2026-10-10: 5 career agents are in the Rotonos station; mission agents, epic arcs (9), storyline (none yet), Paragon (cosmetic).",
  "activities": [
   {
    "id": "agent_career",
@@ -321,6 +321,77 @@
    },
    "blocked": "Omega clone only, needs a Skyhook on a temperate planet in sov space: not routed",
    "how": "Later, if ever."
+  },
+  {
+   "id": "epic_visions",
+   "name": "Epic Arc: Visions of Greatness (AIR, 8 chapters)",
+   "area": "agents",
+   "match": [
+    "epic",
+    "visions of greatness",
+    "holographic"
+   ],
+   "prior": [
+    500000,
+    3000000
+   ],
+   "minutes": 40,
+   "risk": "low",
+   "requires": {},
+   "how": "Talk to Cassandra Ahfrim, Manifest V - AIR Laboratories (3 jumps). Chapters: Holographic Reenactment, Caldari Prime Breakout, Travel to the Minmatar, Battle of Pator, Travel to the Amarr... 0 of 8 done. Epic arcs are one-time with big rewards; time each chapter as its own run."
+  },
+  {
+   "id": "epic_other",
+   "name": "Other epic arcs (Blood-Stained Stars 8j, Fractured Legacy 17j, Syndication)",
+   "area": "agents",
+   "match": [
+    "blood-stained",
+    "fractured legacy",
+    "syndication"
+   ],
+   "prior": [
+    500000,
+    3000000
+   ],
+   "minutes": 40,
+   "risk": "medium",
+   "requires": {},
+   "how": "Later: pick one after Visions of Greatness; check the route for gank risk first."
+  },
+  {
+   "id": "storyline",
+   "name": "Storyline missions (standing boosts)",
+   "area": "agents",
+   "match": [
+    "storyline"
+   ],
+   "prior": [
+    300000,
+    1500000
+   ],
+   "minutes": 25,
+   "risk": "low",
+   "requires": {},
+   "blocked": "none assigned yet: they appear after you run many security missions",
+   "how": "Appear automatically after normal agent missions."
+  },
+  {
+   "id": "paragon",
+   "name": "Paragon (IRIS) agents: cosmetic personalization items",
+   "area": "agents",
+   "match": [
+    "paragon",
+    "iris"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 15,
+   "risk": "none",
+   "requires": {},
+   "blocked": "cosmetic only (auto-injected, cannot be sold): no ISK value, skipped",
+   "how": "Ignore for ISK."
   }
  ]
 }
