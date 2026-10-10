@@ -400,14 +400,15 @@
    "granted": [
     "Civilian Relic Analyzer"
    ],
-   "task_min": 25,
+   "task_min": 30,
    "jumps": 0,
    "m3": 1,
    "available": true,
    "agent_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
    "career": "Industrialist",
-   "timer_name": "Agent L1 step 7 Entrepreneur relic site"
+   "timer_name": "Agent L1 step 7 Entrepreneur relic site",
+   "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it"
   },
   {
    "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
@@ -532,5 +533,6 @@
   }
  ],
  "min_per_jump": 3.0,
- "note_accept": "Missions cannot be accepted remotely: go to the agent's station first (agent_system). jumps = distance agent -> mission target."
+ "note_accept": "Missions cannot be accepted remotely: go to the agent's station first (agent_system). jumps = distance agent -> mission target.",
+ "last_checked": "2026-10-10: all six open missions re-screenshotted; no new rewards except Arnelin step 10 (still cut off)"
 }
