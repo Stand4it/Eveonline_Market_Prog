@@ -192,7 +192,7 @@ def format_plan(pl, progress=None):
     for o in sorted(pl["options"], key=lambda o: (not o["ok"], o["minutes"])):
         mark = "<<" if o in b["pair"] else "  "
         if o["ok"]:
-            c = o["cash"]
+            c = round(o["cash"]) + 0.0
             L.append(f"   {mark} {o['goal']:<30} {progress.get(o['goal'], ''):<8} ~{o['minutes']:.0f} min, "
                      + (f"~{c:,.0f} ISK" if c >= 0 else f"PAYS ITSELF BACK +{-c:,.0f} ISK"))
         else:
