@@ -26,6 +26,8 @@ def skill_levels(con):
 
 
 def missing_for(act, levels, wallet):
+    if act.get("blocked"):
+        return [act["blocked"]]
     miss = [f"{k} {v}" for k, v in act.get("requires", {}).items() if levels.get(k.lower(), 0) < v]
     if act.get("isk_min") and wallet < act["isk_min"]:
         miss.append(f"{act['isk_min']:,.0f} ISK")

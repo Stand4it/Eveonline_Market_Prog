@@ -245,7 +245,7 @@
     "Planetology": 1
    },
    "isk_min": 2000000,
-   "how": "Set up a colony; harvest every few days."
+   "how": "Set up a colony (Buy command center). Rotonos has 8 planets: I and III Barren (I has Carbon Compounds, Microorganisms, Base Metals, Aqueous Liquids, Noble Metals), II/IV/V Gas. Next door: Ligare 9 planets, Waison 7, Tiberis 7, Axiosere. Harvest every few days."
   },
   {
    "id": "invention_t2",
@@ -285,6 +285,42 @@
     "Gallente Frigate": 4
    },
    "how": "Only in safe space with a proper combat ship; time one hour."
+  },
+  {
+   "id": "colony_sov",
+   "name": "Sovereignty colony resources (power/workforce)",
+   "area": "industry",
+   "match": [
+    "sovereignty"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "null-sec sovereignty space (nearest 16+ jumps): not routed",
+   "how": "Not for a new character."
+  },
+  {
+   "id": "merc_dens",
+   "name": "Mercenary Dens (Infomorph Decryption Keys)",
+   "area": "industry",
+   "match": [
+    "mercenary"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {
+    "Mercenary Management": 1
+   },
+   "blocked": "Omega clone only, needs a Skyhook on a temperate planet in sov space: not routed",
+   "how": "Later, if ever."
   }
  ]
 }
