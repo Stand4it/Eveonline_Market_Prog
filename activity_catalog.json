@@ -117,7 +117,7 @@
    "minutes": 25,
    "risk": "low",
    "requires": {},
-   "how": "Find a Level 1 security agent near you (`agents`), time one mission."
+   "how": "Nearest Level 1 security agents: Emens Deroutte, Axiosere (1 jump, Federation Navy); Berwelet Trisevent, Lustre (3 jumps, Sisters of EVE); Annve Hoddoren / Ongunbjer Hetinold, Tourier (5 jumps). Needs a combat-capable ship; time one mission."
   },
   {
    "id": "agent_l2_security",
@@ -210,7 +210,7 @@
    "minutes": 30,
    "risk": "low",
    "requires": {},
-   "how": "Take a safe courier contract (Contracts > Courier) along a route you fly anyway."
+   "how": "Distribution (courier) agents: L1 Trenck Larcacraine, Agrallarier (7 jumps); L2 Dire Serin, Foves (11), Ivonalle Galelare, Slays (11). Or Contracts > Courier along a route you fly anyway."
   },
   {
    "id": "lp_store",
@@ -392,6 +392,61 @@
    "requires": {},
    "blocked": "cosmetic only (auto-injected, cannot be sold): no ISK value, skipped",
    "how": "Ignore for ISK."
+  },
+  {
+   "id": "agent_mining_l1",
+   "name": "Mining agents (deliver ore): Level 1",
+   "area": "mining",
+   "match": [
+    "mining agent",
+    "augumene",
+    "emps"
+   ],
+   "prior": [
+    100000,
+    500000
+   ],
+   "minutes": 25,
+   "risk": "low",
+   "requires": {},
+   "how": "Emps Metyt, Axiosere (1 jump, Astral Mining): ore delivery. Others 6 jumps (Arant, Hotak, Tindfjalla)."
+  },
+  {
+   "id": "agent_rd",
+   "name": "R&D agents (research points and datacores)",
+   "area": "science",
+   "match": [
+    "r&d agent",
+    "research point"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "none",
+   "requires": {
+    "Science": 1
+   },
+   "blocked": "needs standing and R&D skills; nearest 8 jumps: later",
+   "how": "Later."
+  },
+  {
+   "id": "agent_locator",
+   "name": "Locator agents (find player characters)",
+   "area": "agents",
+   "match": [
+    "locator"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "tracks other players: skipped (stay good)",
+   "how": "Skipped."
   }
  ]
 }
