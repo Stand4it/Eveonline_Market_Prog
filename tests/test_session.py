@@ -607,3 +607,23 @@ class MiningSitesTests(unittest.TestCase):
         self.assertEqual(r[0]["system"], "Rotonos")                                  # 0 jumps beats the 1-jump sites with the same ores
         self.assertEqual(r[0]["best_ore"], "Pyroxeres 0-Grade")
         self.assertIn("WHERE: Rotonos", recommend(con))
+
+
+class HaulSafetyTests(unittest.TestCase):
+    def test_kept_gear_is_not_hauled_and_side_trades_are_capped(self):
+        from eve_profit import haul
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        self.assertLessEqual(haul.TRADE_WALLET_SHARE, 0.5)
+        self.assertLess(haul.TRADE_HAIRCUT, 1.0)
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        far = [x for x, r in g.reach(1, 3).items() if r.jumps == 2][0]
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(883,'Core Scanner Probe I',1,1)")
+        con.execute("INSERT INTO orders VALUES(990101,883,?,?,10000001,1,9000.0,50,1,'',1)", (60000000 + far, far))
+        con.execute("INSERT INTO inventory VALUES(883,1,8)")
+        con.execute("DELETE FROM inventory WHERE type_id!=883")
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        self.assertIsNone(haul.haul_option(con, g, p))                      # the only stack is on the keep list

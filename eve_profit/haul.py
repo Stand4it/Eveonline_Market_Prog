@@ -2,6 +2,7 @@
 other activity: (extra ISK vs selling it right here) / (trips x round trip + docking). Ore may ride in a mining ship's ore hold."""
 import math
 
+from .along import keep_names
 from .orders import load_books, sell_into_bids
 from .sellplan import is_ore, ore_hold_m3
 
@@ -9,6 +10,8 @@ DOCK_MIN = 2.0
 MIN_GAIN = 50_000.0
 MAX_JUMPS = 25
 MAX_TRIPS = 3
+TRADE_WALLET_SHARE = 0.30    # side trades may use at most this share of your wallet
+TRADE_HAIRCUT = 0.5          # count only half of the projected side-trade profit: prices move and thin orders vanish
 
 
 def haul_option(con, g, p):
@@ -19,9 +22,12 @@ def haul_option(con, g, p):
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     ore_cap, cargo = ore_hold_m3(con), max(p.cargo_m3, 1.0)
+    keep = keep_names(con)                                   # gear you plan to use (probes, miners...) is never hauled off to sell
     per_dest = {}
     for inv in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = inv["type_id"], inv["quantity"]
+        if str(name.get(tid, "")).lower() in keep:
+            continue
         _, local = sell_into_bids(buys.get(tid, {}).get(cur, []), qty, p.sales_tax)
         best = None
         for b, bids in buys.get(tid, {}).items():
@@ -67,9 +73,12 @@ def enrich_route(con, g, p, h):
     extra_isk, extra_min, lines = 0.0, 0.0, []
     try:
         hold = min(h["other_m3"], p.cargo_m3) if h["other_m3"] else 0.0
-        isk, mins, tl = trade_extras(con, g, p, {"to_system": h["dest"], "m3": hold, "one_way": False})
+        capped = dataclasses.replace(p, wallet_isk=p.wallet_isk * TRADE_WALLET_SHARE)           # never put the whole wallet into side trades
+        isk, mins, tl = trade_extras(con, g, capped, {"to_system": h["dest"], "m3": hold, "one_way": False})
+        isk *= TRADE_HAIRCUT                                                                    # prices move before you get there
         if isk > 0:
-            lines += ["ON THE WAY (spare hold, there and back):"] + ["      " + x for x in tl]
+            lines += [f"ON THE WAY (spare hold, there and back; at most {TRADE_WALLET_SHARE:.0%} of your wallet; counted at {TRADE_HAIRCUT:.0%} because prices move; "
+                      "CONFIRM each buy with `check`/the market window first, a huge margin on one unit is often a trap):"] + ["      " + x for x in tl]
             for k in range(h["trips"]):
                 extra_isk += isk * (1.0 if k == 0 else 0.5)             # repeat trips: market depth is partly used up
                 extra_min += mins
