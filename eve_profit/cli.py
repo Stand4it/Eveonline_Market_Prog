@@ -769,9 +769,11 @@ def _now(a):
         keep_ = keep_names(con)
         names_ = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
         # stacks with NO local buyer and few units are often rare items (limited SKINs, nanocoatings, event loot) that sell for a lot elsewhere
+        adj_ = {r[0]: r[1] or 0.0 for r in con.execute("SELECT type_id,adjusted_price FROM prices")}       # CCP's average price: ranks which unknown stacks matter
         unpriced = [{"tid": r["type_id"], "name": names_.get(r["type_id"], r["type_id"]), "sold": r["quantity"]}
                     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (g.id_of(p.current_system),))
                     if r["type_id"] not in priced and r["quantity"] <= 20 and str(names_.get(r["type_id"], "")).lower() not in keep_]
+        unpriced.sort(key=lambda d: -(adj_.get(d["tid"], 0.0) * d["sold"]))
         sells = sells[:2] + unpriced[:3]
         if sells:
             print(f"[4/4 best price in all of New Eden for {len(sells)} stack(s): your biggest sells and rare items nobody here buys] ...", flush=True)

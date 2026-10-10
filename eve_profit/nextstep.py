@@ -514,6 +514,8 @@ def _name_of(step):
         return "Skills buy book"
     if lo.startswith("step: queue a skill"):
         return "Skills queue"
+    if lo.startswith("step: air daily goals"):
+        return "AIR Daily Goals"
     if lo.startswith("step: test"):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: haul"):

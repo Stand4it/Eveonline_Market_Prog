@@ -678,3 +678,9 @@ class ExperimentClockTests(unittest.TestCase):
         self.assertEqual(con.execute("SELECT value FROM meta WHERE key='start_count'").fetchone()[0], "1")
         start(con, "Test Project Discovery", 1, wallet=1e7)
         self.assertEqual(con.execute("SELECT value FROM meta WHERE key='last_exp'").fetchone()[0], "2")
+
+
+class TimerNameTests2(unittest.TestCase):
+    def test_daily_goals_timer_name_is_short(self):
+        from eve_profit.nextstep import _name_of
+        self.assertEqual(_name_of("STEP: AIR DAILY GOALS - about 445,000 ISK for any 2 of the 5 goals (resets daily)\n   Destroy 25"), "AIR Daily Goals")
