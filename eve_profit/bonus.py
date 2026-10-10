@@ -66,7 +66,17 @@ def daily_goal_due(con, today=None):
     return not (r and r[0] == today)
 
 
-def daily_goal_step(pr):
+def daily_goal_step(pr, con=None, free_ride=False):
+    """The daily-goals step. With a DB it picks the cheapest pair of goals (dailygoals.plan); without one it prints the static list."""
+    if con is not None:
+        try:
+            from .dailygoals import format_plan, plan
+            prog = {g["goal"]: g.get("progress", "") for g in pr.get("goals", [])}
+            pl = plan(con, pr.get("reward_isk", 445000), free_ride)
+            if pl["best"]:
+                return format_plan(pl, prog)
+        except Exception:                                               # noqa: BLE001
+            pass
     L = [f"STEP: AIR DAILY GOALS - about {pr.get('reward_isk', 0):,.0f} ISK for any 2 of the 5 goals (resets daily)"]
     for g in pr.get("goals", []):
         L.append(f"   {g['goal']:<34} {g.get('progress', '')}")

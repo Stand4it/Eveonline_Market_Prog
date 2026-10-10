@@ -684,3 +684,38 @@ class TimerNameTests2(unittest.TestCase):
     def test_daily_goals_timer_name_is_short(self):
         from eve_profit.nextstep import _name_of
         self.assertEqual(_name_of("STEP: AIR DAILY GOALS - about 445,000 ISK for any 2 of the 5 goals (resets daily)\n   Destroy 25"), "AIR Daily Goals")
+
+
+class DailyGoalPlannerTests(unittest.TestCase):
+    def _con(self):
+        return db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+
+    def test_armor_repair_is_never_routed_and_jumps_are_free_on_a_far_trip(self):
+        from eve_profit.dailygoals import plan
+        con = self._con()
+        pl = plan(con, 445000, free_ride=True)
+        rep = [o for o in pl["options"] if o["goal"].startswith("Armor")][0]
+        self.assertFalse(rep["ok"])
+        self.assertTrue(pl["best"])
+        names = [o["goal"] for o in pl["best"]["pair"]]
+        self.assertNotIn(rep["goal"], names)
+        other = [o for o in pl["best"]["pair"] if o["goal"] != "Complete 3 Jumps"][0]
+        self.assertEqual(pl["best"]["minutes"], other["minutes"] + 1.0)      # the 3 jumps cost only 1 extra minute on a trip you take anyway
+
+    def test_build_uses_hangar_materials_and_picks_the_free_build(self):
+        from eve_profit.dailygoals import build_option
+        con = self._con()
+        con.execute("INSERT INTO types(type_id,name) VALUES(1,'Toy Blueprint'),(2,'Tritanium')")
+        con.execute("INSERT INTO my_blueprints(blueprint_id) VALUES(1)")
+        con.execute("INSERT INTO bp_materials VALUES(1,2,100)")
+        con.execute("INSERT INTO inventory VALUES(2,1,500)")
+        o = build_option(con)
+        self.assertTrue(o["ok"])
+        self.assertEqual(o["cash"], 0.0)
+        self.assertIn("already in your hangar", o["how"])
+
+    def test_step_text_names_the_best_pair_and_the_not_routed_goal(self):
+        from eve_profit.dailygoals import format_plan, plan
+        txt = format_plan(plan(self._con(), 445000, free_ride=True))
+        self.assertIn("BEST PAIR", txt)
+        self.assertIn("NOT ROUTED", txt)
