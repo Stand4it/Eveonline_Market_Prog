@@ -1,20 +1,158 @@
 {
  "why": "Mission agents near the character, read from Agency > Agents & Missions > Mission Agents (2026-10-10). level = agent level, jumps from Rotonos. Standings gate the higher levels. Add more from screenshots.",
  "agents": [
-  {"type": "Security", "name": "Emens Deroutte", "level": 1, "system": "Axiosere", "sec": 1.0, "jumps": 1, "corp": "Federation Navy"},
-  {"type": "Security", "name": "Berwelet Trisevent", "level": 1, "system": "Lustre", "sec": 1.0, "jumps": 3, "corp": "Sisters of EVE"},
-  {"type": "Security", "name": "Annve Hoddoren", "level": 1, "system": "Tourier", "sec": 0.9, "jumps": 5, "corp": "Republic Security Services"},
-  {"type": "Security", "name": "Ongunbjer Hetinold", "level": 1, "system": "Tourier", "sec": 0.9, "jumps": 5, "corp": "Republic Security Services"},
-  {"type": "Mining", "name": "Emps Metyt", "level": 1, "system": "Axiosere", "sec": 1.0, "jumps": 1, "corp": "Astral Mining Inc."},
-  {"type": "Mining", "name": "Alpielanda Plampsen", "level": 1, "system": "Arant", "sec": 0.6, "jumps": 6, "corp": "Quafe Company"},
-  {"type": "Mining", "name": "Natakko Kuomi", "level": 1, "system": "Hotak", "sec": 1.0, "jumps": 6, "corp": "Deep Core Mining Inc."},
-  {"type": "Mining", "name": "Akrenur Fronkendar", "level": 1, "system": "Tindfjalla", "sec": 1.0, "jumps": 6, "corp": "Minmatar Mining Corporation"},
-  {"type": "Distribution", "name": "Trenck Larcacraine", "level": 1, "system": "Agrallarier", "sec": 0.9, "jumps": 7, "corp": "Astral Mining Inc."},
-  {"type": "Distribution", "name": "Dire Serin", "level": 2, "system": "Foves", "sec": 0.6, "jumps": 11, "corp": "Center for Advanced Studies"},
-  {"type": "Distribution", "name": "Ivonalle Galelare", "level": 2, "system": "Slays", "sec": 0.5, "jumps": 11, "corp": "Center for Advanced Studies"},
-  {"type": "Distribution", "name": "Armailitte Alonckbraert", "level": 2, "system": "Olide", "sec": 0.7, "jumps": 15, "corp": "Center for Advanced Studies"},
-  {"type": "R&D", "name": "Obalanes Ardarette", "level": 1, "system": "Carirgnottin", "sec": 0.6, "jumps": 8, "corp": "Duvolle Laboratories"},
-  {"type": "R&D", "name": "Bouveseuston Orvyllerier", "level": 1, "system": "Carirgnottin", "sec": 0.6, "jumps": 8, "corp": "CreoDron"}
+  {
+   "type": "Security",
+   "name": "Emens Deroutte",
+   "level": 1,
+   "system": "Axiosere",
+   "sec": 1.0,
+   "jumps": 1,
+   "corp": "Federation Navy"
+  },
+  {
+   "type": "Security",
+   "name": "Berwelet Trisevent",
+   "level": 1,
+   "system": "Lustre",
+   "sec": 1.0,
+   "jumps": 3,
+   "corp": "Sisters of EVE"
+  },
+  {
+   "type": "Security",
+   "name": "Annve Hoddoren",
+   "level": 1,
+   "system": "Tourier",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Republic Security Services"
+  },
+  {
+   "type": "Security",
+   "name": "Ongunbjer Hetinold",
+   "level": 1,
+   "system": "Tourier",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Republic Security Services"
+  },
+  {
+   "type": "Mining",
+   "name": "Emps Metyt",
+   "level": 1,
+   "system": "Axiosere",
+   "sec": 1.0,
+   "jumps": 1,
+   "corp": "Astral Mining Inc."
+  },
+  {
+   "type": "Mining",
+   "name": "Alpielanda Plampsen",
+   "level": 1,
+   "system": "Arant",
+   "sec": 0.6,
+   "jumps": 6,
+   "corp": "Quafe Company"
+  },
+  {
+   "type": "Mining",
+   "name": "Natakko Kuomi",
+   "level": 1,
+   "system": "Hotak",
+   "sec": 1.0,
+   "jumps": 6,
+   "corp": "Deep Core Mining Inc."
+  },
+  {
+   "type": "Mining",
+   "name": "Akrenur Fronkendar",
+   "level": 1,
+   "system": "Tindfjalla",
+   "sec": 1.0,
+   "jumps": 6,
+   "corp": "Minmatar Mining Corporation"
+  },
+  {
+   "type": "Distribution",
+   "name": "Trenck Larcacraine",
+   "level": 1,
+   "system": "Agrallarier",
+   "sec": 0.9,
+   "jumps": 7,
+   "corp": "Astral Mining Inc."
+  },
+  {
+   "type": "Distribution",
+   "name": "Dire Serin",
+   "level": 2,
+   "system": "Foves",
+   "sec": 0.6,
+   "jumps": 11,
+   "corp": "Center for Advanced Studies"
+  },
+  {
+   "type": "Distribution",
+   "name": "Ivonalle Galelare",
+   "level": 2,
+   "system": "Slays",
+   "sec": 0.5,
+   "jumps": 11,
+   "corp": "Center for Advanced Studies"
+  },
+  {
+   "type": "Distribution",
+   "name": "Armailitte Alonckbraert",
+   "level": 2,
+   "system": "Olide",
+   "sec": 0.7,
+   "jumps": 15,
+   "corp": "Center for Advanced Studies"
+  },
+  {
+   "type": "R&D",
+   "name": "Obalanes Ardarette",
+   "level": 1,
+   "system": "Carirgnottin",
+   "sec": 0.6,
+   "jumps": 8,
+   "corp": "Duvolle Laboratories"
+  },
+  {
+   "type": "R&D",
+   "name": "Bouveseuston Orvyllerier",
+   "level": 1,
+   "system": "Carirgnottin",
+   "sec": 0.6,
+   "jumps": 8,
+   "corp": "CreoDron"
+  },
+  {
+   "type": "Locator",
+   "name": "Fette Aleartener",
+   "level": 1,
+   "system": "Alenia",
+   "sec": 0.9,
+   "jumps": 6,
+   "corp": "Astral Mining Inc.",
+   "skipped": "finds player characters"
+  },
+  {
+   "type": "Locator",
+   "name": "Carpon Onck",
+   "level": 1,
+   "system": "Derririntel",
+   "sec": 0.8,
+   "jumps": 7,
+   "corp": "Chemal Tech",
+   "skipped": "finds player characters"
+  }
  ],
- "categories": {"Security": "hired guns / combat missions", "Distribution": "courier cargo moves", "Mining": "deliver ore", "R&D": "materials research (needs standing and datacores)", "Locator": "find player characters (skipped)"}
+ "categories": {
+  "Security": "hired guns / combat missions",
+  "Distribution": "courier cargo moves",
+  "Mining": "deliver ore",
+  "R&D": "materials research (needs standing and datacores)",
+  "Locator": "find player characters (skipped)"
+ }
 }
