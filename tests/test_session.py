@@ -559,3 +559,36 @@ class ProgressValueTests(unittest.TestCase):
         self.assertEqual(got[0][1], "test Mining")
         self.assertGreater(got[0][0], 150000.0)                                   # prior + model value
         self.assertEqual(experiment_candidates(con, {"Mining": 5}, v), [])
+
+
+class CatalogTests(unittest.TestCase):
+    def _con(self):
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(777,'Trade',0.01,1)")
+        return con
+
+    def test_status_locked_unlocked_and_modeled(self):
+        from eve_profit.catalog import models_report, status
+        con = self._con()
+        st = {a["id"]: a for a in status(con, 6_900_000)}
+        self.assertTrue(st["pd"]["unlocked"])
+        self.assertFalse(st["agent_l2_security"]["unlocked"])               # needs Gallente Frigate 3 etc.
+        self.assertIn("Trade 2", st["station_trading"]["missing"] or ["Trade 2"])
+        for i in range(3):
+            con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Project Discovery',50000,0.5,?)", (i,))
+        self.assertEqual({a["id"]: a for a in status(con)}["pd"]["state"], "MODELED")
+        self.assertIn("MODEL MAP", models_report(con, 6_900_000))
+
+    def test_experiment_is_offered_every_fourth_step_and_on_new_unlock(self):
+        from eve_profit.catalog import EVERY, pick_experiment
+        con = self._con()
+        act, why, seen = pick_experiment(con, 6_900_000, 700_000.0, counter=1, last_exp=0, seen=set())
+        self.assertIsNone(act)                                              # first call only records what is already unlocked
+        self.assertTrue(seen)
+        act, why, _ = pick_experiment(con, 6_900_000, 700_000.0, counter=EVERY, last_exp=0, seen=set(seen))
+        self.assertIsNotNone(act)
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(778,'Industry',0.01,1)")
+        con.execute("INSERT INTO character_skills(skill_id,level,sp) VALUES(778,1,100)")
+        act, why, _ = pick_experiment(con, 6_900_000, 700_000.0, counter=2, last_exp=1, seen=set(seen))
+        self.assertEqual(act["id"], "manufacturing_t1")
+        self.assertIn("NEW", why)

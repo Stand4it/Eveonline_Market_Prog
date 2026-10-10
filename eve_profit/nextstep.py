@@ -617,12 +617,31 @@ def next_action(con, g, p, full=False):
             trade_text = core
     cands.sort(key=lambda c: -c[0])
     why = ""
+    exp_note = ""
+    try:                                                         # MODEL-BUILDING turn: an unmodeled, unlocked activity goes first now and then
+        import json as _j
+        from .catalog import experiment_step, pick_experiment
+        meta = {r[0]: r[1] for r in con.execute("SELECT key,value FROM meta WHERE key IN ('next_count','last_exp','seen_unlocked')")}
+        counter = int(meta.get("next_count", 0)) + 1
+        last_exp = int(meta.get("last_exp", 0))
+        seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
+        best_known = max((c[0] for c in cands), default=0.0)
+        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen)
+        con.execute("INSERT OR REPLACE INTO meta VALUES('next_count',?)", (str(counter),))
+        con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(seen | set(new_seen))),))
+        if act:
+            con.execute("INSERT OR REPLACE INTO meta VALUES('last_exp',?)", (str(counter),))
+            cands.insert(0, (float("inf"), f"TEST {act['name']}", experiment_step(act, reason), reason))
+            exp_note = f"MODEL-BUILDING TURN: {reason}. The best-ISK/hr options stay in the list below."
+        con.commit()
+    except Exception:                                            # noqa: BLE001
+        pass
     if cands:
         steps.append(cands[0][2])
         trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
         if len(cands) > 1:
             why = "WHY THIS ONE (ISK per hour, same yardstick for all): " + "; ".join(
-                f"{'>> ' if i == 0 else ''}{c[1]} {c[0]:,.0f}" for i, c in enumerate(cands[:5]))
+                f"{'>> ' if i == 0 else ''}{c[1]} " + ("(model turn)" if c[0] == float("inf") else f"{c[0]:,.0f}") for i, c in enumerate(cands[:5]))
             why += "   (cash + the value of progress and of teaching the model; numbers editable in progress_values.json)"
     if trade_text:
         steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
@@ -632,7 +651,7 @@ def next_action(con, g, p, full=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
-    out = _chain(steps) + (("\n\n" + why) if why else "") + "\n\n" + DONE
+    out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + "\n\n" + DONE
     if not selling or len(steps) > 1:
         out += "\n(more detail: python -m eve_profit next --all)"
     return out + home
