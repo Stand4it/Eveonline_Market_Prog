@@ -152,6 +152,19 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR, skip=()
             "taken": taken, "cargo_m3": p.cargo_m3, "held": held, "left_behind": left_behind, "dest": dest_name, "path_ids": path}
 
 
+def _agents_on_route(route_names):
+    """Mission agents (mission_agents.json, skipping locators/R&D) whose system is on the route."""
+    import json
+    import os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "mission_agents.json")
+    try:
+        agents = json.load(open(f, encoding="utf-8")).get("agents", [])
+    except (OSError, ValueError):
+        return []
+    on = set(route_names)
+    return [a for a in agents if a["system"] in on and a["type"] in ("Security", "Mining", "Distribution")]
+
+
 def format_journey(res, limit=8):
     L = [f"JOURNEY to {res['dest']}: {res['jumps']} jumps on the safe route"
          + (f" + {res['extra_jumps']} jumps of side trips" if res["extra_jumps"] else ""),
@@ -176,6 +189,10 @@ def format_journey(res, limit=8):
     if res["left_behind"]:
         L.append(f"\nLEFT BEHIND (hold full): {len(res['left_behind'])} stacks worth {sum(d['net'] for d in res['left_behind']):,.0f} ISK"
                  " - a second trip, or list them where they are")
+    ag = _agents_on_route(res["route"])
+    if ag:
+        L += ["", "MISSION AGENTS ON YOUR ROUTE (open their window as you pass; a Level 1 job here beats flying empty):"]
+        L += [f"   {a['name']:<24} L{a['level']} {a['type']:<12} at {a['system']} ({a['corp']})" for a in ag]
     L += ["", "Compare with LISTING the same goods and waiting: that can pay more but may take weeks or never sell, and the "
           "ISK/hr above only counts your active time.",
           "Prices are from your last scan: refresh first with `journey --to NAME --live`, then confirm each buy with `check`."]
