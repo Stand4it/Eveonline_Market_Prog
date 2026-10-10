@@ -762,12 +762,21 @@ def _now(a):
         con = db.connect(a.db)
         p = Profile.load(a.profile)
         g = Graph(con)
-        sells = [d for d in plan_along(con, g, p, p.current_system)["sell_here"]
-                 if d["advice"] != "LIST" and d["net"] >= 5_000_000 and d.get("tid")]
+        res_ = plan_along(con, g, p, p.current_system)
+        sells = [d for d in res_["sell_here"] if d["advice"] != "LIST" and d["net"] >= 5_000_000 and d.get("tid")]
+        priced = {d["tid"] for d in res_["sell_here"]}
+        from .along import keep_names
+        keep_ = keep_names(con)
+        names_ = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
+        # stacks with NO local buyer and few units are often rare items (limited SKINs, nanocoatings, event loot) that sell for a lot elsewhere
+        unpriced = [{"tid": r["type_id"], "name": names_.get(r["type_id"], r["type_id"]), "sold": r["quantity"]}
+                    for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (g.id_of(p.current_system),))
+                    if r["type_id"] not in priced and r["quantity"] <= 20 and str(names_.get(r["type_id"], "")).lower() not in keep_]
+        sells = sells[:2] + unpriced[:3]
         if sells:
-            print(f"[4/4 best price in all of New Eden for your {min(len(sells), 2)} biggest sell stack(s)] ...", flush=True)
+            print(f"[4/4 best price in all of New Eden for {len(sells)} stack(s): your biggest sells and rare items nobody here buys] ...", flush=True)
             esi = ESI()
-            for d in sells[:2]:
+            for d in sells:
                 rows, _ = best_prices(con, g, p, esi, d["tid"], d["sold"], log=lambda m: None)
                 checks.append(f"   {d['name']}: " + format_best(d["name"], d["sold"], rows, p.current_system).splitlines()[-1])
         else:
