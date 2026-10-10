@@ -6,6 +6,16 @@ from .planner import plan
 AFTER = "Then run:  python -m eve_profit now"
 
 
+def _better_places(con, g, p, min_extra=50_000.0, rate=None):
+    """{type_id: sell_plan row} for stacks here where carrying or a detour to a scanned market pays clearly more than selling now."""
+    try:
+        from .sellplan import sell_plan
+        res = sell_plan(con, g, p, min_value=100_000.0, rate=rate)
+    except Exception:                                                   # noqa: BLE001
+        return {}
+    return {x["tid"]: x for x in res["rows"] if not x["best_label"].startswith(("SELL", "LIST")) and x["extra"] >= min_extra}
+
+
 def rebuy_note(d):
     """One line when the item is a building material: what rebuying it later would cost against what you get now."""
     if not d.get("used_in") or not d.get("rebuy"):
@@ -26,8 +36,13 @@ def _next_action_core(con, g, p):
     if sells:
         total = sum(d["net"] for d in sells)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
+        better = _better_places(con, g, p)
         for d in sells[:8]:
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} @ {d['net'] / max(d['sold'], 1):>12,.2f} each = ~{d['net']:>12,.0f}")
+            b = better.get(d["tid"])
+            if b:
+                L.append(f"      BETTER PLACE: {b['best_label']} pays ~{b['best_net']:,.0f} (+{b['extra']:,.0f} ISK for ~{b['mins']:.0f} min extra)"
+                         + (f" [{b['note']}]" if b["note"] else ""))
             if rebuy_note(d):
                 L.append(rebuy_note(d))
         if len(sells) > 8:

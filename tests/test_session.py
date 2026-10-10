@@ -455,3 +455,21 @@ class CareersTests(unittest.TestCase):
         self.assertIn("600,000", out)
         self.assertIn("TRY NEXT: Explorer", out)
         self.assertIn("1 run(s): needs 2 more", out)
+
+
+class BetterPlaceTests(unittest.TestCase):
+    def test_next_points_at_a_clearly_better_market_nearby(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import _better_places
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        far = [x for x, r in g.reach(1, 3).items() if r.jumps == 2][0]
+        con.execute("DELETE FROM orders WHERE type_id=34")
+        con.execute("INSERT INTO orders VALUES(999001,34,60000001,1,10000001,1,185.0,100000,1,'',1)")
+        con.execute("INSERT INTO orders VALUES(999002,34,?,?,10000001,1,490.0,100000,1,'',1)", (60000000 + far, far))
+        con.execute("INSERT INTO inventory VALUES(34,1,2000)")
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        self.assertIn(34, _better_places(con, g, p, rate=1_000_000.0))

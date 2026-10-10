@@ -56,3 +56,4 @@
 - 2026-10-10: new command careers: timed runs grouped by career (Industrialist/Explorer/Soldier of Fortune/Enforcer/Mining/Trading/Project Discovery): runs, hours, ISK/hr, ISK/min, MEASURED (>=3 runs) vs needs more, UNMEASURED careers, TRY NEXT suggestion with an open offer.
 - 2026-10-10: careers fixes: cap booster/armor repairer/shuttle/navitas/decoy runs map to Industrialist, 'mixed' runs get their own row, TRY NEXT picks an unmeasured career that has an open offer for exactly that career; long lines no longer get an underline.
 - 2026-10-10: careers: BEST MEASURED only counts careers with >=3 runs and ignores the mixed row.
+- 2026-10-10: SELL NOW lines add 'BETTER PLACE: <carry/detour to scanned market> pays ~X (+Y ISK for ~Z min extra)' when sellplan finds >= 50k more nearby (user: 2,120 Kernite sold here at 185 while ~400-490 buyers exist elsewhere). Only markets in the scanned DB are considered; for the whole map run sellplan --world.
