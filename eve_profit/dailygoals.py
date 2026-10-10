@@ -165,6 +165,14 @@ def jumps_option(con, places=None, g=None, p=None, idx=0):
     how = f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)"
     if t_isk > 0:
         how += f"\n      trades on the way there and back: ~{t_isk:,.0f} ISK (half counted)\n         " + "\n         ".join(t_lines)
+    try:                                                                # agents on the route and cheap things you need anyway
+        from .tripplus import _agents, _route, cheap_needs
+        path = _route(g, p, sysname)
+        more = _agents(g, path) + cheap_needs(con, g, p, path) if path else []
+        if more:
+            how += "\n      also on that route:\n         " + "\n         ".join(more)
+    except Exception:                                                   # noqa: BLE001
+        pass
     return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 3 * PER_JUMP_MIN + t_min, "cash": -t_isk, "jumps_away": 0,
             "how": how, "dest": dest, "dest_system": sysname}
 

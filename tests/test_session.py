@@ -796,3 +796,25 @@ class ShopOnTheRouteTests(unittest.TestCase):
         txt = " ".join(o["how"] for o in far["best"]["pair"])
         self.assertIn("(on your route)", txt)
         self.assertLessEqual(far["best"]["minutes"], nowhere["best"]["minutes"])
+
+
+class TripPlusTests(unittest.TestCase):
+    def test_cheap_needs_finds_gear_you_lack_that_is_cheaper_on_the_route(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit import tripplus
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+        con.execute("INSERT INTO types(type_id,name) VALUES(777,'Miner I')")
+        here, there = g.id_of("Home"), g.id_of("Sys02")
+        con.execute("INSERT INTO orders(order_id,type_id,location_id,system_id,region_id,is_buy,price,volume_remain,fetched_at) VALUES(9001,777,1,?,1,0,50000,10,0)", (here,))
+        con.execute("INSERT INTO orders(order_id,type_id,location_id,system_id,region_id,is_buy,price,volume_remain,fetched_at) VALUES(9002,777,2,?,1,0,20000,10,0)", (there,))
+        lines = tripplus.cheap_needs(con, g, p, [here, there])
+        self.assertTrue(any("Miner I" in l and "Sys02" in l for l in lines), lines)
+
+    def test_extras_without_a_destination_is_empty(self):
+        from eve_profit.tripplus import extras
+        self.assertEqual(extras(None, None, None, None)["lines"], [])

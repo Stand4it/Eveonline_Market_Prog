@@ -628,6 +628,19 @@ def next_action(con, g, p, full=False):
             cands.append((best_trade, "best trade / planned activity", core, "from the last scan"))
             trade_text = core
     cands.sort(key=lambda c: -c[0])
+    try:                                                         # every trip gets the same extras: agents on the route, cheap things you need, trades both ways
+        from .tripplus import extras as _extras
+        dest_ = None
+        if cands and cands[0][1].startswith("haul stock to ") and h:
+            dest_ = h["dest"]
+        if dest_:
+            ex_ = _extras(con, g, p, dest_)
+            keep_lines = [l for l in ex_["lines"] if not l.startswith(("going:", "coming back:", "trades there"))] if h.get("extra_lines") else ex_["lines"]
+            if keep_lines:
+                c0 = cands[0]
+                cands[0] = (c0[0], c0[1], c0[2] + "\n   ALSO ON THE ROUTE:\n" + "\n".join("      " + l for l in keep_lines), c0[3])
+    except Exception:                                            # noqa: BLE001
+        pass
     why = ""
     exp_note = ""
     try:                                                         # MODEL-BUILDING turn: an unmodeled, unlocked activity goes first now and then
@@ -665,6 +678,12 @@ def next_action(con, g, p, full=False):
                     where = recommend(con)
                     if where:
                         step_txt = step_txt.replace("\n   about", "\n" + where + "\n   about", 1)
+                        from .mining_sites import rank_sites
+                        from .tripplus import extras as _extras
+                        top_ = rank_sites(con)[0]
+                        ex_ = _extras(con, g, p, top_["system"]) if top_["jumps"] else None
+                        if ex_ and ex_["lines"]:
+                            step_txt += "\n   ALSO ON THE ROUTE:\n" + "\n".join("      " + l for l in ex_["lines"])
                 except Exception:                                # noqa: BLE001
                     pass
             cands.insert(0, (float("inf"), f"TEST {act['name']}", step_txt, reason))

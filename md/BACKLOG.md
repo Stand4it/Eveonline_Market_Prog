@@ -8,3 +8,4 @@
 - Gear reserve: show 'cost to replace your current fit' and warn when wallet < that; spares for combat ships (auto_keep_fitted covers fitted modules only).
 - Persist worldwide price results (bestprice / now step 4) in a world_prices table (type, system, net each, jumps, ts) so next/haul can use them for rare stacks nobody near buys. Entropic Rose Metallic - Limited x2: Lustrevik 925k each (25 jumps, ~21 min), Jita 576k (18), Perimeter 481k (17), Botane 371k (6), Dodixie 370k (7); C-J6MT/Ney have no safe route.
 - Industry jobs: add scope esi-industry.read_character_jobs.v1 (needs re-login) so sync sees running jobs and 'Manufacturing jobs 0/1' without screenshots; then next can say 'job finishes in N min'.
+- tripplus: rank ALL candidates with route extras included (not just show them on the winner); long-term value (standing, unlocks, skills) per candidate in progress_values.json.
