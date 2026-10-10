@@ -68,11 +68,16 @@ def models_report(con, wallet=0.0):
     for a in sorted(st, key=lambda x: (x["area"], x["name"])):
         pr = f"{a['prior'][0] / 1000:,.0f}k - {a['prior'][1] / 1000:,.0f}k"
         rate = f"{a['rate']:,.0f}" if a["rate"] else "-"
-        state = a["state"] + ("" if a["unlocked"] else "  LOCKED: needs " + ", ".join(a["missing"]))
+        if a.get("blocked"):
+            state = "NOT ROUTED: " + a["blocked"].split(":")[0]
+        else:
+            state = a["state"] + ("" if a["unlocked"] else "  LOCKED: needs " + ", ".join(a["missing"]))
         L.append(f"{a['name'][:46]:<46} {a['area']:<12} {a['runs']:>4} {rate:>11}  {pr:<19} {state}")
     ok = [a for a in st if a["unlocked"]]
     done = [a for a in ok if a["state"] == "MODELED"]
-    L += ["", f"MODEL MAP: {len(done)} of {len(ok)} unlocked activities are modeled ({MODELED_RUNS}+ timed runs); {len(st) - len(ok)} more are locked behind skills or ISK.",
+    blocked = [a for a in st if a.get("blocked")]
+    L += ["", f"MODEL MAP: {len(done)} of {len(ok)} unlocked activities are modeled ({MODELED_RUNS}+ timed runs); {len(st) - len(ok) - len(blocked)} more are locked behind skills or ISK; "
+              f"{len(blocked)} are not routed (null-sec/Omega).",
           "Unmodeled options are offered by `next` every 4th step and the moment they unlock; new game features: add them to activity_catalog.json."]
     return "\n".join(L)
 
