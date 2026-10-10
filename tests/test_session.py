@@ -647,3 +647,14 @@ class WalletDeltaTests(unittest.TestCase):
         out = stop(con, E(), now=t_start + 120, wallet_now=6_388_377.0)
         self.assertIn("393,377", out)                                       # the sale counted, the purchase (negative) did not
         self.assertIn("wallet changed by +388,377", out)
+
+
+class DailyGoalTests2(unittest.TestCase):
+    def test_daily_goals_are_due_until_a_reward_is_seen_today(self):
+        from eve_profit.bonus import daily_goal_due, daily_goal_step
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        self.assertTrue(daily_goal_due(con, today="2026-10-10"))
+        con.execute("INSERT OR REPLACE INTO meta VALUES('daily_goal_last','2026-10-10')")
+        self.assertFalse(daily_goal_due(con, today="2026-10-10"))
+        self.assertTrue(daily_goal_due(con, today="2026-10-11"))
+        self.assertIn("AIR DAILY GOALS", daily_goal_step({"reward_isk": 445000, "goals": [{"goal": "Complete 3 Jumps", "progress": "0/3"}]}))

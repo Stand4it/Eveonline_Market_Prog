@@ -46,3 +46,30 @@ def daily_goal_hits(mission_text, progs=None):
                 if any(k in low for k in g.get("keywords", [])):
                     out.append(f"{g['goal']} ({g.get('progress', '')})")
     return out
+
+
+def daily_goal_program(progs=None):
+    for pr in progs if progs is not None else programs():
+        if pr.get("kind") == "daily_goals":
+            return pr
+    return None
+
+
+def daily_goal_due(con, today=None):
+    """True when no AIR Daily Goal reward has been seen in your wallet journal today (UTC), so the 2-of-5 daily reward is still on the table."""
+    import time as _t
+    today = today or _t.strftime("%Y-%m-%d", _t.gmtime())
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='daily_goal_last'").fetchone()
+    except Exception:                                                   # noqa: BLE001
+        return True
+    return not (r and r[0] == today)
+
+
+def daily_goal_step(pr):
+    L = [f"STEP: AIR DAILY GOALS - about {pr.get('reward_isk', 0):,.0f} ISK for any 2 of the 5 goals (resets daily)"]
+    for g in pr.get("goals", []):
+        L.append(f"   {g['goal']:<34} {g.get('progress', '')}")
+    L.append("   Cheapest pair: Complete 3 Jumps (any trip, e.g. to Manifest and back) + Manufacture an Item (start any small build in Industry),"
+             " or Scan 5 Signatures. Check the Opportunities > AIR Daily Goals window.")
+    return "\n".join(L)

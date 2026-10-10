@@ -99,6 +99,20 @@ def _sync_orders(con, esi, cid):
     return len(rows)
 
 
+def _sync_daily_goal(con, esi, cid):
+    """Remember the date (UTC) of the newest AIR Daily Goal reward in your wallet journal, so `next` does not offer the goals twice a day."""
+    try:
+        rows = esi.get(f"/characters/{cid}/wallet/journal/")[0]
+    except Exception:                                                   # noqa: BLE001
+        return None
+    hit = [e["date"][:10] for e in rows if "daily" in (e.get("ref_type", "") + " " + e.get("description", "")).lower()
+           and "goal" in (e.get("ref_type", "") + " " + e.get("description", "")).lower()]
+    if hit:
+        con.execute("INSERT OR REPLACE INTO meta VALUES('daily_goal_last', ?)", (max(hit),))
+        return max(hit)
+    return None
+
+
 def sync_character(con, esi, cid, profile):
     """Fills profile (system, ship, cargo, wallet, tax) and inventory. -> summary dict."""
     loc = esi.get(f"/characters/{cid}/location/")[0]
@@ -136,6 +150,7 @@ def sync_character(con, esi, cid, profile):
     _sync_attributes_and_queue(con, esi, cid)
     n_tx = _sync_transactions(con, esi, cid)
     n_orders = _sync_orders(con, esi, cid)
+    _sync_daily_goal(con, esi, cid)
     profile.mfg_slots_total = 1 + lv(MASS_PRODUCTION) + lv(ADV_MASS_PRODUCTION)
     jobs = esi.get(f"/characters/{cid}/industry/jobs/")[0]
     profile.mfg_slots_used = sum(1 for j in jobs if j["activity_id"] == 1

@@ -583,6 +583,13 @@ def next_action(con, g, p, full=False):
         counts, vals = run_counts(con), values()
     except Exception:                                            # noqa: BLE001
         counts, vals = {}, None
+    try:                                                          # AIR Daily Goals pay real ISK (445,000 seen): a main candidate until claimed today
+        from .bonus import daily_goal_due, daily_goal_program, daily_goal_step
+        dg = daily_goal_program()
+        if dg and dg.get("reward_isk") and daily_goal_due(con):
+            cands.append((dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20), "AIR daily goals", daily_goal_step(dg), "once a day"))
+    except Exception:                                            # noqa: BLE001
+        pass
     if agent:
         rate_adj = rate
         try:

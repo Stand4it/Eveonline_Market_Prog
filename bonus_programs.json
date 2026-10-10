@@ -32,7 +32,7 @@
    "progress_isk": 0,
    "reward_isk": 0,
    "reward_guess": true,
-   "note": "Same: any market profit counts. (2026-10-10: no longer shown in your rewards list; replaced by the Scordite bundle. Unsafe=false here only hides it.)",
+   "note": "Same: any market profit counts. (2026-10-10: no longer shown in your rewards list; replaced by the Scordite bundle. Unsafe=false here only hides it.) PAID: 50,000 ISK 'AIR Career Program Reward' 2026-10-09 02:50 UTC.",
    "safe": false
   },
   {
@@ -56,12 +56,12 @@
    "kind": "reward_bundle",
    "reward_isk": 62500,
    "claimed": true,
-   "note": "62,500 ISK, shown as Claimed on 2026-10-10: nothing left to do."
+   "note": "PAID: 62,500 ISK 'AIR Career Program Reward' 2026-10-10 05:14 UTC."
   },
   {
    "name": "AIR Daily Goals",
    "kind": "daily_goals",
-   "reward": "10,000 (blue icon; unit not identified) for completing 2 of the 5 goals, resets daily",
+   "reward": "OBSERVED 445,000 ISK ('Daily Goal Reward', wallet 2026-10-09 15:53 UTC) for completing the day's goals (2 of 5); resets daily",
    "goals": [
     {
      "goal": "Destroy 25 non-capsuleers",
@@ -105,7 +105,9 @@
       "jump"
      ]
     }
-   ]
+   ],
+   "reward_isk": 445000,
+   "minutes_estimate": 20
   },
   {
    "name": "Project Discovery (University of Caille)",
