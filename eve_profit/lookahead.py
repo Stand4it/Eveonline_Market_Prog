@@ -47,61 +47,197 @@ def _queue_hours(con, skill_name):
     return 0.0
 
 
-def unlock_options(con, g, p, base, horizon=HORIZON_H):
-    """Every locked, routable activity as a chain: train skills -> (books) -> (ISK gap) -> its own rate. Best gain first."""
+def load_unlocks():
+    """unlocks.json: ships, gear and standings that unlock or boost activities (data, grows with the game)."""
+    import json
+    import os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "unlocks.json")
     try:
-        from .advisor import virtual_levels
-        from .trainplan import book_list, plan_training, trainable_now
+        return json.load(open(f, encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _owned(con, item):
+    """Do you hold this ship / item (hangar, parked ships or fitted)?  -> quantity."""
+    n = 0
+    for sql in ("SELECT COALESCE(SUM(i.quantity),0) FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE t.name=? COLLATE NOCASE",
+                "SELECT COUNT(*) FROM my_ships s JOIN types t ON t.type_id=s.type_id WHERE t.name=? COLLATE NOCASE",
+                "SELECT COALESCE(SUM(f.quantity),0) FROM fitted f JOIN types t ON t.type_id=f.type_id WHERE t.name=? COLLATE NOCASE"):
+        try:
+            n += int(con.execute(sql, (item,)).fetchone()[0] or 0)
+        except Exception:                                               # noqa: BLE001
+            pass
+    return n
+
+
+def _price(con, g, p, item, est, qty=1):
+    """Cost to buy qty of item: cheapest ask within 10 jumps -> (ISK, where, jumps, from_market); else the estimate."""
+    try:
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (item,)).fetchone()
+        if row:
+            reach = g.reach(g.id_of(p.current_system), 10, p.avoid_yellow)
+            best = None
+            for sid, price in con.execute("SELECT system_id, MIN(price) FROM orders WHERE type_id=? AND is_buy=0 GROUP BY system_id", (row[0],)):
+                if sid in reach and (best is None or price < best[0]):
+                    best = (price, sid)
+            if best:
+                return best[0] * qty, g.name[best[1]], reach[best[1]].jumps, True
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return float(est) * qty, "", None, False
+
+
+def standing_with(con, corp):
+    """Best standing (-10..10) with any agent/corporation/faction whose name contains `corp`; None if unknown (sync fills the names)."""
+    try:
+        rows = con.execute("SELECT s.standing FROM standings s JOIN standing_names n ON n.from_id=s.from_id WHERE n.name LIKE ?", (f"%{corp}%",)).fetchall()
+    except Exception:                                                   # noqa: BLE001
+        return None
+    return max((r[0] for r in rows), default=None)
+
+
+def _skill_chain(con, g, p, goals):
+    """Skills to train for `goals` [(name, level, why)] -> (train hours on the clock, book cost, book note, first queueable step) or None."""
+    from .trainplan import book_list, plan_training, trainable_now
+    if not goals:
+        return 0.0, 0.0, "", None
+    best = {}
+    for sk, lvl, why in goals:
+        if lvl > best.get(sk, (0, ""))[0]:
+            best[sk] = (lvl, why)
+    res = plan_training(con, 24 * 365, [(k, v[0], v[1]) for k, v in best.items()])
+    if res["unknown"] or not res["steps"]:
+        return None
+    train_h = res["steps"][-1]["cum"] / 60.0
+    try:
+        books = book_list(con, g, p, res, hours=24 * 365)
+    except Exception:                                                   # noqa: BLE001
+        books = []
+    cost, note = 0.0, ""
+    for name, price, where, jumps in books:
+        if price is None:
+            note += f"{name} book: no seller found nearby; "
+        else:
+            cost += price
+            note += f"{name} book ~{price:,.0f} at {where} ({jumps} jumps); "
+    now = trainable_now(con, res)
+    return train_h, cost, note.strip("; "), (now[0] if now else None)
+
+
+def _missing_skills(con, req):
+    """[(skill, level, queued_hours)] you do not have yet; queued ones carry the hours until the queue finishes them."""
+    trained = skill_levels(con)
+    try:
+        virt = {r[0].lower(): r[1] for r in con.execute("SELECT t.name, s.level FROM character_skills s JOIN types t ON t.type_id=s.skill_id")}
+        for r in con.execute("SELECT t.name, q.level FROM skill_queue q JOIN types t ON t.type_id=q.skill_id"):
+            virt[r[0].lower()] = max(virt.get(r[0].lower(), 0), r[1])
+    except Exception:                                                   # noqa: BLE001
+        virt = trained
+    out = []
+    for sk, lvl in req.items():
+        if trained.get(sk.lower(), 0) >= lvl:
+            continue
+        out.append((sk, lvl, _queue_hours(con, sk) if virt.get(sk.lower(), 0) >= lvl else None))
+    return out
+
+
+def unlock_options(con, g, p, base, horizon=HORIZON_H):
+    """Every way to open a better activity as a chain of prerequisites: skills to train (clock time), ships and gear to buy, standing to earn
+    by running agent missions, ISK to earn. Also BOOSTS: a ship or gear that makes an activity you can do pay more. Best gain first."""
+    try:
+        from .trainplan import plan_training  # noqa: F401  (import check)
     except Exception:                                                   # noqa: BLE001
         return []
     wallet = float(p.wallet_isk or 0.0)
+    cat = {a["id"]: a for a in status(con, wallet)}
+    data = load_unlocks()
+    entries = ([{**e, "kind": "ship"} for e in data.get("ships", [])] + [{**e, "kind": "gear"} for e in data.get("gear", [])]
+               + [{**e, "kind": "standing"} for e in data.get("standings", [])])
+
+    def entry_need(e):
+        """-> (cost, delay_h, goals, parts) for one entry, or None when it is already satisfied."""
+        goals = [(sk, lvl, f"for {e.get('item', e.get('corp'))}") for sk, lvl, q in _missing_skills(con, e.get("requires", {})) if q is None]
+        queue_h = max([q for _, _, q in _missing_skills(con, e.get("requires", {})) if q is not None], default=0.0)
+        if e["kind"] == "standing":
+            cur = standing_with(con, e["corp"])
+            have = 0.0 if cur is None else cur
+            if have >= e["needs"]:
+                return None
+            steps = -(-int(round((e["needs"] - have) * 1000)) // max(int(round(e["per_step"] * 1000)), 1))
+            part = (f"standing with {e['corp']}: {'unknown (sync resolves the names), assuming 0' if cur is None else f'{cur:+.2f}'} -> {e['needs']:+.2f}: "
+                    f"about {steps} Level 1 missions from that corp ({steps * e['minutes_per_step']:.0f} min of the work you would do anyway)")
+            return 0.0, steps * e["minutes_per_step"] / 60.0, goals, [part], queue_h
+        qty = int(e.get("qty", 1))
+        have_n = _owned(con, e["item"])
+        if have_n >= qty:
+            return None
+        cost, where, jumps, mkt = _price(con, g, p, e["item"], e.get("est_cost", 0), qty - have_n)
+        part = f"buy {qty - have_n} x {e['item']} ~{cost:,.0f} ISK" + (f" at {where} ({jumps} jumps)" if where else " (estimate: not on the scanned market)")
+        return cost, 0.25, goals, [part], queue_h
+
     out = []
-    for a in status(con, wallet):
-        if a["unlocked"] or a.get("blocked"):
+    # 1. activities that are locked, or gated by a ship/gear/standing entry
+    by_act = {}
+    for e in entries:
+        for aid in e.get("unlocks", []):
+            by_act.setdefault(aid, []).append(e)
+    for aid in sorted(set(by_act) | {k for k, a in cat.items() if not a["unlocked"] and not a.get("blocked")}):
+        a = cat.get(aid)
+        if not a or a.get("blocked"):
             continue
-        trained = skill_levels(con)
-        goals, queue_h = [], 0.0
-        try:
-            vlv = {r[0].lower(): r[1] for r in con.execute("SELECT t.name, v.level FROM types t JOIN (SELECT skill_id, level FROM character_skills) v ON v.skill_id=t.type_id")}
-            for r in con.execute("SELECT t.name, q.level FROM skill_queue q JOIN types t ON t.type_id=q.skill_id"):
-                vlv[r[0].lower()] = max(vlv.get(r[0].lower(), 0), r[1])
-        except Exception:                                               # noqa: BLE001
-            vlv = trained
-        for sk, lvl in a.get("requires", {}).items():
-            if trained.get(sk.lower(), 0) >= lvl:
+        goals = [(sk, lvl, f"unlocks {a['name']}") for sk, lvl, q in _missing_skills(con, a.get("requires", {})) if q is None]
+        queue_h = max([q for _, _, q in _missing_skills(con, a.get("requires", {})) if q is not None], default=0.0)
+        cost, delay_parts, parts = 0.0, [queue_h], []
+        for e in by_act.get(aid, []):
+            need = entry_need(e)
+            if not need:
                 continue
-            if vlv.get(sk.lower(), 0) >= lvl:
-                queue_h = max(queue_h, _queue_hours(con, sk))          # already queued: just wait for it
-            else:
-                goals.append((sk, lvl, f"unlocks {a['name']}"))
-        train_h, books_cost, enabler, book_note = queue_h, 0.0, None, ""
-        if goals:
-            try:
-                res = plan_training(con, 24 * 365, goals)
-            except Exception:                                           # noqa: BLE001
-                continue
-            if res["unknown"] or not res["steps"]:
-                continue
-            train_h = max(train_h, res["steps"][-1]["cum"] / 60.0)
-            try:
-                books = book_list(con, g, p, res, hours=24 * 365)
-            except Exception:                                           # noqa: BLE001
-                books = []
-            for name, price, where, jumps in books:
-                if price is None:
-                    book_note = f"{name} book: no seller found nearby"
-                else:
-                    books_cost += price
-                    book_note += f"{name} book ~{price:,.0f} at {where} ({jumps} jumps); "
-            now = trainable_now(con, res)
-            if now:
-                enabler = now[0]
+            c, d, gl, pt, qh = need
+            cost += c
+            delay_parts.append(d)
+            delay_parts.append(qh)
+            goals += gl
+            parts += pt
         gap = max(0.0, float(a.get("isk_min", 0) or 0) - wallet)
+        if a["unlocked"] and not parts:
+            continue                                                    # open already and nothing to buy/earn
+        try:
+            chain = _skill_chain(con, g, p, goals)
+        except Exception:                                               # noqa: BLE001
+            chain = None
+        if chain is None:
+            continue
+        train_h, books, book_note, enabler = chain
         rate_u, src = act_rate(a)
-        delay_h = max(train_h, gap / max(base, 1.0))
-        gain = chain_gain(base, rate_u, delay_h, horizon, books_cost)
-        out.append({"id": a["id"], "name": a["name"], "rate": rate_u, "src": src, "delay_h": delay_h, "train_h": train_h, "gap": gap,
-                    "books_cost": books_cost, "book_note": book_note.strip("; "), "gain": gain, "enabler": enabler})
+        delay_h = max(delay_parts + [train_h, gap / max(base, 1.0)])
+        gain = chain_gain(base, rate_u, delay_h, horizon, cost + books)
+        out.append({"id": aid, "kind": "unlock", "name": a["name"], "rate": rate_u, "src": src, "delay_h": delay_h, "train_h": train_h, "gap": gap,
+                    "books_cost": books + cost, "book_note": book_note, "parts": parts, "gain": gain, "enabler": enabler})
+    # 2. boosts: the same activity pays more with this ship or gear
+    for e in entries:
+        for aid, mult in (e.get("boosts") or {}).items():
+            a = cat.get(aid)
+            if not a or a.get("blocked"):
+                continue
+            need = entry_need(e)
+            if not need:
+                continue
+            c, d, gl, pt, qh = need
+            try:
+                chain = _skill_chain(con, g, p, gl + [(sk, lvl, f"unlocks {a['name']}") for sk, lvl, q in _missing_skills(con, a.get("requires", {})) if q is None])
+            except Exception:                                           # noqa: BLE001
+                chain = None
+            if chain is None:
+                continue
+            train_h, books, book_note, enabler = chain
+            rate_u, src = act_rate(a)
+            new_rate = rate_u * float(mult)
+            delay_h = max(d, qh, train_h)
+            gain = chain_gain(base, new_rate, delay_h, horizon, c + books)
+            out.append({"id": e["id"], "kind": "boost", "name": f"{e.get('item', e.get('corp'))} -> {a['name']} x{mult}", "rate": new_rate, "src": src,
+                        "delay_h": delay_h, "train_h": train_h, "gap": 0.0, "books_cost": books + c, "book_note": book_note, "parts": pt, "gain": gain,
+                        "enabler": enabler})
     out.sort(key=lambda o: -o["gain"])
     return out
 
@@ -133,6 +269,8 @@ def format_long_view(an):
         wait = (f"{u['train_h']:.1f} h of training" if u["train_h"] else "") + (f"{' + ' if u['train_h'] else ''}{u['gap']:,.0f} ISK to earn" if u["gap"] else "")
         L.append(f"   UNLOCK {u['name']:<34} ~{u['rate']:>10,.0f} ISK/hr ({u['src']}), ready in {u['delay_h']:.1f} h" + (f" ({wait})" if wait else "")
                  + f"  => +{u['gain']:,.0f} ISK over the horizon")
+        for part in u.get("parts", []):
+            L.append(f"          {part}")
         if u["book_note"]:
             L.append(f"          books: {u['book_note']}")
     if an["unmodeled"]:

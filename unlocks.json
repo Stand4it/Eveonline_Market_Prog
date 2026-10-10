@@ -1,0 +1,17 @@
+{
+ "why": "What ships, gear and standings UNLOCK or BOOST. The look-ahead planner (`next` > THE LONG VIEW) prices each chain: buy/train/earn the prerequisites, then the activity pays its own rate for the rest of the planning horizon. unlocks = activity ids (activity_catalog.json) that need this item/standing; boosts = {activity id: multiplier on that activity's ISK/hr}; requires = skills (name: level) to use it; est_cost = used only when the item is not on the scanned market. ALL numbers here are guesses marked guess=true: edit them or replace them with your own timed runs. Add new ships, gear and standings as the game grows.",
+ "ships": [
+  {"id": "ship_incursus", "item": "Incursus", "unlocks": ["ratting", "agent_l2_security"], "requires": {"Gallente Frigate": 3}, "est_cost": 350000, "guess": true, "note": "Gallente combat frigate: missions and ratting"},
+  {"id": "ship_procurer", "item": "Procurer", "boosts": {"mining_belt": 1.5}, "requires": {"Mining Barge": 1}, "est_cost": 2500000, "guess": true, "note": "tanky mining barge: bigger yield and ore hold than the Venture"},
+  {"id": "ship_nereus", "item": "Nereus", "boosts": {"haul_stock": 1.4}, "requires": {"Gallente Hauler": 1}, "est_cost": 600000, "guess": true, "note": "bigger cargo hold for hauling and courier jobs"}
+ ],
+ "gear": [
+  {"id": "gear_miner2", "item": "Miner II", "qty": 3, "boosts": {"mining_belt": 1.25}, "requires": {"Mining": 3}, "est_cost": 60000, "guess": true, "note": "each: ~25% more ore than Miner I"},
+  {"id": "gear_probe_launcher", "item": "Core Probe Launcher I", "qty": 1, "unlocks": ["explore_sites"], "requires": {}, "est_cost": 60000, "guess": true, "note": "needed to scan down data and relic sites"},
+  {"id": "gear_probes", "item": "Core Scanner Probe I", "qty": 8, "unlocks": ["explore_sites"], "requires": {}, "est_cost": 120000, "guess": true, "note": "8 probes; keep them (keep_items.json)"}
+ ],
+ "standings": [
+  {"id": "standing_l2_navy", "corp": "Federation Navy", "needs": 1.0, "per_step": 0.15, "minutes_per_step": 25, "unlocks": ["agent_l2_security"], "guess": true,
+   "note": "Level 2 security agents want about 1.0 standing; each Level 1 mission from this corp or its faction adds a little"}
+ ]
+}

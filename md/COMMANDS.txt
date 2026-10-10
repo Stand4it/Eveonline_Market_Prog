@@ -110,7 +110,7 @@ FIT  -  what is fitted to your ship
 ZKILL  -  refresh the hauler-loss map
    example: python -m eve_profit zkill
 
-NEXT  -  ONE next step (agent offers, sell/list, best trade)
+NEXT  -  ONE next step; add --plan to look ahead (the chain and the long view)
    --sync         refresh your character data (assets, wallet, location) first
    --all          next: print everything (offers, skills, trades), not just the one step
    example: python -m eve_profit next
@@ -225,5 +225,8 @@ CAREERS  -  ISK/hr per career path from your timed runs; which to try next
 
 MODELS  -  the map of every activity: modeled, unmodeled, locked
    example: python -m eve_profit models
+
+HISTORY  -  the steps you completed, newest first, with ISK per minute
+   example: python -m eve_profit history --n 20
 
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.

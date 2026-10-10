@@ -160,8 +160,16 @@ def sync_character(con, esi, cid, profile):
                     [(x["corporation_id"], x["loyalty_points"])
                      for x in esi.get(f"/characters/{cid}/loyalty/points/")[0]])
     con.execute("DELETE FROM standings")
-    con.executemany("INSERT OR REPLACE INTO standings VALUES(?,?)",
-                    [(x["from_id"], x["standing"]) for x in esi.get(f"/characters/{cid}/standings/")[0]])
+    st_rows = esi.get(f"/characters/{cid}/standings/")[0]
+    con.executemany("INSERT OR REPLACE INTO standings VALUES(?,?)", [(x["from_id"], x["standing"]) for x in st_rows])
+    try:                                                                # names for the standing ids (agents, corporations, factions): public endpoint
+        ids = sorted({x["from_id"] for x in st_rows})[:1000]
+        if ids:
+            con.execute("DELETE FROM standing_names")
+            con.executemany("INSERT OR REPLACE INTO standing_names VALUES(?,?,?)",
+                            [(n["id"], n["name"], n.get("category")) for n in esi.post_json("/universe/names/", ids)])
+    except Exception:                                                   # noqa: BLE001
+        pass
     con.execute("DELETE FROM my_blueprints")
     bps = esi.paged(f"/characters/{cid}/blueprints/")
     con.executemany("INSERT INTO my_blueprints VALUES(?,?,?,?)",

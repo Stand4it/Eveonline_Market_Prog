@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -84,6 +84,8 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
+    ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
+    ap.add_argument("--plan", action="store_true", help="next: look ahead: the whole chain of steps, why, and the long view (default is ONE step)")
     ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
     ap.add_argument("--minutes", type=float, default=0, help="stop: minutes you really worked (use after falling asleep or leaving); replaces the clock time")
     ap.add_argument("--budget", type=float, default=6.0, help="scan --live: stop downloading new regions after this many minutes (default 6; 0 = no limit)")
@@ -139,7 +141,7 @@ def main(argv=None):
         raise SystemExit(str(e))
 
 
-CHAR_TABLES = ["inventory", "my_blueprints", "character_skills", "skill_queue", "char_attrs", "standings",
+CHAR_TABLES = ["inventory", "my_blueprints", "character_skills", "skill_queue", "char_attrs", "standings", "standing_names",
                "lp_balance", "transactions", "fitted", "my_ships", "my_orders", "opportunities", "activity_log"]
 
 
@@ -438,7 +440,7 @@ def _run(a):
     elif a.cmd == "next":
         from .graph import Graph
         from .nextstep import next_action
-        print(next_action(con, Graph(con), p, full=a.all))
+        print(next_action(con, Graph(con), p, full=a.all, ahead=a.plan))
     elif a.cmd == "zkill":
         from .esi import ESI
         from .zkill import ZKill, refresh_gank_map
@@ -566,6 +568,9 @@ def _run(a):
     elif a.cmd == "activities":
         from .session import summary
         print(summary(con))
+    elif a.cmd == "history":
+        from .session import history
+        print(history(con, a.n))
     elif a.cmd == "trainplan":
         from .advisor import fill_skill_info
         from .esi import ESI

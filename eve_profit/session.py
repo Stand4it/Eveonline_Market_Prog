@@ -110,6 +110,33 @@ def summary(con):
     return "\n".join(L)
 
 
+def history(con, n=15):
+    """The steps you completed, newest first: when, what, minutes, ISK, ISK per minute and per hour (a timer measured it), plus totals.
+    Steps the wallet cannot measure (queueing a skill) show '-' for the ISK columns."""
+    import time as _t
+    try:
+        rows = con.execute("SELECT activity, isk, hours, ts, COALESCE(ship,'?') AS ship FROM activity_log ORDER BY ts DESC, id DESC LIMIT ?", (int(n),)).fetchall()
+        total = con.execute("SELECT COUNT(*), COALESCE(SUM(isk),0), COALESCE(SUM(hours),0) FROM activity_log").fetchone()
+    except Exception:                                                   # noqa: BLE001
+        rows, total = [], (0, 0, 0)
+    if not rows:
+        return "No completed steps yet. Start one with  start --activity \"NAME\"  and finish it with  stop  (or add one afterwards with  log --activity NAME --isk X --hours H)."
+    L = [f"HISTORY of completed steps, newest first (last {len(rows)} of {total[0]}; ISK per minute where a timer measured it)",
+         f"   {'when (PC time)':<15} {'step':<44} {'min':>5} {'ISK':>11} {'ISK/min':>9} {'ISK/hr':>11}  ship"]
+    for r in rows:
+        mins = r["hours"] * 60.0
+        when = _t.strftime("%m-%d %H:%M", _t.localtime(r["ts"]))
+        if r["isk"] and mins > 0:
+            isk, per_min, per_hr = f"{r['isk']:,.0f}", f"{r['isk'] / mins:,.0f}", f"{r['isk'] / r['hours']:,.0f}"
+        else:
+            isk, per_min, per_hr = ("0" if mins > 0 else "-"), "-", "-"
+        L.append(f"   {when:<15} {r['activity'][:44]:<44} {mins:>5.0f} {isk:>11} {per_min:>9} {per_hr:>11}  {r['ship'].split(' - ')[0]}")
+    if total[2] > 0:
+        L.append(f"   ALL TIME: {total[0]} steps, {total[2]:.1f} h on the clock, {total[1]:,.0f} ISK = {total[1] / total[2]:,.0f} ISK/hr ({total[1] / (total[2] * 60):,.0f} ISK/min)")
+    L.append("   more:  history --n 40   |   by activity and ship:  activities")
+    return "\n".join(L)
+
+
 def _load(con):
     row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
     if not row:

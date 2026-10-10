@@ -557,9 +557,10 @@ def _upgrade_step(con, g, p):
     return "\n".join(L)
 
 
-def next_action(con, g, p, full=False):
+def next_action(con, g, p, full=False, ahead=False):
     """KISS: ONE task or ONE chain of tasks that belong together, in order: sell stock here / list one item here, buy a skill book sold
-    here, queue a skill, then the best agent mission (if it beats the best trade) else the best trade. `next --all` = everything."""
+    here, queue a skill, then the best agent mission (if it beats the best trade) else the best trade. `next` prints ONLY the first step;
+    `next --plan` = the whole chain, why, and THE LONG VIEW; `next --all` = everything."""
     if full:
         return next_action_all(con, g, p)
     core = _next_action_core(con, g, p)
@@ -724,7 +725,10 @@ def next_action(con, g, p, full=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
+    if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
+        out = steps[0] + "\n\n" + DONE
+        out += "\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
+        return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
-    if not selling or len(steps) > 1:
-        out += "\n(more detail: python -m eve_profit next --all)"
+    out += "\n(everything: python -m eve_profit next --all)"
     return out + home

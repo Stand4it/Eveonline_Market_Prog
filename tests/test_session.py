@@ -854,3 +854,98 @@ class LookAheadTests(unittest.TestCase):
         self.assertIn("NOW", txt)
         self.assertIn("UNLOCK", txt)
         self.assertIn("QUEUE Astrometrics", enabler_step(an["enabler"], an["base"]))
+
+
+class OneStepDefaultTests(unittest.TestCase):
+    def test_next_prints_one_step_and_plan_prints_the_chain(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import next_action
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        one = next_action(con, g, p)
+        full = next_action(con, g, p, ahead=True)
+        self.assertNotIn("TODAY'S CHAIN", one)
+        self.assertNotIn("THE LONG VIEW", one)
+        self.assertIn("next --plan", one)
+        self.assertEqual(one.count("STEP:") + one.count("AGENT MISSION:"), 1)
+        self.assertIn("THE LONG VIEW", full)
+        self.assertGreater(len(full), len(one))
+
+
+class UnlockKindsTests(unittest.TestCase):
+    def _world(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        return con, Graph(con), Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+
+    def test_standing_with_matches_names(self):
+        from eve_profit.lookahead import standing_with
+        con, g, p = self._world()
+        self.assertIsNone(standing_with(con, "Federation Navy"))
+        con.execute("INSERT INTO standing_names VALUES(500,'Federation Navy','corporation')")
+        con.execute("INSERT INTO standings VALUES(500,0.35)")
+        self.assertAlmostEqual(standing_with(con, "Federation Navy"), 0.35)
+
+    def test_gear_boost_and_standing_unlock_are_priced(self):
+        import eve_profit.lookahead as la
+        con, g, p = self._world()
+        con.execute("INSERT INTO standing_names VALUES(500,'Federation Navy','corporation')")
+        con.execute("INSERT INTO standings VALUES(500,0.35)")
+        con.execute("INSERT INTO types(type_id,name,skill_rank,skill_primary,skill_secondary) VALUES(3328,'Gallente Frigate',1,165,166),(3306,'Small Hybrid Turret',1,165,166)")
+        con.execute("INSERT INTO character_skills VALUES(3328,3,0),(3306,3,0)")        # both required skills trained: only the standing is missing
+        con.execute("INSERT OR REPLACE INTO char_attrs VALUES('perception',20),('willpower',20),('intelligence',20),('memory',20),('charisma',20)")
+        old = la.load_unlocks
+        la.load_unlocks = lambda: {
+            "gear": [{"id": "gear_miner2", "item": "Miner II", "qty": 3, "boosts": {"mining_belt": 3.0}, "requires": {}, "est_cost": 60000}],
+            "ships": [],
+            "standings": [{"id": "st", "corp": "Federation Navy", "needs": 1.0, "per_step": 0.15, "minutes_per_step": 20, "unlocks": ["agent_l2_security"]}]}
+        try:
+            opts = la.unlock_options(con, g, p, 50000.0)
+        finally:
+            la.load_unlocks = old
+        boost = [o for o in opts if o["kind"] == "boost"]
+        self.assertTrue(boost, [o["id"] for o in opts])
+        self.assertIn("buy 3 x Miner II", boost[0]["parts"][0])
+        self.assertGreater(boost[0]["gain"], 0)
+        self.assertEqual(boost[0]["books_cost"], 180000.0)                       # 3 x 60,000 estimate: not on the mock market
+        st = [o for o in opts if o["id"] == "agent_l2_security"]
+        self.assertTrue(st, [o["id"] for o in opts])
+        self.assertTrue(any("standing with Federation Navy" in x and "5 Level 1 missions" in x for x in st[0]["parts"]), st[0]["parts"])
+        self.assertAlmostEqual(st[0]["delay_h"], 5 * 20 / 60.0)                   # 5 missions x 20 min = the wait before it unlocks
+
+    def test_owned_items_are_not_unlocks(self):
+        import eve_profit.lookahead as la
+        con, g, p = self._world()
+        con.execute("INSERT INTO types(type_id,name) VALUES(888,'Miner II')")
+        con.execute("INSERT INTO inventory VALUES(888,1,3)")
+        old = la.load_unlocks
+        la.load_unlocks = lambda: {"gear": [{"id": "g", "item": "Miner II", "qty": 3, "boosts": {"mining_belt": 3.0}, "requires": {}, "est_cost": 60000}], "ships": [], "standings": []}
+        try:
+            opts = la.unlock_options(con, g, p, 50000.0)
+        finally:
+            la.load_unlocks = old
+        self.assertFalse([o for o in opts if o["kind"] == "boost"])
+
+
+class HistoryTests(unittest.TestCase):
+    def test_history_lists_steps_newest_first_with_isk_per_minute(self):
+        import time as _t
+        from eve_profit.session import history
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        self.assertIn("No completed steps yet", history(con))
+        now = _t.time()
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Market sell stock Rotonos',451423,5/60.0,?)", (now - 100,))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Skills queue',0,0.5/60.0,?)", (now,))
+        txt = history(con)
+        lines = txt.splitlines()
+        self.assertIn("Skills queue", lines[2])                       # newest first
+        self.assertIn("Market sell stock Rotonos", lines[3])
+        self.assertIn("90,285", lines[3])                             # 451,423 ISK in 5 min
+        self.assertIn("ALL TIME: 2 steps", txt)
