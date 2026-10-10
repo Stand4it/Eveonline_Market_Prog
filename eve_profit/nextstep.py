@@ -631,7 +631,16 @@ def next_action(con, g, p, full=False):
         con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(seen | set(new_seen))),))
         if act:
             con.execute("INSERT OR REPLACE INTO meta VALUES('last_exp',?)", (str(counter),))
-            cands.insert(0, (float("inf"), f"TEST {act['name']}", experiment_step(act, reason), reason))
+            step_txt = experiment_step(act, reason)
+            if act["id"] == "mining_belt":
+                try:
+                    from .mining_sites import recommend
+                    where = recommend(con)
+                    if where:
+                        step_txt = step_txt.replace("\n   about", "\n" + where + "\n   about", 1)
+                except Exception:                                # noqa: BLE001
+                    pass
+            cands.insert(0, (float("inf"), f"TEST {act['name']}", step_txt, reason))
             exp_note = f"MODEL-BUILDING TURN: {reason}. The best-ISK/hr options stay in the list below."
         con.commit()
     except Exception:                                            # noqa: BLE001

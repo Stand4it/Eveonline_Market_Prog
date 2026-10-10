@@ -592,3 +592,18 @@ class CatalogTests(unittest.TestCase):
         act, why, _ = pick_experiment(con, 6_900_000, 700_000.0, counter=2, last_exp=1, seen=set(seen))
         self.assertEqual(act["id"], "manufacturing_t1")
         self.assertIn("NEW", why)
+
+
+class MiningSitesTests(unittest.TestCase):
+    def test_sites_are_ranked_by_ore_value_per_m3_minus_distance(self):
+        from eve_profit.mining_sites import rank_sites, recommend, sites
+        self.assertTrue(sites())
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(881,'Pyroxeres 0-Grade',0.3,1)")
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(882,'Veldspar 0-Grade',0.1,1)")
+        con.execute("INSERT INTO orders VALUES(990001,881,60000001,1,10000001,1,60.0,1000,1,'',1)")      # 200 ISK/m3
+        con.execute("INSERT INTO orders VALUES(990002,882,60000001,1,10000001,1,10.0,1000,1,'',1)")      # 100 ISK/m3
+        r = rank_sites(con)
+        self.assertEqual(r[0]["system"], "Rotonos")                                  # 0 jumps beats the 1-jump sites with the same ores
+        self.assertEqual(r[0]["best_ore"], "Pyroxeres 0-Grade")
+        self.assertIn("WHERE: Rotonos", recommend(con))
