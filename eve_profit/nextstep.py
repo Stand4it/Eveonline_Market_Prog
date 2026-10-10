@@ -590,9 +590,9 @@ def next_action(con, g, p, full=False):
         dg = daily_goal_program()
         if dg and dg.get("reward_isk") and daily_goal_due(con):
             from .dailygoals import plan as _dg_plan
-            _pl = _dg_plan(con, dg["reward_isk"])
+            _pl = _dg_plan(con, dg["reward_isk"], g=g, p=p)
             _rate = _pl["best"]["rate"] if _pl["best"] else dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20)
-            cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con), "once a day"))
+            cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p), "once a day"))
     except Exception:                                            # noqa: BLE001
         pass
     if agent:

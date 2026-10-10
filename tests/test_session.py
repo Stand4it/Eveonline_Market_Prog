@@ -719,3 +719,40 @@ class DailyGoalPlannerTests(unittest.TestCase):
         txt = format_plan(plan(self._con(), 445000, free_ride=True))
         self.assertIn("BEST PAIR", txt)
         self.assertIn("NOT ROUTED", txt)
+
+
+class MakeOrBuyTests(unittest.TestCase):
+    def _world(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        return con, Graph(con), Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+
+    def test_options_cost_the_build_and_say_what_it_is_worth_afterwards(self):
+        from eve_profit.makebuy import describe, options
+        con, g, p = self._world()
+        res = options(con, g, p)
+        self.assertTrue(res, "the mock blueprint should be buildable from Home")
+        o = res[0]
+        self.assertIn(o["kind"], ("SELL", "KEEP", "NONE"))
+        self.assertAlmostEqual(o["net"], o["value"] - o["cost"], places=3)
+        self.assertIn("cost ~", describe(o))
+
+    def test_hangar_materials_are_valued_not_free(self):
+        from eve_profit.makebuy import options
+        con, g, p = self._world()
+        before = options(con, g, p)[0]
+        for mid, in con.execute("SELECT material_id FROM bp_materials WHERE blueprint_id=90002").fetchall():
+            con.execute("INSERT OR REPLACE INTO inventory VALUES(?,?,?)", (mid, g.id_of("Home"), 100000))
+        after = options(con, g, p)[0]
+        self.assertEqual(after["buy"], [])
+        self.assertLessEqual(after["cash"], before["cash"])
+
+    def test_daily_goals_build_option_uses_the_make_or_buy_numbers(self):
+        from eve_profit.dailygoals import build_option
+        con, g, p = self._world()
+        o = build_option(con, g, p)
+        self.assertTrue(o["ok"])
+        self.assertIn("Build", o["how"])

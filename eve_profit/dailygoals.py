@@ -52,8 +52,18 @@ def _far_places(con, mining=None, offers=None):
     return out
 
 
-def build_option(con):
-    """Cheapest build you can start from a blueprint you own: materials already in the hangar cost nothing."""
+def build_option(con, g=None, p=None):
+    """The best build to start from where you stand (make-or-buy, with what it is worth afterwards). Without a map: the plain cheapest build."""
+    if g is not None and p is not None:
+        try:
+            from .makebuy import describe, options as mb
+            res = mb(con, g, p)
+            if res:
+                o = res[0]
+                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"], "cash": -o["net"], "jumps_away": 0,
+                        "how": describe(o).replace("\n", "\n      ")}
+        except Exception:                                               # noqa: BLE001
+            pass
     best = None
     for bp, name in _q(con, "SELECT b.blueprint_id, t.name FROM my_blueprints b LEFT JOIN types t ON t.type_id=b.blueprint_id"):
         mats = _q(con, "SELECT m.material_id, m.quantity, t.name FROM bp_materials m LEFT JOIN types t ON t.type_id=m.material_id WHERE m.blueprint_id=?", (bp,))
@@ -123,13 +133,13 @@ def jumps_option(con, places=None):
             "how": f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)", "dest": dest}
 
 
-def options(con, places=None):
-    return [jumps_option(con, places), build_option(con), scan_option(con), destroy_option(con), repair_option(con)]
+def options(con, places=None, g=None, p=None):
+    return [jumps_option(con, places), build_option(con, g, p), scan_option(con), destroy_option(con), repair_option(con)]
 
 
-def plan(con, reward=445000.0, free_ride=False, places=None):
+def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
     """Best pair of goals by net ISK per hour. free_ride=True when your next task already goes 3+ jumps."""
-    opts = options(con, places)
+    opts = options(con, places, g, p)
     ok = [o for o in opts if o["ok"]]
     best = None
     for a, b in itertools.combinations(ok, 2):
@@ -158,7 +168,9 @@ def format_plan(pl, progress=None):
     for o in sorted(pl["options"], key=lambda o: (not o["ok"], o["minutes"])):
         mark = "<<" if o in b["pair"] else "  "
         if o["ok"]:
-            L.append(f"   {mark} {o['goal']:<30} {progress.get(o['goal'], ''):<8} ~{o['minutes']:.0f} min, ~{o['cash']:,.0f} ISK")
+            c = o["cash"]
+            L.append(f"   {mark} {o['goal']:<30} {progress.get(o['goal'], ''):<8} ~{o['minutes']:.0f} min, "
+                     + (f"~{c:,.0f} ISK" if c >= 0 else f"PAYS ITSELF BACK +{-c:,.0f} ISK"))
         else:
             L.append(f"      {o['goal']:<30} {progress.get(o['goal'], ''):<8} NOT ROUTED: {o['why_not']}")
     L.append("   Check the Opportunities > AIR Daily Goals window. Items marked (?) are guesses: time it and the model learns.")
