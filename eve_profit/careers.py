@@ -61,7 +61,12 @@ def report(con, offers=None):
     thin = [n for n, c in ranked if c["runs"] < MIN_RUNS]
     if thin:
         tip.append(f"NEEDS MORE RUNS before it can be trusted: {', '.join(thin)}.")
-    if ranked:
-        n, c = ranked[0]
-        tip.append(f"BEST SO FAR: {n} at {c['isk'] / c['hours']:,.0f} ISK/hr ({c['runs']} run(s)).")
+    solid = [(n, c) for n, c in ranked if c["runs"] >= MIN_RUNS and "mixed" not in n]
+    single = [(n, c) for n, c in ranked if "mixed" not in n]
+    if solid:
+        n, c = solid[0]
+        tip.append(f"BEST MEASURED: {n} at {c['isk'] / c['hours']:,.0f} ISK/hr over {c['runs']} runs.")
+    elif single:
+        n, c = single[0]
+        tip.append(f"BEST SO FAR (too few runs to trust): {n} at {c['isk'] / c['hours']:,.0f} ISK/hr.")
     return "\n".join(L + tip) if rows else "No timed runs yet. Use start --activity \"NAME\" and stop (see `next`)."
