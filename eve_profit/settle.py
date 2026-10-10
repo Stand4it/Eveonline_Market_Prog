@@ -136,12 +136,13 @@ def apply(con, props):
 
 
 def show(esi, cid, n=40):
-    """The raw market-looking journal entries (id, date, type, amount, description): to see exactly what ESI calls each fee."""
+    """The newest journal entries, unfiltered (id, date, type, amount, description, and whether settle counts it as a sale 'S' or a cost 'C')."""
     entries = esi.paged(f"/characters/{cid}/wallet/journal/")
-    keep = [e for e in entries if is_sale(e) or is_cost(e) or "market" in (e.get("ref_type") or "")]
-    L = [f"{'id':>14} {'date (UTC)':<20} {'ref_type':<28} {'amount':>12}  description"]
+    keep = list(entries)                                                # everything, unfiltered: we are looking for what ESI calls the fees we miss
+    L = [f"{'id':>14} {'date (UTC)':<20} {'ref_type':<34} {'amount':>12} ?  description"]
     for e in sorted(keep, key=lambda x: x["date"], reverse=True)[:n]:
-        L.append(f"{e.get('id', 0):>14} {e['date'][:19]:<20} {e.get('ref_type', ''):<28} {e.get('amount', 0):>12,.0f}  {e.get('description', '')[:50]}")
+        mark = "S" if is_sale(e) else ("C" if is_cost(e) else " ")
+        L.append(f"{e.get('id', 0):>14} {e['date'][:19]:<20} {e.get('ref_type', ''):<34} {e.get('amount', 0):>12,.0f} {mark}  {e.get('description', '')[:50]}")
     return "\n".join(L)
 
 
