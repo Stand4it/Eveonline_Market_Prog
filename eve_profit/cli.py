@@ -277,7 +277,7 @@ def _run(a):
             _, cid = sso.get_token(a.client_id)
             from .loot import snapshot
             snap = snapshot(con) if resync() else None
-            print(start(con, a.activity, cid, snap=snap))
+            print(start(con, a.activity, cid, snap=snap, wallet=p.wallet_isk))
         else:
             esi = ESI()
             esi.token, _ = sso.get_token(a.client_id)
@@ -289,7 +289,7 @@ def _run(a):
                 from .loot import gains, snapshot, value_loot
                 loot = value_loot(con, Graph(con), p, gains(before, snapshot(con)))
             try:
-                print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused - a.add_min, loot=loot, work_min=a.minutes or None))
+                print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused - a.add_min, loot=loot, work_min=a.minutes or None, wallet_now=p.wallet_isk))
             except ValueError as e:
                 raise SystemExit(str(e))
     elif a.cmd == "log":

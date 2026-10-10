@@ -627,3 +627,23 @@ class HaulSafetyTests(unittest.TestCase):
         con.execute("DELETE FROM inventory WHERE type_id!=883")
         p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
         self.assertIsNone(haul.haul_option(con, g, p))                      # the only stack is on the keep list
+
+
+class WalletDeltaTests(unittest.TestCase):
+    def test_stop_shows_wallet_change_and_counts_market_sales(self):
+        from eve_profit.session import INCOME_TYPES, start, stop, summarize_journal
+
+        class E:
+            def paged(self, path):
+                return [{"date": "2026-10-10T04:14:00Z", "ref_type": "market_transaction", "amount": 393377.0},
+                        {"date": "2026-10-10T04:14:00Z", "ref_type": "market_transaction", "amount": -5000.0}]
+        self.assertNotIn("market_transaction", INCOME_TYPES)                  # only selling runs count sales
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        t0 = 1_791_000_000.0
+        import calendar as _c
+        import time as _t
+        t_start = _c.timegm(_t.strptime("2026-10-10T04:13:00", "%Y-%m-%dT%H:%M:%S"))
+        start(con, "Market sell stock X", 1, now=t_start, wallet=6_000_000.0)            # a selling run: sales count
+        out = stop(con, E(), now=t_start + 120, wallet_now=6_388_377.0)
+        self.assertIn("393,377", out)                                       # the sale counted, the purchase (negative) did not
+        self.assertIn("wallet changed by +388,377", out)

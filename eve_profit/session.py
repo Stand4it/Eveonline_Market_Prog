@@ -8,20 +8,22 @@ import time
 # income that comes from DOING the activity (not from trading, transfers or refunds)
 INCOME_TYPES = ("bounty_prizes", "agent_mission_reward", "agent_mission_time_bonus_reward",
                 "project_discovery_reward", "corporation_reward_payout", "insurance", "ess_escrow_transfer")
+SALE_WORDS = ("market", "hauling", "trade", "sell")       # runs with these words in the name also count market SALES as income
 
 
 def _ts(iso):
     return calendar.timegm(time.strptime(iso.rstrip("Z"), "%Y-%m-%dT%H:%M:%S"))
 
 
-def summarize_journal(entries, since_ts, until_ts=None):
-    """-> (total_isk, {ref_type: isk}) for payout types after since_ts."""
+def summarize_journal(entries, since_ts, until_ts=None, sales=False):
+    """-> (total_isk, {ref_type: isk}) for payout types after since_ts. sales=True also counts market sales (positive market_transaction)."""
     by = {}
+    types = INCOME_TYPES + (("market_transaction",) if sales else ())
     for e in entries:
         t = _ts(e["date"])
         if t < since_ts or (until_ts and t > until_ts):
             continue
-        if e.get("ref_type") in INCOME_TYPES and e.get("amount", 0) > 0:
+        if e.get("ref_type") in types and e.get("amount", 0) > 0:
             by[e["ref_type"]] = by.get(e["ref_type"], 0.0) + e["amount"]
     return sum(by.values()), by
 
@@ -31,23 +33,23 @@ def _clock(t):
     return time.strftime("%Y-%m-%d %H:%M", time.localtime(t)) + " (local PC time)"
 
 
-def start(con, activity, char_id, now=None, snap=None):
+def start(con, activity, char_id, now=None, snap=None, wallet=None):
     now = now or time.time()
     con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)",
-                (json.dumps({"activity": activity, "t": now, "char": char_id, "snap": snap}),))
+                (json.dumps({"activity": activity, "t": now, "char": char_id, "snap": snap, "wallet0": wallet}),))
     con.commit()
     return (f"Started {_clock(now)}: timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   "
             f"(add --isk N for loot you sell yourself; fell asleep or left? use --minutes N for the minutes you really worked)")
 
 
-def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None, work_min=None):
+def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None, work_min=None, wallet_now=None):
     row = con.execute("SELECT value FROM meta WHERE key='session'").fetchone()
     if not row:
         raise ValueError("no session running: start one with  start --activity \"NAME\"")
     s = json.loads(row[0])
     now = now or time.time()
     entries = esi.paged(f"/characters/{s['char']}/wallet/journal/")
-    isk, by = summarize_journal(entries, s["t"], now)
+    isk, by = summarize_journal(entries, s["t"], now, sales=any(w in s["activity"].lower() for w in SALE_WORDS))
     isk += extra_isk
     total_paused = paused_min + s.get("paused_min", 0.0) + ((now - s["pause_t"]) / 60.0 if s.get("pause_t") else 0.0)   # pauses made with `pause`/`resume` + --paused
     clock_min = (now - s["t"]) / 60.0
@@ -74,6 +76,12 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
     if not by and not extra_isk:
         lines.append("   No payouts found in the wallet journal for that time (ESI journal can lag a few minutes: wait and run `stop` again is NOT possible, "
                      "so use  log --activity NAME --isk N --hours H  to enter it by hand).")
+    w0 = s.get("wallet0")
+    if w0 is not None and wallet_now is not None:
+        d = wallet_now - w0
+        lines.append(f"   Your wallet changed by {d:+,.0f} ISK during this run (all income AND spending, not only this activity).")
+        if d > 0 and isk <= 0:
+            lines.append(f"   The journal showed nothing yet (ESI lags): if this run earned it, enter it with  fixlast --isk {d:,.0f}")
     lines.append("After 3 logged runs of the same activity the planner uses your real ISK/hr instead of its guess.")
     return "\n".join(lines)
 
