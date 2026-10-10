@@ -818,3 +818,39 @@ class TripPlusTests(unittest.TestCase):
     def test_extras_without_a_destination_is_empty(self):
         from eve_profit.tripplus import extras
         self.assertEqual(extras(None, None, None, None)["lines"], [])
+
+
+class LookAheadTests(unittest.TestCase):
+    def test_pure_math(self):
+        from eve_profit.lookahead import act_rate, base_rate, chain_gain
+        self.assertEqual(act_rate({"rate": 900000.0, "runs": 3, "prior": [1, 2]}), (900000.0, "measured"))
+        r, src = act_rate({"rate": None, "runs": 0, "prior": [100000, 500000]})
+        self.assertEqual(src, "guess")
+        self.assertAlmostEqual(r, 240000.0)
+        self.assertEqual(chain_gain(100000, 300000, 2, horizon=6, cost=50000), 750000.0)
+        self.assertEqual(chain_gain(100000, 300000, 9, horizon=6), 0.0)
+        cands = [(float("inf"), "TEST x", "", ""), (1.8e6, "daily", "", "once a day"), (7e5, "agent", "", "x"), (3e5, "trade", "", "y")]
+        self.assertEqual(base_rate(cands), 7e5)
+
+    def test_a_locked_activity_becomes_an_unlock_with_a_free_enabler(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.lookahead import analyse, enabler_step, format_long_view, unlock_options
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT INTO types(type_id,name,skill_rank,skill_primary,skill_secondary) VALUES(3412,'Astrometrics',3,165,164)")
+        con.execute("INSERT INTO character_skills VALUES(3412,0,0)")                 # book already injected (level 0): it can be queued now
+        con.execute("INSERT OR REPLACE INTO char_attrs VALUES('perception',20),('willpower',20),('intelligence',20),('memory',20),('charisma',20)")
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+        opts = unlock_options(con, g, p, 100000.0)
+        ex = [o for o in opts if o["id"] == "explore_sites"]
+        self.assertTrue(ex, [o["id"] for o in opts])
+        self.assertIsNotNone(ex[0]["enabler"])
+        cands = [(7e5, "agent mission", "x", "cash"), (1.8e6, "AIR daily goals", "y", "once a day")]
+        an = analyse(con, g, p, cands)
+        txt = format_long_view(an)
+        self.assertIn("NOW", txt)
+        self.assertIn("UNLOCK", txt)
+        self.assertIn("QUEUE Astrometrics", enabler_step(an["enabler"], an["base"]))

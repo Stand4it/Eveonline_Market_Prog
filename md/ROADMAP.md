@@ -25,7 +25,7 @@ Layers (each is a file or two, all data-driven where possible):
 2. ACTIVITY CATALOG + MODELS: `activity_catalog.json`, timed runs (`start`/`stop`), `models`, `careers`: measured ISK/hr replaces guesses after 3 runs.
 3. VALUE FUNCTION: `nextstep.py` candidates; `progress_values.json` (skills, standings, unlocks, model value); `bonus_programs.json` (rewards).
 4. ROUTE EXTRAS: `tripplus.py` (agents on route, cheap needs, trades both ways), `makebuy.py` (make-or-buy), `dailygoals.py` (pair of goals), `haul.py`, `journey.py`.
-5. PLANNER (next big step): rank ALL candidates WITH their route extras included, then look ahead 2-4 steps (e.g. train Astrometrics -> unlock scan goal + exploration career;
+5. PLANNER (first version DONE: eve_profit/lookahead.py, THE LONG VIEW in `next`; still to add: ships/gear/standings as unlocks, ordering several unlocks): rank ALL candidates WITH their route extras included, then look ahead 2-4 steps (e.g. train Astrometrics -> unlock scan goal + exploration career;
    buy a ship -> unlock a faster activity) and pick the first step of the best chain by ISK per minute over the whole chain.
 6. SELF-IMPROVEMENT: model-building turns (try an unmodeled activity every 4th timer), each result lands in the DB and changes the ranking.
 Open items for the planner: extras ISK inside the ranking (not only shown on the winner); skills/standings/unlock values per candidate; chain lookahead;

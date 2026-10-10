@@ -699,6 +699,16 @@ def next_action(con, g, p, full=False):
         con.commit()
     except Exception:                                            # noqa: BLE001
         pass
+    long_view = ""
+    try:                                                         # LOOK AHEAD: what pays most over the next hours, and which free enabler to queue now
+        from .lookahead import analyse, enabler_step, format_long_view
+        an_ = analyse(con, g, p, cands)
+        long_view = format_long_view(an_)
+        if an_["enabler"]:
+            steps = [x for x in steps if not x.startswith("STEP: QUEUE A SKILL")]
+            steps.append(enabler_step(an_["enabler"], an_["base"]))
+    except Exception:                                            # noqa: BLE001
+        long_view = ""
     if cands:
         steps.append(cands[0][2])
         trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
@@ -714,7 +724,7 @@ def next_action(con, g, p, full=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
-    out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + "\n\n" + DONE
+    out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
     if not selling or len(steps) > 1:
         out += "\n(more detail: python -m eve_profit next --all)"
     return out + home
