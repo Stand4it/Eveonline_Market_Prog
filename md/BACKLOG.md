@@ -6,3 +6,4 @@
 5. Unverified on live data: journey, compare, home-station read, trainplan.
 - Keep-list: do not advise selling/listing items a ship or mission you plan needs (e.g. 2 x Miner I for the Venture: instant sale 2,897 vs rebuy ~13,900 each). Compare sell price vs rebuy price before any SELL/LIST step.
 - Gear reserve: show 'cost to replace your current fit' and warn when wallet < that; spares for combat ships (auto_keep_fitted covers fitted modules only).
+- Persist worldwide price results (bestprice / now step 4) in a world_prices table (type, system, net each, jumps, ts) so next/haul can use them for rare stacks nobody near buys. Entropic Rose Metallic - Limited x2: Lustrevik 925k each (25 jumps, ~21 min), Jita 576k (18), Perimeter 481k (17), Botane 371k (6), Dodixie 370k (7); C-J6MT/Ney have no safe route.
