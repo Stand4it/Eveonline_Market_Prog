@@ -1030,16 +1030,17 @@ class SettlePayoutTests(unittest.TestCase):
         import time as _t
         from eve_profit.settle import payout_plan
         utc = lambda d, hhmm: calendar.timegm(_t.strptime(f"2026-10-{d} {hhmm}", "%Y-%m-%d %H:%M"))
-        e = lambda i, d, hh, ref, amt, desc="": {"id": i, "date": f"2026-10-{d}T{hh}Z", "ref_type": ref, "amount": amt, "description": desc}
-        journal = [e(1, "09", "01:26:02", "agent_mission_reward", 187790, "Mission reward from agent Arnelin"),
-                   e(2, "09", "01:26:02", "agent_mission_time_bonus_reward", 220720, "Mission reward bonus from agent Arnelin"),
-                   e(3, "09", "01:26:02", "corporation_account_withdrawal", -44937, "Agent Mission Reward Corporation Tax"),
-                   e(4, "09", "08:14:48", "agent_mission_reward", 239000, "Mission reward from agent Arnelin")]
+        e = lambda i, d, hh, ref, amt, bal, desc="": {"id": i, "date": f"2026-10-{d}T{hh}Z", "ref_type": ref, "amount": amt, "balance": bal, "description": desc}
+        # the corporation tax lines are NOT in the journal: only the balance shows them (20,657 and 24,280)
+        journal = [e(0, "09", "00:50:00", "brokers_fee", -100, 1000000.0),
+                   e(1, "09", "01:26:02", "agent_mission_reward", 187790, 1167133.0, "Mission reward from agent Arnelin"),
+                   e(2, "09", "01:26:02", "agent_mission_time_bonus_reward", 220720, 1363573.0, "Mission reward bonus from agent Arnelin"),
+                   e(4, "09", "08:14:48", "agent_mission_reward", 239000, 1602573.0, "Mission reward from agent Arnelin")]
         rows = [{"id": 18, "activity": "Agent L1 step 8 Industrialist shuttle", "isk": 0, "hours": 20 / 60.0, "ts": utc("09", "01:26")},
                 {"id": 19, "activity": "Agent L1 step 8 Industrialist shuttle", "isk": 423640, "hours": 54 / 60.0, "ts": utc("09", "08:15")}]
         out = payout_plan(rows, journal)
         self.assertEqual(len(out), 1)                                           # only the 0-ISK step; the paid one is left alone
         self.assertEqual(out[0]["step"]["id"], 18)
         self.assertEqual(out[0]["gross"], 187790 + 220720)
-        self.assertEqual(out[0]["net"], 187790 + 220720 - 44937)
-        self.assertEqual(payout_plan(rows, journal, used=[1, 2, 3]), [])         # already used entries are never counted twice
+        self.assertEqual(round(out[0]["net"]), 187790 + 220720 - 20657 - 24280)  # tax recovered from the balance gaps
+        self.assertEqual(payout_plan(rows, journal, used=[1, 2, "gap-1", "gap-2"]), [])      # used entries are never counted twice

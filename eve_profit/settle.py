@@ -134,12 +134,18 @@ def payout_plan(rows, entries, used=(), skip=()):
     from just before it ended until 30 minutes after. -> [{"step": row, "net": X, "gross": G, "tax": T, "ids": [...]}]"""
     used_s = {str(u) for u in used}
     zero = [r for r in rows if not r["isk"] and r["hours"] > 0 and r["id"] not in set(skip)]
+    entries = with_gaps(entries)                                        # ESI hides the corporation-tax lines too: they show up as balance gaps
+    gaps = [e for e in entries if str(e.get("id")).startswith("gap-") and str(e["id"]) not in used_s]
     cand = sorted((e for e in entries if is_payout(e) and str(e.get("id")) not in used_s), key=lambda x: (_ts(x["date"]), str(x.get("id", 0)).zfill(20)))
     taken, out = set(), []
     for r in sorted(zero, key=lambda r: r["ts"]):
         lo, hi = r["ts"] - PAY_BEFORE_S, r["ts"] + PAY_AFTER_S
         mine = [e for e in cand if str(e.get("id")) not in taken and lo <= _ts(e["date"]) <= hi]
         gross = sum(e["amount"] for e in mine if e["amount"] > 0)
+        times = [_ts(e["date"]) for e in mine if e["amount"] > 0]
+        for gp in gaps:                                                 # a hidden charge posted in the same moment as a payout is its corporation tax
+            if str(gp["id"]) not in taken and any(abs(_ts(gp["date"]) - t) <= 5 for t in times):
+                mine.append(gp)
         tax = sum(e["amount"] for e in mine if e["amount"] < 0)
         if gross > 0:
             taken |= {str(e.get("id")) for e in mine}
