@@ -431,3 +431,12 @@ class MyOrdersTests(unittest.TestCase):
         self.assertIn("Tritanium", [d["name"] for d in plan_along(con, g, p, "Home")["sell_here"]])
         con.execute("INSERT INTO my_orders VALUES(1,34,60000001,0,4500.0,6,6,'2026-10-09T10:00:00Z')")
         self.assertNotIn("Tritanium", [d["name"] for d in plan_along(con, g, p, "Home")["sell_here"]])
+
+
+class DailyGoalTests(unittest.TestCase):
+    def test_missions_are_matched_to_air_daily_goals(self):
+        from eve_profit.bonus import daily_goal_hits
+        progs = [{"kind": "daily_goals", "goals": [{"goal": "Scan 5 Signatures", "progress": "0/5", "keywords": ["scan down"]},
+                                                  {"goal": "Complete 3 Jumps", "progress": "0/3", "keywords": ["jump"]}]}]
+        self.assertEqual(daily_goal_hits("Scan down the relic site", progs), ["Scan 5 Signatures (0/5)"])
+        self.assertEqual(daily_goal_hits("nothing relevant", progs), [])

@@ -192,6 +192,10 @@ def offers_rows(con, g=None, p=None):
         if b_isk:
             net += b_isk
             tags = tags + [f"BONUS PROGRAM: {b_txt}"]
+        from .bonus import daily_goal_hits
+        hits = daily_goal_hits(o["mission"])
+        if hits:
+            tags = tags + ["also advances AIR Daily Goals: " + "; ".join(hits)]
         ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
         if ex_isk > 0:
             net, minutes = net + ex_isk, minutes + ex_min

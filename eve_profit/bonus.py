@@ -34,3 +34,15 @@ def market_lines(progs=None):
                 continue
             L.append(f"   bonus: counts toward '{pr['name']}' ({prog:,.0f}/{tgt:,.0f})")
     return L
+
+
+def daily_goal_hits(mission_text, progs=None):
+    """AIR Daily Goals an agent mission also advances (matched by words in the mission text): -> ['Scan 5 Signatures (0/5)', ...]."""
+    low = mission_text.lower()
+    out = []
+    for pr in progs if progs is not None else programs():
+        if pr.get("kind") == "daily_goals":
+            for g in pr.get("goals", []):
+                if any(k in low for k in g.get("keywords", [])):
+                    out.append(f"{g['goal']} ({g.get('progress', '')})")
+    return out
