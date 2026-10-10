@@ -473,3 +473,29 @@ class BetterPlaceTests(unittest.TestCase):
         con.execute("INSERT INTO inventory VALUES(34,1,2000)")
         p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
         self.assertIn(34, _better_places(con, g, p, rate=1_000_000.0))
+
+
+class ScanBudgetTests(unittest.TestCase):
+    def test_refresh_orders_stops_when_the_time_budget_is_used(self):
+        import time as _t
+        from eve_profit.esi import refresh_orders
+
+        class FakeESI:
+            def __init__(self):
+                self.asked = []
+
+            def region_orders(self, rid, max_pages=None, log=None):
+                self.asked.append(rid)
+                _t.sleep(0.05)
+                return []
+
+            def system_kills(self):
+                return []
+
+            def get(self, path, **kw):
+                return [], 1
+
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        esi = FakeESI()
+        refresh_orders(con, esi, [1, 2, 3], budget_min=0.0005)            # 0.03 s budget: only the first region fits
+        self.assertEqual(esi.asked, [1])

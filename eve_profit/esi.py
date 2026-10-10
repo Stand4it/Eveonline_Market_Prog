@@ -89,13 +89,16 @@ def region_age_min(con, rid):
     return None if t is None else (time.time() - t) / 60.0
 
 
-def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0):
+def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0):
     """Replace order book for the given regions + update kill counts + missing types.
     max_age (minutes): skip regions downloaded more recently than that. Each region is saved as soon as it
     arrives, so Ctrl+C keeps everything downloaded so far."""
     now = time.time()
     n = 0
     for rid in region_ids:
+        if budget_min and (time.time() - now) / 60.0 > budget_min:
+            print(f"  time budget of {budget_min:g} min reached: the remaining regions keep their older data (run scan --live again for them)", flush=True)
+            break
         age = region_age_min(con, rid)
         if max_age and age is not None and age < max_age:
             print(f"  region {rid}: already fresh ({age:.0f} min old), skipped", flush=True)

@@ -86,6 +86,7 @@ def main(argv=None):
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
     ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
     ap.add_argument("--minutes", type=float, default=0, help="stop: minutes you really worked (use after falling asleep or leaving); replaces the clock time")
+    ap.add_argument("--budget", type=float, default=5.0, help="scan --live: stop downloading new regions after this many minutes (default 5; 0 = no limit)")
     ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
     ap.add_argument("--radius", type=int, default=10, help="buy: how many jumps around you to look for sellers")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
@@ -638,25 +639,32 @@ def _run(a):
                 print(f"Contacting ESI for market orders in regions {regions} "
                       f"(first page can take up to ~30 s; Ctrl+C to stop)...", flush=True)
                 from .esi import refresh_orders
-                print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages, a.max_age))
+                import time as _tm
+                t_scan = _tm.time()
+                print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages, a.max_age, a.budget))
                 from .contracts import refresh_contracts
                 from .graph import Graph
                 g0 = Graph(con)
                 near = g0.reach(g0.id_of(p.current_system), p.max_jumps * 2, p.avoid_yellow)
-                print("Contracts stored / contents fetched:",
-                      refresh_contracts(con, esi, regions, set(near)))
-                from .lp import refresh_offers
-                ids = ",".join(str(int(s)) for s in near) or "0"
-                corps = [r[0] for r in con.execute(
-                    f"SELECT corporation_id FROM lp_balance UNION SELECT corporation_id FROM agents "
-                    f"WHERE system_id IN ({ids}) UNION SELECT corporation_id FROM stations "
-                    f"WHERE system_id IN ({ids}) AND corporation_id IS NOT NULL")]
-                print("LP stores refreshed:", refresh_offers(con, esi, corps))
-                try:
-                    from .zkill import ZKill, refresh_gank_map
-                    print("zKillboard:", refresh_gank_map(con, ZKill(), esi, regions))
-                except Exception as e:           # optional signal: never break a scan
-                    print("zKillboard skipped:", e)
+                over = bool(a.budget) and (_tm.time() - t_scan) / 60.0 > a.budget
+                if over:
+                    print("Contracts / LP / zKillboard skipped: the time budget is used up (run scan --live --budget 0 for everything).")
+                else:
+                    print("Contracts stored / contents fetched:",
+                          refresh_contracts(con, esi, regions, set(near)))
+                if not over:
+                    from .lp import refresh_offers
+                    ids = ",".join(str(int(s)) for s in near) or "0"
+                    corps = [r[0] for r in con.execute(
+                        f"SELECT corporation_id FROM lp_balance UNION SELECT corporation_id FROM agents "
+                        f"WHERE system_id IN ({ids}) UNION SELECT corporation_id FROM stations "
+                        f"WHERE system_id IN ({ids}) AND corporation_id IS NOT NULL")]
+                    print("LP stores refreshed:", refresh_offers(con, esi, corps))
+                    try:
+                        from .zkill import ZKill, refresh_gank_map
+                        print("zKillboard:", refresh_gank_map(con, ZKill(), esi, regions))
+                    except Exception as e:           # optional signal: never break a scan
+                        print("zKillboard skipped:", e)
                 if p.use_structures:
                     from . import sso
                     if a.client_id and os.path.exists(sso.token_path()):
@@ -665,6 +673,15 @@ def _run(a):
                         print("Structures:", refresh_structures(con, esi, set(near), p.structure_ids))
                     else:
                         print("Structure markets skipped (run login first)")
+                try:                                                      # fresh prices: update the sell plan for ALL your stock right away
+                    from .graph import Graph
+                    from .sellplan import format_sellplan, sell_plan
+                    from .stock import stock_report
+                    gg = Graph(con)
+                    print("\n=== SELL PLAN UPDATED with the fresh prices (default: sell now) ===")
+                    print(format_sellplan(sell_plan(con, gg, p, None, None, min_value=0.0), limit=40))
+                except Exception as e:                                   # noqa: BLE001 (never break a scan over this)
+                    print("Sell plan update skipped:", e)
             elif a.cmd == "watch":
                 from .mock import refresh_mock_orders
                 refresh_mock_orders(con, random.Random())

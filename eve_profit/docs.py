@@ -33,7 +33,7 @@ COMMAND_HELP = {
 
 
 CMD_OPTS = {
-    "scan": ["--live", "--away", "--max-age", "--regions", "--max-pages", "--top"], "plan": ["--top"], "watch": ["--live", "--interval", "--away"],
+    "scan": ["--budget", "--live", "--away", "--max-age", "--regions", "--max-pages", "--top"], "plan": ["--top"], "watch": ["--live", "--interval", "--away"],
     "profile": ["--system", "--cargo"], "login": ["--char", "--client-id"], "sync": ["--char"], "log": ["--activity", "--isk", "--hours"],
     "go": ["--pick", "--send", "--away", "--top"], "universe": ["--force", "--sde-file", "--sde-url", "--depth"], "esimap": ["--depth"],
     "sde": ["--sde-file", "--sde-url"], "skills": ["--hours"], "explain": ["--pick"], "check": ["--pick"], "stock": ["--top"], "along": ["--to"],
