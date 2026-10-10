@@ -37,6 +37,16 @@ def start(con, activity, char_id, now=None, snap=None, wallet=None):
     now = now or time.time()
     con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)",
                 (json.dumps({"activity": activity, "t": now, "char": char_id, "snap": snap, "wallet0": wallet}),))
+    try:
+        n = int((con.execute("SELECT value FROM meta WHERE key='start_count'").fetchone() or ["0"])[0]) + 1
+        con.execute("INSERT OR REPLACE INTO meta VALUES('start_count',?)", (str(n),))
+        if activity.lower().startswith("test"):                 # you took the model-building turn: reset the clock and acknowledge new unlocks
+            con.execute("INSERT OR REPLACE INTO meta VALUES('last_exp',?)", (str(n),))
+            from .catalog import status
+            ids = sorted(a["id"] for a in status(con, wallet or 0.0) if a["unlocked"])
+            con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (json.dumps(ids),))
+    except Exception:                                            # noqa: BLE001
+        pass
     con.commit()
     return (f"Started {_clock(now)}: timing '{activity}'. Do the activity, then run:  python -m eve_profit stop   "
             f"(add --isk N for loot you sell yourself; fell asleep or left? use --minutes N for the minutes you really worked)")

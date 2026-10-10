@@ -628,17 +628,32 @@ def next_action(con, g, p, full=False):
     try:                                                         # MODEL-BUILDING turn: an unmodeled, unlocked activity goes first now and then
         import json as _j
         from .catalog import experiment_step, pick_experiment
-        meta = {r[0]: r[1] for r in con.execute("SELECT key,value FROM meta WHERE key IN ('next_count','last_exp','seen_unlocked')")}
-        counter = int(meta.get("next_count", 0)) + 1
+        meta = {r[0]: r[1] for r in con.execute("SELECT key,value FROM meta WHERE key IN ('start_count','last_exp','seen_unlocked')")}
+        counter = int(meta.get("start_count", 0))                # counts timers you START, not times you look at `next`
         last_exp = int(meta.get("last_exp", 0))
         seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
         best_known = max((c[0] for c in cands), default=0.0)
         act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen)
-        con.execute("INSERT OR REPLACE INTO meta VALUES('next_count',?)", (str(counter),))
-        con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(seen | set(new_seen))),))
+        if "seen_unlocked" not in meta:                          # first ever call: just remember what is already unlocked
+            con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
         if act:
-            con.execute("INSERT OR REPLACE INTO meta VALUES('last_exp',?)", (str(counter),))
             step_txt = experiment_step(act, reason)
+            if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
+                try:
+                    opps_ = plan(con, p, 5, False)
+                    if opps_:
+                        o_ = opps_[0]
+                        step_txt = (f"STEP: TEST Station / hub trading ({reason})\n   Best trade right now: {o_.description}\n"
+                                    f"   about {o_.net_isk:,.0f} ISK in {o_.hours * 60:.0f} min ({o_.isk_per_hour:,.0f} ISK/hr). Confirm live prices first:  "
+                                    "python -m eve_profit check --pick 1   then   python -m eve_profit go --pick 1 --send\n"
+                                    "   Unmodeled: 3 timed runs turn the guess into your own number.")
+                    else:
+                        step_txt = None                           # no ranked trade right now: do not offer an empty test
+                except Exception:                                # noqa: BLE001
+                    step_txt = None
+            if step_txt is None:
+                act = None
+        if act:
             if act["id"] == "mining_belt":
                 try:
                     from .mining_sites import recommend

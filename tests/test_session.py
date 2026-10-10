@@ -658,3 +658,23 @@ class DailyGoalTests2(unittest.TestCase):
         self.assertFalse(daily_goal_due(con, today="2026-10-10"))
         self.assertTrue(daily_goal_due(con, today="2026-10-11"))
         self.assertIn("AIR DAILY GOALS", daily_goal_step({"reward_isk": 445000, "goals": [{"goal": "Complete 3 Jumps", "progress": "0/3"}]}))
+
+
+class ExperimentClockTests(unittest.TestCase):
+    def test_looking_at_next_does_not_advance_the_model_clock_but_starting_does(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import next_action
+        from eve_profit.session import start
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        for _ in range(6):
+            next_action(con, g, p)
+        self.assertIsNone(con.execute("SELECT value FROM meta WHERE key='start_count'").fetchone())
+        start(con, "Agent L1 something", 1, wallet=1e7)
+        self.assertEqual(con.execute("SELECT value FROM meta WHERE key='start_count'").fetchone()[0], "1")
+        start(con, "Test Project Discovery", 1, wallet=1e7)
+        self.assertEqual(con.execute("SELECT value FROM meta WHERE key='last_exp'").fetchone()[0], "2")
