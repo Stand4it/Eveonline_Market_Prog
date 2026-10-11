@@ -781,7 +781,6 @@ def _now(a):
     stage("1/4 your character: assets, wallet, location", "sync")
     if not a.fast:
         stage("2/4 market prices (live)", "scan", live=True, top=5)
-    step = stage("3/4 working out your next step", "next")
     checks = []
     try:
         from .along import plan_along
@@ -805,19 +804,24 @@ def _now(a):
         unpriced.sort(key=lambda d: -(adj_.get(d["tid"], 0.0) * d["sold"]))
         sells = sells[:2] + unpriced[:3]
         if sells:
-            print(f"[4/4 best price in all of New Eden for {len(sells)} stack(s): your biggest sells and rare items nobody here buys] ...", flush=True)
+            print(f"[3/4 best price in all of New Eden for {len(sells)} stack(s): your biggest sells and rare items nobody here buys] ...", flush=True)
             esi = ESI()
             for d in sells:
                 rows, _ = best_prices(con, g, p, esi, d["tid"], d["sold"], log=lambda m: None)
                 from .worldprices import save as _wsave
                 _wsave(con, d["tid"], rows)
-                checks.append(f"   {d['name']}: " + format_best(d["name"], d["sold"], rows, p.current_system).splitlines()[-1])
+                top = [x for x in rows if x.get("jumps") is not None][:3]
+                if top:
+                    checks.append(f"   {d['name']} x{d['sold']:,}: best buyers: " + "; ".join(f"{x['system']} ~{x['net']:,.0f} ({x['jumps']} jumps)" for x in top))
+                else:
+                    checks.append(f"   {d['name']} x{d['sold']:,}: no buyer found worldwide")
         else:
-            print("[4/4 worldwide price check] nothing big enough to check")
+            print("[3/4 worldwide price check] nothing big enough to check")
     except SystemExit as e:
         print(f"   skipped: {e}")
     except Exception as e:
         print(f"   price check failed: {type(e).__name__}: {e}")
+    step = stage("4/4 working out your next step (it now knows the worldwide prices)", "next")
     from .style import bold, dim, task_block
     print("\n" + dim("=" * 70))
     print(task_block(step))
