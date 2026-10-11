@@ -64,7 +64,8 @@
    "available": true,
    "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)",
    "timer_name": "Agent L1 step 3 Explorer data site",
-   "agent_system": "Rotonos"
+   "agent_system": "Rotonos",
+   "note": "standing 1.47"
   },
   {
    "agent": "Arabeton Spilmottin (Soldier of Fortune)",
@@ -203,7 +204,8 @@
    "available": true,
    "where": "Rotonos (this system)",
    "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need",
-   "agent_system": "Rotonos"
+   "agent_system": "Rotonos",
+   "note": "standing 2.12; reward item Small Remote Armor Repairer I"
   },
   {
    "agent": "Ormelace Vaille (Enforcer)",
@@ -385,7 +387,7 @@
   },
   {
    "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-   "mission": "step 7: scan down the ancient (relic) site in Rotonos with the granted Civilian Relic Analyzer (needs Core Scanner Probes; Serpentis ships there), bring 1 x Datacore - Elementary Civilian Tech (1 m3) back to Rotonos IV - CAS",
+   "mission": "step 7 'Balancing the Books' (7 of 10): scan down the ancient (relic) site in Rotonos with the granted Civilian Relic Analyzer (needs Core Scanner Probes; Serpentis ships there), bring 1 x Datacore - Elementary Civilian Tech (1 m3) back to Rotonos IV - CAS",
    "isk": 0,
    "bonus": 178000,
    "taxed": true,
@@ -408,7 +410,8 @@
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
    "career": "Industrialist",
    "timer_name": "Agent L1 step 7 Entrepreneur relic site",
-   "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it"
+   "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it",
+   "note": "standing 3.80; cargo 1 x Datacore - Elementary Civilian Tech"
   },
   {
    "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
@@ -504,11 +507,17 @@
   },
   {
    "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-   "mission": "step 10 of 10 'Making Mountains of Molehills' (FINAL): acquire 1 x Navitas (PACKAGED frigate, 2,500 m3) for Rotonos IV - CAS. You are granted the Navitas Blueprint on accepting: buy a Navitas if the market has one, or BUILD it. 2,500 m3 does not fit your Imicus (400 m3): buy/build it AT Rotonos. REWARDS: a module/item + ISK; amounts NOT SEEN (screenshot cut off): send the bottom of the window",
+   "mission": "step 10 of 10 'Making Mountains of Molehills' (FINAL): acquire 1 x Navitas (PACKAGED frigate, 2,500 m3) for Rotonos IV - CAS. You are granted the Navitas Blueprint on accepting: buy a Navitas if the market has one, or BUILD it. 2,500 m3 does not fit your Imicus (400 m3): buy/build it AT Rotonos. REWARDS (seen): 1 x Nereus (hauler frigate) + bonus 175,000 ISK; standing 5.04",
    "isk": 0,
-   "bonus": 0,
+   "bonus": 175000,
    "taxed": true,
-   "loot": [],
+   "loot": [
+    {
+     "item": "Nereus",
+     "qty": 1,
+     "est": 2000000
+    }
+   ],
    "cost": [
     {
      "item": "Navitas",
