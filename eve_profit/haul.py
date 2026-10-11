@@ -125,6 +125,42 @@ def _hop(g, p, dest):
     return None, 0, 0
 
 
+HAUL_GEAR = (("expanded cargohold", "low slot: more cargo space"), ("inertial stabilizers", "low slot: faster align, quicker warps"),
+             ("nanofiber", "low slot: faster align"), ("afterburner", "mid slot: faster in a gate-to-gate hop"),
+             ("overdrive", "low slot: faster ship"))
+
+
+def ship_lines(con, g, p, h):
+    """Which ship makes the trip and which modules you OWN (in the hangar here) are worth fitting for it. -> list of lines."""
+    L = []
+    need = h.get("other_m3", 0.0) + (0.0 if h.get("ore") else 0.0)
+    here = g.id_of(p.current_system)
+    fly = f"your {p.ship_name} (cargo {p.cargo_m3:,.0f} m3)"
+    trips = max(1, -(-int(need) // int(max(p.cargo_m3, 1)))) if need else 1
+    L.append(f"SHIP: {fly}, the stock is {need:,.1f} m3 -> " + ("fits in 1 trip" if trips == 1 else f"{trips} trips"))
+    if trips > 1 and con is not None:
+        try:
+            from .fleet import parked_ships
+            for sh in sorted((x for x in parked_ships(con) if x["system_id"] == here and x["capacity"] > p.cargo_m3), key=lambda x: x["capacity"]):
+                t2 = max(1, -(-int(need) // int(sh["capacity"])))
+                L.append(f"      better: swap to your parked {sh['name']} (cargo {sh['capacity']:,.0f} m3) -> {t2} trip{'s' if t2 != 1 else ''}")
+                break
+        except Exception:                                               # noqa: BLE001
+            pass
+    if con is not None:
+        fitted = {r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id")}
+        rows = con.execute("SELECT t.name,i.quantity FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=?", (here,)).fetchall()
+        fit = []
+        for key, why in HAUL_GEAR:
+            for r in rows:
+                n = str(r["name"])
+                if key in n.lower() and n.lower() not in fitted:
+                    fit.append(f"      FIT {r['quantity']} x {n} ({why}) - you own it, it is in your hangar here")
+        L += fit or ["      FIT: nothing in your hangar here helps this trip; fly as you are"]
+        L.append("      (check the fitting window: I cannot see free slots, so fit only what has a free slot)")
+    return L
+
+
 def haul_step(h, g=None, p=None, con=None):
     """The haul as ONE jump at a time: the first jump is the step; at every stop `next` plans again."""
     L = [f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps, one way: `next` plans again at every stop)"]
@@ -135,6 +171,11 @@ def haul_step(h, g=None, p=None, con=None):
     hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
     if hop[0]:
         L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} (jump 1 of {hop[2]}). Then run  python -m eve_profit next  again.")
+    if g is not None and p is not None:
+        try:
+            L += ["   " + x for x in ship_lines(con, g, p, h)]
+        except Exception:                                               # noqa: BLE001
+            pass
     if h.get("extra_isk"):
         L.append(f"   includes about +{h['extra_isk']:,.0f} ISK of trades along the route")
     L += ["   " + x for x in h.get("extra_lines", [])]

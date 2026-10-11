@@ -128,3 +128,4 @@
 - 2026-10-11 agents_nearby.json: Distribution (nearest 7 jumps) and Epic Arcs (9 arcs; Visions of Greatness starts at Manifest 3 jumps with Cassandra Ahfrim, 8 chapters, 0 done) recorded.
 - 2026-10-11 Agency lists have Filters on the left (Level, Location/distance, Security, Faction, Ignore standings): ask for filtered views in future screens (e.g. Level 2+, within 5 jumps).
 - 2026-10-11 screens step: agent screens say exactly what to show (step title/number, objectives, rewards, bonus + time limit, standing); fixed doubled '>> >>' headline in now.
+- 2026-10-11 haul step now says which ship flies it (flown ship cargo vs stock m3, better parked ship if fewer trips) and which owned hangar modules to fit (cargo expander, inertial stabilizers, nanofiber, afterburner, overdrive).
