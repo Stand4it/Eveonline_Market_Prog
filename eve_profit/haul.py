@@ -130,6 +130,12 @@ HAUL_GEAR = (("expanded cargohold", "low slot: more cargo space"), ("inertial st
              ("overdrive", "low slot: faster ship"))
 
 
+FLEX_GEAR = (("miner", "mining"), ("strip miner", "mining"), ("probe launcher", "exploration / data and relic sites"), ("core scanner probe", "exploration / data and relic sites"),
+             ("analyzer", "data and relic sites"), ("gatling", "combat missions (needs a weapon fitted)"), ("autocannon", "combat missions"), ("rail", "combat missions"),
+             ("armor repairer", "repair missions / tank"), ("remote armor repair", "Arabeton's repair mission"), ("salvager", "salvage"),
+             ("warp disruptor", "Arabeton's warp-disrupt mission"), ("antimatter", "ammo for the gatling"))
+
+
 def ship_lines(con, g, p, h):
     """Which ship makes the trip and which modules you OWN (in the hangar here) are worth fitting for it. -> list of lines."""
     L = []
@@ -157,6 +163,14 @@ def ship_lines(con, g, p, h):
                 if key in n.lower() and n.lower() not in fitted:
                     fit.append(f"      FIT {r['quantity']} x {n} ({why}) - you own it, it is in your hangar here")
         L += fit or ["      FIT: nothing in your hangar here helps this trip; fly as you are"]
+        seen, flex = set(), []
+        for r in rows:
+            n = str(r["name"])
+            for key, why in FLEX_GEAR:
+                if key in n.lower() and n.lower() not in fitted and n not in seen:
+                    seen.add(n)
+                    flex.append(f"      KEEP FLEXIBLE: {r['quantity']} x {n} ({why}): do NOT sell it; carry it on this trip so the next stop can switch activity")
+        L += flex[:6]
         L.append("      (check the fitting window: I cannot see free slots, so fit only what has a free slot)")
     return L
 
