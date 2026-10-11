@@ -114,6 +114,30 @@
    "kind": "activity",
    "safe": true,
    "note": "Intro screen seen 2026-10-10. Pays ISK (wallet journal: project_discovery_reward) for classifying cell images; zero risk, can be done in station. UNMEASURED: time it with start --activity \"Project Discovery\" to learn ISK/hr."
+  },
+  {
+   "name": "AIR reward: Earn 500,000 ISK on the Market",
+   "kind": "market_goal",
+   "market": true,
+   "target_isk": 500000,
+   "progress_isk": 500000,
+   "reward_isk": 62500,
+   "reward_guess": false,
+   "claimable": true,
+   "seen": "2026-10-11",
+   "note": "COMPLETE (the 488k Kernite sale): click Claim in the AIR rewards window. Pays 62,500 ISK ('AIR Career Program Reward' in the wallet)."
+  },
+  {
+   "name": "AIR reward bundle: Earn 250,000 ISK on the Market",
+   "kind": "market_goal",
+   "market": true,
+   "target_isk": 250000,
+   "progress_isk": 250000,
+   "reward_isk": 0,
+   "reward_guess": true,
+   "claimable": true,
+   "seen": "2026-10-11",
+   "note": "COMPLETE: Claim it. '2x items in bundle': contents not seen yet (screenshot the Inventory after claiming) so the ISK value is unknown. Pattern: the market goals keep stepping up (50k, 100k, 250k, 500k ISK earned), each paying a reward: selling stock is how they complete."
   }
  ]
 }
