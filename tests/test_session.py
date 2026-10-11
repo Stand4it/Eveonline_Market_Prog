@@ -1248,3 +1248,42 @@ class TimerRunningNoteTests(unittest.TestCase):
         con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)", (json.dumps({"activity": "AIR Daily Goals", "t": 1}),))
         self.assertIn("already running", _timer("AIR Daily Goals", con))
         self.assertIn("Time it:", _timer("Something else", con))
+
+
+class WayLinesTests(unittest.TestCase):
+    def test_trap_margins_and_big_bets_are_dropped_but_sane_trades_and_stock_sales_stay(self):
+        from eve_profit.dailygoals import way_lines
+        res = {"stops": [("Ligare", 0, {"pick": [], "sell": [], "buy": [("Sane Thing", 100, 100000.0), ("Trap Thing", 6, 1000000.0), ("Whale Thing", 10, 4000000.0)]}),
+                         ("Manifest", 0, {"pick": [], "buy": [], "sell": [("Sane Thing", 100, 130000.0), ("Trap Thing", 6, 3200000.0), ("Whale Thing", 10, 5000000.0),
+                                                                          ("Scordite", 30000, 250000.0)]})]}
+        lines = way_lines(res, wallet=8_000_000)
+        txt = "\n".join(lines)
+        self.assertIn("Sane Thing", txt)                                         # +30% on 100k
+        self.assertNotIn("Trap Thing", txt)                                      # +220%: usually a trap
+        self.assertNotIn("Whale Thing", txt)                                     # 4M of an 8M wallet
+        self.assertIn("sell 30,000 x Scordite from your hangar at Manifest", txt)
+
+    def test_the_fly_step_has_no_next_step_in_it_and_says_when_there_is_nothing_on_the_way(self):
+        import json
+        con, g, mk = DailyChainTests()._world()
+        from eve_profit.dailygoals import chain_step
+        txt = chain_step(con, g, mk("Home"), {"best": None, "reward": 445000.0})
+        self.assertNotIn("next step", txt)
+        self.assertNotIn("run  sync", txt)
+        self.assertTrue("ON THE WAY" in txt or "Nothing worth buying or selling on this route" in txt)
+
+    def test_cheap_needs_here_lists_keep_gear_that_is_much_cheaper_in_this_system(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.tripplus import cheap_needs_here
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        home, there = g.id_of("Home"), g.id_of("Sys02")
+        con.execute("INSERT INTO types(type_id,name) VALUES(777,'Core Scanner Probe I')")
+        con.execute("INSERT INTO orders VALUES(9301,777,1,?,10000001,0,29850,10,1,'',1)", (home,))
+        con.execute("INSERT INTO orders VALUES(9302,777,2,?,10000001,0,9290,10,1,'',1)", (there,))
+        p = Profile(current_system="Sys02", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+        lines = cheap_needs_here(con, g, p, "Home")
+        self.assertTrue(any("Core Scanner Probe I" in l and "saves" in l for l in lines), lines)

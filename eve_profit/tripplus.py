@@ -88,3 +88,31 @@ def extras(con, g, p, dest, m3=0.0):
     except Exception:                                                   # noqa: BLE001
         pass
     return out
+
+
+def cheap_needs_here(con, g, p, home_name, min_save=0.20, min_isk=3000.0):
+    """Gear you keep but are short of (keep_items.json) that is >=20% cheaper in THIS system than at home: buy it now, you are here anyway."""
+    out = []
+    try:
+        here, home = g.id_of(p.current_system), g.id_of(home_name)
+    except Exception:                                                   # noqa: BLE001
+        return out
+    if here == home:
+        return out
+    for key, rule in keep_rules(con).items():
+        want = rule.get("qty")
+        if not want:
+            continue
+        r = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (rule["item"],)).fetchone()
+        if not r:
+            continue
+        tid = r[0]
+        have = con.execute("SELECT COALESCE(SUM(quantity),0) FROM inventory WHERE type_id=?", (tid,)).fetchone()[0]
+        short = int(want) - int(have)
+        if short <= 0:
+            continue
+        ask = lambda sid: (con.execute("SELECT MIN(price) FROM orders WHERE type_id=? AND is_buy=0 AND system_id=?", (tid, sid)).fetchone() or [None])[0]
+        a_here, a_home = ask(here), ask(home)
+        if a_here and a_home and a_here <= a_home * (1 - min_save) and (a_home - a_here) * short >= min_isk:
+            out.append(f"{short:,} x {rule['item']} ~{a_here:,.0f} each here (about {a_home:,.0f} at {home_name}): saves ~{(a_home - a_here) * short:,.0f} ISK")
+    return out

@@ -381,6 +381,46 @@ def _station_of(con, g, item, system_name):
         return ""
 
 
+def way_lines(res, wallet, max_lines=4):
+    """Lines for what is worth buying, selling or carrying on the way: stock from your hangar sold at a stop, and trades (buy at one stop,
+    sell at a later one) that pass a sanity check: margin under 100% (one-unit 200% margins are usually traps) and under 30% of your wallet."""
+    buys, sells = {}, {}
+    for sysname, detour, acts in res.get("stops", []):
+        for nm, q, c in acts.get("buy", []):
+            buys.setdefault(nm, []).append((sysname, q, c))
+        for nm, q, r in acts.get("sell", []):
+            sells.setdefault(nm, []).append((sysname, q, r))
+    lines = []
+    for nm, bl in buys.items():
+        for a, q, c in bl:
+            for b, q2, r in sells.get(nm, []):
+                if b == a or not q or not q2:
+                    continue
+                u = min(q, q2)
+                cost, rev = c * u / q, r * u / q2
+                if cost <= 0 or rev / cost - 1 > 1.0 or cost > 0.3 * wallet or rev - cost < 10000:
+                    continue
+                lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK"))
+    for nm, sl in sells.items():
+        if nm in buys:
+            continue
+        for b, q, r in sl:
+            if r >= 10000:
+                lines.append((r, f"sell {q:,} x {nm} from your hangar at {b} (+{r:,.0f})"))
+    lines.sort(key=lambda x: -x[0])
+    return [x[1] for x in lines[:max_lines]]
+
+
+def _on_the_way(con, g, p, dest):
+    try:
+        import dataclasses
+        from .journey import plan_journey
+        res = plan_journey(con, g, dataclasses.replace(p, wallet_isk=min(p.wallet_isk or 0, 0.3 * (p.wallet_isk or 0) + 1)), dest, detour=1)
+        return way_lines(res, p.wallet_isk or 0)
+    except Exception:                                                   # noqa: BLE001
+        return []
+
+
 def chain_step(con, g, p, pl, reward_ok=True):
     """The ONE step the daily goals chain is at right now, or None when the chain does not apply (then the caller shows the plain checklist)."""
     st = _chain_load(con)
@@ -417,10 +457,23 @@ def chain_step(con, g, p, pl, reward_ok=True):
         if missing_near and here == home:
             txt = [head, "", f"   YOU ARE AT {here}. DO ONLY THIS: buy these here (Market > item > Buy, the cheapest sell order):"] + buy_lines(missing_near)
         elif missing_far and here != st["dest"] and not any(x["system"] == here for x in missing_far):
-            txt = [head, "", f"   DO ONLY THIS: fly to {st['dest_label'] or dest} (3 jumps: that trip is the goal 'Complete 3 Jumps'). Stay in 0.5+ space.",
-                   "   (the next step, buying the materials there, shows when you arrive: run  sync  then  next)"]
+            try:
+                jn = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow).jumps
+            except Exception:                                           # noqa: BLE001
+                jn = 3
+            txt = [head, "", f"   DO ONLY THIS: fly to {dest} ({jn} jumps). That trip is the goal 'Complete 3 Jumps'. Stay in 0.5+ space."]
+            way = _on_the_way(con, g, p, dest)
+            txt.append("   ON THE WAY (optional; confirm each buy with `check` first):" if way else "   Nothing worth buying or selling on this route right now.")
+            txt += [f"      {x}" for x in way]
         elif missing_far:
             txt = [head, "", f"   YOU ARE AT {here}. DO ONLY THIS: buy these here (Market > item > Buy, the cheapest sell order):"] + buy_lines([x for x in missing_far if x["system"] == here] or missing_far)
+            try:
+                from .tripplus import cheap_needs_here
+                also = cheap_needs_here(con, g, p, home)
+            except Exception:                                           # noqa: BLE001
+                also = []
+            if also:
+                txt += ["   ALSO BUY HERE (you need these anyway and they are much cheaper here):"] + [f"      {x}" for x in also]
         else:
             txt = [head, "", "   DO ONLY THIS: load the materials from your hangar into your ship."]
     elif here == dest and dest != home and st["dest"].lower() == "manifest" and not st.get("epic_done"):
