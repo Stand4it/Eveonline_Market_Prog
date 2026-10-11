@@ -125,3 +125,4 @@
 - 2026-10-11 screens step also asks for Agency > Agents & Missions > Mission Agents and Epic Arcs (agents in other systems; Career Agents list = the 5 at Rotonos IV, Emps Metyt not a career agent there).
 - 2026-10-11 agents_nearby.json: Agency screens recorded (Paragon/IRIS agents, Security agents; Mining/Distribution/R&D/Locator lists still to send).
 - 2026-10-11 agents_nearby.json: Mining (Emps Metyt 1 jump, next 6), R&D (nearest 8), Locator (nearest 6) lists recorded; L1 mission agents nearby are mainly Axiosere (Security Emens Deroutte, Mining Emps Metyt). Distribution still to send.
+- 2026-10-11 agents_nearby.json: Distribution (nearest 7 jumps) and Epic Arcs (9 arcs; Visions of Greatness starts at Manifest 3 jumps with Cassandra Ahfrim, 8 chapters, 0 done) recorded.

@@ -72,7 +72,9 @@
   "Security",
   "Mining",
   "R&D",
-  "Locator"
+  "Locator",
+  "Distribution",
+  "Epic Arcs"
  ],
  "mining": [
   {
@@ -131,6 +133,58 @@
    "sec": 0.9,
    "jumps": 6,
    "corp": "Astral Mining Inc."
+  }
+ ],
+ "distribution_nearest": [
+  {
+   "agent": "Trenck Larcacraine",
+   "system": "Agrallarier",
+   "sec": 0.9,
+   "jumps": 7,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Alailon Dauttin",
+   "system": "Hulmate",
+   "sec": 0.4,
+   "jumps": 7,
+   "level": 1
+  },
+  {
+   "note": "nearest level-2 distribution agents are 11+ jumps (Dire Serin, Foves 0.6, 11 jumps, Center for Advanced Studies)"
+  }
+ ],
+ "epic_arcs": [
+  {
+   "arc": "Visions of Greatness",
+   "corp": "Association for Interdisciplinary Research",
+   "start_system": "Manifest",
+   "jumps": 3,
+   "missions": 8,
+   "completed": 0,
+   "agent": "Cassandra Ahfrim (AIR Laboratories)",
+   "chapter1": "Holographic Reenactment",
+   "note": "chapter 1 shows 'unavailable, talk to Cassandra Ahfrim'"
+  },
+  {
+   "arc": "The Unwanted Stars",
+   "corp": "Servant Sisters of EVE",
+   "start_system": "Arnon",
+   "sec": 0.8,
+   "jumps": 8
+  },
+  {
+   "arc": "Fractured Legacy",
+   "corp": "ORE",
+   "start_system": "Kisogo",
+   "sec": 0.9,
+   "jumps": 17
+  },
+  {
+   "arc": "Syndication",
+   "corp": "Gallente Federation",
+   "note": "distance not seen"
   }
  ]
 }
