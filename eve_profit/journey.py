@@ -149,7 +149,8 @@ def plan_journey(con, g, p, dest_name, detour=2, rate=TIME_VALUE_ISK_HR, skip=()
     return {"route": [g.name[s] for s in path], "jumps": route.jumps, "extra_jumps": jumps - route.jumps,
             "stops": [(g.name[s], pos[s][1], stops[s]) for s in order], "stock_net": stock_net, "trade_profit": trade_profit,
             "total": total, "hours": hours, "isk_hr": total / hours if hours else 0.0, "used_m3": p.cargo_m3 - room,
-            "taken": taken, "cargo_m3": p.cargo_m3, "held": held, "left_behind": left_behind, "dest": dest_name, "path_ids": path}
+            "taken": taken, "cargo_m3": p.cargo_m3, "held": held, "left_behind": left_behind, "dest": dest_name, "path_ids": path,
+            "fly_min": route.jumps * p.jump_seconds / 60.0, "isk_min": total / (hours * 60.0) if hours else 0.0}
 
 
 def _agents_on_route(route_names):
@@ -166,8 +167,8 @@ def _agents_on_route(route_names):
 
 
 def format_journey(res, limit=8):
-    L = [f"JOURNEY to {res['dest']}: {res['jumps']} jumps on the safe route"
-         + (f" + {res['extra_jumps']} jumps of side trips" if res["extra_jumps"] else ""),
+    L = [f"FROM {res['route'][0]} TO {res['dest']}: {res['jumps']} jumps on the safe route, about {res.get('fly_min', 0):.0f} min of flying"
+         + (f" (+ {res['extra_jumps']} jumps of side trips)" if res["extra_jumps"] else ""),
          "   " + " > ".join(res["route"]), ""]
     for sysname, detour, acts in res["stops"]:
         if not (acts["pick"] or acts["buy"] or acts["sell"]):
@@ -182,7 +183,7 @@ def format_journey(res, limit=8):
     L += ["", f"Stock sold along the way : {res['stock_net']:>14,.0f} ISK",
           f"Trade profit on the way  : {res['trade_profit']:>14,.0f} ISK",
           f"TOTAL                    : {res['total']:>14,.0f} ISK in about {res['hours'] * 60:,.0f} min "
-          f"= {res['isk_hr']:,.0f} ISK/hr   (hold used {res['used_m3']:,.0f} of {res['cargo_m3']:,.0f} m3)"]
+          f"= {res['isk_hr']:,.0f} ISK/hr = {res.get('isk_min', 0):,.0f} ISK/min   (hold used {res['used_m3']:,.0f} of {res['cargo_m3']:,.0f} m3)"]
     if res["held"]:
         L += ["", "HELD BACK (would sell below what you paid on this trip):"]
         L += [f"   {d['qty']:>9,} x {d['name']:<32} paid {d['cost']:>12,.0f}, best here {d['best']:>12,.0f} at {d['at']}" for d in res["held"][:6]]

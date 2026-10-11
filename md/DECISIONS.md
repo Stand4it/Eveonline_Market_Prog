@@ -103,3 +103,4 @@
 - 2026-10-11: scan --live default time budget raised from 6 to 10 minutes (user request).
 - 2026-10-11: terminal color (eve_profit/style.py), color-blind safe: the task is a white-on-blue banner '>> YOUR TASK <<' + bold bright-yellow headline (brightness and shape carry the meaning, not hue); progress/logs/footers are dim grey; with NO_COLOR=1 / EVE_COLOR=0 / piped output the same markers appear without escape codes. Used by now and next (one-step); next --plan/--all stay plain. EVE_COLOR=1 forces color.
 - 2026-10-11: style changed at the user's request: the white-on-blue banner is gone; ONLY the task headline is highlighted (black on bright yellow bar, marked '>> '), all other text stays plain white (no dimming). Same in now and next.
+- 2026-10-11: journey --to NAME now opens with 'FROM here TO there: N jumps, about M min of flying' and ends with the ISK/min as well as ISK/hr (stock sold + trades along the route; agents on the route listed).
