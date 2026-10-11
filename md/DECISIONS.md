@@ -126,3 +126,4 @@
 - 2026-10-11 agents_nearby.json: Agency screens recorded (Paragon/IRIS agents, Security agents; Mining/Distribution/R&D/Locator lists still to send).
 - 2026-10-11 agents_nearby.json: Mining (Emps Metyt 1 jump, next 6), R&D (nearest 8), Locator (nearest 6) lists recorded; L1 mission agents nearby are mainly Axiosere (Security Emens Deroutte, Mining Emps Metyt). Distribution still to send.
 - 2026-10-11 agents_nearby.json: Distribution (nearest 7 jumps) and Epic Arcs (9 arcs; Visions of Greatness starts at Manifest 3 jumps with Cassandra Ahfrim, 8 chapters, 0 done) recorded.
+- 2026-10-11 Agency lists have Filters on the left (Level, Location/distance, Security, Faction, Ignore standings): ask for filtered views in future screens (e.g. Level 2+, within 5 jumps).

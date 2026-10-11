@@ -51,7 +51,7 @@ def items():
     """The screens to send, one per step: the AIR benefits window, then each agent window with an open offer."""
     out = [("the AIR benefits / rewards window (claim anything with a Claim button)", "goals, progress, time limits")]
     out.append(("the Agency window > Agents & Missions > Mission Agents (left-side Agency button), sorted by distance",
-                "the list of agents: name, level, corporation, jumps away, standing needed"))
+                "the list of agents: name, level, corporation, jumps away, standing needed (tip: use the Filters on the left: Level, Location, Security, Faction)"))
     out.append(("the Agency window > Agents & Missions > Epic Arcs",
                 "the arcs offered, their start system and how many jumps away"))
     out += [(f"{a}'s agent window", "the mission text, the rewards and the time limit") for a in _agents()[:8]]
