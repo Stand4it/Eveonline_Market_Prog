@@ -770,9 +770,10 @@ class TripTradesTests(unittest.TestCase):
             o = jumps_option(con, [(0.0, "Yulai (mining, 4 jumps)", 4, "Yulai")], g=object(), p=object())
         finally:
             ns.trade_extras = old
-        self.assertEqual(o["cash"], -50000.0)                      # half of the 100,000 counts
-        self.assertIn("trades on the way there and back", o["how"])
-        self.assertEqual(o["minutes"], 9.0 + 5.0)
+        self.assertEqual(o["cash"], 0)                              # side trades are listed but NOT counted in the rate (one-unit margins are often traps)
+        self.assertIn("side trades on the way there and back", o["how"])
+        self.assertIn("NOT counted", o["how"])
+        self.assertEqual(o["minutes"], 9.0)
 
 
 class ShopOnTheRouteTests(unittest.TestCase):
@@ -1149,3 +1150,31 @@ class DetourStepTests(unittest.TestCase):
         self.assertIn("Load 33,333 x Scordite 0-Grade", txt)                    # 66,666 in 2 trips of the 5,000 m3 hold
         self.assertIn("QUICK ALTERNATIVE", txt)
         self.assertTrue(_name_of(first).startswith("Market sell stock "))
+
+
+class CompactDailyGoalsTests(unittest.TestCase):
+    def test_default_next_shows_a_short_ordered_checklist_for_the_daily_goals(self):
+        import eve_profit.nextstep as ns
+        from eve_profit.config import Profile
+        from eve_profit.dailygoals import compact_plan, plan
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        old = ns.trade_extras
+        ns.trade_extras = lambda *a: (100000.0, 5.0, ["going: buy 1 x Foo at X (-1)"])
+        try:
+            pl = plan(con, 445000, places=[(0.0, "Sys02 (mining, 1 jump)", 1, "Sys02")], g=g, p=p)
+        finally:
+            ns.trade_extras = old
+        txt = compact_plan(pl)
+        self.assertTrue(txt.startswith("STEP: AIR DAILY GOALS"))
+        self.assertLess(len(txt.splitlines()), 16)                              # one short checklist, not a wall of text
+        self.assertNotIn("ALL FIVE", txt)
+        self.assertNotIn("going:", txt)                                          # the side trades are not in the default step
+        self.assertIn("Collect the finished job", txt)
+        self.assertIn("Opportunities > AIR Daily Goals", txt)
+        full = __import__("eve_profit.dailygoals", fromlist=["format_plan"]).format_plan(pl)
+        self.assertIn("ALL FIVE", full)                                         # the analysis is still there for --plan

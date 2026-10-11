@@ -662,7 +662,7 @@ def next_action(con, g, p, full=False, ahead=False):
             from .dailygoals import plan as _dg_plan
             _pl = _dg_plan(con, dg["reward_isk"], g=g, p=p)
             _rate = _pl["best"]["rate"] if _pl["best"] else dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20)
-            cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p), "once a day"))
+            cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
     except Exception:                                            # noqa: BLE001
         pass
     if agent:

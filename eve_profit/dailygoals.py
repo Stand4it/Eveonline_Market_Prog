@@ -31,6 +31,7 @@ def _has_skill(con, name):
     return bool(r and r[0][0] >= 1)
 
 
+COUNT_TRADES = False         # side trades are shown but NOT counted in the goal's rate: one-unit 200% margins are usually traps (check each first)
 TRADE_HAIRCUT = 0.5          # count only half of side-trade profit (prices move, thin orders vanish): same as haul.py
 
 
@@ -76,11 +77,17 @@ def build_option(con, g=None, p=None, free=None):
             if res:
                 o = res[0]
                 t_isk, t_min, t_lines = _trades(con, g, p, o.get("trip_to"), o.get("m3", 0.0))
+                if not COUNT_TRADES:
+                    t_cnt_isk, t_cnt_min = 0.0, 0.0
+                else:
+                    t_cnt_isk, t_cnt_min = t_isk, t_min
                 how = describe(o)
                 if t_isk > 0:
-                    how += f"\n   ON THE TRIP to {o['trip_to']} and back (hold space left over): ~{t_isk:,.0f} ISK of trades (half counted)\n      " + "\n      ".join(t_lines)
-                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_min, "cash": -(o["net"] + t_isk), "jumps_away": 0, "job_min": o.get("job_min", 0.0),
-                        "how": how}
+                    how += (f"\n   SIDE TRADES on the trip to {o['trip_to']} and back: ~{t_isk:,.0f} ISK (half counted; "
+                            + ("counted in the rate" if COUNT_TRADES else "NOT counted in the rate: confirm each with `check`, a huge margin on one unit is often a trap") + ")\n      "
+                            + "\n      ".join(t_lines))
+                return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_cnt_min, "cash": -(o["net"] + t_cnt_isk), "jumps_away": 0, "job_min": o.get("job_min", 0.0),
+                        "how": how, "mb": o}
         except Exception:                                               # noqa: BLE001
             pass
     best = None
@@ -164,7 +171,10 @@ def jumps_option(con, places=None, g=None, p=None, idx=0):
     t_isk, t_min, t_lines = _trades(con, g, p, sysname)
     how = f"fly to {dest}: that trip IS the 3 jumps (stay in 0.5+ space)"
     if t_isk > 0:
-        how += f"\n      trades on the way there and back: ~{t_isk:,.0f} ISK (half counted)\n         " + "\n         ".join(t_lines)
+        how += (f"\n      side trades on the way there and back: ~{t_isk:,.0f} ISK (half counted; " + ("counted in the rate" if COUNT_TRADES else "NOT counted in the rate: confirm each with `check`, a huge margin on one unit is often a trap")
+                + ")\n         " + "\n         ".join(t_lines))
+    if not COUNT_TRADES:
+        t_isk, t_min = 0.0, 0.0
     try:                                                                # agents on the route and cheap things you need anyway
         from .tripplus import _agents, _route, cheap_needs
         path = _route(g, p, sysname)
@@ -217,6 +227,47 @@ def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
         names = {o["goal"] for o in best["pair"]}
         opts = [next((o for o in best["pair"] if o["goal"] == x["goal"]), x) for x in opts]
     return {"best": best, "options": opts, "reward": reward}
+
+
+def _clean(line):
+    return " ".join(line.split())
+
+
+def compact_plan(pl, progress=None):
+    """ONE task as a short ordered checklist (the default `next`): what to do, in order. The pair analysis, the table of all five goals and
+    the side trades stay in `next --plan`."""
+    b = pl["best"]
+    if not b:
+        return "STEP: AIR DAILY GOALS - no pair of goals is doable right now (see `next --plan`)"
+    a1, a2 = b["pair"]
+    names = " + ".join(o["goal"] for o in sorted(b["pair"], key=lambda o: o["goal"] != "Complete 3 Jumps"))
+    L = [f"STEP: AIR DAILY GOALS - about {pl['reward']:,.0f} ISK for 2 of the 5 goals ({names}), ~{b['minutes']:.0f} min, ~{max(b['cash'], 0):,.0f} ISK to do it", ""]
+    jumps = next((o for o in b["pair"] if o["goal"] == "Complete 3 Jumps"), None)
+    build = next((o for o in b["pair"] if o["goal"] == "Manufacture an Item" and o.get("mb")), None)
+    steps = []
+    if jumps and build:
+        mb = build["mb"]
+        route_buys = [x for x in mb["buy"] if "(on your route)" in x]
+        home_buys = [x for x in mb["buy"] if "(on your route)" not in x]
+        dest = jumps.get("dest", "the far system")
+        if route_buys and not home_buys:
+            steps.append((f"Fly to {dest}: that trip is Complete 3 Jumps. On the way, buy:", [_clean(x) for x in route_buys]))
+            steps.append((f"Back at your station: Industry > start {mb['product']} ({mb['runs']} run{'s' if mb['runs'] != 1 else ''}, {mb['units']} items); the job runs ~{mb.get('job_min', 0):.0f} min", []))
+        else:
+            if mb["buy"]:
+                steps.append(("Buy first:", [_clean(x) for x in mb["buy"]]))
+            steps.append((f"Industry > start {mb['product']} ({mb['runs']} run{'s' if mb['runs'] != 1 else ''}, {mb['units']} items); the job runs ~{mb.get('job_min', 0):.0f} min in the background", []))
+            steps.append((f"While it runs, fly to {dest}: that trip is Complete 3 Jumps (stay in 0.5+ space)", []))
+        steps.append(("Collect the finished job in Industry: that is Manufacture an Item", []))
+    else:
+        for o in b["pair"]:
+            steps.append((f"{o['goal']}: " + o["how"].split("\n")[0].strip(), []))
+    steps.append(("Open Opportunities > AIR Daily Goals: both goals should show complete, then stop the timer", []))
+    for n, (txt, subs) in enumerate(steps, 1):
+        L.append(f"   {n}. {txt}")
+        L += [f"        {x}" for x in subs]
+    L += ["", "   (the pair analysis, all five goals and the side trades: next --plan)"]
+    return "\n".join(L)
 
 
 def _indent(text, pad):
