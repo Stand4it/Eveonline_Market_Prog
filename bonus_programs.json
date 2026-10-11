@@ -123,9 +123,10 @@
    "progress_isk": 500000,
    "reward_isk": 62500,
    "reward_guess": false,
-   "claimable": true,
+   "claimable": false,
    "seen": "2026-10-11",
-   "note": "COMPLETE (the 488k Kernite sale): click Claim in the AIR rewards window. Pays 62,500 ISK ('AIR Career Program Reward' in the wallet)."
+   "note": "COMPLETE (the 488k Kernite sale): click Claim in the AIR rewards window. Pays 62,500 ISK ('AIR Career Program Reward' in the wallet).",
+   "claimed": true
   },
   {
    "name": "AIR reward bundle: Earn 250,000 ISK on the Market",
@@ -135,9 +136,10 @@
    "progress_isk": 250000,
    "reward_isk": 0,
    "reward_guess": true,
-   "claimable": true,
+   "claimable": false,
    "seen": "2026-10-11",
-   "note": "COMPLETE: Claim it. '2x items in bundle': contents not seen yet (screenshot the Inventory after claiming) so the ISK value is unknown. Pattern: the market goals keep stepping up (50k, 100k, 250k, 500k ISK earned), each paying a reward: selling stock is how they complete."
+   "note": "COMPLETE: Claim it. '2x items in bundle': contents not seen yet (screenshot the Inventory after claiming) so the ISK value is unknown. Pattern: the market goals keep stepping up (50k, 100k, 250k, 500k ISK earned), each paying a reward: selling stock is how they complete.",
+   "claimed": true
   }
  ]
 }
