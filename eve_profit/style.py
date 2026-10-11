@@ -1,6 +1,6 @@
-"""Terminal color that works for EVERY kind of color vision: the task you must do is marked by BRIGHTNESS and SHAPE (a white-on-blue banner,
-bold text, '>>' markers), never by hue alone; the background chatter (progress, logs) is dimmed grey. With no color at all (piped output,
-NO_COLOR=1, EVE_COLOR=0) the same markers and labels still appear, so nothing depends on seeing a color.
+"""Terminal color that works for EVERY kind of color vision: the task you must do is ONE line, black on bright yellow (brightness contrast, not hue),
+marked with '>> '; all other text stays plain white. With no color at all (piped output, NO_COLOR=1, EVE_COLOR=0) the '>> ' marker still appears,
+so nothing depends on seeing a color.
 EVE_COLOR=1 forces color on; the default is on only when the output is a real terminal."""
 import os
 import sys
@@ -41,36 +41,25 @@ def _w(code, s):
 
 
 def dim(s):
-    return _w("90", s)                                                  # grey: background chatter
+    return s                                                            # other text stays plain white (user's choice): no dimming
 
 
 def bold(s):
     return _w("1", s)
 
 
-def accent(s):
-    return _w("1;93", s)                                                # bold bright yellow: high luminance, stays visible for red/green and blue/yellow color blindness
+def highlight(s, width=70):
+    """The task line: black on bright yellow (maximum brightness contrast for every kind of color vision), padded into a bar."""
+    return _w("30;103", s.ljust(width))
 
 
-def banner(label, width=70):
-    text = f" >> {label} << "
-    return _w("1;97;44", text.ljust(width))                             # bold white on blue: contrast by brightness, not by hue
-
-
-def task_block(text, label="YOUR TASK - do this one thing now"):
-    """The step text with a banner above it, its first line in bold yellow and the 'When done' footer dimmed."""
-    lines = text.split("\n")
-    out = [banner(label)]
-    first = True
-    for ln in lines:
-        s = ln.strip()
-        if first and s:
-            out.append(accent(ln))
+def task_block(text):
+    """The step text with its headline marked '>> ' and highlighted black on yellow; every other line stays plain."""
+    out, first = [], True
+    for ln in text.split("\n"):
+        if first and ln.strip():
+            out.append(highlight(">> " + ln.strip()))
             first = False
-        elif s.startswith(("Time it:", "In game:")):
-            out.append(bold(ln))
-        elif s.startswith(("When done:", "(look ahead", "(everything", "(more detail")):
-            out.append(dim(ln))
         else:
             out.append(ln)
     return "\n".join(out)
