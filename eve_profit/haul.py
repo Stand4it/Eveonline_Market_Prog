@@ -138,4 +138,6 @@ def haul_step(h, g=None, p=None, con=None):
     if h.get("extra_isk"):
         L.append(f"   includes about +{h['extra_isk']:,.0f} ISK of trades along the route")
     L += ["   " + x for x in h.get("extra_lines", [])]
+    if not any(x.startswith("ON THE WAY") for x in h.get("extra_lines", [])):
+        L.append("   ON THE WAY: nothing worth buying or selling on this route right now.")
     return "\n".join(L)

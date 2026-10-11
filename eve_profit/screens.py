@@ -40,7 +40,8 @@ def _agents():
 
 
 def rate():
-    return VALUE_ISK * 60.0 / MINUTES
+    """When it is due it comes FIRST (it takes 3 minutes and every later step depends on the data): bigger than any hauling or trading rate."""
+    return 1e8
 
 
 def step():
