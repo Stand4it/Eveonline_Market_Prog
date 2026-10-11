@@ -151,11 +151,15 @@ def agents_here(system):
         o = json.load(open(os.path.join(os.path.dirname(f), "agent_offers.json"), encoding="utf-8")).get("offers", [])
         seen = set()
         for x in o:
-            if (x.get("agent_system") == system or x.get("to_system") == system) and not x.get("agent", "").startswith("BOTH"):
-                nm = x["agent"].split(" (")[0]
-                if nm not in seen:
-                    seen.add(nm)
-                    out.append(f"AGENT here: {nm} - {x['mission'][:70]}")
+            nm = x.get("agent", "").split(" (")[0]
+            if nm.startswith("BOTH"):
+                continue
+            if x.get("agent_system") == system and nm not in seen:
+                seen.add(nm)
+                out.append(f"AGENT here: {nm} - {x['mission'][:70]}")
+            elif x.get("to_system") == system and ("drop" + nm) not in seen:
+                seen.add("drop" + nm)
+                out.append(f"DROP-OFF here (only if you hold {nm}'s courier mission): {x['mission'][:60]}")
     except Exception:                                                   # noqa: BLE001
         pass
     return out
