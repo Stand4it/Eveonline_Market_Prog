@@ -1084,7 +1084,7 @@ class ReprocessTests(unittest.TestCase):
 
 
 class StyleTests(unittest.TestCase):
-    TEXT = ("STEP: SELL NOW in Rotonos - about 1 ISK\n      66,666 x Scordite 0-Grade       @ 4.66 each\n   bonus: counts toward X\n"
+    TEXT = ("STEP: SELL NOW in Rotonos - about 1 ISK\n      66,666 x Scordite 0-Grade       @ 4.66 each\n      => SELL RAW. Refining only wins above about 78% yield\n"
             "   In game: Market > item > Sell\n   Time it:  python -m eve_profit start --activity \"Market sell stock Rotonos\"\n\n"
             "When done:  python -m eve_profit stop   (wait)   then   python -m eve_profit sync")
 
@@ -1110,8 +1110,42 @@ class StyleTests(unittest.TestCase):
         Y = "\x1b[1;93;40m"
         self.assertIn(Y, lines[0])                                              # headline
         self.assertIn(Y, lines[1])                                              # what to sell
-        self.assertNotIn("\x1b[", lines[2])                                     # other text untouched
-        self.assertIn(Y, lines[3])                                              # the 'In game: ... Sell' line
+        self.assertIn(Y, lines[2])                                              # the '=> SELL RAW' verdict
+        self.assertNotIn("\x1b[", lines[3])                                     # the 'In game: ... Sell' line below it is NOT highlighted
         self.assertIn('\x1b[1;97mpython -m eve_profit start --activity "Market sell stock Rotonos"\x1b[0m', lines[4])
         self.assertEqual(lines[6].count("\x1b[1;97m"), 2)                       # stop and sync both bold white
         self.assertEqual(st.dim("x"), "x")
+
+
+class DetourStepTests(unittest.TestCase):
+    def test_a_clearly_better_market_one_jump_away_becomes_the_step(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.nextstep import _name_of, next_action
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        home = g.id_of("Home")
+        near = g.adj[home][0]
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(96001,'Scordite 0-Grade',0.15)")
+        con.execute("DELETE FROM inventory")
+        con.execute("INSERT INTO inventory VALUES(96001,?,66666)", (home,))
+        con.execute("DELETE FROM orders WHERE type_id=96001")
+        con.execute("INSERT INTO orders VALUES(97001,96001,60000001,?,10000001,1,5.04,2000000,1,'',1)", (home,))
+        con.execute("INSERT INTO orders VALUES(97002,96001,60000009,?,10000001,1,8.70,700000,1,'',1)", (near,))
+        p = Profile(current_system="Home", cargo_m3=50, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45, ship_name="Venture - Stand4it Dahl")
+        import eve_profit.nextstep as ns
+        import eve_profit.sellplan as sp
+        old = sp.sell_plan
+        sp.sell_plan = lambda con_, g_, p_, **kw: old(con_, g_, p_, **{**kw, "rate": 1_000_000.0})        # the mock world has absurd 17M ISK/hr trades
+        try:
+            txt = next_action(con, g, p)
+        finally:
+            sp.sell_plan = old
+        first = txt.splitlines()[0]
+        self.assertTrue(first.startswith("STEP: SELL SCORDITE 0-GRADE 1 JUMP AWAY in "), first)
+        self.assertIn("HOW:", txt)
+        self.assertIn("Load 33,333 x Scordite 0-Grade", txt)                    # 66,666 in 2 trips of the 5,000 m3 hold
+        self.assertIn("QUICK ALTERNATIVE", txt)
+        self.assertTrue(_name_of(first).startswith("Market sell stock "))

@@ -27,6 +27,58 @@ def rebuy_note(d):
     return f"   needed later? it is a material in {d['used_in']} blueprint(s): rebuy ~{d['rebuy']:,.0f} vs {get_now:,.0f} now -> {verdict}"
 
 
+def _detour_step(con, g, p, where, sells, d, b):
+    """SELL <ITEM> n JUMPS AWAY in <place>: the stack pays clearly more there, even with several trips of your hold."""
+    place = b["best_label"].split("DETOUR to ", 1)[-1].strip()
+    jumps = 1
+    try:
+        jumps = g.reach(g.id_of(where), 10, p.avoid_yellow)[g.id_of(place)].jumps
+    except Exception:                                                   # noqa: BLE001
+        pass
+    trips = int(b.get("trips") or 1)
+    per_trip = -(-d["sold"] // max(trips, 1))
+    bid = station = None
+    try:
+        r = con.execute("SELECT o.price, s.name FROM orders o LEFT JOIN stations s ON s.station_id=o.location_id WHERE o.type_id=? AND o.is_buy=1 AND o.system_id=? "
+                        "ORDER BY o.price DESC LIMIT 1", (d["tid"], g.id_of(place))).fetchone()
+        if r:
+            bid, station = r[0], r[1]
+    except Exception:                                                   # noqa: BLE001
+        pass
+    item = d["name"]
+    L = [f"STEP: SELL {item.upper()} {jumps} JUMP{'S' if jumps != 1 else ''} AWAY in {place} - about {b['best_net']:,.0f} ISK",
+         f"   {d['sold']:>9,} x {item:<34} @ {b['best_net'] / max(d['sold'], 1):>12,.2f} each = ~{b['best_net']:>12,.0f}   (net of tax)",
+         f"   that is +{b['extra']:,.0f} ISK more than selling in {where} (~{d['net']:,.0f}), for about {b['mins']:.0f} more minutes",
+         "   HOW:"]
+    n = 0
+
+    def add(t):
+        nonlocal n
+        n += 1
+        L.append(f"   {n}. {t}")
+    add(f"Load {per_trip:,} x {item} into your ship's hold" + (f" (trip 1 of {trips})" if trips > 1 else ""))
+    add(f"Fly {jumps} jump{'s' if jumps != 1 else ''} to {place}" + (f" and dock at {station}" if station else " and dock"))
+    add(f"Market > {item} > Sell > pick the HIGHEST buy order" + (f" (about {bid:,.2f} ISK each)" if bid else "") + ": instant sale, no listing")
+    if trips > 1:
+        add(f"Fly back and repeat for the other {d['sold'] - per_trip:,} ({trips - 1} more trip{'s' if trips > 2 else ''})")
+    else:
+        add(f"Fly back to {where}")
+    L.append(f"   QUICK ALTERNATIVE: sell it all right here for ~{d['net']:,.0f} ISK in about 3 minutes (the plan above pays more per minute only if you have nothing better to do).")
+    try:
+        from .reprocess import describe as _rdesc, refine_option
+        ro = refine_option(con, g, p, d["name"], d["sold"], d["net"])
+        if ro:
+            L += _rdesc(d["name"], ro)
+    except Exception:                                                   # noqa: BLE001
+        pass
+    others = [x for x in sells[1:6]]
+    if others:
+        L.append(f"   also sell here in {where}: " + "; ".join(f"{x['sold']:,} x {x['name']} (~{x['net']:,.0f})" for x in others))
+    L.append("   bonus: counts toward 'Crimson Harvest: Items traded' (0/150)")
+    L.append(AFTER)
+    return "\n".join(L)
+
+
 def _next_action_core(con, g, p):
     res = plan_along(con, g, p, p.current_system)
     here = res["sell_here"]
@@ -37,6 +89,14 @@ def _next_action_core(con, g, p):
         total = sum(d["net"] for d in sells)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         better = _better_places(con, g, p)
+        detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
+        for d in sells[:8]:
+            b = better.get(d["tid"])
+            if b and detour is None and d is sells[0] and b["best_label"].startswith("DETOUR to"):
+                detour = (d, b)
+                break
+        if detour:
+            return _detour_step(con, g, p, where, sells, detour[0], detour[1])
         for d in sells[:8]:
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} @ {d['net'] / max(d['sold'], 1):>12,.2f} each = ~{d['net']:>12,.0f}")
             b = better.get(d["tid"])
@@ -514,6 +574,8 @@ def _name_of(step):
     rest = first.split(":", 1)[-1].strip() if ":" in first else first
     if lo.startswith("step: sell now"):
         return "Market sell stock " + rest.replace("SELL NOW in ", "").split(" - ")[0]
+    if lo.startswith("step: sell ") and " away in " in lo:             # SELL SCORDITE 1 JUMP AWAY in Axiosere - ...
+        return "Market sell stock " + first.split(" AWAY in ", 1)[-1].split(" - ")[0].strip()
     if lo.startswith("step: list"):
         item = step.splitlines()[1].strip().split(" x ", 1)[-1] if len(step.splitlines()) > 1 else ""
         return f"Market list {item}".strip()

@@ -1,4 +1,4 @@
-"""Terminal color that works for EVERY kind of color vision: what to DO (the task line, what to sell, where to sell) is bright yellow on black,
+"""Terminal color that works for EVERY kind of color vision: what to DO (the task line, what to sell and the sell-or-refine verdict) is bright yellow on black,
 the commands to start and stop are bold white, everything else is plain. With no color at all (piped output, NO_COLOR=1, EVE_COLOR=0) the '>> '
 marker still appears, so nothing depends on seeing a color.
 EVE_COLOR=1 forces color on; the default is on only when the output is a real terminal."""
@@ -65,7 +65,7 @@ def white_cmds(line):
 
 
 def task_block(text):
-    """The step text: headline (marked '>> '), the item lines ('66,666 x Scordite') and the 'In game:' line in yellow on black;
+    """The step text: headline (marked '>> '), the item lines ('66,666 x Scordite') and the refine-or-sell verdict ('=> SELL RAW') in yellow on black;
     the start / stop / sync / next commands in bold white; everything else plain."""
     out, first = [], True
     for ln in text.split("\n"):
@@ -73,7 +73,7 @@ def task_block(text):
         if first and s:
             out.append(hue(">> " + s))
             first = False
-        elif re.match(r"^\s+[\d,]+ x ", ln) or s.startswith("In game:"):
+        elif re.match(r"^\s+[\d,]+ x ", ln) or s.startswith(("=> SELL RAW", "=> REFINE FIRST")):
             out.append(hue(ln))
         elif s.startswith(("Time it:", "When done:")):
             out.append(white_cmds(ln))
