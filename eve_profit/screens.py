@@ -54,7 +54,7 @@ def items():
                 "the list of agents: name, level, corporation, jumps away, standing needed (tip: use the Filters on the left: Level, Location, Security, Faction)"))
     out.append(("the Agency window > Agents & Missions > Epic Arcs",
                 "the arcs offered, their start system and how many jumps away"))
-    out += [(f"{a}'s agent window", "the mission text, the rewards and the time limit") for a in _agents()[:8]]
+    out += [(f"{a}'s agent window (Start Conversation, so the current mission shows)", "the whole mission window: step title and number, objectives, rewards, bonus reward and its time limit, the agent's standing with you") for a in _agents()[:8]]
     return out
 
 

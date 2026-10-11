@@ -76,7 +76,7 @@ def task_block(text):
     for ln in text.split("\n"):
         s = ln.strip()
         if first and s:
-            out.append(hue(">> " + s))
+            out.append(hue(">> " + s.lstrip("> ").strip()))
             first = False
         elif "DO ONLY THIS" in ln:
             blank()
