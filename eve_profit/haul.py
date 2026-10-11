@@ -258,7 +258,7 @@ def hop_only(text):
             ln = re.sub(r"\s*\(it plans again.*\)\.?$", "", ln)
             ln = ln.replace("and stop there. Then run", "and stop there. Then run")
         else:
-            m = re.match(r"^(\s+[\d,]+ x .+?)\s{2,}.*(there vs|~\s).*$", ln)
+            m = re.match(r"^(\s+[\d,]+ x .+?)(\s{2,}.*there vs.*|\s+~\s.*)$", ln)
             if m:
                 ln = m.group(1)
         out.append(ln)

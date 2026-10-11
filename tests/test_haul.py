@@ -79,3 +79,11 @@ class AgentsNearTests(unittest.TestCase):
         out = agents_near(G(), P(), "Tiberis")
         self.assertTrue(any(l.startswith("1 jump away in Rotonos") for l in out))
         self.assertTrue(any("Axiosere" in l and "2 jumps away" in l for l in out))
+
+
+class HopOnlyChainTests(unittest.TestCase):
+    def test_chain_item_line_loses_price_and_destination(self):
+        from eve_profit.haul import hop_only
+        o = hop_only("STEP: FLY to Fortitude\n           2 x Entropic Rose Metallic - Limited ~  1,152,550 at Jita\n")
+        self.assertNotIn("Jita", o)
+        self.assertIn("2 x Entropic Rose Metallic - Limited", o)
