@@ -85,3 +85,12 @@ def step(con=None):
                       f"   Show me: {show}.",
                       "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
                       "   When it is sent run:  python -m eve_profit done"])
+
+
+def goto(con, n):
+    """`done --screen N`: several screens were sent at once; show screen N next."""
+    its = items()
+    i = max(0, min(n - 1, len(its) - 1))
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (IDX_KEY, str(i)))
+    con.commit()
+    return f"OK. Next to send: screen {i + 1} of {len(its)}. Run  python -m eve_profit next"

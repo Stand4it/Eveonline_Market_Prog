@@ -87,6 +87,7 @@ def main(argv=None):
     ap.add_argument("--ago", type=float, default=0.0, help="log: how many minutes ago you finished (default 0 = just now)")
     ap.add_argument("--apply", action="store_true", help="settle: save the proposed changes (default is a dry run)")
     ap.add_argument("--id", type=int, default=0, help="fixlast: the # of the run to change (shown by history); default = the newest")
+    ap.add_argument("--screen", type=int, default=0, help="done: jump to this screen number (when you sent several at once)")
     ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
     ap.add_argument("--plan", action="store_true", help="next: look ahead: the whole chain of steps, why, and the long view (default is ONE step)")
     ap.add_argument("--all", action="store_true", help="next: print everything (offers, skills, trades), not just the one step")
@@ -591,7 +592,11 @@ def _run(a):
         print(summary(con))
     elif a.cmd == "done":
         from .dailygoals import chain_done
-        print(chain_done(con))
+        if a.screen:
+            from .screens import goto
+            print(goto(con, a.screen))
+        else:
+            print(chain_done(con))
     elif a.cmd == "settle":
         from . import sso
         from .esi import ESI
