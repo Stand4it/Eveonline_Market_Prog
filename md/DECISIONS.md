@@ -123,3 +123,4 @@
 - 2026-10-11 `done --screen N`: jump to screen N when several screens were sent at once.
 - 2026-10-11 screens step only asks for agents in Rotonos (Emps Metyt is at Axiosere: asked when there).
 - 2026-10-11 screens step also asks for Agency > Agents & Missions > Mission Agents and Epic Arcs (agents in other systems; Career Agents list = the 5 at Rotonos IV, Emps Metyt not a career agent there).
+- 2026-10-11 agents_nearby.json: Agency screens recorded (Paragon/IRIS agents, Security agents; Mining/Distribution/R&D/Locator lists still to send).
