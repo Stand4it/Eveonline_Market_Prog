@@ -1136,6 +1136,8 @@ class DetourStepTests(unittest.TestCase):
         con.execute("INSERT INTO orders VALUES(97001,96001,60000001,?,10000001,1,5.04,2000000,1,'',1)", (home,))
         con.execute("INSERT INTO orders VALUES(97002,96001,60000009,?,10000001,1,8.70,700000,1,'',1)", (near,))
         p = Profile(current_system="Home", cargo_m3=50, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45, ship_name="Venture - Stand4it Dahl")
+        from eve_profit.screens import mark
+        mark(con)                                                               # the game-screens step is due first in a new world: it is not what this test is about
         import eve_profit.nextstep as ns
         import eve_profit.sellplan as sp
         old = sp.sell_plan
