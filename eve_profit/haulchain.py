@@ -77,7 +77,8 @@ def candidate(con, g, p):
         ag = agents_here(here)
         text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: before flying on, check this system for agents and missions you can do here:"]
                           + (["      " + x for x in ag] if ag else ["      no agent known here: open the Agency (left side) > Agents & Missions and look for one within 1-2 jumps"])
-                          + ["   New offer or mission? Send me the agent window screenshot. Nothing? Run  python -m eve_profit next  (it flies on)."])
+                          + ["   HOW TO TELL: dock, station window (right side) > Agents tab. An orange 'Offered' beside a name = a mission is waiting. No 'Offered' = nothing here.",
+                             "   Orange 'Offered' on a NEW agent or mission? Send me only that agent's window. No orange? Run  python -m eve_profit next  (it flies on)."])
         return 1e11, text
     try:
         r = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow)
