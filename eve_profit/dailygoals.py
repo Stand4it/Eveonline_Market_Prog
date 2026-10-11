@@ -338,11 +338,15 @@ def chain_clear(con):
 
 def chain_done(con):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
+    try:
+        from .screens import mark
+        mark(con)                                                       # the game screens were sent: not asked again for 12 hours
+    except Exception:                                                   # noqa: BLE001
+        pass
     st = _chain_load(con)
-    if not st:
-        return "Nothing to mark: no daily-goals chain is running."
-    st["epic_done"] = True
-    _chain_save(con, st)
+    if st:
+        st["epic_done"] = True
+        _chain_save(con, st)
     return "OK, that step is marked done. Run  python -m eve_profit next  for the next one."
 
 

@@ -687,6 +687,12 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # screenshots the tool needs from the game: a short step now and then (data makes later steps better)
+        from . import screens as _sc
+        if _sc.due(con) and daily_goal_program() is not None:
+            cands.append((_sc.rate(), "update the model from the game", _sc.step(), "once a day (every 12 h)"))
+    except Exception:                                            # noqa: BLE001
+        pass
     if agent:
         rate_adj = rate
         try:
@@ -707,7 +713,21 @@ def next_action(con, g, p, full=False, ahead=False):
         h = haul_option(con, g, p)
     except Exception:                                            # noqa: BLE001
         h = None
-    if h:
+    hc = None
+    try:
+        from .haulchain import candidate as _hc
+        hc = _hc(con, g, p)                                      # a haul already under way (cargo is invisible to sync, so it is remembered)
+    except Exception:                                            # noqa: BLE001
+        hc = None
+    if hc:
+        _st = None
+        try:
+            from .haulchain import load as _hl
+            _st = _hl(con)
+        except Exception:                                        # noqa: BLE001
+            pass
+        cands.append((hc[0], f"haul stock to {(_st or {}).get('dest', '?')} (under way)", hc[1], "re-planned at every stop; keeps going unless something pays 25% more"))
+    elif h:
         h_rate = h["rate_hr"]
         try:                                                     # gear you need anyway that is cheaper on the route is part of what the trip earns
             from .tripplus import needs_saving
@@ -716,7 +736,7 @@ def next_action(con, g, p, full=False, ahead=False):
                 h_rate = (h["gain"] + sv) * 60.0 / h["minutes"]
         except Exception:                                        # noqa: BLE001
             pass
-        cands.append((h_rate, f"haul stock to {h['dest']}", haul_step(h), "sell-now prices at the far market"))
+        cands.append((h_rate, f"haul stock to {h['dest']}", haul_step(h, g, p, con), "sell-now prices at the far market"))
     best_trade, trade_text = 0.0, None
     if not selling:
         try:
@@ -728,6 +748,12 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.append((best_trade, "best trade / planned activity", core, "from the last scan"))
             trade_text = core
     cands.sort(key=lambda c: -c[0])
+    try:                                                         # a haul that wins starts a chain: from now on it is planned one jump at a time
+        if cands and cands[0][1].startswith("haul stock to ") and "(under way)" not in cands[0][1] and h:
+            from .haulchain import make as _hmake, save as _hsave
+            _hsave(con, _hmake(h, p.current_system))
+    except Exception:                                            # noqa: BLE001
+        pass
     try:                                                         # every trip gets the same extras: agents on the route, cheap things you need, trades both ways
         from .tripplus import extras as _extras
         dest_ = None

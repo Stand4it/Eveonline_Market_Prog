@@ -1,5 +1,6 @@
 """Hauling candidate for `next`: stock lying here that sells much better at another scanned market. Scored in ISK per hour like every
-other activity: (extra ISK vs selling it right here) / (trips x round trip + docking). Ore may ride in a mining ship's ore hold."""
+other activity: (extra ISK vs selling it right here) / (the trip ONE WAY + docking; extra loads add their round trips). There is no planned
+return: `next` plans again at every stop, so at the destination the best next step is chosen fresh. Ore may ride in a mining ship's ore hold."""
 import math
 
 from .along import keep_names
@@ -51,7 +52,8 @@ def haul_option(con, g, p):
         if trips > MAX_TRIPS:
             continue
         j = reach[b].jumps
-        minutes = trips * (2 * j * p.jump_seconds / 60.0 + 2 * DOCK_MIN)
+        one_way = j * p.jump_seconds / 60.0 + DOCK_MIN                      # you re-plan AT the destination: no return trip is counted for the first load
+        minutes = one_way + (trips - 1) * (2 * j * p.jump_seconds / 60.0 + 2 * DOCK_MIN)       # only extra loads need the round trip back
         gain = d["gain"]
         if gain < MIN_GAIN or minutes <= 0:
             continue
@@ -74,10 +76,10 @@ def enrich_route(con, g, p, h):
     try:
         hold = min(h["other_m3"], p.cargo_m3) if h["other_m3"] else 0.0
         capped = dataclasses.replace(p, wallet_isk=p.wallet_isk * TRADE_WALLET_SHARE)           # never put the whole wallet into side trades
-        isk, mins, tl = trade_extras(con, g, capped, {"to_system": h["dest"], "m3": hold, "one_way": False})
+        isk, mins, tl = trade_extras(con, g, capped, {"to_system": h["dest"], "m3": hold, "one_way": True})
         isk *= TRADE_HAIRCUT                                                                    # prices move before you get there
         if isk > 0:
-            lines += [f"ON THE WAY (spare hold, there and back; at most {TRADE_WALLET_SHARE:.0%} of your wallet; counted at {TRADE_HAIRCUT:.0%} because prices move; "
+            lines += [f"ON THE WAY (spare hold, one way; at most {TRADE_WALLET_SHARE:.0%} of your wallet; counted at {TRADE_HAIRCUT:.0%} because prices move; "
                       "CONFIRM each buy with `check`/the market window first, a huge margin on one unit is often a trap):"] + ["      " + x for x in tl]
             for k in range(h["trips"]):
                 extra_isk += isk * (1.0 if k == 0 else 0.5)             # repeat trips: market depth is partly used up
@@ -103,7 +105,7 @@ def enrich_route(con, g, p, h):
     except Exception:                                                   # noqa: BLE001
         pass
     if h["trips"] > 1:
-        lines.append(f"{h['trips']} trips needed: bring the next batch back the same way; the return leg is planned for trades too.")
+        lines.append(f"{h['trips']} trips needed: the first load goes one way; the return for the next batch is decided when you get there.")
     h["extra_lines"] = lines
     if extra_isk:
         total_isk, total_min = h["gain_stock"] + extra_isk, h["minutes_stock"] + extra_min
@@ -112,12 +114,27 @@ def enrich_route(con, g, p, h):
     return h
 
 
-def haul_step(h):
-    L = [f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps each way)"]
+def _hop(g, p, dest):
+    """(next system name, jumps left, total jumps) on the safe route from where you are to dest; (None, 0, 0) if none."""
+    try:
+        r = g.route(g.id_of(p.current_system), g.id_of(dest), 60, p.avoid_yellow)
+        if r and len(r.path) > 1:
+            return g.name[r.path[1]], r.jumps, r.jumps
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return None, 0, 0
+
+
+def haul_step(h, g=None, p=None, con=None):
+    """The haul as ONE jump at a time: the first jump is the step; at every stop `next` plans again."""
+    L = [f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps, one way: `next` plans again at every stop)"]
     for n, q, net, local in h["items"][:6]:
         L.append(f"   {q:>9,} x {n:<32} {net:>12,.0f} there vs {local:>10,.0f} here")
     L.append(f"   {h['trips']} trip(s), about {h['minutes']:.0f} min, +{h['gain']:,.0f} ISK more than selling here = {h['rate_hr']:,.0f} ISK/hr"
              + ("   (ore rides in your mining ship's ore hold)" if h["ore"] else ""))
+    hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
+    if hop[0]:
+        L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} (jump 1 of {hop[2]}). Then run  python -m eve_profit next  again.")
     if h.get("extra_isk"):
         L.append(f"   includes about +{h['extra_isk']:,.0f} ISK of trades along the route")
     L += ["   " + x for x in h.get("extra_lines", [])]

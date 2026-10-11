@@ -1379,3 +1379,69 @@ class LogAfterTheFactTests(unittest.TestCase):
         self.assertEqual([r[2] for r in rows], [445000])                         # the old payout and the fee are not listed
         self.assertIn("fixlast --isk AMOUNT", format_recent(rows))
         self.assertIn("No payouts", format_recent([]))
+
+
+class HaulChainTests(unittest.TestCase):
+    def _world(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("DELETE FROM inventory")
+        g = Graph(con)
+        home = g.id_of("Home")
+        mid = g.adj[home][0]
+        far = [x for x in g.adj[mid] if x != home][0]
+        return con, g, g.name[home], g.name[mid], g.name[far], lambda system: Profile(current_system=system, cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+
+    def _chain(self, con, origin, dest, total):
+        from eve_profit.haulchain import make, save
+        save(con, make({"dest": dest, "jumps": total, "gain": 600000.0, "net": 900000.0, "items": [("Scordite 0-Grade", 66666, 900000.0, 300000.0)], "ore": True}, origin))
+
+    def test_a_haul_is_one_jump_at_a_time_and_ends_with_the_sale_not_a_return(self):
+        from eve_profit.haulchain import candidate, load
+        con, g, home, mid, far, mk = self._world()
+        self._chain(con, home, far, 2)
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(96001,'Scordite 0-Grade',0.15)")
+        con.execute("INSERT INTO inventory VALUES(96001,?,66666)", (g.id_of(home),))
+        self.assertIsNone(candidate(con, g, mk(home)))                           # still in the hangar: not started, the normal haul step handles it
+        con.execute("DELETE FROM inventory")                                      # loaded into the ship: sync cannot see cargo
+        rate, text = candidate(con, g, mk(home))
+        self.assertIn("DO ONLY THIS: fly to", text)
+        self.assertIn("jump 1 of 2", text)
+        rate2, text2 = candidate(con, g, mk(mid))                                  # one jump later: re-planned from here
+        self.assertIn("jump 2 of 2", text2)
+        self.assertIn("1 jumps left", text2)
+        rate3, text3 = candidate(con, g, mk(far))                                  # arrived
+        self.assertIn("SELL YOUR HAULED STOCK", text3)
+        self.assertIn("no planned trip back", text3)
+        self.assertGreater(rate3, 1e9)
+        self.assertIsNone(candidate(con, g, mk(far)))                              # the next call: the haul is over, the best step is chosen fresh
+        self.assertIsNone(load(con))
+
+    def test_haul_minutes_are_one_way_for_a_single_load(self):
+        from eve_profit.haul import haul_option
+        con, g, home, mid, far, mk = self._world()
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(96001,'Rare Widget',1.0)")
+        con.execute("INSERT INTO inventory VALUES(96001,?,10)", (g.id_of(home),))
+        con.execute("DELETE FROM orders WHERE type_id=96001")
+        con.execute("INSERT INTO orders VALUES(97001,96001,60000001,?,10000001,1,100.0,1000,1,'',1)", (g.id_of(home),))
+        con.execute("INSERT INTO orders VALUES(97002,96001,60000002,?,10000001,1,30000.0,1000,1,'',1)", (g.id_of(mid),))
+        h = haul_option(con, g, mk(home))
+        self.assertIsNotNone(h)
+        self.assertEqual(h["trips"], 1)
+        self.assertAlmostEqual(h["minutes_stock"], 1 * mk(home).jump_seconds / 60.0 + 2.0)      # one jump one way + docking, no return
+
+
+class ScreensStepTests(unittest.TestCase):
+    def test_the_game_screens_step_is_due_until_done_and_names_the_agents(self):
+        from eve_profit import screens
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        self.assertTrue(screens.due(con))
+        txt = screens.step()
+        self.assertIn("UPDATE THE MODEL FROM THE GAME", txt)
+        self.assertIn("AIR benefits", txt)
+        self.assertIn("python -m eve_profit done", txt)
+        screens.mark(con)
+        self.assertFalse(screens.due(con))
