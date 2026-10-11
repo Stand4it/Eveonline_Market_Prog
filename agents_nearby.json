@@ -1,18 +1,136 @@
 {
  "_help": "Agents seen in the Agency window (Agents & Missions) from Rotonos. level, security, jumps from Rotonos, corporation. Entered from screenshots 2026-10-11.",
  "paragon_iris": [
-  {"system": "Manifest", "sec": 1.0, "jumps": 3, "level": 1},
-  {"system": "Ourapheh", "sec": 0.9, "jumps": 5, "level": 1},
-  {"system": "Aubenall", "sec": 0.4, "jumps": 12, "level": 1},
-  {"system": "Yehaba", "sec": 0.2, "jumps": 19, "level": 1}
+  {
+   "system": "Manifest",
+   "sec": 1.0,
+   "jumps": 3,
+   "level": 1
+  },
+  {
+   "system": "Ourapheh",
+   "sec": 0.9,
+   "jumps": 5,
+   "level": 1
+  },
+  {
+   "system": "Aubenall",
+   "sec": 0.4,
+   "jumps": 12,
+   "level": 1
+  },
+  {
+   "system": "Yehaba",
+   "sec": 0.2,
+   "jumps": 19,
+   "level": 1
+  }
  ],
  "security": [
-  {"agent": "Emens Deroutte", "system": "Axiosere", "sec": 1.0, "jumps": 1, "corp": "Federation Navy", "level": 1},
-  {"agent": "Berwelet Trisevent", "system": "Lustre", "sec": 1.0, "jumps": 3, "corp": "Sisters of EVE", "level": 1},
-  {"agent": "Annve Hoddoren", "system": "Tourier", "sec": 0.9, "jumps": 5, "corp": "Republic Security Services", "level": 1},
-  {"agent": "Ongunbjer Hetinold", "system": "Tourier", "sec": 0.9, "jumps": 5, "corp": "Republic Security Services", "level": 1}
+  {
+   "agent": "Emens Deroutte",
+   "system": "Axiosere",
+   "sec": 1.0,
+   "jumps": 1,
+   "corp": "Federation Navy",
+   "level": 1
+  },
+  {
+   "agent": "Berwelet Trisevent",
+   "system": "Lustre",
+   "sec": 1.0,
+   "jumps": 3,
+   "corp": "Sisters of EVE",
+   "level": 1
+  },
+  {
+   "agent": "Annve Hoddoren",
+   "system": "Tourier",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Republic Security Services",
+   "level": 1
+  },
+  {
+   "agent": "Ongunbjer Hetinold",
+   "system": "Tourier",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Republic Security Services",
+   "level": 1
+  }
  ],
  "career_agents_here": "Ormelace (Enforcer), Arnelin (Industrialist-Producer), Rounaminck (Explorer), Arabeton (Soldier of Fortune), Beradaillot (Industrialist-Entrepreneur): all In Current Station",
- "mission_agent_types": ["Security", "Distribution", "Mining", "R&D", "Locator"],
- "seen_types": ["Security (30 results)"]
+ "mission_agent_types": [
+  "Security",
+  "Distribution",
+  "Mining",
+  "R&D",
+  "Locator"
+ ],
+ "seen_types": [
+  "Security",
+  "Mining",
+  "R&D",
+  "Locator"
+ ],
+ "mining": [
+  {
+   "agent": "Emps Metyt",
+   "system": "Axiosere",
+   "sec": 1.0,
+   "jumps": 1,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Alpielanda Plampsen",
+   "system": "Arant",
+   "sec": 0.6,
+   "jumps": 6,
+   "corp": "Quafe Company",
+   "level": 1
+  },
+  {
+   "agent": "Natakko Kuomi",
+   "system": "Hotak",
+   "sec": 1.0,
+   "jumps": 6,
+   "corp": "Deep Core Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Akrenur Fronkendar",
+   "system": "Tindfjalla",
+   "sec": 1.0,
+   "jumps": 6,
+   "corp": "Minmatar Mining Corporation",
+   "level": 1
+  }
+ ],
+ "rd_nearest": [
+  {
+   "agent": "Obalanes Ardarette",
+   "system": "Carirgnottin",
+   "sec": 0.6,
+   "jumps": 8,
+   "corp": "Duvolle Laboratories"
+  },
+  {
+   "agent": "Wemire Ghynosseil",
+   "system": "Lirsautton",
+   "sec": 0.8,
+   "jumps": 9,
+   "corp": "CreoDron"
+  }
+ ],
+ "locator_nearest": [
+  {
+   "agent": "Fette Aleartener",
+   "system": "Alenia",
+   "sec": 0.9,
+   "jumps": 6,
+   "corp": "Astral Mining Inc."
+  }
+ ]
 }
