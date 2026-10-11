@@ -143,3 +143,4 @@
 - 2026-10-11 hop_only also strips '~ price at <dest>' from chain item lines.
 - 2026-10-11 START/END frames use one # line each (was two).
 - 2026-10-11 hop step shows buy/sell/need-anyway lines only for the system you are in; trades at other systems appear when you get there (next re-plans).
+- 2026-10-11 THREADS: next --plan lists the best candidate of each long-term thread (ISK, AIR/agents, growth, model); design contract + gaps in ROADMAP.

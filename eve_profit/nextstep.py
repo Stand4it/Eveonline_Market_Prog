@@ -654,6 +654,22 @@ def _upgrade_step(con, g, p):
     return "\n".join(L)
 
 
+THREADS = (("ISK: trading and hauling", ("best trade", "haul", "sell", "list")), ("AIR career and agent missions", ("air daily", "agent")),
+           ("character growth: skills, ships, gear", ("test", "skill", "gear", "upgrade", "build")), ("teaching the model", ("update the model", "model")))
+
+
+def _threads(cands):
+    """The best candidate of each long-term thread -> {thread: (rate, label)}; a candidate that fits no thread goes under 'other'."""
+    out = {}
+    for rate, label, *_ in cands:
+        low = label.lower()
+        name = next((t for t, keys in THREADS if any(k in low for k in keys)), "other")
+        r = 1e12 if rate == float("inf") else rate
+        if name not in out or r > out[name][0]:
+            out[name] = (r, label[:40])
+    return out
+
+
 def next_action(con, g, p, full=False, ahead=False):
     """KISS: ONE task or ONE chain of tasks that belong together, in order: sell stock here / list one item here, buy a skill book sold
     here, queue a skill, then the best agent mission (if it beats the best trade) else the best trade. `next` prints ONLY the first step;
@@ -840,6 +856,8 @@ def next_action(con, g, p, full=False, ahead=False):
             why = "WHY THIS ONE (ISK per hour, same yardstick for all): " + "; ".join(
                 f"{'>> ' if i == 0 else ''}{c[1]} " + ("(model turn)" if c[0] == float("inf") else f"{c[0]:,.0f}") for i, c in enumerate(cands[:5]))
             why += "   (cash + the value of progress and of teaching the model; numbers editable in progress_values.json)"
+            why += "\nTHREADS (every stop re-ranks all of them; the best one wins, none is dropped): " + "; ".join(
+                f"{t}: {lbl} {r:,.0f}" for t, (r, lbl) in _threads(cands).items())
     if trade_text:
         steps.append(trade_text.rsplit("\n" + AFTER, 1)[0])
     if selling or trade_text:

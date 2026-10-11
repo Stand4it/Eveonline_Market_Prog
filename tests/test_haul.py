@@ -102,3 +102,12 @@ class HopOnlyElsewhereTests(unittest.TestCase):
         self.assertNotIn("ALSO ON THE ROUTE", o)
         o2 = hop_only(t, "Kemerk")
         self.assertIn("Kemerk", o2)
+
+
+class ThreadsTests(unittest.TestCase):
+    def test_best_per_thread(self):
+        from eve_profit.nextstep import _threads
+        t = _threads([(5e6, "haul stock to Jita", "x", ""), (1e6, "best trade A", "x", ""), (2e6, "AIR daily goals", "x", ""), (float("inf"), "update the model from the game", "x", "")])
+        self.assertEqual(t["ISK: trading and hauling"][0], 5e6)
+        self.assertIn("AIR career and agent missions", t)
+        self.assertIn("teaching the model", t)

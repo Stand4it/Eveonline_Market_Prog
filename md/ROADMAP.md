@@ -30,3 +30,10 @@ Layers (each is a file or two, all data-driven where possible):
 6. SELF-IMPROVEMENT: model-building turns (try an unmodeled activity every 4th timer), each result lands in the DB and changes the ranking.
 Open items for the planner: extras ISK inside the ranking (not only shown on the winner); skills/standings/unlock values per candidate; chain lookahead;
 mining and reprocess-vs-buy for materials; ESI industry jobs scope; worldwide sale value for builds; per-character `profile` so a second character reuses the same model.
+
+## THREADS (user, 2026-10-11): every stop re-evaluates ALL threads; the next step always belongs to a long-term ISK or character-progression path
+Threads: ISK (trading/hauling), AIR career + agent missions, character growth (skills/ships/gear/standings), teaching the model (screens, tests).
+Each `next` call (= every stop) ranks every candidate of every thread in ISK/hr incl. progress/model value; the best wins; a started haul keeps a 1.25x head start
+so threads interleave without flip-flopping (haul hop -> agent here -> trade here -> hop). `next --plan` shows the best candidate of each thread.
+GAPS (BACKLOG): detour candidates (an agent/trade 1 jump off the route) are not yet ranked against the haul; progress value per candidate is a flat table
+(progress_values.json), not derived from the unlock graph; threads are not stored as persistent goals with progress bars.
