@@ -44,13 +44,44 @@ def rate():
     return 1e8
 
 
-def step():
-    L = [f"STEP: UPDATE THE MODEL FROM THE GAME (about {MINUTES:.0f} minutes; it makes future ISK)",
-         "   DO ONLY THIS: open these windows in game and send me a screenshot of each, one message per screenshot or all together:",
-         "      1. the AIR benefits / rewards window: goals, progress, time limits, anything with a Claim button (claim it)"]
-    ag = _agents()
-    if ag:
-        L.append(f"      2. each agent window with an open offer ({', '.join(ag[:6])}): the mission text, the rewards and the time limit")
-    L.append("      3. anything new since last time (a skill queue, a new agent, planets, the market for something you hold)")
-    L.append("   When they are sent run:  python -m eve_profit done")
-    return "\n".join(L)
+IDX_KEY = "screens_idx"
+
+
+def items():
+    """The screens to send, one per step: the AIR benefits window, then each agent window with an open offer."""
+    out = [("the AIR benefits / rewards window (claim anything with a Claim button)", "goals, progress, time limits")]
+    out += [(f"{a}'s agent window", "the mission text, the rewards and the time limit") for a in _agents()[:8]]
+    return out
+
+
+def _idx(con):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (IDX_KEY,)).fetchone()
+        return int(r[0]) if r else 0
+    except Exception:                                                   # noqa: BLE001
+        return 0
+
+
+def advance(con):
+    """`done`: the screen shown was sent. Move to the next one; after the last, the whole step is finished for 12 hours. -> text."""
+    its = items()
+    i = _idx(con) + 1
+    if i >= len(its):
+        con.execute("DELETE FROM meta WHERE key=?", (IDX_KEY,))
+        mark(con)
+        return "All the screens are sent. Thank you: the model is updated for the next 12 hours."
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (IDX_KEY, str(i)))
+    con.commit()
+    return f"Screen {i} of {len(its)} sent. Run  python -m eve_profit next  for the next one."
+
+
+def step(con=None):
+    """ONE screen at a time."""
+    its = items()
+    i = min(_idx(con) if con is not None else 0, len(its) - 1)
+    what, show = its[i]
+    return "\n".join([f"STEP: UPDATE THE MODEL FROM THE GAME - screen {i + 1} of {len(its)} (about 30 seconds)",
+                      f"   DO ONLY THIS: open {what}",
+                      f"   Show me: {show}.",
+                      "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
+                      "   When it is sent run:  python -m eve_profit done"])

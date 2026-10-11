@@ -1234,6 +1234,8 @@ class DailyChainTests(unittest.TestCase):
         con.execute("INSERT OR IGNORE INTO systems VALUES(8888,'Manifest',0.9,10000001)")
         g2 = __import__("eve_profit.graph", fromlist=["Graph"]).Graph(con)
         pl = {"best": None, "reward": 445000.0}
+        from eve_profit.screens import mark
+        mark(con)                                                               # no game-screens step pending: `done` then belongs to the epic arc step
         txt = chain_step(con, g2, mk("Manifest"), pl)
         self.assertIn("Cassandra Ahfrim", txt)
         self.assertIn("python -m eve_profit done", txt)
@@ -1339,8 +1341,7 @@ class WorldHoldTests(unittest.TestCase):
             st._ON = None
             os.environ.pop("EVE_COLOR", None)
         lines = out.split("\n")
-        self.assertNotIn("\x1b[", lines[1])
-        for ln in lines[2:]:
+        for ln in lines[1:]:                                                    # the DO ONLY THIS line and the sell / keep / buy lines
             self.assertIn("\x1b[1;93;40m", ln)
 
 
@@ -1436,14 +1437,26 @@ class HaulChainTests(unittest.TestCase):
         self.assertAlmostEqual(h["minutes_stock"], 1 * mk(home).jump_seconds / 60.0 + 2.0)      # one jump one way + docking, no return
 
 
+
+
 class ScreensStepTests(unittest.TestCase):
-    def test_the_game_screens_step_is_due_until_done_and_names_the_agents(self):
+    def test_the_game_screens_come_one_at_a_time_and_done_moves_on(self):
         from eve_profit import screens
+        from eve_profit.dailygoals import chain_done
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         self.assertTrue(screens.due(con))
-        txt = screens.step()
-        self.assertIn("UPDATE THE MODEL FROM THE GAME", txt)
+        n = len(screens.items())
+        txt = screens.step(con)
+        self.assertIn(f"screen 1 of {n}", txt)
         self.assertIn("AIR benefits", txt)
+        self.assertEqual(txt.count("DO ONLY THIS"), 1)                          # ONE thing to do
+        self.assertIn("Win + Shift + S", txt)                                    # how to send the image
         self.assertIn("python -m eve_profit done", txt)
-        screens.mark(con)
-        self.assertFalse(screens.due(con))
+        if n > 1:
+            msg = chain_done(con)                                                # done: on to screen 2
+            self.assertIn("Screen 1 of", msg)
+            self.assertIn(f"screen 2 of {n}", screens.step(con))
+            self.assertTrue(screens.due(con))
+        for _ in range(n):
+            chain_done(con)
+        self.assertFalse(screens.due(con))                                       # all sent: not asked again for 12 hours

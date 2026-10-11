@@ -607,6 +607,8 @@ def _name_of(step):
         return "Skills queue"
     if lo.startswith("step: air daily goals"):
         return "AIR Daily Goals"
+    if lo.startswith("step: update the model"):
+        return "Update the model from the game"
     if lo.startswith("step: test"):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: haul"):
@@ -690,7 +692,7 @@ def next_action(con, g, p, full=False, ahead=False):
     try:                                                         # screenshots the tool needs from the game: a short step now and then (data makes later steps better)
         from . import screens as _sc
         if _sc.due(con) and daily_goal_program() is not None:
-            cands.append((_sc.rate(), "update the model from the game", _sc.step(), "once a day (every 12 h)"))
+            cands.append((_sc.rate(), "update the model from the game", _sc.step(con), "once a day (every 12 h)"))
     except Exception:                                            # noqa: BLE001
         pass
     if agent:

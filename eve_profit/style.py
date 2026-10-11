@@ -65,7 +65,7 @@ def white_cmds(line):
 
 
 def task_block(text):
-    """The step text: headline (marked '>> '), the item lines ('66,666 x Scordite'), the sell / buy / keep lines on the way and the refine-or-sell verdict ('=> SELL RAW') in yellow on black;
+    """The step text: headline (marked '>> '), the 'DO ONLY THIS' line (the one thing to do), the item lines ('66,666 x Scordite'), the sell / buy / keep lines on the way and the refine-or-sell verdict ('=> SELL RAW') in yellow on black;
     the start / stop / sync / next commands in bold white; everything else plain."""
     out, first = [], True
     for ln in text.split("\n"):
@@ -73,7 +73,7 @@ def task_block(text):
         if first and s:
             out.append(hue(">> " + s))
             first = False
-        elif re.match(r"^\s+[\d,]+ x ", ln) or re.match(r"^\s+(sell|buy|keep) ", ln) or s.startswith(("=> SELL RAW", "=> REFINE FIRST")):
+        elif "DO ONLY THIS" in ln or re.match(r"^\s+[\d,]+ x ", ln) or re.match(r"^\s+(sell|buy|keep) ", ln) or s.startswith(("=> SELL RAW", "=> REFINE FIRST")):
             out.append(hue(ln))
         elif s.startswith(("Time it:", "When done:")):
             out.append(white_cmds(ln))
