@@ -135,6 +135,33 @@ def agents_on_route(g, p, dest):
         names = {g.name[x] for x in r.path[1:]}
     except Exception:                                                   # noqa: BLE001
         return []
+    return _agents_in(d, names)
+
+
+def agents_here(system):
+    """Known agents in this one system -> list of lines (empty if none known)."""
+    import json, os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents_nearby.json")
+    try:
+        d = json.load(open(f, encoding="utf-8"))
+    except Exception:                                                   # noqa: BLE001
+        return []
+    out = _agents_in(d, {system})
+    try:
+        o = json.load(open(os.path.join(os.path.dirname(f), "agent_offers.json"), encoding="utf-8")).get("offers", [])
+        seen = set()
+        for x in o:
+            if (x.get("agent_system") == system or x.get("to_system") == system) and not x.get("agent", "").startswith("BOTH"):
+                nm = x["agent"].split(" (")[0]
+                if nm not in seen:
+                    seen.add(nm)
+                    out.append(f"AGENT here: {nm} - {x['mission'][:70]}")
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return out
+
+
+def _agents_in(d, names):
     out = []
     for kind in ("security", "mining", "distribution_nearest", "locator_nearest", "rd_nearest"):
         for a in d.get(kind, []):

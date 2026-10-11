@@ -70,6 +70,15 @@ def candidate(con, g, p):
         text = "\n".join([f"STEP: SELL YOUR HAULED STOCK in {dest} - about {st['net']:,.0f} ISK", "   DO ONLY THIS: dock and sell to the HIGHEST buy orders (Market > item > Sell):"] + items
                          + ["   After this `next` chooses the best step from here: there is no planned trip back."])
         return 1e12, text                                               # you are there with the goods: finishing the sale comes first
+    if st.get("looked") != here and here != st["origin"]:
+        st["looked"] = here                                             # shown once per stop: the next `next` flies on
+        save(con, st)
+        from .haul import agents_here
+        ag = agents_here(here)
+        text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: before flying on, check this system for agents and missions you can do here:"]
+                          + (["      " + x for x in ag] if ag else ["      no agent known here: open the Agency (left side) > Agents & Missions and look for one within 1-2 jumps"])
+                          + ["   New offer or mission? Send me the agent window screenshot. Nothing? Run  python -m eve_profit next  (it flies on)."])
+        return 1e11, text
     try:
         r = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow)
     except Exception:                                                   # noqa: BLE001
