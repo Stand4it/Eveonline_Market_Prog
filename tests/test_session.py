@@ -1287,3 +1287,56 @@ class WayLinesTests(unittest.TestCase):
         p = Profile(current_system="Sys02", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
         lines = cheap_needs_here(con, g, p, "Home")
         self.assertTrue(any("Core Scanner Probe I" in l and "saves" in l for l in lines), lines)
+
+
+class WorldHoldTests(unittest.TestCase):
+    def _con(self):
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        rows = [{"system": "Amarr", "net": 278100.0, "units": 1, "jumps": 37, "gank": 0}, {"system": "Jita", "net": 203800.0, "units": 1, "jumps": 18, "gank": 2}]
+        from eve_profit.worldprices import save
+        save(con, 31083, rows)
+        return con
+
+    def test_a_light_stack_that_pays_far_more_elsewhere_is_kept_not_dumped(self):
+        from eve_profit.worldprices import hold_advice, keep_line
+        con = self._con()
+        adv = hold_advice(con, 31083, 1, 5.0, local_net=57359.0)
+        self.assertEqual(adv["system"], "Amarr")                                   # the best of the remembered markets
+        self.assertAlmostEqual(adv["extra"], 278100.0 - 57359.0)
+        self.assertIn("keep 1 x Small Salvage Tackle I", keep_line("Small Salvage Tackle I", 1, adv))
+        self.assertIsNone(hold_advice(con, 31083, 1, 5.0, local_net=200000.0))     # not 2x better: sell it
+        self.assertIsNone(hold_advice(con, 31083, 50, 5.0, local_net=57359.0))     # 250 m3: too heavy to just carry along
+        self.assertIsNone(hold_advice(con, 99999, 1, 5.0, local_net=1.0))          # nothing remembered
+
+    def test_old_prices_are_not_trusted(self):
+        import time
+        from eve_profit.worldprices import hold_advice
+        con = self._con()
+        con.execute("UPDATE world_prices SET ts=?", (time.time() - 10 * 86400,))
+        self.assertIsNone(hold_advice(con, 31083, 1, 5.0, local_net=1000.0))
+
+    def test_way_lines_keep_the_item_instead_of_selling_it_cheap_on_the_route(self):
+        from eve_profit.dailygoals import way_lines
+        from eve_profit.worldprices import hold_advice
+        con = self._con()
+        res = {"stops": [("Manifest", 0, {"pick": [], "buy": [], "sell": [("Small Salvage Tackle I", 1, 57359.0), ("Contaminated Lorentz Fluid", 1, 48109.0)]})]}
+        fn = lambda name, qty, net: hold_advice(con, 31083, qty, 5.0, net) if name == "Small Salvage Tackle I" else None
+        lines = way_lines(res, 8_000_000, hold_fn=fn)
+        txt = "\n".join(lines)
+        self.assertIn("keep 1 x Small Salvage Tackle I", txt)
+        self.assertNotIn("sell 1 x Small Salvage Tackle I", txt)
+        self.assertIn("sell 1 x Contaminated Lorentz Fluid", txt)                  # no far market remembered: sell it on the way
+
+    def test_sell_buy_keep_lines_are_yellow_too(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ["EVE_COLOR"] = "1"
+        try:
+            out = st.task_block("STEP: X\n   DO ONLY THIS: fly\n      sell 1 x Foo from your hangar at Manifest (+1)\n      keep 1 x Bar: pays more\n      buy 3 x Baz at Y")
+        finally:
+            st._ON = None
+            os.environ.pop("EVE_COLOR", None)
+        lines = out.split("\n")
+        self.assertNotIn("\x1b[", lines[1])
+        for ln in lines[2:]:
+            self.assertIn("\x1b[1;93;40m", ln)

@@ -91,6 +91,8 @@ CREATE TABLE IF NOT EXISTS lp_fetched(corporation_id INTEGER PRIMARY KEY, fetche
 CREATE TABLE IF NOT EXISTS lp_balance(corporation_id INTEGER PRIMARY KEY, points INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS standings(from_id INTEGER PRIMARY KEY, standing REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS standing_names(from_id INTEGER PRIMARY KEY, name TEXT, kind TEXT);
+CREATE TABLE IF NOT EXISTS world_prices(type_id INTEGER NOT NULL, system TEXT NOT NULL, net REAL NOT NULL, units INTEGER NOT NULL, jumps INTEGER, gank INTEGER, ts REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_wp ON world_prices(type_id);
 CREATE TABLE IF NOT EXISTS structures(
   structure_id INTEGER PRIMARY KEY, name TEXT, system_id INTEGER, owner_id INTEGER,
   access INTEGER NOT NULL DEFAULT -1, info_at REAL, orders_at REAL);

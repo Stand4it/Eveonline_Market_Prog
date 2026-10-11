@@ -329,6 +329,8 @@ def _run(a):
                 if nm in ids:
                     print(f"Checking every market for {nm}...", flush=True)
                     world[r["type_id"]] = best_prices(con, g, p, esi, r["type_id"], r["quantity"])[0]
+                    from .worldprices import save as _wsave
+                    _wsave(con, r["type_id"], world[r["type_id"]])
         print(format_sellplan(sell_plan(con, g, p, a.to or None, world, min_value=0.0), limit=40))
     elif a.cmd == "bestprice":
         from .bestprice import best_prices, format_best, resolve_type
@@ -342,6 +344,8 @@ def _run(a):
         qty = a.qty or (held[0] if held else 1)
         print(f"Asking ESI for buy orders of {nm} in every region (about a minute)...", flush=True)
         rows, _ = best_prices(con, g, p, ESI(), tid, qty, log=lambda m: print(m, flush=True))
+        from .worldprices import save as _wsave
+        _wsave(con, tid, rows)
         print(format_best(nm, qty, rows, p.current_system))
         from .bestprice import add_asks
         asks = add_asks(ESI(), rows, tid, p.current_system)
@@ -805,6 +809,8 @@ def _now(a):
             esi = ESI()
             for d in sells:
                 rows, _ = best_prices(con, g, p, esi, d["tid"], d["sold"], log=lambda m: None)
+                from .worldprices import save as _wsave
+                _wsave(con, d["tid"], rows)
                 checks.append(f"   {d['name']}: " + format_best(d["name"], d["sold"], rows, p.current_system).splitlines()[-1])
         else:
             print("[4/4 worldwide price check] nothing big enough to check")

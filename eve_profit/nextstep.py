@@ -85,10 +85,23 @@ def _next_action_core(con, g, p):
     where = p.current_system
     docked = "" if p.current_location_id else f"(undocked? dock at a {where} station first)\n"
     sells = [d for d in here if d["advice"] != "LIST" and d["net"] >= 50_000]
+    better, keep_lines = {}, []
+    if sells:
+        better = _better_places(con, g, p)
+        try:                                                     # light stacks that pay several times more far away: keep them, do not dump them here
+            from .worldprices import hold_advice, keep_line
+            vol_ = {r[0]: (r[1] or 0.0) for r in con.execute("SELECT type_id,volume FROM types")}
+            for d in list(sells):
+                b_ = better.get(d["tid"])
+                adv = hold_advice(con, d["tid"], d["sold"], vol_.get(d["tid"], 0.0), max(d["net"], b_["best_net"] if b_ else 0.0))
+                if adv:
+                    keep_lines.append("   " + keep_line(d["name"], d["sold"], adv))
+                    sells.remove(d)
+        except Exception:                                        # noqa: BLE001
+            pass
     if sells:
         total = sum(d["net"] for d in sells)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
-        better = _better_places(con, g, p)
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
         for d in sells[:8]:
             b = better.get(d["tid"])
@@ -114,6 +127,7 @@ def _next_action_core(con, g, p):
                 pass
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
+        L += keep_lines
         big = sells[0]
         if big["net"] >= 5_000_000:
             L.append(f"   BIG ONE: before selling {big['name']}, compare other markets:  python -m eve_profit bestprice --item \"{big['name']}\"")

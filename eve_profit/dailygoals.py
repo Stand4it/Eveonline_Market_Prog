@@ -381,7 +381,7 @@ def _station_of(con, g, item, system_name):
         return ""
 
 
-def way_lines(res, wallet, max_lines=4):
+def way_lines(res, wallet, max_lines=4, hold_fn=None):
     """Lines for what is worth buying, selling or carrying on the way: stock from your hangar sold at a stop, and trades (buy at one stop,
     sell at a later one) that pass a sanity check: margin under 100% (one-unit 200% margins are usually traps) and under 30% of your wallet."""
     buys, sells = {}, {}
@@ -401,22 +401,37 @@ def way_lines(res, wallet, max_lines=4):
                 if cost <= 0 or rev / cost - 1 > 1.0 or cost > 0.3 * wallet or rev - cost < 10000:
                     continue
                 lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK"))
+    keeps = []
     for nm, sl in sells.items():
         if nm in buys:
             continue
         for b, q, r in sl:
-            if r >= 10000:
+            adv = hold_fn(nm, q, r) if hold_fn else None
+            if adv:                                                  # a far market pays several times more: keep it, do not sell cheap on the way
+                from .worldprices import keep_line
+                keeps.append(keep_line(nm, q, adv))
+            elif r >= 10000:
                 lines.append((r, f"sell {q:,} x {nm} from your hangar at {b} (+{r:,.0f})"))
     lines.sort(key=lambda x: -x[0])
-    return [x[1] for x in lines[:max_lines]]
+    return keeps + [x[1] for x in lines[:max_lines]]
 
 
 def _on_the_way(con, g, p, dest):
     try:
         import dataclasses
         from .journey import plan_journey
-        res = plan_journey(con, g, dataclasses.replace(p, wallet_isk=min(p.wallet_isk or 0, 0.3 * (p.wallet_isk or 0) + 1)), dest, detour=1)
-        return way_lines(res, p.wallet_isk or 0)
+        res = plan_journey(con, g, dataclasses.replace(p, wallet_isk=0.3 * (p.wallet_isk or 0) + 1), dest, detour=1)
+        stacks = {}
+        for r in con.execute("SELECT i.type_id, i.quantity, t.name, t.volume FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=?", (g.id_of(p.current_system),)):
+            stacks[r["name"]] = (r["type_id"], r["quantity"], r["volume"] or 0.0)
+
+        def hold_fn(name, qty, local_net):
+            from .worldprices import hold_advice
+            if name not in stacks:
+                return None
+            tid, have, vol = stacks[name]
+            return hold_advice(con, tid, min(qty, have), vol, local_net)
+        return way_lines(res, p.wallet_isk or 0, hold_fn=hold_fn)
     except Exception:                                                   # noqa: BLE001
         return []
 
