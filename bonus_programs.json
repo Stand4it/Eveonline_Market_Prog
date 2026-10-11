@@ -10,7 +10,7 @@
    "reward_isk": 25000,
    "reward_guess": false,
    "career_points": 10,
-   "progress": "missions 1-3 of 10 done (35/750 career points)",
+   "progress": "missions 1-3 of 10 done (35/750 career points); window seen 2026-10-11: missions 4-10 open (0/1 each). Mission 1: 25,000 ISK + 10 career points, risk none, est. 5 min",
    "note": "Mission 1 pays 25,000 ISK + 10 career points. Later mission rewards not seen yet; assumed the same."
   },
   {
@@ -140,6 +140,14 @@
    "seen": "2026-10-11",
    "note": "COMPLETE: Claim it. '2x items in bundle': contents not seen yet (screenshot the Inventory after claiming) so the ISK value is unknown. Pattern: the market goals keep stepping up (50k, 100k, 250k, 500k ISK earned), each paying a reward: selling stock is how they complete.",
    "claimed": true
+  },
+  {
+   "name": "AIR reward: Make 25 Stargate Jumps",
+   "kind": "reward_bundle",
+   "reward_isk": 25000,
+   "claimed": true,
+   "seen": "2026-10-11",
+   "note": "PAID: 25,000 ISK 'AIR Career Program Reward' 2026-10-11 11:36 UTC (seen in the AIR Career Program window under Your Rewards: Claimed). Cumulative stargate jumps count, so travelling pays this ladder; the next rung (more jumps?) not seen yet."
   }
  ]
 }
