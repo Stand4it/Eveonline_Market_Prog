@@ -1081,3 +1081,31 @@ class ReprocessTests(unittest.TestCase):
         from eve_profit.reprocess import refine_option
         con, g, p = self._world()
         self.assertIsNone(refine_option(con, g, p, "Kernite", 1000, 5000.0))
+
+
+class StyleTests(unittest.TestCase):
+    def tearDown(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ.pop("EVE_COLOR", None)
+        os.environ.pop("NO_COLOR", None)
+
+    def test_without_color_the_markers_and_labels_are_still_there(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ["NO_COLOR"] = "1"
+        out = st.task_block("STEP: SELL NOW in Rotonos - about 1 ISK\n   1 x Foo\nWhen done:  stop")
+        self.assertIn(">> YOUR TASK - do this one thing now <<", out)
+        self.assertNotIn("\x1b[", out)                                         # no escape codes at all
+        self.assertIn("STEP: SELL NOW in Rotonos", out)
+
+    def test_with_color_the_task_is_bright_and_the_footer_is_dim(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ["EVE_COLOR"] = "1"
+        out = st.task_block("STEP: SELL NOW in Rotonos - about 1 ISK\n   1 x Foo\nWhen done:  stop")
+        lines = out.split("\n")
+        self.assertIn("\x1b[1;97;44m", lines[0])                              # white on blue banner (brightness contrast)
+        self.assertIn("\x1b[1;93m", lines[1])                                 # bold bright yellow headline
+        self.assertIn("\x1b[90m", lines[-1])                                  # footer dimmed
+        self.assertEqual(st.dim("x"), "\x1b[90mx\x1b[0m")

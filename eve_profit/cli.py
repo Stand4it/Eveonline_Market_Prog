@@ -442,7 +442,9 @@ def _run(a):
     elif a.cmd == "next":
         from .graph import Graph
         from .nextstep import next_action
-        print(next_action(con, Graph(con), p, full=a.all, ahead=a.plan))
+        from .style import task_block
+        txt = next_action(con, Graph(con), p, full=a.all, ahead=a.plan)
+        print(txt if (a.all or a.plan) else task_block(txt))
     elif a.cmd == "zkill":
         from .esi import ESI
         from .zkill import ZKill, refresh_gank_map
@@ -745,7 +747,8 @@ def _now(a):
             while "\n" in self._line:
                 line, self._line = self._line.split("\n", 1)
                 if line.startswith(self.SHOW):
-                    sys.__stdout__.write("   " + line.strip() + "\n")
+                    from .style import dim as _dim
+                    sys.__stdout__.write(_dim("   " + line.strip()) + "\n")
                     sys.__stdout__.flush()
             return len(text)
 
@@ -754,7 +757,8 @@ def _now(a):
         b.cmd, b.sync = cmd, False
         for k, v in kw.items():
             setattr(b, k, v)
-        print(f"[{label}] ...", flush=True)
+        from .style import dim as _dim
+        print(_dim(f"[{label}] ..."), flush=True)
         buf = Progress()
         try:
             with contextlib.redirect_stdout(buf):
@@ -805,11 +809,13 @@ def _now(a):
         print(f"   skipped: {e}")
     except Exception as e:
         print(f"   price check failed: {type(e).__name__}: {e}")
-    print(f"\n{'=' * 70}\n{step}")
+    from .style import bold, dim, task_block
+    print("\n" + dim("=" * 70))
+    print(task_block(step))
     if checks:
-        print("\nWORLDWIDE PRICE CHECK:")
-        print("\n".join(checks))
-    print(f"\n(done in {time.time() - t0:.0f} s)")
+        print("\n" + bold("WORLDWIDE PRICE CHECK (background info):"))
+        print("\n".join(dim(c) for c in checks))
+    print(dim(f"\n(done in {time.time() - t0:.0f} s)"))
 
 
 if __name__ == "__main__":

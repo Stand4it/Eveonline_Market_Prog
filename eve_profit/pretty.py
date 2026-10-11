@@ -87,7 +87,8 @@ class Heartbeat:
         while not self.stop_flag.wait(self.every):
             n += 1
             el = int(time.time() - self.t0)
-            line = f"\n   ... {el // 60}:{el % 60:02d} elapsed - {MESSAGES[(n - 1) % len(MESSAGES)]}\n"
+            from .style import dim
+            line = "\n" + dim(f"   ... {el // 60}:{el % 60:02d} elapsed - {MESSAGES[(n - 1) % len(MESSAGES)]}") + "\n"
             (self.out or sys.stdout).write(line)
             (self.out or sys.stdout).flush()
 
