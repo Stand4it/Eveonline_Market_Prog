@@ -1113,8 +1113,11 @@ class StyleTests(unittest.TestCase):
         self.assertIn(Y, lines[1])                                              # what to sell
         self.assertIn(Y, lines[2])                                              # the '=> SELL RAW' verdict
         self.assertNotIn("\x1b[", lines[3])                                     # the 'In game: ... Sell' line below it is NOT highlighted
-        self.assertIn('\x1b[1;97mpython -m eve_profit start --activity "Market sell stock Rotonos"\x1b[0m', lines[4])
-        self.assertEqual(lines[6].count("\x1b[1;97m"), 2)                       # stop and sync both bold white
+        self.assertEqual(lines[4], "")                                          # a blank line before the timer line
+        start = [l for l in lines if "start --activity" in l][0]
+        self.assertIn('\x1b[1;97mpython -m eve_profit start --activity "Market sell stock Rotonos"\x1b[0m', start)
+        done = [l for l in lines if l.startswith("When done:")][0]
+        self.assertEqual(done.count("\x1b[1;97m"), 2)                           # stop and sync both bold white
         self.assertEqual(st.dim("x"), "x")
 
 
@@ -1341,7 +1344,8 @@ class WorldHoldTests(unittest.TestCase):
             st._ON = None
             os.environ.pop("EVE_COLOR", None)
         lines = out.split("\n")
-        for ln in lines[1:]:                                                    # the DO ONLY THIS line and the sell / keep / buy lines
+        self.assertEqual(lines[1], "")                                          # a blank line BEFORE the action
+        for ln in lines[2:]:                                                    # the DO ONLY THIS line and the sell / keep / buy lines
             self.assertIn("\x1b[1;93;40m", ln)
 
 
@@ -1460,3 +1464,21 @@ class ScreensStepTests(unittest.TestCase):
         for _ in range(n):
             chain_done(con)
         self.assertFalse(screens.due(con))                                       # all sent: not asked again for 12 hours
+
+
+class AirAroundTheActionTests(unittest.TestCase):
+    def test_blank_lines_before_the_action_and_before_the_timer(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ["NO_COLOR"] = "1"
+        try:
+            out = st.task_block("STEP: X - screen 1 of 7\n   DO ONLY THIS: open the window\n   Show me: goals.\n   When it is sent run:  python -m eve_profit done\n   Time it:  python -m eve_profit start --activity \"Y\"\n\nWhen done:  python -m eve_profit stop")
+        finally:
+            st._ON = None
+            os.environ.pop("NO_COLOR", None)
+        lines = out.split("\n")
+        i = [k for k, l in enumerate(lines) if "DO ONLY THIS" in l][0]
+        j = [k for k, l in enumerate(lines) if l.strip().startswith("Time it:")][0]
+        self.assertEqual(lines[i - 1], "")                                      # air before the action
+        self.assertEqual(lines[j - 1], "")                                      # air after it
+        self.assertNotIn("\n\n\n", out)                                         # but never a double gap

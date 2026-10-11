@@ -65,17 +65,28 @@ def white_cmds(line):
 
 
 def task_block(text):
-    """The step text: headline (marked '>> '), the 'DO ONLY THIS' line (the one thing to do), the item lines ('66,666 x Scordite'), the sell / buy / keep lines on the way and the refine-or-sell verdict ('=> SELL RAW') in yellow on black;
-    the start / stop / sync / next commands in bold white; everything else plain."""
+    """The step text: headline (marked '>> '), the 'DO ONLY THIS' line (the one thing to do), the item lines ('66,666 x Scordite'), the sell / buy / keep
+    lines on the way and the refine-or-sell verdict ('=> SELL RAW') in yellow on black; the start / stop / sync / next commands in bold white; everything
+    else plain. A blank line goes BEFORE the action and AFTER it (before the timer line) so the part you act on stands out."""
     out, first = [], True
+
+    def blank():
+        if out and out[-1].strip():
+            out.append("")
     for ln in text.split("\n"):
         s = ln.strip()
         if first and s:
             out.append(hue(">> " + s))
             first = False
-        elif "DO ONLY THIS" in ln or re.match(r"^\s+[\d,]+ x ", ln) or re.match(r"^\s+(sell|buy|keep) ", ln) or s.startswith(("=> SELL RAW", "=> REFINE FIRST")):
+        elif "DO ONLY THIS" in ln:
+            blank()
             out.append(hue(ln))
-        elif s.startswith(("Time it:", "When done:")):
+        elif re.match(r"^\s+[\d,]+ x ", ln) or re.match(r"^\s+(sell|buy|keep) ", ln) or s.startswith(("=> SELL RAW", "=> REFINE FIRST")):
+            out.append(hue(ln))
+        elif s.startswith(("Time it:", "Timer:")):
+            blank()
+            out.append(white_cmds(ln))
+        elif s.startswith("When done:"):
             out.append(white_cmds(ln))
         else:
             out.append(ln)
