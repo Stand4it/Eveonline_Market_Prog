@@ -71,15 +71,15 @@ def candidate(con, g, p):
                          + ["   After this `next` chooses the best step from here: there is no planned trip back."])
         return 1e12, text                                               # you are there with the goods: finishing the sale comes first
     if st.get("looked") != here and here != st["origin"]:
-        st["looked"] = here                                             # shown once per stop: the next `next` flies on
+        st["looked"] = here                                             # checked once per stop
         save(con, st)
         from .haul import agents_here
-        ag = agents_here(here, g, p)
-        text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: before flying on, check this system for agents and missions you can do here:"]
-                          + (["      " + x for x in ag] if ag else ["      no known agent within 2 jumps: open the Agency (left side) > Agents & Missions to look further"])
-                          + ["   HOW TO TELL: dock, station window (right side) > Agents tab. An orange 'Offered' beside a name = a mission is waiting. No 'Offered' = nothing here.",
-                             "   Orange 'Offered' on a NEW agent or mission? Send me only that agent's window. No orange? Run  python -m eve_profit next  (it flies on)."])
-        return 1e11, text
+        ag = [x for x in agents_here(here, g, p) if x.startswith("HERE")]       # only agents in THIS system matter; no list of far ones
+        if ag:
+            text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: dock and open the station window > Agents tab:"]
+                              + ["      " + x for x in ag]
+                              + ["   Orange 'Offered' beside a name = a mission is waiting: send me only that agent's window. No orange? Run  python -m eve_profit next  (it flies on)."])
+            return 1e11, text
     try:
         r = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow)
     except Exception:                                                   # noqa: BLE001

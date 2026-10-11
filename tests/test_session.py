@@ -1417,9 +1417,7 @@ class HaulChainTests(unittest.TestCase):
         rate, text = candidate(con, g, mk(home))
         self.assertIn("DO ONLY THIS: fly to", text)
         self.assertIn("jump 1 of 2", text)
-        _, look = candidate(con, g, mk(mid))                                       # one jump later: first a look around (agents, missions here)
-        self.assertIn("LOOK AROUND", look)
-        rate2, text2 = candidate(con, g, mk(mid))                                  # then re-planned from here
+        rate2, text2 = candidate(con, g, mk(mid))                                  # one jump later: no agent here, so no look-around: re-planned from here
         self.assertIn("jump 2 of 2", text2)
         self.assertIn("1 jumps left", text2)
         rate3, text3 = candidate(con, g, mk(far))                                  # arrived
