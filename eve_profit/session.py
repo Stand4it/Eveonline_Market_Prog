@@ -7,7 +7,8 @@ import time
 
 # income that comes from DOING the activity (not from trading, transfers or refunds)
 INCOME_TYPES = ("bounty_prizes", "agent_mission_reward", "agent_mission_time_bonus_reward",
-                "project_discovery_reward", "corporation_reward_payout", "insurance", "ess_escrow_transfer")
+                "project_discovery_reward", "corporation_reward_payout", "insurance", "ess_escrow_transfer",
+                "daily_goal_payouts", "air_career_program_reward")                  # the AIR daily goals and career-program rewards are income too
 SALE_WORDS = ("market", "hauling", "trade", "sell")       # runs with these words in the name also count market SALES as income
 
 

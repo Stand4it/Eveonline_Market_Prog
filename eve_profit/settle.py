@@ -229,3 +229,20 @@ def run(con, esi, cid, do_apply=False):
         if pays:
             apply_payouts(con, pays)
     return format_plan(props, do_apply and bool(props or pays), pays)
+
+
+def recent_payouts(entries, since_ts):
+    """Payout entries (rewards, bounties, AIR/daily-goal rewards) posted since since_ts, newest first: [(time, ref_type, amount, description)]."""
+    out = []
+    for e in entries:
+        if e.get("amount", 0) > 0 and e.get("ref_type") in INCOME_TYPES and _ts(e["date"]) >= since_ts:
+            out.append((_ts(e["date"]), e["ref_type"], e["amount"], (e.get("description") or "")[:40]))
+    return sorted(out, reverse=True)
+
+
+def format_recent(rows):
+    if not rows:
+        return "   No payouts in your wallet journal in that time (ESI can lag a few minutes)."
+    L = ["   Payouts in your wallet journal (newest first). To put one on this run:  python -m eve_profit fixlast --isk AMOUNT"]
+    L += [f"      {time.strftime('%m-%d %H:%M', time.localtime(t))} local   {amt:>10,.0f}   {ref}   {desc}" for t, ref, amt, desc in rows[:8]]
+    return "\n".join(L)

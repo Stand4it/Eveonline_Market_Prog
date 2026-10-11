@@ -84,6 +84,7 @@ def main(argv=None):
     ap.add_argument("--add-min", type=float, default=0, help="stop/fixlast: minutes of work to ADD (e.g. worked while the timer was paused)")
     ap.add_argument("--check", action="store_true", help="docs: show where the notes and the code disagree")
     ap.add_argument("--delete", action="store_true", help="fixlast: delete that timed run (e.g. a timer started by mistake)")
+    ap.add_argument("--ago", type=float, default=0.0, help="log: how many minutes ago you finished (default 0 = just now)")
     ap.add_argument("--apply", action="store_true", help="settle: save the proposed changes (default is a dry run)")
     ap.add_argument("--id", type=int, default=0, help="fixlast: the # of the run to change (shown by history); default = the newest")
     ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
@@ -297,12 +298,24 @@ def _run(a):
             except ValueError as e:
                 raise SystemExit(str(e))
     elif a.cmd == "log":
-        if not (a.activity and a.hours > 0):
-            raise SystemExit('usage: log --activity "<name>" --isk <earned> --hours <spent>')
-        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES(?,?,?,?)",
-                    (a.activity, a.isk, a.hours, time.time()))
+        hours = a.hours or (a.minutes / 60.0)
+        if not (a.activity and hours > 0):
+            raise SystemExit('usage: log --activity "<name>" --minutes <spent> [--isk <earned>] [--ago <minutes since you finished>]   (or --hours H)')
+        ended = time.time() - a.ago * 60.0
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts,ship) VALUES(?,?,?,?,?)", (a.activity, a.isk, hours, ended, p.ship_name))
         con.commit()
-        print("Logged. Planner will use your real average after 3 runs.")
+        print(f"Logged '{a.activity}': {hours * 60:.0f} min, {a.isk:,.0f} ISK, finished {time.strftime('%Y-%m-%d %H:%M', time.localtime(ended))} (local PC time).")
+        if not a.isk:                                                       # no ISK given: show what the wallet journal paid recently so you can attach it
+            try:
+                from . import sso
+                from .esi import ESI
+                from .settle import format_recent, recent_payouts
+                esi_ = ESI()
+                esi_.token, cid_ = sso.get_token(a.client_id)
+                print(format_recent(recent_payouts(esi_.paged(f"/characters/{cid_}/wallet/journal/"), ended - 4 * 3600)))
+            except Exception as e:                                          # noqa: BLE001
+                print(f"   (could not read the wallet journal: {type(e).__name__}; give the ISK with --isk)")
+        print("The planner uses your real average after 3 runs of the same activity name.")
     elif a.cmd == "mock":
         from .mock import load_mock
         load_mock(con)

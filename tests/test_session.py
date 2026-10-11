@@ -1363,3 +1363,19 @@ class BoldCommandsEverywhereTests(unittest.TestCase):
             lines = buf.getvalue().split("\n")
             self.assertEqual("\x1b[1;97mpython -m eve_profit go --pick 1 --send\x1b[0m" in lines[0], expect)
             self.assertEqual(lines[1], "a line with no command")
+
+
+class LogAfterTheFactTests(unittest.TestCase):
+    def test_air_rewards_count_as_income_and_recent_payouts_are_listed(self):
+        import calendar
+        import time as _t
+        from eve_profit.session import INCOME_TYPES
+        from eve_profit.settle import format_recent, recent_payouts
+        self.assertIn("daily_goal_payouts", INCOME_TYPES)
+        self.assertIn("air_career_program_reward", INCOME_TYPES)
+        e = lambda i, d, ref, amt: {"id": i, "date": f"2026-10-11T{d}Z", "ref_type": ref, "amount": amt, "description": ""}
+        since = calendar.timegm(_t.strptime("2026-10-11 05:00", "%Y-%m-%d %H:%M"))
+        rows = recent_payouts([e(1, "04:00:00", "daily_goal_payouts", 111), e(2, "05:30:00", "daily_goal_payouts", 445000), e(3, "06:00:00", "brokers_fee", -5)], since)
+        self.assertEqual([r[2] for r in rows], [445000])                         # the old payout and the fee are not listed
+        self.assertIn("fixlast --isk AMOUNT", format_recent(rows))
+        self.assertIn("No payouts", format_recent([]))
