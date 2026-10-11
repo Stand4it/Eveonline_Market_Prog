@@ -31,7 +31,7 @@ def _agents():
         seen, out = set(), []
         for o in d.get("offers", []):
             n = o.get("agent", "")
-            if o.get("available", True) and n and not n.startswith("BOTH") and n not in seen:
+            if o.get("available", True) and o.get("agent_system", "Rotonos") == "Rotonos" and n and not n.startswith("BOTH") and n not in seen:
                 seen.add(n)
                 out.append(n.split(" (")[0])
         return out

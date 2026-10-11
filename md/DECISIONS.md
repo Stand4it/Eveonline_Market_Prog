@@ -121,3 +121,4 @@
 - 2026-10-11: AIR Career Program window seen: 'Make 25 Stargate Jumps' paid 25,000 ISK (claimed; that was the 25,000 at 11:36 UTC), Soldier of Fortune path missions 1-3 done / 4-10 open, 35/750 career points, mission 1 est. 5 min risk none. The 470,000 on the daily goals run = 445,000 daily goal + 25,000 stargate-jump reward.
 - 2026-10-11 agent_offers.json: recorded Arabeton/Arnelin/Beradaillot/Ormelace/Rounaminck windows (Arnelin final reward = Nereus + 175k bonus; standings noted).
 - 2026-10-11 `done --screen N`: jump to screen N when several screens were sent at once.
+- 2026-10-11 screens step only asks for agents in Rotonos (Emps Metyt is at Axiosere: asked when there).
