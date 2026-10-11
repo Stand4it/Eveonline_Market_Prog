@@ -138,28 +138,51 @@ def agents_on_route(g, p, dest):
     return _agents_in(d, names)
 
 
-def agents_here(system):
-    """Known agents in this one system -> list of lines (empty if none known)."""
+def agents_near(g, p, system, max_jumps=2):
+    """Every known agent (agents_nearby.json + agent_offers.json), distance recomputed from where you stand now. -> lines, nearest first:
+    0 jumps = here (dock at the station: that is a stop); 1-2 jumps = a possible next stop."""
     import json, os
-    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents_nearby.json")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    seen, found = set(), []
+
+    def add(name, sysname, kind):
+        if not name or not sysname or (name, sysname) in seen:
+            return
+        seen.add((name, sysname))
+        try:
+            j = 0 if sysname == system else g.route(g.id_of(system), g.id_of(sysname), 60, p.avoid_yellow).jumps
+        except Exception:                                               # noqa: BLE001
+            return
+        if j <= max_jumps:
+            found.append((j, name, sysname, kind))
     try:
-        d = json.load(open(f, encoding="utf-8"))
-    except Exception:                                                   # noqa: BLE001
-        return []
-    out = _agents_in(d, {system})
-    try:
-        o = json.load(open(os.path.join(os.path.dirname(f), "agent_offers.json"), encoding="utf-8")).get("offers", [])
-        seen = set()
-        for x in o:
-            nm = x.get("agent", "").split(" (")[0]
-            if nm.startswith("BOTH"):
-                continue
-            if x.get("agent_system") == system and nm not in seen:
-                seen.add(nm)
-                out.append(f"AGENT here: {nm} - {x['mission'][:70]}")
+        d = json.load(open(os.path.join(root, "agents_nearby.json"), encoding="utf-8"))
+        for kind in ("security", "mining", "distribution_nearest", "locator_nearest", "rd_nearest"):
+            for a in d.get(kind, []):
+                add(a.get("agent"), a.get("system"), kind.split("_")[0])
     except Exception:                                                   # noqa: BLE001
         pass
+    try:
+        for x in json.load(open(os.path.join(root, "agent_offers.json"), encoding="utf-8")).get("offers", []):
+            nm = x.get("agent", "").split(" (")[0]
+            if not nm.startswith("BOTH"):
+                add(nm, x.get("agent_system"), "career/mission")
+    except Exception:                                                   # noqa: BLE001
+        pass
+    out = []
+    for j, name, sysname, kind in sorted(found):
+        if j == 0:
+            out.append(f"HERE in {sysname}: {name} ({kind}): dock at the station and open the Agents tab")
+        else:
+            out.append(f"{j} jump{'s' if j != 1 else ''} away in {sysname}: {name} ({kind})" + (" - could be your next stop" if j == 1 else ""))
     return out
+
+
+def agents_here(system, g=None, p=None):
+    """Known agents near the system you are in. With the map: distances from here; without: only agents in this very system."""
+    if g is not None and p is not None:
+        return agents_near(g, p, system)
+    return []
 
 
 def _agents_in(d, names):

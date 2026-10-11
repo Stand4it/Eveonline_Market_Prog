@@ -74,9 +74,9 @@ def candidate(con, g, p):
         st["looked"] = here                                             # shown once per stop: the next `next` flies on
         save(con, st)
         from .haul import agents_here
-        ag = agents_here(here)
+        ag = agents_here(here, g, p)
         text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: before flying on, check this system for agents and missions you can do here:"]
-                          + (["      " + x for x in ag] if ag else ["      no agent known here: open the Agency (left side) > Agents & Missions and look for one within 1-2 jumps"])
+                          + (["      " + x for x in ag] if ag else ["      no known agent within 2 jumps: open the Agency (left side) > Agents & Missions to look further"])
                           + ["   HOW TO TELL: dock, station window (right side) > Agents tab. An orange 'Offered' beside a name = a mission is waiting. No 'Offered' = nothing here.",
                              "   Orange 'Offered' on a NEW agent or mission? Send me only that agent's window. No orange? Run  python -m eve_profit next  (it flies on)."])
         return 1e11, text

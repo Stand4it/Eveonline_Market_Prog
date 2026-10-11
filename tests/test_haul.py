@@ -55,3 +55,27 @@ class DestinationTests(unittest.TestCase):
         self.assertEqual(destination_of("STEP: FLY to Tiberis\n   DO ONLY THIS: x"), "Tiberis")
         self.assertEqual(destination_of(">> STEP: FLY to Tiberis - jump 1 of 18, hauling your stock to Jita"), "Tiberis")
         self.assertIsNone(destination_of("STEP: SELL Scordite"))
+
+
+class AgentsNearTests(unittest.TestCase):
+    def test_distance_is_recomputed_from_here(self):
+        from eve_profit.haul import agents_near
+
+        class R:
+            def __init__(self, j):
+                self.jumps = j
+
+        class G:
+            ids = {"Tiberis": 1, "Rotonos": 2, "Axiosere": 3}
+
+            def id_of(self, n):
+                return self.ids[n]
+
+            def route(self, a, b, mx, yellow):
+                return R(1 if {a, b} == {1, 2} else 2)
+
+        class P:
+            avoid_yellow = True
+        out = agents_near(G(), P(), "Tiberis")
+        self.assertTrue(any(l.startswith("1 jump away in Rotonos") for l in out))
+        self.assertTrue(any("Axiosere" in l and "2 jumps away" in l for l in out))

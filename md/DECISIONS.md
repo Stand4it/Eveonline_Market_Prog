@@ -138,3 +138,4 @@
 - 2026-10-11 look-around: courier drop-off systems are labelled DROP-OFF (not 'AGENT here'); only the agent's own system says AGENT here.
 - 2026-10-11 look-around lists only agents located in the system; courier drop-offs of missions you do not hold are not mentioned.
 - 2026-10-11 look-around says how to tell: station window Agents tab, orange 'Offered' = mission waiting; send only agents with a new Offered.
+- 2026-10-11 look-around recomputes every known agent's distance from where you stand (HERE / 1 jump = possible next stop / 2 jumps), from agents_nearby.json + agent_offers.json.
