@@ -45,6 +45,13 @@ def _next_action_core(con, g, p):
                          + (f" [{b['note']}]" if b["note"] else ""))
             if rebuy_note(d):
                 L.append(rebuy_note(d))
+            try:                                                 # an ore or item we have refining data for: refine vs sell raw
+                from .reprocess import describe as _rdesc, refine_option
+                ro = refine_option(con, g, p, d["name"], d["sold"], d["net"])
+                if ro:
+                    L += _rdesc(d["name"], ro)
+            except Exception:                                    # noqa: BLE001
+                pass
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
         big = sells[0]

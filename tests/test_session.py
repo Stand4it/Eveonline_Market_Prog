@@ -1044,3 +1044,40 @@ class SettlePayoutTests(unittest.TestCase):
         self.assertEqual(out[0]["gross"], 187790 + 220720)
         self.assertEqual(round(out[0]["net"]), 187790 + 220720 - 20657 - 24280)  # tax recovered from the balance gaps
         self.assertEqual(payout_plan(rows, journal, used=[1, 2, "gap-1", "gap-2"]), [])      # used entries are never counted twice
+
+
+class ReprocessTests(unittest.TestCase):
+    def _world(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        for name in ("Tritanium", "Pyerite"):
+            if not con.execute("SELECT 1 FROM types WHERE name=?", (name,)).fetchone():
+                con.execute("INSERT INTO types(type_id,name) VALUES(?,?)", (9100 + len(name), name))
+        con.execute("DELETE FROM orders WHERE type_id IN (SELECT type_id FROM types WHERE name IN ('Tritanium','Pyerite'))")
+        tid = {n: con.execute("SELECT type_id FROM types WHERE name=?", (n,)).fetchone()[0] for n in ("Tritanium", "Pyerite")}
+        home = Graph(con).id_of("Home")
+        for oid, name, price in ((95001, "Tritanium", 5.0), (95002, "Pyerite", 20.0)):
+            con.execute("INSERT INTO orders VALUES(?,?,60000001,?,10000001,1,?,?,1,'',1)", (oid, tid[name], home, price, 10_000_000))
+        return con, Graph(con), Profile(current_system="Home", cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001)
+
+    def test_refining_wins_when_the_raw_price_is_low_and_loses_when_it_is_high(self):
+        from eve_profit.reprocess import describe, refine_option
+        con, g, p = self._world()
+        low = refine_option(con, g, p, "Scordite 0-Grade", 66667, raw_net=100000.0)
+        self.assertTrue(low["refine_wins"])
+        self.assertEqual(low["minerals"]["Tritanium"], 19980)
+        self.assertIn("REFINE FIRST", "\n".join(describe("Scordite 0-Grade", low)))
+        high = refine_option(con, g, p, "Scordite 0-Grade", 66667, raw_net=400000.0)
+        self.assertFalse(high["refine_wins"])
+        txt = "\n".join(describe("Scordite 0-Grade", high))
+        self.assertIn("SELL RAW", txt)
+        self.assertIn("% yield", txt)                                   # the break-even yield is shown
+        self.assertGreater(high["breakeven_yield"], 0.40)
+
+    def test_unknown_items_are_ignored(self):
+        from eve_profit.reprocess import refine_option
+        con, g, p = self._world()
+        self.assertIsNone(refine_option(con, g, p, "Kernite", 1000, 5000.0))

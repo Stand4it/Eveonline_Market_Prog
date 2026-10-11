@@ -1,0 +1,8 @@
+{
+ "why": "Refining data seen in the in-game Reprocessing Plant window (right-click an ore > Reprocess). per_unit = minerals you get per ONE unit of ore at the yield you had when you looked (yield_seen). Add one entry per ore/item from a screenshot; the tool compares REFINE vs SELL RAW for it every time it would tell you to sell that stack. If your refining yield changes (skills, station), update yield_seen and run the window again.",
+ "yield_seen": 0.40,
+ "fee_per_unit": 0.1517,
+ "ores": {
+  "Scordite 0-Grade": {"per_unit": {"Tritanium": 0.2997, "Pyerite": 0.2197}, "seen": "2026-10-11", "note": "66,667 ore -> 19,980 Tritanium + 14,650 Pyerite at 40.0% yield; fee 10,114 ISK; game estimate 469,000 in, 327,000 out"}
+ }
+}
