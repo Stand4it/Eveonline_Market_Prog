@@ -142,3 +142,4 @@
 - 2026-10-11 look-around step only appears when a known agent is in the system you are in; otherwise next goes straight to the best step (no agent lists).
 - 2026-10-11 hop_only also strips '~ price at <dest>' from chain item lines.
 - 2026-10-11 START/END frames use one # line each (was two).
+- 2026-10-11 hop step shows buy/sell/need-anyway lines only for the system you are in; trades at other systems appear when you get there (next re-plans).

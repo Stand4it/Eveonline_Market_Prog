@@ -852,7 +852,7 @@ def next_action(con, g, p, full=False, ahead=False):
         first = steps[0]
         if first.startswith("STEP: FLY to") and "hauling your stock to" in first:
             from .haul import hop_only
-            first = hop_only(first)
+            first = hop_only(first, p.current_system)
         out = first + "\n\n" + DONE
         out += "\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home

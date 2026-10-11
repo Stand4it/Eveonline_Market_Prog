@@ -244,11 +244,16 @@ def ship_lines(con, g, p, h):
     return L
 
 
-def hop_only(text):
+def hop_only(text, here=None):
     """KISS: the step is the next jump and what to load; the end point, the money and the 'after selling' view wait for `next --plan`."""
     import re
     out = []
-    for ln in text.split("\n"):
+    lines = text.split("\n")
+    for ln in lines:
+        if here and re.match(r"^\s{6}(buy|sell|need anyway)", ln):             # a stop elsewhere is not part of THIS step: it comes up when you are there
+            m = re.search(r"(?:buy .*? at|sell .*? at|need anyway: .*? at) (.+?)(?: \(| on the route|$)", ln)
+            if m and m.group(1).strip().lower() != here.lower():
+                continue
         if ln.startswith("STEP: FLY to"):
             ln = re.sub(r", hauling your stock to .*$", "", ln)
             ln = re.sub(r" - jump \d+ of \d+", "", ln)
@@ -262,7 +267,16 @@ def hop_only(text):
             if m:
                 ln = m.group(1)
         out.append(ln)
-    return "\n".join(out)
+    res = []
+    for i, ln in enumerate(out):                                        # drop section headers whose lines were all removed
+        if re.match(r"^\s+(ON THE WAY|ALSO ON THE ROUTE)", ln) and not ln.strip().startswith("ON THE WAY: nothing"):
+            nxt = out[i + 1] if i + 1 < len(out) else ""
+            if not re.match(r"^\s{6}\S", nxt):
+                if ln.strip().startswith("ON THE WAY"):
+                    res.append("   ON THE WAY: nothing to buy or sell on this hop.")
+                continue
+        res.append(ln)
+    return "\n".join(res)
 
 
 def haul_step(h, g=None, p=None, con=None):

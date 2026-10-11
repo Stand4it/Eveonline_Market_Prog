@@ -87,3 +87,18 @@ class HopOnlyChainTests(unittest.TestCase):
         o = hop_only("STEP: FLY to Fortitude\n           2 x Entropic Rose Metallic - Limited ~  1,152,550 at Jita\n")
         self.assertNotIn("Jita", o)
         self.assertIn("2 x Entropic Rose Metallic - Limited", o)
+
+
+class HopOnlyElsewhereTests(unittest.TestCase):
+    def test_trades_at_other_systems_are_not_in_this_step(self):
+        from eve_profit.haul import hop_only
+        t = ("STEP: FLY to Fortitude\n   DO ONLY THIS: fly to Fortitude and stop there.\n"
+             "   ON THE WAY (optional; confirm each buy with `check` first):\n"
+             "      buy 2 x Ferros at Kemerk (-1,378,000), sell at Jita (+2,590,000) = +1,212,000 ISK\n"
+             "   ALSO ON THE ROUTE:\n      need anyway: 3 x Miner I is ~12,000 each at Manifest on the route (here 25,000): buy there\n")
+        o = hop_only(t, "Tiberis")
+        self.assertNotIn("Kemerk", o)
+        self.assertNotIn("Manifest", o)
+        self.assertNotIn("ALSO ON THE ROUTE", o)
+        o2 = hop_only(t, "Kemerk")
+        self.assertIn("Kemerk", o2)
