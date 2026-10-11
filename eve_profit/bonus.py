@@ -74,6 +74,11 @@ def daily_goal_step(pr, con=None, free_ride=False, g=None, p=None, compact=False
             prog = {g["goal"]: g.get("progress", "") for g in pr.get("goals", [])}
             pl = plan(con, pr.get("reward_isk", 445000), free_ride, g=g, p=p)
             if pl["best"]:
+                if compact and g is not None and p is not None:
+                    from .dailygoals import chain_step
+                    one = chain_step(con, g, p, pl)                      # ONE step at a time: where you are in the chain
+                    if one:
+                        return one
                 return compact_plan(pl, prog) if compact else format_plan(pl, prog)
         except Exception:                                               # noqa: BLE001
             pass

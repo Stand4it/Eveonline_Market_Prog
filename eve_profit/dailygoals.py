@@ -298,3 +298,146 @@ def format_plan(pl, progress=None):
     L.append("")
     L.append("   Check Opportunities > AIR Daily Goals in game. (?) = a guess: time it and the model learns.")
     return "\n".join(L)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------
+# THE CHAIN: the daily goals as ONE STEP AT A TIME. The tool remembers the plan (meta 'daily_chain') and works out which step you are on from
+# what `sync` sees: where you are, what is in your hangar, whether a build job is running. `next` shows only that step.
+# Steps: buy at home -> fly there (the 3 jumps) -> buy there -> [epic arc, optional] -> fly home -> start the build -> wait and collect -> done.
+# ---------------------------------------------------------------------------------------------------------------------------------------
+import json as _json
+import time as _time
+
+CHAIN_KEY = "daily_chain"
+CHAIN_MAX_AGE_S = 36 * 3600
+
+
+def _chain_load(con):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (CHAIN_KEY,)).fetchone()
+        st = _json.loads(r[0]) if r else None
+    except Exception:                                                   # noqa: BLE001
+        return None
+    if st and _time.time() - st.get("t", 0) > CHAIN_MAX_AGE_S:
+        return None
+    return st
+
+
+def _chain_save(con, st):
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (CHAIN_KEY, _json.dumps(st)))
+    con.commit()
+
+
+def chain_clear(con):
+    try:
+        con.execute("DELETE FROM meta WHERE key=?", (CHAIN_KEY,))
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass
+
+
+def chain_done(con):
+    """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
+    st = _chain_load(con)
+    if not st:
+        return "Nothing to mark: no daily-goals chain is running."
+    st["epic_done"] = True
+    _chain_save(con, st)
+    return "OK, that step is marked done. Run  python -m eve_profit next  for the next one."
+
+
+def _chain_from_plan(pl, here):
+    """Start a chain from the best plan when it is the jumps + build pair; None otherwise."""
+    b = pl.get("best")
+    if not b:
+        return None
+    jumps = next((o for o in b["pair"] if o["goal"] == "Complete 3 Jumps"), None)
+    build = next((o for o in b["pair"] if o["goal"] == "Manufacture an Item" and o.get("mb")), None)
+    if not (jumps and build):
+        return None
+    mb = build["mb"]
+    return {"t": _time.time(), "home": here, "dest": jumps.get("dest_system") or "", "dest_label": jumps.get("dest", ""), "product": mb["product"], "runs": mb["runs"],
+            "units": mb["units"], "job_min": mb.get("job_min", 0.0), "buy": mb.get("buy_items", []), "bought": False, "started": False, "epic_done": False,
+            "reward": pl.get("reward", 445000.0), "minutes": b["minutes"]}
+
+
+def _held(con, item, system_name, g):
+    """Units of `item` in your hangar in that system."""
+    try:
+        sid = g.id_of(system_name)
+        r = con.execute("SELECT COALESCE(SUM(i.quantity),0) FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE t.name=? COLLATE NOCASE AND i.system_id=?", (item, sid)).fetchone()
+        return int(r[0] or 0)
+    except Exception:                                                   # noqa: BLE001
+        return 0
+
+
+def _station_of(con, g, item, system_name):
+    """Station with the cheapest sell order for the item in that system: 'Manifest V - AIR Laboratories Trade Center'."""
+    try:
+        r = con.execute("SELECT s.name FROM orders o LEFT JOIN stations s ON s.station_id=o.location_id JOIN types t ON t.type_id=o.type_id "
+                        "WHERE t.name=? COLLATE NOCASE AND o.is_buy=0 AND o.system_id=? ORDER BY o.price ASC LIMIT 1", (item, g.id_of(system_name))).fetchone()
+        return r[0] if r and r[0] else ""
+    except Exception:                                                   # noqa: BLE001
+        return ""
+
+
+def chain_step(con, g, p, pl, reward_ok=True):
+    """The ONE step the daily goals chain is at right now, or None when the chain does not apply (then the caller shows the plain checklist)."""
+    st = _chain_load(con)
+    if st is None:
+        st = _chain_from_plan(pl, p.current_system)
+        if st is None:
+            return None
+    here = p.current_system
+    home, dest = st["home"], st["dest"] or st["home"]
+    far = [x for x in st["buy"] if x["system"] != home]
+    near = [x for x in st["buy"] if x["system"] == home]
+    slots_used = int(getattr(p, "mfg_slots_used", 0) or 0)
+    changed = False
+    head = f"STEP: AIR DAILY GOALS - about {st['reward']:,.0f} ISK for 2 of the 5 goals (Complete 3 Jumps + Manufacture an Item)"
+
+    def done_checks():
+        nonlocal changed
+        if not st["bought"] and all(_held(con, x["item"], x["system"], g) >= x["qty"] for x in st["buy"]) :
+            st["bought"], changed = True, True
+        if st["bought"] and not st["started"] and here == home and slots_used > 0:
+            st["started"], changed = True, True
+    done_checks()
+
+    def buy_lines(items):
+        out = []
+        for x in items:
+            station = _station_of(con, g, x["item"], x["system"])
+            out.append(f"      {x['qty']:>6,} x {x['item']:<18} ~{x['cost']:>9,.0f} ISK" + (f"   at {station}" if station else f"   at {x['system']}"))
+        return out
+
+    if not st["bought"]:
+        missing_near = [x for x in near if _held(con, x["item"], x["system"], g) < x["qty"]]
+        missing_far = [x for x in far if _held(con, x["item"], x["system"], g) < x["qty"]]
+        if missing_near and here == home:
+            txt = [head, "", f"   YOU ARE AT {here}. DO ONLY THIS: buy these here (Market > item > Buy, the cheapest sell order):"] + buy_lines(missing_near)
+        elif missing_far and here != st["dest"] and not any(x["system"] == here for x in missing_far):
+            txt = [head, "", f"   DO ONLY THIS: fly to {st['dest_label'] or dest} (3 jumps: that trip is the goal 'Complete 3 Jumps'). Stay in 0.5+ space.",
+                   "   (the next step, buying the materials there, shows when you arrive: run  sync  then  next)"]
+        elif missing_far:
+            txt = [head, "", f"   YOU ARE AT {here}. DO ONLY THIS: buy these here (Market > item > Buy, the cheapest sell order):"] + buy_lines([x for x in missing_far if x["system"] == here] or missing_far)
+        else:
+            txt = [head, "", "   DO ONLY THIS: load the materials from your hangar into your ship."]
+    elif here == dest and dest != home and st["dest"].lower() == "manifest" and not st.get("epic_done"):
+        txt = [head, "", f"   YOU ARE AT {here} with the materials. OPTIONAL, DO ONLY THIS: the epic arc agent Cassandra Ahfrim is here (chapter 1 of 'Visions of Greatness').",
+               "   Open her window, SCREENSHOT the rewards before you accept, then accept chapter 1. It is a new activity: it adds to the model.",
+               "   Not now? Skip it. When done or skipped run:  python -m eve_profit done"]
+    elif here != home:
+        txt = [head, "", f"   DO ONLY THIS: load the materials into your ship and fly back to {home} (3 jumps: this finishes 'Complete 3 Jumps')."]
+    elif not st["started"] and slots_used == 0:
+        txt = [head, "", f"   YOU ARE AT {home} with the materials. DO ONLY THIS: Industry > {st['product']} blueprint > {st['runs']} run{'s' if st['runs'] != 1 else ''} > Start",
+               f"   (makes {st['units']} items; the job takes ~{st['job_min']:.0f} min)"]
+    elif slots_used > 0:
+        txt = [head, "", f"   THE BUILD IS RUNNING (~{st['job_min']:.0f} min). DO ONLY THIS: wait for it, then Industry > Jobs > Deliver the finished job.",
+               "   (that completes 'Manufacture an Item'; the finished items have no buyer nearby: keep them for cap booster missions)"]
+    else:
+        txt = [head, "", "   DO ONLY THIS: open Opportunities > AIR Daily Goals in game: both goals should show complete and the reward is paid (445,000 ISK).",
+               "   Then stop the timer."]
+    if changed or _chain_load(con) is None:
+        _chain_save(con, st)
+    return "\n".join(txt)

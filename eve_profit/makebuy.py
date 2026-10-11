@@ -57,7 +57,7 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
     cur = g.id_of(p.current_system)
     if True:
         pid, units = prod["product_id"], prod["quantity"] * r_
-        spend, hangar_val, buy_lines, srcs, ok = 0.0, 0.0, [], {}, True
+        spend, hangar_val, buy_lines, buy_items, srcs, ok = 0.0, 0.0, [], [], {}, True
         for m in mats:
             tid, need = m["material_id"], material_qty(m["quantity"], r_, me)
             have_here = con.execute("SELECT COALESCE(SUM(quantity),0) FROM inventory WHERE type_id=? AND system_id=?", (tid, cur)).fetchone()[0]
@@ -78,6 +78,7 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
                     break
                 spend += best[1]
                 srcs[best[2]] = srcs.get(best[2], 0) + 1
+                buy_items.append({"item": str(name.get(tid, tid)), "qty": int(rem), "system": g.name[best[2]], "cost": best[1], "route": best[2] in free})
                 buy_lines.append(f"{rem:>7,} x {str(name.get(tid, tid)):<16} at {g.name[best[2]]:<12} ~{best[1]:>9,.0f} ISK" + ("   (on your route)" if best[2] in free else ""))
         if not ok:
             return None
@@ -111,7 +112,7 @@ def _one(con, g, p, reach, sells, buys, name, adj, keep, bp, me, te, bp_runs, pr
         from .manufacturing import build_seconds
         job_min = build_seconds(prod["base_time"], r_, te, p) / 60.0
         return ({"trip_to": trip_to, "m3": m3, "job_min": job_min, "blueprint": bp, "product": name.get(pid, str(pid)), "units": units, "runs": r_, "cash": spend + fee, "cost": cost, "value": value,
-                    "kind": kind, "where": where, "net": value - cost, "minutes": minutes, "buy": buy_lines, "hangar_val": hangar_val,
+                    "kind": kind, "where": where, "net": value - cost, "minutes": minutes, "buy": buy_lines, "buy_items": buy_items, "hangar_val": hangar_val,
                     "buy_instead": (rebuy[0], g.name[rebuy[1]]) if (is_keep and rebuy[0]) else None})
 
 

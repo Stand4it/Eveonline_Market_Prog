@@ -1178,3 +1178,73 @@ class CompactDailyGoalsTests(unittest.TestCase):
         self.assertIn("Opportunities > AIR Daily Goals", txt)
         full = __import__("eve_profit.dailygoals", fromlist=["format_plan"]).format_plan(pl)
         self.assertIn("ALL FIVE", full)                                         # the analysis is still there for --plan
+
+
+class DailyChainTests(unittest.TestCase):
+    def _world(self):
+        import json
+        import time as _t
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        if not con.execute("SELECT 1 FROM types WHERE name='Tritanium'").fetchone():
+            con.execute("INSERT INTO types(type_id,name) VALUES(9034,'Tritanium')")
+        con.execute("DELETE FROM inventory")
+        g = Graph(con)
+        st = {"t": _t.time(), "home": "Home", "dest": "Sys02", "dest_label": "Sys02 (mining, 1 jump)", "product": "Mock Widget", "runs": 1, "units": 10, "job_min": 5.0,
+              "buy": [{"item": "Tritanium", "qty": 100, "system": "Sys02", "cost": 500.0, "route": True}], "bought": False, "started": False, "epic_done": False,
+              "reward": 445000.0, "minutes": 14.0}
+        con.execute("INSERT OR REPLACE INTO meta VALUES('daily_chain', ?)", (json.dumps(st),))
+        mk = lambda system, slots=0: Profile(current_system=system, cargo_m3=5000, wallet_isk=1e7, current_location_id=60000001, mfg_slots_used=slots)
+        return con, g, mk
+
+    def test_each_next_shows_only_the_step_you_are_at(self):
+        from eve_profit.dailygoals import chain_step
+        con, g, mk = self._world()
+        pl = {"best": None, "reward": 445000.0}
+        t1 = chain_step(con, g, mk("Home"), pl)
+        self.assertIn("DO ONLY THIS: fly to Sys02", t1)                          # step 1: just the flight
+        self.assertNotIn("Industry", t1)
+        t2 = chain_step(con, g, mk("Sys02"), pl)
+        self.assertIn("buy these here", t2)
+        self.assertIn("100 x Tritanium", t2)
+        con.execute("INSERT INTO inventory VALUES((SELECT type_id FROM types WHERE name='Tritanium'),?,100)", (g.id_of("Sys02"),))
+        t3 = chain_step(con, g, mk("Sys02"), pl)                                  # bought: not Manifest, so no epic arc: fly home
+        self.assertIn("fly back to Home", t3)
+        t4 = chain_step(con, g, mk("Home"), pl)
+        self.assertIn("DO ONLY THIS: Industry > Mock Widget blueprint", t4)
+        t5 = chain_step(con, g, mk("Home", slots=1), pl)
+        self.assertIn("THE BUILD IS RUNNING", t5)
+        t6 = chain_step(con, g, mk("Home", slots=0), pl)                          # job delivered
+        self.assertIn("Opportunities > AIR Daily Goals", t6)
+        for t in (t1, t2, t3, t4, t5, t6):
+            self.assertLess(len(t.splitlines()), 8)                              # always a short step
+
+    def test_the_epic_arc_is_offered_once_at_manifest_and_done_moves_on(self):
+        import json
+        from eve_profit.dailygoals import chain_done, chain_step
+        con, g, mk = self._world()
+        st = json.loads(con.execute("SELECT value FROM meta WHERE key='daily_chain'").fetchone()[0])
+        st.update({"dest": "Manifest", "bought": True, "buy": []})
+        con.execute("INSERT OR REPLACE INTO meta VALUES('daily_chain', ?)", (json.dumps(st),))
+        con.execute("INSERT OR IGNORE INTO systems VALUES(8888,'Manifest',0.9,10000001)")
+        g2 = __import__("eve_profit.graph", fromlist=["Graph"]).Graph(con)
+        pl = {"best": None, "reward": 445000.0}
+        txt = chain_step(con, g2, mk("Manifest"), pl)
+        self.assertIn("Cassandra Ahfrim", txt)
+        self.assertIn("python -m eve_profit done", txt)
+        chain_done(con)
+        self.assertIn("fly back to Home", chain_step(con, g2, mk("Manifest"), pl))
+
+
+class TimerRunningNoteTests(unittest.TestCase):
+    def test_a_running_timer_for_the_same_task_is_not_offered_again(self):
+        import json
+        from eve_profit.nextstep import _timer
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        self.assertIn("Time it:", _timer("AIR Daily Goals", con))
+        con.execute("INSERT OR REPLACE INTO meta VALUES('session', ?)", (json.dumps({"activity": "AIR Daily Goals", "t": 1}),))
+        self.assertIn("already running", _timer("AIR Daily Goals", con))
+        self.assertIn("Time it:", _timer("Something else", con))

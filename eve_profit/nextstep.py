@@ -562,8 +562,16 @@ def _agent_step(con, g, p):
     return "\n".join(L), rate
 
 
-def _timer(name):
-    """Every step ends with the command that times it, so each run is classified for the ISK/hr model."""
+def _timer(name, con=None):
+    """Every step ends with the command that times it, so each run is classified for the ISK/hr model. A timer already running for this task
+    (a later step of the same chain) is only mentioned, not started twice."""
+    try:
+        import json as _j
+        r = con.execute("SELECT value FROM meta WHERE key='session'").fetchone() if con is not None else None
+        if r and _j.loads(r[0]).get("activity") == name:
+            return f'   Timer: already running for "{name}". Stop it only when the whole task is finished.'
+    except Exception:                                                   # noqa: BLE001
+        pass
     return f'   Time it:  python -m eve_profit start --activity "{name}"'
 
 
@@ -793,7 +801,7 @@ def next_action(con, g, p, full=False, ahead=False):
         bl = market_lines()
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
-    steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x)) for x in steps]
+    steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
         out = steps[0] + "\n\n" + DONE
         out += "\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"

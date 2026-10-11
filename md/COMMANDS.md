@@ -235,5 +235,8 @@ HISTORY  -  the steps you completed, newest first, with ISK per minute
 SETTLE  -  match market sales and fees to the step that listed them (dry run; --apply saves)
    example: python -m eve_profit settle
 
+DONE  -  mark the optional step of the daily-goals chain (epic arc) as done or skipped
+   example: python -m eve_profit done
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```
