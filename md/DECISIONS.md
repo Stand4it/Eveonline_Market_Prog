@@ -136,3 +136,4 @@
 - 2026-10-11 `next`/`now` on a 'STEP: FLY to X' put X into the game autopilot as the only waypoint (esi-ui.write_waypoint; red never; falls back to a manual line and 'login' hint if the scope is missing).
 - 2026-10-11 haul chain: at each intermediate stop a one-time 'LOOK AROUND <system>' step (known agents here, else open the Agency); timer name for hops is 'Hauling: fly to X' (no end point).
 - 2026-10-11 look-around: courier drop-off systems are labelled DROP-OFF (not 'AGENT here'); only the agent's own system says AGENT here.
+- 2026-10-11 look-around lists only agents located in the system; courier drop-offs of missions you do not hold are not mentioned.

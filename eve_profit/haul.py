@@ -157,9 +157,6 @@ def agents_here(system):
             if x.get("agent_system") == system and nm not in seen:
                 seen.add(nm)
                 out.append(f"AGENT here: {nm} - {x['mission'][:70]}")
-            elif x.get("to_system") == system and ("drop" + nm) not in seen:
-                seen.add("drop" + nm)
-                out.append(f"DROP-OFF here (only if you hold {nm}'s courier mission): {x['mission'][:60]}")
     except Exception:                                                   # noqa: BLE001
         pass
     return out
