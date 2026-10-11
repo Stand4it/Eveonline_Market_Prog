@@ -1107,3 +1107,30 @@ class StyleTests(unittest.TestCase):
         self.assertIn("\x1b[30;103m", lines[0])                               # black on bright yellow
         self.assertEqual(lines[1:], ["   1 x Foo", "When done:  stop"])        # everything else untouched
         self.assertEqual(st.dim("x"), "x")
+
+
+class MultiTripSellTests(unittest.TestCase):
+    def test_a_stack_bigger_than_the_ore_hold_is_carried_in_trips_not_sold_cheap(self):
+        from eve_profit.config import Profile
+        from eve_profit.graph import Graph
+        from eve_profit.mock import load_mock
+        from eve_profit.sellplan import sell_plan
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        g = Graph(con)
+        home = g.id_of("Home")
+        near = g.adj[home][0]
+        con.execute("INSERT INTO types(type_id,name,volume) VALUES(96001,'Scordite 0-Grade',0.15),(96002,'Venture',2500)")
+        con.execute("INSERT INTO my_ships VALUES(777,96002,?,60000001)", (home,))
+        con.execute("INSERT INTO inventory VALUES(96001,?,66666)", (home,))
+        con.execute("DELETE FROM orders WHERE type_id=96001")
+        con.execute("INSERT INTO orders VALUES(97001,96001,60000001,?,10000001,1,5.04,2000000,1,'',1)", (home,))
+        con.execute("INSERT INTO orders VALUES(97002,96001,60000009,?,10000001,1,8.70,700000,1,'',1)", (near,))
+        p = Profile(current_system="Home", cargo_m3=50, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
+        res = sell_plan(con, g, p, rate=1_000_000.0, min_value=0)
+        row = [r for r in res["rows"] if r["tid"] == 96001][0]
+        self.assertEqual(row["trips"], 2)                                         # 66,666 x 0.15 = 10,000 m3 against a 5,000 m3 ore hold
+        self.assertTrue(row["best_label"].startswith("DETOUR to"), row["best_label"])
+        self.assertGreater(row["extra"], 200000)                                 # about +226k over selling here
+        self.assertAlmostEqual(row["mins"], 2 * (2 * p.jump_seconds / 60.0 + 4), places=3)
+        self.assertIn("2 trips", row["note"])

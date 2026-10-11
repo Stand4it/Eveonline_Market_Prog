@@ -9,6 +9,7 @@ the hassle/risk); the hold size and the value you carry are respected."""
 from .along import _bids_at
 from .orders import load_books, sell_into_bids
 import dataclasses
+import math
 
 from .planner import plan
 from .skills import order_slots
@@ -17,6 +18,7 @@ MIN_LIST_GAIN = 250_000.0     # a listing must add at least this much: order slo
 MIN_EXTRA_FRAC = 0.02        # ignore gains under 2% of the sell-now value
 DOCK_MIN = 2.0               # minutes to dock and sell somewhere on the way
 FALLBACK_RATE = 1_000_000.0  # ISK/hr when the planner finds nothing else to do
+MAX_TRIPS = 3                # a stack bigger than the hold may be carried in up to this many trips
 
 
 ORE_HOLDS = {"venture": 5_000, "procurer": 12_000, "retriever": 22_000, "covetor": 7_000, "skiff": 15_000, "mackinaw": 31_000,
@@ -73,6 +75,10 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         sold0, now = sell_into_bids(local_bids, qty, p.sales_tax)
         asks = sells.get(tid, {}).get(cur, [])
         list_net = qty * asks[0][0] * (1 - p.broker_fee - p.listing_tax - p.sales_tax) if asks else 0.0
+        m3_ = qty * (vol.get(tid, 0) or 0.0001)
+        hold_ = ore_hold_m3(con) if is_ore(name.get(tid, "")) else 0
+        hold_ = max(hold_, p.cargo_m3 or 0)
+        trips = max(1, math.ceil(m3_ / hold_)) if hold_ > 0 else None       # trips needed to move the whole stack
         opts = [("SELL NOW here", now, 0.0, "")]
         from . import along as _al
         if _al.ALLOW_LIST and list_net > now * 1.15 and list_net > 0:
@@ -83,10 +89,13 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
             sold, net = sell_into_bids(buys.get(tid, {}).get(s, []), qty, p.sales_tax)
             if not sold:
                 continue
+            round_trip = 2 * _minutes(p, rt.jumps) + 2 * DOCK_MIN
+            extra_trips = (trips - 1) if trips and trips <= MAX_TRIPS else 0
+            tnote = f", {trips} trips of your hold" if extra_trips else ""
             if s in on_path:
-                opts.append((f"CARRY along the trip, sell at {g.name[s]}", net, DOCK_MIN, f"{rt.jumps} jumps, on your way"))
+                opts.append((f"CARRY along the trip, sell at {g.name[s]}", net, DOCK_MIN + extra_trips * round_trip, f"{rt.jumps} jumps, on your way{tnote}"))
             else:
-                opts.append((f"DETOUR to {g.name[s]}", net, 2 * _minutes(p, rt.jumps) + 2 * DOCK_MIN, f"{rt.jumps} jumps each way"))
+                opts.append((f"DETOUR to {g.name[s]}", net, (1 + extra_trips) * round_trip, f"{rt.jumps} jumps each way{tnote}"))
         for d in world.get(tid, [])[:5]:
             if d["jumps"] is None or d["system"] == g.name[cur]:
                 continue
@@ -102,7 +111,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         scored.sort(key=lambda x: -x[0])
         best = scored[0]
         m3 = qty * (vol.get(tid, 0) or 0.0001)
-        rows.append({"tid": tid, "sys": cur, "name": name.get(tid, tid), "qty": qty, "now": now, "m3": m3, "best_label": best[1], "best_net": best[2],
+        rows.append({"tid": tid, "sys": cur, "name": name.get(tid, tid), "qty": qty, "now": now, "m3": m3, "trips": trips, "best_label": best[1], "best_net": best[2],
                      "mins": best[3], "extra": best[6], "gain": best[0], "note": best[4], "sold_locally": sold0,
                      "list_gain": list_net - now})
     slots = order_slots(con)                                  # None = skills not synced: no limit applied
@@ -116,6 +125,8 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
     room = p.cargo_m3
     ore_room = ore_hold_m3(con)
     for x in carry:
+        if x.get("trips") and 1 < x["trips"] <= MAX_TRIPS:
+            continue                                              # several trips: the hold is emptied each time, no room is kept back
         if is_ore(x["name"]) and x["m3"] <= ore_room:
             ore_room -= x["m3"]                                   # ore rides in the ore hold of your mining ship
         elif x["m3"] <= room:
