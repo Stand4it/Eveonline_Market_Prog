@@ -32,3 +32,18 @@ class ShipLinesTests(unittest.TestCase):
                 return 7
         out = "\n".join(haul.ship_lines(con, G(), Profile(ship_name="Imicus", cargo_m3=400.0, current_system="Rotonos"), {"other_m3": 1.0}))
         self.assertIn("KEEP FLEXIBLE: 1 x Civilian Miner", out)
+
+
+class HopOnlyTests(unittest.TestCase):
+    def test_only_the_hop_is_left(self):
+        from eve_profit.haul import hop_only
+        t = ("STEP: FLY to Tiberis - jump 1 of 18, hauling your stock to Jita\n"
+             "           2 x Entropic Rose    1,152,550 there vs          0 here\n"
+             "   1 trip(s), about 16 min, +1,503,032 ISK more\n"
+             "   DO ONLY THIS: fly to Tiberis and stop there. Then run  python -m eve_profit next  (it plans again from there: 18 jumps left to Jita, no planned trip back).\n"
+             "   AT Jita after selling: next best\n")
+        o = hop_only(t)
+        self.assertNotIn("Jita", o)
+        self.assertIn("STEP: FLY to Tiberis", o)
+        self.assertIn("2 x Entropic Rose", o)
+        self.assertNotIn("there vs", o)

@@ -132,3 +132,4 @@
 - 2026-10-11 haul step lists activity gear you own (miners, probes, analyzers, weapons, repairers...) as KEEP FLEXIBLE: carry it so the next stop can switch to mining/combat/exploration.
 - 2026-10-11 haul headline is now the one hop: 'STEP: FLY to <next system> - jump k of N, hauling your stock to <dest>'; stop there, next re-plans (no planned trip back).
 - 2026-10-11 haul steps list known agents (agents_nearby.json) in the systems you pass: look for new offers at each stop. Not yet ranked by ISK/hr (BACKLOG: rank new-agent offers; discover unknown agents with Agency filters).
+- 2026-10-11 default next on a haul shows only the hop: 'STEP: FLY to <next system>' + what to load + ship/fit; end point, money and after-selling view only in next --plan.

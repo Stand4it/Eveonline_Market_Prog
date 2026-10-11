@@ -847,7 +847,11 @@ def next_action(con, g, p, full=False, ahead=False):
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
-        out = steps[0] + "\n\n" + DONE
+        first = steps[0]
+        if first.startswith("STEP: FLY to") and "hauling your stock to" in first:
+            from .haul import hop_only
+            first = hop_only(first)
+        out = first + "\n\n" + DONE
         out += "\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE

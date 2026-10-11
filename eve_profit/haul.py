@@ -193,6 +193,27 @@ def ship_lines(con, g, p, h):
     return L
 
 
+def hop_only(text):
+    """KISS: the step is the next jump and what to load; the end point, the money and the 'after selling' view wait for `next --plan`."""
+    import re
+    out = []
+    for ln in text.split("\n"):
+        if ln.startswith("STEP: FLY to"):
+            ln = re.sub(r", hauling your stock to .*$", "", ln)
+            ln = re.sub(r" - jump \d+ of \d+", "", ln)
+        elif re.search(r"trip\(s\), about|^\s+AT .* after selling|^\s+includes about", ln):
+            continue
+        elif "DO ONLY THIS" in ln:
+            ln = re.sub(r"\s*\(it plans again.*\)\.?$", "", ln)
+            ln = ln.replace("and stop there. Then run", "and stop there. Then run")
+        else:
+            m = re.match(r"^(\s+[\d,]+ x .+?)\s{2,}.*(there vs|~\s).*$", ln)
+            if m:
+                ln = m.group(1)
+        out.append(ln)
+    return "\n".join(out)
+
+
 def haul_step(h, g=None, p=None, con=None):
     """The haul as ONE jump at a time: the first jump is the step; at every stop `next` plans again."""
     hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
