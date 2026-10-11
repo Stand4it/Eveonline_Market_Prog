@@ -122,3 +122,4 @@
 - 2026-10-11 agent_offers.json: recorded Arabeton/Arnelin/Beradaillot/Ormelace/Rounaminck windows (Arnelin final reward = Nereus + 175k bonus; standings noted).
 - 2026-10-11 `done --screen N`: jump to screen N when several screens were sent at once.
 - 2026-10-11 screens step only asks for agents in Rotonos (Emps Metyt is at Axiosere: asked when there).
+- 2026-10-11 screens step also asks for Agency > Agents & Missions > Mission Agents and Epic Arcs (agents in other systems; Career Agents list = the 5 at Rotonos IV, Emps Metyt not a career agent there).
