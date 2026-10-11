@@ -1,6 +1,6 @@
-"""Terminal color that works for EVERY kind of color vision: the task you must do is ONE line, black on bright yellow (brightness contrast, not hue),
-marked with '>> '; all other text stays plain white. With no color at all (piped output, NO_COLOR=1, EVE_COLOR=0) the '>> ' marker still appears,
-so nothing depends on seeing a color.
+"""Terminal color that works for EVERY kind of color vision: what to DO (the task line, what to sell, where to sell) is bright yellow on black,
+the commands to start and stop are bold white, everything else is plain. With no color at all (piped output, NO_COLOR=1, EVE_COLOR=0) the '>> '
+marker still appears, so nothing depends on seeing a color.
 EVE_COLOR=1 forces color on; the default is on only when the output is a real terminal."""
 import os
 import sys
@@ -48,18 +48,35 @@ def bold(s):
     return _w("1", s)
 
 
-def highlight(s, width=70):
-    """The task line: black on bright yellow (maximum brightness contrast for every kind of color vision), padded into a bar."""
-    return _w("30;103", s.ljust(width))
+import re
+
+HUE = "1;93;40"                       # bold bright yellow text on a black background
+CMD = re.compile(r'python -m eve_profit \w+(?: --[\w-]+(?: "[^"]*"| (?!--)[^\s)]+)?)*')
+
+
+def hue(s):
+    """Yellow on black: the lines that say WHAT to do (the task, what to sell/buy, where to sell)."""
+    return _w(HUE, s)
+
+
+def white_cmds(line):
+    """Every 'python -m eve_profit ...' command in the line in bold white, so the commands to start and stop are easy to find."""
+    return CMD.sub(lambda m: _w("1;97", m.group(0)), line) if enabled() else line
 
 
 def task_block(text):
-    """The step text with its headline marked '>> ' and highlighted black on yellow; every other line stays plain."""
+    """The step text: headline (marked '>> '), the item lines ('66,666 x Scordite') and the 'In game:' line in yellow on black;
+    the start / stop / sync / next commands in bold white; everything else plain."""
     out, first = [], True
     for ln in text.split("\n"):
-        if first and ln.strip():
-            out.append(highlight(">> " + ln.strip()))
+        s = ln.strip()
+        if first and s:
+            out.append(hue(">> " + s))
             first = False
+        elif re.match(r"^\s+[\d,]+ x ", ln) or s.startswith("In game:"):
+            out.append(hue(ln))
+        elif s.startswith(("Time it:", "When done:")):
+            out.append(white_cmds(ln))
         else:
             out.append(ln)
     return "\n".join(out)

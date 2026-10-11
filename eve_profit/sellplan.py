@@ -32,16 +32,29 @@ def is_ore(name):
     return any(w in n for w in ORE_WORDS)
 
 
-def ore_hold_m3(con):
-    """Biggest ore hold among the mining ships you own (parked or flown): ore may be carried in it even when your cargo hold is small."""
+def ore_hold_m3(con, p=None):
+    """Biggest ore hold among the mining ships you own: parked ones AND the ship you fly now (sync leaves the flown ship out of the asset list,
+    so it is read from the profile). Ore may be carried in it even when your cargo hold is small."""
     best = 0
+    names = []
     try:
-        for (n,) in con.execute("SELECT t.name FROM my_ships s JOIN types t ON t.type_id=s.type_id"):
-            for k, v in ORE_HOLDS.items():
-                if k in n.lower():
-                    best = max(best, v)
+        names += [n for (n,) in con.execute("SELECT t.name FROM my_ships s JOIN types t ON t.type_id=s.type_id")]
     except Exception:                                                   # noqa: BLE001
         pass
+    if p is not None:
+        names.append(getattr(p, "ship_name", "") or "")
+        try:
+            tid = getattr(p, "ship_type_id", 0)
+            r = con.execute("SELECT name FROM types WHERE type_id=?", (tid,)).fetchone() if tid else None
+            if r:
+                names.append(r[0])
+        except Exception:                                               # noqa: BLE001
+            pass
+        best = max(best, int(getattr(p, "ore_hold_m3", 0) or 0))
+    for n in names:
+        for k, v in ORE_HOLDS.items():
+            if k in str(n).lower():
+                best = max(best, v)
     return best
 
 
@@ -76,7 +89,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
         asks = sells.get(tid, {}).get(cur, [])
         list_net = qty * asks[0][0] * (1 - p.broker_fee - p.listing_tax - p.sales_tax) if asks else 0.0
         m3_ = qty * (vol.get(tid, 0) or 0.0001)
-        hold_ = ore_hold_m3(con) if is_ore(name.get(tid, "")) else 0
+        hold_ = ore_hold_m3(con, p) if is_ore(name.get(tid, "")) else 0
         hold_ = max(hold_, p.cargo_m3 or 0)
         trips = max(1, math.ceil(m3_ / hold_)) if hold_ > 0 else None       # trips needed to move the whole stack
         opts = [("SELL NOW here", now, 0.0, "")]
@@ -123,7 +136,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
     # hold check: carried stacks must fit; densest value per m3 first, the rest sell now
     carry = sorted([x for x in rows if not x["best_label"].startswith(("SELL", "LIST"))], key=lambda x: -(x["best_net"] / max(x["m3"], 1e-6)))
     room = p.cargo_m3
-    ore_room = ore_hold_m3(con)
+    ore_room = ore_hold_m3(con, p)
     for x in carry:
         if x.get("trips") and 1 < x["trips"] <= MAX_TRIPS:
             continue                                              # several trips: the hold is emptied each time, no room is kept back

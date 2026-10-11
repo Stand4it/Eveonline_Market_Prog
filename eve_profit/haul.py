@@ -21,7 +21,7 @@ def haul_option(con, g, p):
     _, buys = load_books(con, set(reach))
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
-    ore_cap, cargo = ore_hold_m3(con), max(p.cargo_m3, 1.0)
+    ore_cap, cargo = ore_hold_m3(con, p), max(p.cargo_m3, 1.0)
     keep = keep_names(con)                                   # gear you plan to use (probes, miners...) is never hauled off to sell
     per_dest = {}
     for inv in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():

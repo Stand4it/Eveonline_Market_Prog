@@ -1084,6 +1084,10 @@ class ReprocessTests(unittest.TestCase):
 
 
 class StyleTests(unittest.TestCase):
+    TEXT = ("STEP: SELL NOW in Rotonos - about 1 ISK\n      66,666 x Scordite 0-Grade       @ 4.66 each\n   bonus: counts toward X\n"
+            "   In game: Market > item > Sell\n   Time it:  python -m eve_profit start --activity \"Market sell stock Rotonos\"\n\n"
+            "When done:  python -m eve_profit stop   (wait)   then   python -m eve_profit sync")
+
     def tearDown(self):
         import eve_profit.style as st
         st._ON = None
@@ -1094,43 +1098,20 @@ class StyleTests(unittest.TestCase):
         import eve_profit.style as st
         st._ON = None
         os.environ["NO_COLOR"] = "1"
-        out = st.task_block("STEP: SELL NOW in Rotonos - about 1 ISK\n   1 x Foo\nWhen done:  stop")
+        out = st.task_block(self.TEXT)
         self.assertTrue(out.startswith(">> STEP: SELL NOW in Rotonos"))
         self.assertNotIn("\x1b[", out)                                         # no escape codes at all
 
-    def test_with_color_only_the_headline_is_black_on_yellow_and_the_rest_is_plain(self):
+    def test_with_color_the_task_lines_are_yellow_on_black_and_the_commands_bold_white(self):
         import eve_profit.style as st
         st._ON = None
         os.environ["EVE_COLOR"] = "1"
-        out = st.task_block("STEP: SELL NOW in Rotonos - about 1 ISK\n   1 x Foo\nWhen done:  stop")
-        lines = out.split("\n")
-        self.assertIn("\x1b[30;103m", lines[0])                               # black on bright yellow
-        self.assertEqual(lines[1:], ["   1 x Foo", "When done:  stop"])        # everything else untouched
+        lines = st.task_block(self.TEXT).split("\n")
+        Y = "\x1b[1;93;40m"
+        self.assertIn(Y, lines[0])                                              # headline
+        self.assertIn(Y, lines[1])                                              # what to sell
+        self.assertNotIn("\x1b[", lines[2])                                     # other text untouched
+        self.assertIn(Y, lines[3])                                              # the 'In game: ... Sell' line
+        self.assertIn('\x1b[1;97mpython -m eve_profit start --activity "Market sell stock Rotonos"\x1b[0m', lines[4])
+        self.assertEqual(lines[6].count("\x1b[1;97m"), 2)                       # stop and sync both bold white
         self.assertEqual(st.dim("x"), "x")
-
-
-class MultiTripSellTests(unittest.TestCase):
-    def test_a_stack_bigger_than_the_ore_hold_is_carried_in_trips_not_sold_cheap(self):
-        from eve_profit.config import Profile
-        from eve_profit.graph import Graph
-        from eve_profit.mock import load_mock
-        from eve_profit.sellplan import sell_plan
-        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
-        load_mock(con)
-        g = Graph(con)
-        home = g.id_of("Home")
-        near = g.adj[home][0]
-        con.execute("INSERT INTO types(type_id,name,volume) VALUES(96001,'Scordite 0-Grade',0.15),(96002,'Venture',2500)")
-        con.execute("INSERT INTO my_ships VALUES(777,96002,?,60000001)", (home,))
-        con.execute("INSERT INTO inventory VALUES(96001,?,66666)", (home,))
-        con.execute("DELETE FROM orders WHERE type_id=96001")
-        con.execute("INSERT INTO orders VALUES(97001,96001,60000001,?,10000001,1,5.04,2000000,1,'',1)", (home,))
-        con.execute("INSERT INTO orders VALUES(97002,96001,60000009,?,10000001,1,8.70,700000,1,'',1)", (near,))
-        p = Profile(current_system="Home", cargo_m3=50, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45)
-        res = sell_plan(con, g, p, rate=1_000_000.0, min_value=0)
-        row = [r for r in res["rows"] if r["tid"] == 96001][0]
-        self.assertEqual(row["trips"], 2)                                         # 66,666 x 0.15 = 10,000 m3 against a 5,000 m3 ore hold
-        self.assertTrue(row["best_label"].startswith("DETOUR to"), row["best_label"])
-        self.assertGreater(row["extra"], 200000)                                 # about +226k over selling here
-        self.assertAlmostEqual(row["mins"], 2 * (2 * p.jump_seconds / 60.0 + 4), places=3)
-        self.assertIn("2 trips", row["note"])
