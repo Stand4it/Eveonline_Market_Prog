@@ -463,6 +463,11 @@ def _run(a):
         from .style import task_block
         txt = next_action(con, Graph(con), p, full=a.all, ahead=a.plan)
         print(txt if (a.all or a.plan) else task_block(txt))
+        if not (a.all or a.plan):
+            from .autopilot import auto_destination
+            line = auto_destination(txt, Graph(con), a.client_id)
+            if line:
+                print("\n" + line)
     elif a.cmd == "zkill":
         from .esi import ESI
         from .zkill import ZKill, refresh_gank_map
@@ -843,6 +848,14 @@ def _now(a):
     from .style import bold, dim, task_block
     print("\n" + dim("=" * 70))
     print(task_block(step))
+    try:
+        from .autopilot import auto_destination
+        from .graph import Graph
+        line = auto_destination(step, Graph(db.connect(a.db)), a.client_id)
+        if line:
+            print("\n" + line)
+    except Exception:                                                   # noqa: BLE001
+        pass
     if checks:
         print("\n" + bold("WORLDWIDE PRICE CHECK (background info):"))
         print("\n".join(dim(c) for c in checks))

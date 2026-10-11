@@ -47,3 +47,11 @@ class HopOnlyTests(unittest.TestCase):
         self.assertIn("STEP: FLY to Tiberis", o)
         self.assertIn("2 x Entropic Rose", o)
         self.assertNotIn("there vs", o)
+
+
+class DestinationTests(unittest.TestCase):
+    def test_destination_of_a_fly_step(self):
+        from eve_profit.autopilot import destination_of
+        self.assertEqual(destination_of("STEP: FLY to Tiberis\n   DO ONLY THIS: x"), "Tiberis")
+        self.assertEqual(destination_of(">> STEP: FLY to Tiberis - jump 1 of 18, hauling your stock to Jita"), "Tiberis")
+        self.assertIsNone(destination_of("STEP: SELL Scordite"))

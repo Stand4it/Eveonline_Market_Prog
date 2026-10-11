@@ -51,3 +51,29 @@ def send_route(esi, g, waypoints, send=False, pause=0.3, stops=None):
                      add_to_beginning="false", clear_other_waypoints="true" if i == 0 else "false")
             time.sleep(pause)
     return [g.name[s] for s in wps]
+
+
+def destination_of(text):
+    """The system a step tells you to fly to: 'STEP: FLY to <system> ...' -> name, else None."""
+    import re
+    m = re.match(r"\s*(?:>> )*STEP: FLY to ([^\n]+?)(?: - |$|\n)", text or "")
+    return m.group(1).strip() if m else None
+
+
+def auto_destination(text, g, client_id):
+    """`next` for a fly step: put that system into the game's autopilot as the ONLY waypoint (you still press autopilot). -> one line."""
+    name = destination_of(text)
+    if not name:
+        return ""
+    try:
+        sid = g.id_of(name)
+        if g.is_red(sid):
+            return f"Destination NOT set: {name} is a red system."
+        from . import sso
+        from .esi import ESI
+        esi = ESI()
+        esi.token, _ = sso.get_token(client_id)
+        esi.post("/ui/autopilot/waypoint/", destination_id=sid, add_to_beginning="false", clear_other_waypoints="true")
+        return f"Destination set in your game: {name}  (press the autopilot / Ctrl-click Set Destination in the game; I cannot fly for you)"
+    except Exception as e:                                              # noqa: BLE001
+        return f"Destination not set automatically ({type(e).__name__}); in game: Map > {name} > Set Destination. If it says scope, run: python -m eve_profit login"
