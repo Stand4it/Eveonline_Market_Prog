@@ -141,3 +141,4 @@
 - 2026-10-11 look-around recomputes every known agent's distance from where you stand (HERE / 1 jump = possible next stop / 2 jumps), from agents_nearby.json + agent_offers.json.
 - 2026-10-11 look-around step only appears when a known agent is in the system you are in; otherwise next goes straight to the best step (no agent lists).
 - 2026-10-11 hop_only also strips '~ price at <dest>' from chain item lines.
+- 2026-10-11 START/END frames use one # line each (was two).

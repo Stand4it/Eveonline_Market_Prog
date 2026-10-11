@@ -61,7 +61,7 @@ class pretty_output:
     def __enter__(self):
         self.old = sys.stdout
         if self.title:
-            self.old.write(f"\n\n{BAR}\n{BAR}\n##  START  {self.title}\n{BAR}\n\n")
+            self.old.write(f"\n\n{BAR}\n##  START  {self.title}\n{BAR}\n\n")
         sys.stdout = Pretty(self.old)
         return self
 
@@ -69,7 +69,7 @@ class pretty_output:
         sys.stdout.flush()
         sys.stdout = self.old
         if self.title:
-            self.old.write(f"\n{BAR}\n##  END  {self.title}\n{BAR}\n{BAR}\n\n\n")
+            self.old.write(f"\n{BAR}\n##  END  {self.title}\n{BAR}\n\n\n")
             self.old.flush()
 
 
