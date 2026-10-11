@@ -90,4 +90,9 @@ def candidate(con, g, p):
             lines += [f"      {x}" for x in way]
     except Exception:                                                   # noqa: BLE001
         pass
+    try:
+        from .haul import agents_on_route
+        lines += ["   " + x for x in agents_on_route(g, p, dest)]
+    except Exception:                                                   # noqa: BLE001
+        pass
     return rate * STICKY, "\n".join(lines)

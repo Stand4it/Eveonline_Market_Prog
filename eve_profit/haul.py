@@ -125,6 +125,24 @@ def _hop(g, p, dest):
     return None, 0, 0
 
 
+def agents_on_route(g, p, dest):
+    """Known agents (agents_nearby.json, from the Agency window) in the systems you pass, destination included. -> list of lines."""
+    import json, os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents_nearby.json")
+    try:
+        d = json.load(open(f, encoding="utf-8"))
+        r = g.route(g.id_of(p.current_system), g.id_of(dest), 60, p.avoid_yellow)
+        names = {g.name[x] for x in r.path[1:]}
+    except Exception:                                                   # noqa: BLE001
+        return []
+    out = []
+    for kind in ("security", "mining", "distribution_nearest", "locator_nearest", "rd_nearest"):
+        for a in d.get(kind, []):
+            if a.get("system") in names and a.get("agent"):
+                out.append(f"AGENT at {a['system']}: {a['agent']} ({kind.split('_')[0]}, level {a.get('level', 1)}): look at the offer when you stop there; a new mission may have appeared")
+    return out
+
+
 HAUL_GEAR = (("expanded cargohold", "low slot: more cargo space"), ("inertial stabilizers", "low slot: faster align, quicker warps"),
              ("nanofiber", "low slot: faster align"), ("afterburner", "mid slot: faster in a gate-to-gate hop"),
              ("overdrive", "low slot: faster ship"))
@@ -188,6 +206,7 @@ def haul_step(h, g=None, p=None, con=None):
         L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {h['jumps']} jumps left to {h['dest']}, no planned trip back).")
     if g is not None and p is not None:
         try:
+            L += ["   " + x for x in agents_on_route(g, p, h["dest"])]
             L += ["   " + x for x in ship_lines(con, g, p, h)]
         except Exception:                                               # noqa: BLE001
             pass

@@ -131,3 +131,4 @@
 - 2026-10-11 haul step now says which ship flies it (flown ship cargo vs stock m3, better parked ship if fewer trips) and which owned hangar modules to fit (cargo expander, inertial stabilizers, nanofiber, afterburner, overdrive).
 - 2026-10-11 haul step lists activity gear you own (miners, probes, analyzers, weapons, repairers...) as KEEP FLEXIBLE: carry it so the next stop can switch to mining/combat/exploration.
 - 2026-10-11 haul headline is now the one hop: 'STEP: FLY to <next system> - jump k of N, hauling your stock to <dest>'; stop there, next re-plans (no planned trip back).
+- 2026-10-11 haul steps list known agents (agents_nearby.json) in the systems you pass: look for new offers at each stop. Not yet ranked by ISK/hr (BACKLOG: rank new-agent offers; discover unknown agents with Agency filters).
