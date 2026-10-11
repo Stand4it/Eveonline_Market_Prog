@@ -20,7 +20,11 @@ class Pretty:
         return len(s)
 
     def _emit(self, line):
-        self.out.write(line + "\n")
+        out = line
+        if "python -m eve_profit" in line and "\x1b[" not in line:      # every command shown in any output is bold white (lines already styled are left alone)
+            from .style import white_cmds
+            out = white_cmds(line)
+        self.out.write(out + "\n")
         self.prev = line
 
     def _line(self, line):

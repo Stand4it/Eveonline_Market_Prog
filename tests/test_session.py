@@ -1340,3 +1340,26 @@ class WorldHoldTests(unittest.TestCase):
         self.assertNotIn("\x1b[", lines[1])
         for ln in lines[2:]:
             self.assertIn("\x1b[1;93;40m", ln)
+
+
+class BoldCommandsEverywhereTests(unittest.TestCase):
+    def tearDown(self):
+        import eve_profit.style as st
+        st._ON = None
+        os.environ.pop("EVE_COLOR", None)
+
+    def test_commands_in_any_output_are_bold_white_and_plain_without_color(self):
+        import io
+        import eve_profit.style as st
+        from eve_profit.pretty import Pretty
+        for color, expect in (("1", True), ("0", False)):
+            st._ON = None
+            os.environ["EVE_COLOR"] = color
+            buf = io.StringIO()
+            pr = Pretty(buf)
+            pr.write("   then route:   python -m eve_profit go --pick 1 --send\n")
+            pr.write("a line with no command\n")
+            pr.flush()
+            lines = buf.getvalue().split("\n")
+            self.assertEqual("\x1b[1;97mpython -m eve_profit go --pick 1 --send\x1b[0m" in lines[0], expect)
+            self.assertEqual(lines[1], "a line with no command")
