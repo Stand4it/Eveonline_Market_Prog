@@ -130,3 +130,4 @@
 - 2026-10-11 screens step: agent screens say exactly what to show (step title/number, objectives, rewards, bonus + time limit, standing); fixed doubled '>> >>' headline in now.
 - 2026-10-11 haul step now says which ship flies it (flown ship cargo vs stock m3, better parked ship if fewer trips) and which owned hangar modules to fit (cargo expander, inertial stabilizers, nanofiber, afterburner, overdrive).
 - 2026-10-11 haul step lists activity gear you own (miners, probes, analyzers, weapons, repairers...) as KEEP FLEXIBLE: carry it so the next stop can switch to mining/combat/exploration.
+- 2026-10-11 haul headline is now the one hop: 'STEP: FLY to <next system> - jump k of N, hauling your stock to <dest>'; stop there, next re-plans (no planned trip back).

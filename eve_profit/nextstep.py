@@ -611,6 +611,8 @@ def _name_of(step):
         return "Update the model from the game"
     if lo.startswith("step: test"):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
+    if lo.startswith("step: fly") and "hauling your stock to" in lo:
+        return "Hauling stock to " + first.split("hauling your stock to ", 1)[-1].strip()
     if lo.startswith("step: haul"):
         return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):

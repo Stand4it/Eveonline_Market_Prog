@@ -177,14 +177,15 @@ def ship_lines(con, g, p, h):
 
 def haul_step(h, g=None, p=None, con=None):
     """The haul as ONE jump at a time: the first jump is the step; at every stop `next` plans again."""
-    L = [f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps, one way: `next` plans again at every stop)"]
+    hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
+    L = [f"STEP: FLY to {hop[0]} - jump 1 of {hop[2]}, hauling your stock to {h['dest']}" if hop[0]
+         else f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps, one way: `next` plans again at every stop)"]
     for n, q, net, local in h["items"][:6]:
         L.append(f"   {q:>9,} x {n:<32} {net:>12,.0f} there vs {local:>10,.0f} here")
     L.append(f"   {h['trips']} trip(s), about {h['minutes']:.0f} min, +{h['gain']:,.0f} ISK more than selling here = {h['rate_hr']:,.0f} ISK/hr"
              + ("   (ore rides in your mining ship's ore hold)" if h["ore"] else ""))
-    hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
     if hop[0]:
-        L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} (jump 1 of {hop[2]}). Then run  python -m eve_profit next  again.")
+        L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {h['jumps']} jumps left to {h['dest']}, no planned trip back).")
     if g is not None and p is not None:
         try:
             L += ["   " + x for x in ship_lines(con, g, p, h)]

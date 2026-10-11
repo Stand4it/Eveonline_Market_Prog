@@ -80,8 +80,8 @@ def candidate(con, g, p):
     k = max(1, st["total"] - left + 1)
     minutes = left * p.jump_seconds / 60.0 + 2.0
     rate = st["gain"] * 60.0 / max(minutes, 1.0)
-    lines = [f"STEP: HAUL your stock to {dest} ({left} jumps left, one way: `next` plans again at every stop)"] + items
-    lines.append(f"   DO ONLY THIS: fly to {g.name[r.path[1]]} (jump {k} of {st['total']}). Then run  python -m eve_profit next  again.")
+    lines = [f"STEP: FLY to {g.name[r.path[1]]} - jump {k} of {st['total']}, hauling your stock to {dest}"] + items
+    lines.append(f"   DO ONLY THIS: fly to {g.name[r.path[1]]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {left} jumps left to {dest}, no planned trip back).")
     try:
         from .dailygoals import _on_the_way
         way = _on_the_way(con, g, p, dest)
