@@ -1,5 +1,5 @@
 {
- "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why. Items with repeat=true come back on an interval that ADAPTS: after sending the screen run `done --changed` (it differed from last time: asked sooner) or `done --same` (asked less often). base_h/min_h/max_h are the starting, fastest and slowest intervals in hours.",
+ "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why. Items with repeat=true come back on an interval that ADAPTS: after sending the screen run `done --changed` (it differed from last time: asked sooner) or `done --same` (asked less often). base_h/min_h/max_h are the starting, fastest and slowest intervals in hours. 'moves': the screen is also due when you are this many jumps from where its list was last scanned (lists like Freelance Jobs show what is near YOU).",
  "items": [
   {
    "id": "freelance_detail_90jita",
@@ -22,7 +22,11 @@
    "where": "Neocom > Freelance Jobs > Opportunities (sort by newest if possible)",
    "show": "the first screen of the list (job names, budgets, distance) plus the Active tab if you accepted any",
    "why": "jobs appear and run out; mining and delivery jobs add ISK on top of what you already do",
-   "auto": true
+   "auto": true,
+   "moves": {
+    "list": "freelance",
+    "jumps": 3
+   }
   },
   {
    "id": "air_overall",

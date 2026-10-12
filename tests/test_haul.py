@@ -246,3 +246,17 @@ class ListingsTests(unittest.TestCase):
         self.assertTrue(listings.is_gone(con, "freelance", "b|mine"))
         listings.apply(con, {"list": "freelance", "ts": "t3", "complete": False, "items": []})     # partial: nothing newly gone
         self.assertFalse(listings.is_gone(con, "freelance", "a|mine"))
+
+
+class ListingOriginTests(unittest.TestCase):
+    def test_moved_list_is_not_marked_gone(self):
+        from eve_profit import listings
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        listings.ensure(con)
+        a, b = {"key": "a|mine", "title": "A"}, {"key": "b|mine", "title": "B"}
+        listings.apply(con, {"list": "freelance", "ts": "t1", "complete": True, "origin": "Manifest", "items": [a, b]})
+        listings.apply(con, {"list": "freelance", "ts": "t2", "complete": True, "origin": "Rotonos", "items": [a]})
+        self.assertFalse(listings.is_gone(con, "freelance", "b|mine"))     # b is just out of range from the new place
+        listings.apply(con, {"list": "freelance", "ts": "t3", "complete": True, "origin": "Rotonos", "items": [a]})
+        self.assertTrue(listings.is_gone(con, "freelance", "b|mine"))      # same place twice: now it really is gone

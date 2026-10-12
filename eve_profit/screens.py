@@ -127,6 +127,19 @@ def _state(con):
     return st
 
 
+def _moved(con, item, g, p):
+    """A list that shows what is near YOU is due again once you are `jumps` away from where it was last scanned."""
+    mv = item.get("moves")
+    if not mv or g is None or p is None:
+        return False
+    try:
+        from .listings import origin_of
+        o = origin_of(con, mv["list"])
+        return bool(o) and o != p.current_system and g.route(g.id_of(o), g.id_of(p.current_system), 60, p.avoid_yellow).jumps >= mv["jumps"]
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
 def _dynamic():
     """Detail pages the data itself says are missing (freelance_jobs.json: jobs marked unverified)."""
     out = []
@@ -142,7 +155,7 @@ def _dynamic():
     return out
 
 
-def wanted_unseen(con):
+def wanted_unseen(con, g=None, p=None):
     """The screens that are due: never sent, or a repeating one whose (adaptive) interval has passed."""
     try:
         items = json.load(open(WANTED_FILE, encoding="utf-8")).get("items", []) + _dynamic()
@@ -151,14 +164,14 @@ def wanted_unseen(con):
     st, now, out = _state(con), time.time(), []
     for i in items:
         s_ = st.get(i["id"])
-        if not s_ or (i.get("repeat") and not s_.get("legacy") and now - s_["ts"] >= s_["int"] * 3600.0):
+        if not s_ or (i.get("repeat") and not s_.get("legacy") and now - s_["ts"] >= s_["int"] * 3600.0) or _moved(con, i, g, p):
             out.append(i)
     return out
 
 
-def wanted_candidate(con):
+def wanted_candidate(con, g=None, p=None):
     """(rate, step text) for the next screenshot the model needs, or None."""
-    left = wanted_unseen(con)
+    left = wanted_unseen(con, g, p)
     if not left:
         return None
     i = left[0]
@@ -172,9 +185,9 @@ def wanted_candidate(con):
     return WANTED_RATE, text
 
 
-def wanted_mark_shown(con, text):
+def wanted_mark_shown(con, text, g=None, p=None):
     if (text or "").startswith("STEP: SHOW ME A SCREEN"):
-        for i in wanted_unseen(con):
+        for i in wanted_unseen(con, g, p):
             if f"open  {i['where']}" in text:
                 con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (SHOWN_KEY, i["id"]))
                 con.commit()

@@ -58,7 +58,12 @@ def apply(con, snap):
         else:
             con.execute("UPDATE listings SET data=?, last_seen=?, status='active' WHERE list_id=? AND key=?", (json.dumps(it, ensure_ascii=False), ts, lst, it["key"]))
     gone = 0
-    if snap.get("complete"):
+    origin = snap.get("origin")
+    r = con.execute("SELECT value FROM meta WHERE key=?", ("listing_origin_" + lst,)).fetchone()
+    same_place = not origin or not r or r[0] == origin           # jobs out of range after you moved are not 'gone'
+    if origin:
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", ("listing_origin_" + lst, origin))
+    if snap.get("complete") and same_place:
         for k, st in old.items():
             if st == "active" and k not in seen:
                 gone += 1
@@ -108,3 +113,11 @@ def active(con, lst, kind=None):
     except Exception:                                                   # noqa: BLE001
         return []
     return [r for r in rows if not kind or r.get("kind") == kind]
+
+
+def origin_of(con, lst):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", ("listing_origin_" + lst,)).fetchone()
+        return r[0] if r else None
+    except Exception:                                                   # noqa: BLE001
+        return None

@@ -734,7 +734,7 @@ def next_action(con, g, p, full=False, ahead=False):
         pass
     try:                                                         # a screen the model still needs (screens_wanted.json): asked once each, one at a time
         from .screens import wanted_candidate as _wc
-        _w = _wc(con)
+        _w = _wc(con, g, p)
         if _w:
             cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
     except Exception:                                            # noqa: BLE001
@@ -923,7 +923,7 @@ def next_action(con, g, p, full=False, ahead=False):
         from .social import mark_shown as _ms
         from .screens import wanted_mark_shown as _wms
         _ms(con, steps[0] if steps else "")
-        _wms(con, steps[0] if steps else "")
+        _wms(con, steps[0] if steps else "", g, p)
     except Exception:                                            # noqa: BLE001
         pass
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
