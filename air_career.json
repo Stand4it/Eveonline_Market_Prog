@@ -1,0 +1,14 @@
+{
+ "_help": "AIR Career Program (seen 2026-10-12). Four careers, each 750 career points (CP) to graduate; overall 3,000 CP. Sub-goals are bubbles inside each career. Edit from screenshots.",
+ "careers": {
+  "Enforcer": {"cp": 125, "of": 750},
+  "Explorer": {"cp": 60, "of": 750},
+  "Industrialist": {"cp": 255, "of": 750},
+  "Soldier of Fortune": {"cp": 35, "of": 750,
+    "graduation_reward": ["100,000 Skill Points (Omega row) / 100,000 Skill Points", "Phantasm Aspirant Soldier SKIN", "Orthrus Aspirant Soldier SKIN", "Stratios Aspirant Soldier SKIN", "Cynabal Aspirant Soldier SKIN"],
+    "bubbles": {"Career Agent Missions": "3/10 (each 25,000 ISK + 10 CP)", "Destruction": "1/5", "Duels": "0/4", "Social": "0/5", "Electronic Warfare": "0/5", "Combat": "0/3",
+                "PvP": "0/4", "Capacitor Warfare": "0/6", "Faction Warfare": "0/5", "Support": "0/6"},
+    "note": "35 CP = 30 from three missions + 5 from Destruction 1/5 (so Destruction goals likely give 5 CP each). Bubble rewards other than Career Agent Missions not seen yet."}
+ },
+ "overall": {"cp": 475, "of": 3000, "milestones": [[750, 50000], [1500, 75000], [2250, 100000], [3000, 125000]]}
+}

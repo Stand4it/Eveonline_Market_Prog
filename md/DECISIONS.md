@@ -156,3 +156,4 @@
 - 2026-10-12 new command 'hours': timed hours, runs, date span and AIR career points per timed hour (upper bound).
 - 2026-10-12 AIR Soldier of Fortune missions 1-5: 25,000 ISK + 10 CP each (est 5/5/5/5/10 min); 6-10 still to hover.
 - 2026-10-12 AIR Soldier of Fortune missions 6-10 rewards: 25k ISK + 10 CP each; #10 also a free Soldier of Fortune Expert System. Whole path = 250k ISK + 100 CP.
+- 2026-10-12 air_career.json: CP per career (Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 35 of 750 each = 475 overall), Soldier of Fortune bubbles and graduation reward (100k SP + 4 SKINs). Other careers' bubbles still to send.
