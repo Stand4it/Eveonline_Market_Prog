@@ -28,20 +28,36 @@ def _get(path, params=None):
 
 
 def _all_jobs():
-    """Every job, following the cursor page by page. -> list of job dicts."""
-    jobs, seen, params = [], set(), None
+    """Every job: ask for a big page first (params after/before/limit), then follow the cursor in both directions until nothing new comes. -> list of job dicts."""
+    jobs, seen = [], set()
+    d, limit = None, 0
+    for lim in (1000, 200, 100, 50, 0):
+        try:
+            d, limit = _get("/freelance-jobs", {"limit": lim} if lim else None), lim
+            break
+        except RuntimeError:
+            continue
+    if d is None:
+        raise RuntimeError("freelance list not reachable")
     for _ in range(MAX_PAGES):
-        d = _get("/freelance-jobs", params)
         page = d.get("freelance_jobs", []) if isinstance(d, dict) else list(d)
         fresh = [j for j in page if j["id"] not in seen]
-        if not fresh:
-            break
         jobs += fresh
         seen.update(j["id"] for j in fresh)
-        after = (d.get("cursor") or {}).get("after") if isinstance(d, dict) else None
-        if not after or len(page) < 10:
+        cur = (d.get("cursor") or {}) if isinstance(d, dict) else {}
+        nxt = None
+        for key in ("before", "after"):                                  # older first, then newer: whichever still brings new jobs
+            if cur.get(key):
+                try:
+                    d2 = _get("/freelance-jobs", {key: cur[key], **({"limit": limit} if limit else {})})
+                except RuntimeError:
+                    continue
+                if [j for j in d2.get("freelance_jobs", []) if j["id"] not in seen]:
+                    nxt = d2
+                    break
+        if nxt is None:
             break
-        params = {"after": after}
+        d = nxt
     return jobs
 
 
