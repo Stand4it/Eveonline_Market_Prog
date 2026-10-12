@@ -1142,6 +1142,9 @@ class DetourStepTests(unittest.TestCase):
         p = Profile(current_system="Home", cargo_m3=50, wallet_isk=1e7, current_location_id=60000001, secs_per_jump=45, ship_name="Venture - Stand4it Dahl")
         from eve_profit.screens import mark
         mark(con)                                                               # the game-screens step is due first in a new world: it is not what this test is about
+        from eve_profit.social import GOALS as _SG
+        con.execute("INSERT OR REPLACE INTO meta VALUES('social_done', ?)", (__import__("json").dumps([g_[0] for g_ in _SG]),))      # nor the one-minute AIR social goals
+        con.execute("INSERT OR REPLACE INTO meta VALUES('wanted_seen', ?)", (__import__("json").dumps([i["id"] for i in __import__("eve_profit.screens", fromlist=["x"]).wanted_unseen(con)]),))
         import eve_profit.nextstep as ns
         import eve_profit.sellplan as sp
         old = sp.sell_plan
