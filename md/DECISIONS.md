@@ -144,3 +144,4 @@
 - 2026-10-11 START/END frames use one # line each (was two).
 - 2026-10-11 hop step shows buy/sell/need-anyway lines only for the system you are in; trades at other systems appear when you get there (next re-plans).
 - 2026-10-11 THREADS: next --plan lists the best candidate of each long-term thread (ISK, AIR/agents, growth, model); design contract + gaps in ROADMAP.
+- 2026-10-12 trades are one step at a time (tradestep.py): FLY to the buy system (destination set in game; per-unit buy prices + station name), BUY step there (starts the haul chain), then the chain flies the cargo hop by hop and sells. TEST station-trading turn uses it too. Chrome/evemarketbrowser not needed: ESI per-item orders (check/bestprice) are the fast single-item refresh.

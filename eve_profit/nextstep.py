@@ -153,6 +153,11 @@ def _next_action_core(con, g, p):
     opps = plan(con, p, 30, False)
     if opps:
         o = opps[0]
+        if o.kind == "trade":
+            from .tradestep import trade_step
+            ts = trade_step(con, g, p, o)
+            if ts:
+                return ts + "\n" + AFTER
         L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
              f"   {o.description}",
              f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)"]
@@ -613,6 +618,10 @@ def _name_of(step):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: fly") and "hauling your stock to" in lo:
         return "Hauling: fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: fly to"):
+        return "Fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: buy at"):
+        return "Trade: buy at " + first.split("STEP: BUY at ", 1)[-1].split(",")[0].strip()
     if lo.startswith("step: look around"):
         return "Look around " + first.split("LOOK AROUND ", 1)[-1].split(" (")[0].strip()
     if lo.startswith("step: haul"):
@@ -776,6 +785,15 @@ def next_action(con, g, p, full=False, ahead=False):
             _hsave(con, _hmake(h, p.current_system))
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # a trade whose BUY step wins: from now on the cargo is flown on one jump at a time
+        if cands:
+            from .tradestep import pending as _pend
+            _h = _pend(cands[0][2])
+            if _h:
+                from .haulchain import make as _hmake2, save as _hsave2
+                _hsave2(con, _hmake2(_h, p.current_system))
+    except Exception:                                            # noqa: BLE001
+        pass
     try:                                                         # every trip gets the same extras: agents on the route, cheap things you need, trades both ways
         from .tripplus import extras as _extras
         dest_ = None
@@ -807,14 +825,18 @@ def next_action(con, g, p, full=False, ahead=False):
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
                 try:
                     opps_ = plan(con, p, 5, False)
+                    step_txt = None                               # no ranked trade right now: do not offer an empty test
                     if opps_:
                         o_ = opps_[0]
-                        step_txt = (f"STEP: TEST Station / hub trading ({reason})\n   Best trade right now: {o_.description}\n"
-                                    f"   about {o_.net_isk:,.0f} ISK in {o_.hours * 60:.0f} min ({o_.isk_per_hour:,.0f} ISK/hr). Confirm live prices first:  "
-                                    "python -m eve_profit check --pick 1   then   python -m eve_profit go --pick 1 --send\n"
-                                    "   Unmodeled: 3 timed runs turn the guess into your own number.")
-                    else:
-                        step_txt = None                           # no ranked trade right now: do not offer an empty test
+                        from .tradestep import trade_step as _ts
+                        step_txt = _ts(con, g, p, o_) if o_.kind == "trade" else None
+                        if step_txt:
+                            step_txt = step_txt.replace("\n   DO ONLY THIS", "\n   (model-building turn: " + reason + ")\n   DO ONLY THIS", 1) + "\n   Unmodeled: 3 timed runs turn the guess into your own number."
+                        else:
+                            step_txt = (f"STEP: TEST Station / hub trading ({reason})\n   Best trade right now: {o_.description}\n"
+                                        f"   about {o_.net_isk:,.0f} ISK in {o_.hours * 60:.0f} min ({o_.isk_per_hour:,.0f} ISK/hr). Confirm live prices first:  "
+                                        "python -m eve_profit check --pick 1   then   python -m eve_profit go --pick 1 --send\n"
+                                        "   Unmodeled: 3 timed runs turn the guess into your own number.")
                 except Exception:                                # noqa: BLE001
                     step_txt = None
             if step_txt is None:
