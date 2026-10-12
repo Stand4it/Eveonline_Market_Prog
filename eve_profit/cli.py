@@ -630,9 +630,12 @@ def _run(a):
         print("\n".join(run_due(con, force=a.all)) or "Nothing is due: every programmatic data grab is fresh.")
     elif a.cmd == "freelance":
         from .freelance import fetch, sample
-        n, d = fetch(con, details=False)
+        n, d = fetch(con, details=bool(a.item), only=a.item or None)
         print(f"{n} freelance jobs downloaded from ESI, {d} details stored (table freelance_raw in your database).")
         print(sample(con))
+        if a.item:
+            from .freelance import detail_sample
+            print("\nDETAIL SAMPLE for '" + a.item + "':\n" + (detail_sample(con, a.item) or "(none stored)"))
     elif a.cmd == "esiroutes":
         from .esiroutes import find
         print(find(a.item.split(",") if a.item else ["project", "freelance", "opportunit"]))
