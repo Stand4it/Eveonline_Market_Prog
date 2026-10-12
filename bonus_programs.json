@@ -227,7 +227,7 @@
     100000,
     125000
    ],
-   "note": "Per career point: first milestone = 50,000 SP / 750 CP = 66.7 SP per CP.",
+   "note": "Account is OMEGA (user 2026-10-12, all three characters). Per career point: first milestone = 50,000 SP / 750 CP = 66.7 SP per CP; valued at 55,000 ISK per CP in progress_values.json. The Omega and non-Omega reward lists in the tooltip showed the same amounts.",
    "overall_cp": 475,
    "overall_cp_max": 3000,
    "milestones": [
