@@ -66,7 +66,7 @@ def per_unit(j):
     return (j.get("reward") or {}).get("initial", 0) / des if des else 0.0
 
 
-def fetch(con, details=False, log=print, cap=400, reuse_h=24.0, only=None):
+def fetch(con, details=False, log=print, cap=5000, reuse_h=24.0, only=None):
     """Download the whole list into freelance_raw (the listing row is the job itself); jobs that vanished are removed. -> (jobs, details stored)."""
     con.execute("CREATE TABLE IF NOT EXISTS freelance_raw(job_id TEXT PRIMARY KEY, fetched REAL, listing TEXT, detail TEXT)")
     jobs = _all_jobs()[:cap]
@@ -119,11 +119,15 @@ def sample(con, n=3):
     return "\n".join(f"{j['name'][:48]:<48} {per_unit(j):>10,.2f} ISK per unit  {(j.get('progress') or {}).get('current', 0):,}/{(j.get('progress') or {}).get('desired', 0):,}" for j in rows)
 
 
-def detail_sample(con, pattern, n=1, width=1500):
+def detail_sample(con, pattern, n=1, width=3500):
+    """The detail of the first jobs matching the pattern WITHOUT the long description, so the rules (configuration) fit on screen."""
     out = []
     for r in con.execute("SELECT listing, detail FROM freelance_raw WHERE detail IS NOT NULL"):
-        if re.search(pattern, json.loads(r[0]).get("name", ""), re.I):
-            out.append(f"{json.loads(r[0]).get('name')}\n{r[1][:width]}")
+        lst = json.loads(r[0])
+        if re.search(pattern, lst.get("name", ""), re.I):
+            d = json.loads(r[1])
+            (d.get("details") or {}).pop("description", None)
+            out.append(f"{lst.get('name')}\n" + json.dumps({k: v for k, v in d.items() if k not in ("id", "name")}, ensure_ascii=False)[:width])
             if len(out) >= n:
                 break
     return "\n---\n".join(out)
