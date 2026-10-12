@@ -15,6 +15,11 @@ def accepted_jobs(con):
         return set()
 
 
+def _gone(con, j):
+    from .listings import is_gone, key_of
+    return is_gone(con, "freelance", key_of(j.get("title", ""), "mine"))
+
+
 def freelance_bonus(ore, con=None):
     """(ISK per unit, remaining unit cap) a freelance 'Mine Materials' job you ACCEPTED pays for this ore on top of selling it (freelance_jobs.json)."""
     import json
@@ -23,7 +28,7 @@ def freelance_bonus(ore, con=None):
         acc = accepted_jobs(con) if con is not None else set()
         f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
         for j in json.load(open(f, encoding="utf-8")).get("mining_jobs", []):
-            if j["ore"] in acc and j["ore"].lower() == str(ore).lower():
+            if j["ore"] in acc and j["ore"].lower() == str(ore).lower() and not (con is not None and _gone(con, j)):
                 return float(j["isk_per_unit"]), max(0, int(j["cap_units"]) - int(j.get("mined_so_far", 0)))
     except (OSError, ValueError, KeyError):
         pass

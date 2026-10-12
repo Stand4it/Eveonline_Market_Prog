@@ -168,7 +168,7 @@ def wanted_candidate(con):
                       f"   Why: {i['why']}.",
                       "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
                       ("   When it is sent run:  python -m eve_profit done --changed   (it looks different from last time)   or   python -m eve_profit done --same"
-                       if i.get("repeat") else "   When it is sent run:  python -m eve_profit done")])
+                       if (i.get("repeat") and not i.get("auto")) else "   When it is sent run:  python -m eve_profit done")])
     return WANTED_RATE, text
 
 

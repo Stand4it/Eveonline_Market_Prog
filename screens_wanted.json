@@ -9,7 +9,8 @@
    "max_h": 168,
    "where": "Neocom > Freelance Jobs > Opportunities (sort by newest if possible)",
    "show": "the first screen of the list (job names, budgets, distance) plus the Active tab if you accepted any",
-   "why": "jobs appear and run out; mining and delivery jobs add ISK on top of what you already do"
+   "why": "jobs appear and run out; mining and delivery jobs add ISK on top of what you already do",
+   "auto": true
   },
   {
    "id": "air_overall",

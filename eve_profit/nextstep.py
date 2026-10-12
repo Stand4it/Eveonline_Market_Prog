@@ -511,6 +511,11 @@ def _agent_rate(con):
 
 
 def next_action_all(con, g, p):
+    try:
+        from .listings import import_snapshots
+        import_snapshots(con)                                    # new screenshots I recorded: compare with the stored lists (new / gone / change rate)
+    except Exception:                                            # noqa: BLE001
+        pass
     core = _next_action_core(con, g, p)
     parts = []
     sk = "\n\n".join(x for x in (books_here_note(con, g, p), skill_note(con, g, p)) if x)

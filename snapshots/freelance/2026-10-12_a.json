@@ -1,0 +1,350 @@
+{
+ "list": "freelance",
+ "ts": "2026-10-12T10:30",
+ "complete": false,
+ "note": "first 38 of 63 jobs, from 5 screenshots; partial list: nothing is marked gone from it",
+ "items": [
+  {
+   "key": "join_zrba_today_|deliver",
+   "title": "Join ZRBA today!",
+   "kind": "deliver",
+   "budget": 56152,
+   "pct_used": 94,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "get_started_mining_plagioclase_read_description_|mine",
+   "title": "Get started mining Plagioclase (Read Description)",
+   "kind": "mine",
+   "budget": 5000000,
+   "pct_used": 13,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "get_started_mining_pyroxeres_read_description_|mine",
+   "title": "Get started mining Pyroxeres (Read Description)",
+   "kind": "mine",
+   "budget": 5000000,
+   "pct_used": 7,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "get_started_mining_veldspar_read_description_|mine",
+   "title": "Get started mining Veldspar (Read Description)",
+   "kind": "mine",
+   "budget": 5000000,
+   "pct_used": 31,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "join_zrba_today_|mine",
+   "title": "Join ZRBA today!",
+   "kind": "mine",
+   "budget": 1000000,
+   "pct_used": 41,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "tax_free_high_value_moon_mining_in_dammiline_warp_to|mine",
+   "title": "TAX FREE HIGH VALUE MOON MINING IN DAMMILINE WARP TO",
+   "kind": "mine",
+   "budget": 100000,
+   "pct_used": 0,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "免税高价值月矿开采在dammiline_跃迁到athenor|mine",
+   "title": "免税高价值月矿开采在DAMMILINE 跃迁到ATHENOR",
+   "kind": "mine",
+   "budget": 100000,
+   "pct_used": 0,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "ship_replacement_компенс_кораблів|insurance",
+   "title": "Ship Replacement / Компенс кораблів",
+   "kind": "insurance",
+   "budget": 825713395,
+   "pct_used": 17,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "bonus_npc_bounty_payments_read_description_|destroy",
+   "title": "Bonus NPC Bounty Payments (Read Description)",
+   "kind": "destroy",
+   "budget": 20000000,
+   "pct_used": 29,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "join_zrba_today_|destroy",
+   "title": "Join ZRBA today!",
+   "kind": "destroy",
+   "budget": 9953750,
+   "pct_used": 0,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "l_assurance_du_guide_du_débutant|insurance",
+   "title": "L'assurance du Guide du Débutant",
+   "kind": "insurance",
+   "budget": 5000000,
+   "pct_used": 6,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "寻找新手一起游玩成长newbros_wanted_learn_grow|destroy",
+   "title": "寻找新手一起游玩成长Newbros Wanted - Learn & Grow",
+   "kind": "destroy",
+   "budget": 67,
+   "pct_used": 0,
+   "system": "Manifest",
+   "jumps": 0
+  },
+  {
+   "key": "compressed_pyroxeres|deliver",
+   "title": "COMPRESSED PYROXERES",
+   "kind": "deliver",
+   "budget": 4494996,
+   "pct_used": 95,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_pyroxeres_grade_ii|deliver",
+   "title": "COMPRESSED PYROXERES - GRADE II",
+   "kind": "deliver",
+   "budget": 22,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_pyroxeres_grade_iii|deliver",
+   "title": "COMPRESSED PYROXERES - GRADE III",
+   "kind": "deliver",
+   "budget": 18,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_pyroxeres_grade_iv|deliver",
+   "title": "COMPRESSED PYROXERES - GRADE IV",
+   "kind": "deliver",
+   "budget": 100000000,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_scordite|deliver",
+   "title": "COMPRESSED SCORDITE",
+   "kind": "deliver",
+   "budget": 6358672,
+   "pct_used": 93,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_scordite_grade_0|deliver",
+   "title": "COMPRESSED SCORDITE - GRADE 0",
+   "kind": "deliver",
+   "budget": 51915456,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_scordite_grade_ii|deliver",
+   "title": "COMPRESSED SCORDITE - GRADE II",
+   "kind": "deliver",
+   "budget": 25754235,
+   "pct_used": 71,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_scordite_grade_iii|deliver",
+   "title": "COMPRESSED SCORDITE - GRADE III",
+   "kind": "deliver",
+   "budget": 87025428,
+   "pct_used": 19,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_veldspar|deliver",
+   "title": "COMPRESSED VELDSPAR",
+   "kind": "deliver",
+   "budget": 61846183,
+   "pct_used": 41,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_veldspar_grade_0|deliver",
+   "title": "COMPRESSED VELDSPAR - GRADE 0",
+   "kind": "deliver",
+   "budget": 49900000,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_veldspar_grade_ii|deliver",
+   "title": "COMPRESSED VELDSPAR - GRADE II",
+   "kind": "deliver",
+   "budget": 13797664,
+   "pct_used": 86,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_veldspar_grade_iii|deliver",
+   "title": "COMPRESSED VELDSPAR - GRADE III",
+   "kind": "deliver",
+   "budget": 9,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "compressed_veldspar_grade_iv|deliver",
+   "title": "COMPRESSED VELDSPAR - GRADE IV",
+   "kind": "deliver",
+   "budget": 115000000,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "pyroxeres_grade_0|deliver",
+   "title": "PYROXERES - GRADE 0",
+   "kind": "deliver",
+   "budget": 53840004,
+   "pct_used": 0,
+   "system": "Rigor",
+   "jumps": 1
+  },
+  {
+   "key": "earn_double_on_mining_join_leeth_|mine",
+   "title": "Earn Double on Mining - Join [LEETH]",
+   "kind": "mine",
+   "budget": 300000,
+   "pct_used": 5,
+   "system": "Steadfast",
+   "jumps": 1
+  },
+  {
+   "key": "_claim_new_eden_shape_your_future_|insurance",
+   "title": "!! Claim New Eden, Shape your Future !!",
+   "kind": "insurance",
+   "budget": 1000000,
+   "pct_used": 0,
+   "system": "Fortitude",
+   "jumps": 1
+  },
+  {
+   "key": "npc_kill_bounties_join_leeth_|destroy",
+   "title": "NPC Kill Bounties - Join [LEETH]",
+   "kind": "destroy",
+   "budget": 17100000,
+   "pct_used": 31,
+   "system": "Steadfast",
+   "jumps": 1
+  },
+  {
+   "key": "潮汐星空_0税高安团_新人启航计划_astral_tide_|mine",
+   "title": "潮汐星空 | 0税高安团·新人启航计划 （Astral Tide）",
+   "kind": "mine",
+   "budget": 130000,
+   "pct_used": 0,
+   "system": "Kita-Aino",
+   "jumps": 2
+  },
+  {
+   "key": "new_player_insurance_program_by_tenebris_academy_|insurance",
+   "title": "New Player Insurance Program by \"Tenebris Academy\"",
+   "kind": "insurance",
+   "budget": 20000000,
+   "pct_used": 41,
+   "system": "Forte",
+   "jumps": 2
+  },
+  {
+   "key": "new_player_support_program_by_tenebris_academy_|destroy",
+   "title": "New Player Support Program by \"Tenebris Academy\"",
+   "kind": "destroy",
+   "budget": 94408000,
+   "pct_used": 87,
+   "system": "Forte",
+   "jumps": 2
+  },
+  {
+   "key": "combat_reward_program|destroy",
+   "title": "Combat Reward Program",
+   "kind": "destroy",
+   "budget": 7920000,
+   "pct_used": 0,
+   "system": "Couth",
+   "jumps": 2
+  },
+  {
+   "key": "_buy_back_crokite_all_type|deliver",
+   "title": "..::Buy Back::.. Crokite - all type",
+   "kind": "deliver",
+   "budget": 414073800,
+   "pct_used": 1,
+   "system": "Hotak",
+   "jumps": 3
+  },
+  {
+   "key": "_buy_back_dark_ochre_all_type|deliver",
+   "title": "..::Buy Back::.. Dark Ochre - all type",
+   "kind": "deliver",
+   "budget": 314211000,
+   "pct_used": 7,
+   "system": "Hotak",
+   "jumps": 3
+  },
+  {
+   "key": "_buy_back_omber_all_type|deliver",
+   "title": "..::Buy Back::.. Omber - all type",
+   "kind": "deliver",
+   "budget": 332770667,
+   "pct_used": 3,
+   "system": "Hotak",
+   "jumps": 3
+  },
+  {
+   "key": "all_types_of_omber|deliver",
+   "title": "ALL TYPES OF OMBER",
+   "kind": "deliver",
+   "budget": 1440630,
+   "pct_used": 98,
+   "system": "Manarq",
+   "jumps": 3
+  },
+  {
+   "key": "all_types_of_plagioclase|deliver",
+   "title": "ALL TYPES OF PLAGIOCLASE",
+   "kind": "deliver",
+   "budget": 96646116,
+   "pct_used": 1,
+   "system": "Manarq",
+   "jumps": 3
+  }
+ ]
+}

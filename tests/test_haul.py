@@ -229,3 +229,20 @@ class DynamicDetailScreensTests(unittest.TestCase):
         from eve_profit import screens
         ids = [i["id"] for i in screens._dynamic()]
         self.assertIn("jobdetail_plagioclase", ids)
+
+
+class ListingsTests(unittest.TestCase):
+    def test_new_and_gone(self):
+        from eve_profit import listings
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        listings.ensure(con)
+        a = {"key": "a|mine", "title": "A"}
+        b = {"key": "b|mine", "title": "B"}
+        listings.apply(con, {"list": "freelance", "ts": "t1", "complete": True, "items": [a, b]})
+        self.assertFalse(listings.is_gone(con, "freelance", "b|mine"))
+        s = listings.apply(con, {"list": "freelance", "ts": "t2", "complete": True, "items": [a]})
+        self.assertIn("1 gone", s)
+        self.assertTrue(listings.is_gone(con, "freelance", "b|mine"))
+        listings.apply(con, {"list": "freelance", "ts": "t3", "complete": False, "items": []})     # partial: nothing newly gone
+        self.assertFalse(listings.is_gone(con, "freelance", "a|mine"))
