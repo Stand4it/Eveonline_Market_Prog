@@ -619,6 +619,10 @@ def _name_of(step):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: fly") and "hauling your stock to" in lo:
         return "Hauling: fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: accept freelance job"):
+        return "Accept freelance job " + first.split(" - ", 1)[-1].split(" (about")[0]
+    if lo.startswith("step: undock"):
+        return "Undock and warp to a belt"
     if lo.startswith("step: show me a screen"):
         return "Show a screen " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: air social goal"):
@@ -920,6 +924,8 @@ def next_action(con, g, p, full=False, ahead=False):
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
         first = steps[0]
+        from .miningchain import prestep as _mp
+        first = _mp(con, g, p, first)                                                                    # accept jobs, fly, undock before the mining itself
         first = "\n".join(l for l in first.split("\n") if not l.startswith("   LATER:"))       # future steps belong in --plan, not in this one
         if first.startswith("STEP: FLY to") and "hauling your stock to" in first:
             from .haul import hop_only

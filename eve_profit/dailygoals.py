@@ -339,6 +339,13 @@ def chain_clear(con):
 def chain_done(con):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
     try:
+        from .miningchain import job_done
+        m = job_done(con)
+        if m:
+            return m
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
         from .screens import wanted_done
         m = wanted_done(con)
         if m:

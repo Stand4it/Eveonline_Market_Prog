@@ -183,5 +183,21 @@ class DoneOrderTests(unittest.TestCase):
 class FreelanceMiningTests(unittest.TestCase):
     def test_bonus_only_when_accepted(self):
         from eve_profit.mining import freelance_bonus
-        self.assertEqual(freelance_bonus("Veldspar"), (0.0, 0))          # shipped as not accepted
-        self.assertEqual(freelance_bonus("Scordite"), (0.0, 0))
+        from eve_profit.db import connect
+        from eve_profit.mining import accept_job
+        con = connect(":memory:")
+        self.assertEqual(freelance_bonus("Veldspar", con), (0.0, 0))     # not accepted yet
+        accept_job("Veldspar", con)
+        self.assertEqual(freelance_bonus("Veldspar", con), (5.0, 1000000))
+        self.assertEqual(freelance_bonus("Scordite", con), (0.0, 0))
+
+
+class MiningChainTests(unittest.TestCase):
+    def test_accept_steps_come_first(self):
+        from eve_profit.db import connect
+        from eve_profit.miningchain import is_mining_step, prestep
+        con = connect(":memory:")
+        self.assertTrue(is_mining_step("STEP: TEST Freelance belt mining (Venture) (x)"))
+        t = prestep(con, None, None, "STEP: TEST Freelance belt mining (Venture) (x)\n  how")
+        self.assertIn("STEP: ACCEPT FREELANCE JOB 1 of 3", t)
+        self.assertEqual(prestep(con, None, None, "STEP: SELL NOW"), "STEP: SELL NOW")

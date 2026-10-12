@@ -20,7 +20,32 @@
    "expires": "2026-10-28",
    "accepted": false,
    "where": "any location",
-   "note": "seen 2026-10-12: 5.00 ISK per unit MINED (you keep the ore), your cap 1,000,000 units = 5,000,000 ISK, 97 active participants, 31% of 250,000,000 done. Set accepted true after pressing Accept (max 3 accepted jobs)."
+   "note": "seen 2026-10-12: 5.00 ISK per unit MINED (you keep the ore), your cap 1,000,000 units = 5,000,000 ISK, 97 active participants, 31% of 250,000,000 done. Set accepted true after pressing Accept (max 3 accepted jobs).",
+   "title": "Get started mining Veldspar (Read Description)"
+  },
+  {
+   "ore": "Plagioclase",
+   "corp": "unknown",
+   "isk_per_unit": 5.0,
+   "cap_units": 1000000,
+   "mined_so_far": 0,
+   "expires": "unknown",
+   "accepted": false,
+   "unverified": true,
+   "title": "Get started mining Plagioclase (Read Description)",
+   "note": "card shows 5,000,000 ISK available like Veldspar: pay per unit assumed 5.00 until the detail page is seen"
+  },
+  {
+   "ore": "Pyroxeres",
+   "corp": "unknown",
+   "isk_per_unit": 5.0,
+   "cap_units": 1000000,
+   "mined_so_far": 0,
+   "expires": "unknown",
+   "accepted": false,
+   "unverified": true,
+   "title": "Get started mining Pyroxeres (Read Description)",
+   "note": "card shows 5,000,000 ISK available like Veldspar: pay per unit assumed 5.00 until the detail page is seen"
   }
  ],
  "delivery_jobs_seen": [

@@ -600,7 +600,7 @@ def _run(a):
         from .dailygoals import chain_done
         if a.goal.lower().startswith("job "):
             from .mining import accept_job
-            print(accept_job(a.goal[4:].strip()))
+            print(accept_job(a.goal[4:].strip(), con))
         elif a.goal:
             from .social import mark_goal_done
             print(mark_goal_done(con, a.goal))

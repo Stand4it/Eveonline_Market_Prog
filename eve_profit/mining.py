@@ -5,14 +5,25 @@ from .risk import route_risk
 from .skills import have, type_missing
 
 
-def freelance_bonus(ore):
+def accepted_jobs(con):
+    """Ores of the freelance mining jobs you accepted (kept in the database, so the repo file never conflicts with `git pull`)."""
+    import json
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='jobs_accepted'").fetchone()
+        return set(json.loads(r[0])) if r else set()
+    except Exception:                                                   # noqa: BLE001
+        return set()
+
+
+def freelance_bonus(ore, con=None):
     """(ISK per unit, remaining unit cap) a freelance 'Mine Materials' job you ACCEPTED pays for this ore on top of selling it (freelance_jobs.json)."""
     import json
     import os
     try:
+        acc = accepted_jobs(con) if con is not None else set()
         f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
         for j in json.load(open(f, encoding="utf-8")).get("mining_jobs", []):
-            if j.get("accepted") and j["ore"].lower() == str(ore).lower():
+            if j["ore"] in acc and j["ore"].lower() == str(ore).lower():
                 return float(j["isk_per_unit"]), max(0, int(j["cap_units"]) - int(j.get("mined_so_far", 0)))
     except (OSError, ValueError, KeyError):
         pass
@@ -40,7 +51,7 @@ def find_mining(con, g, p):
             sold, net = sell_into_bids(bids, units, p.sales_tax)
             if sold == 0:
                 continue
-            fb, cap = freelance_bonus(name)
+            fb, cap = freelance_bonus(name, con)
             net += fb * min(units, cap)                               # an accepted freelance job pays per unit mined on top of the sale
             rt = reach[b]
             loss, wait = route_risk(g, rt.path, p.ship_value_isk + net)
@@ -55,8 +66,8 @@ def find_mining(con, g, p):
     return out
 
 
-def accept_job(ore):
-    """`done --goal "job veldspar"`: you pressed Accept on that freelance mining job. -> message."""
+def accept_job(ore, con=None):
+    """`done` / `done --goal "job veldspar"`: you pressed Accept on that freelance mining job. -> message."""
     import json
     import os
     f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
@@ -64,6 +75,8 @@ def accept_job(ore):
     hit = [j for j in d.get("mining_jobs", []) if j["ore"].lower() == ore.lower()]
     if not hit:
         return "No such freelance mining job recorded: " + ", ".join(j["ore"] for j in d.get("mining_jobs", []))
-    hit[0]["accepted"] = True
-    json.dump(d, open(f, "w", encoding="utf-8"), indent=1)
+    if con is not None:
+        acc = accepted_jobs(con) | {hit[0]["ore"]}
+        con.execute("INSERT OR REPLACE INTO meta VALUES('jobs_accepted',?)", (json.dumps(sorted(acc)),))
+        con.commit()
     return f"OK, the {hit[0]['ore']} job pays {hit[0]['isk_per_unit']:.2f} ISK per unit mined on top of the ore sale; mining plans now count it. Run  python -m eve_profit next"
