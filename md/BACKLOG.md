@@ -15,3 +15,4 @@
 - When the user sends screenshots from the UPDATE THE MODEL step: update bonus_programs.json (AIR goals, progress, time limits), agent_offers.json, and note every new field/time limit in DECISIONS.
 - THREADS gaps: rank 1-jump-off-route detours (agent here/near, trade) against the haul; derive progress value from the unlock graph; persistent goals with progress.
 - Value AIR career points: milestone SP rewards (50k/75k/100k/125k) at ~1,667 ISK/SP; need points-per-milestone (hover the diamonds) then add career_points to agent offer value in next.
+- Freelance Veldspar mining job (5 ISK/unit, cap 1M, expires 2026-10-28): keep ranked every step; accept it when mining wins or ore buy prices drop (then 'done --goal "job veldspar"').
