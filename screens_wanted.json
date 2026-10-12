@@ -87,6 +87,16 @@
    "where": "Agency > Resource Harvesting",
    "show": "the nearest mining sites and ore types",
    "why": "mining site choice and ore values"
+  },
+  {
+   "id": "launcher_news",
+   "repeat": true,
+   "base_h": 48,
+   "min_h": 24,
+   "max_h": 336,
+   "where": "EVE Launcher (desktop) > EVE Online > News: the newest patch notes and event posts",
+   "show": "the news list with dates, and the newest Patch Notes page (open it and scroll once)",
+   "why": "the game changes with every patch (24.01 on 2026-10-12): rewards, goals, prices and rules; the model must follow"
   }
  ]
 }
