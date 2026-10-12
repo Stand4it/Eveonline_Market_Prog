@@ -539,6 +539,24 @@
    "career": "Industrialist",
    "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
    "timer_name": "Agent L1 step 10 Industrialist Navitas"
+  },
+  {
+   "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
+   "mission": "chapter 1 of 8 'Holographic Reenactment': report to Holorelay: Heika Torigo at Kita-Aino V - Moon 8 - Chief Executive Panel Bureau (2 jumps from Manifest). Rewards 42,000 ISK + bonus 54,000 ISK; objective details not seen (drone actors / battle reenactment); standing 0.00",
+   "isk": 42000,
+   "bonus": 54000,
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 25,
+   "jumps": 2,
+   "available": true,
+   "where": "Manifest V - AIR Laboratories Trade Center (agent); Kita-Aino V (report to)",
+   "agent_system": "Manifest",
+   "to_system": "Kita-Aino",
+   "career": "Epic arc",
+   "timer_name": "Agent L1 epic Visions of Greatness ch1"
   }
  ],
  "min_per_jump": 3.0,

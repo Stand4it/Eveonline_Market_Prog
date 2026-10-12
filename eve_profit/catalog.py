@@ -82,13 +82,14 @@ def models_report(con, wallet=0.0):
     return "\n".join(L)
 
 
-def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen):
+def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen, here=None):
     """Which unmodeled, unlocked activity should be offered now? -> (activity or None, reason, new_seen_ids)
     NEW unlock => immediately; otherwise every EVERY-th step the highest value-of-information one."""
     st = status(con, wallet)
     unlocked = [a for a in st if a["unlocked"]]
     new_ids = [a["id"] for a in unlocked if a["id"] not in seen]
-    unmodeled = [a for a in unlocked if a["state"] != "MODELED" and a["id"] != "agent_career"]
+    unmodeled = [a for a in unlocked if a["state"] != "MODELED" and a["id"] != "agent_career"
+                 and not (here and a.get("where") and a["where"].lower() != str(here).lower())]      # a test tied to a place is offered only when you are there
     fresh = [a for a in unmodeled if a["id"] in new_ids and seen]        # first call just records what is already unlocked
     if fresh:
         a = max(fresh, key=lambda x: voi(x, best_known_rate))

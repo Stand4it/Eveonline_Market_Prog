@@ -117,7 +117,8 @@
    "minutes": 25,
    "risk": "low",
    "requires": {},
-   "how": "Nearest Level 1 security agents: Emens Deroutte, Axiosere (1 jump, Federation Navy); Berwelet Trisevent, Lustre (3 jumps, Sisters of EVE); Annve Hoddoren / Ongunbjer Hetinold, Tourier (5 jumps). Needs a combat-capable ship; time one mission."
+   "how": "Nearest Level 1 security agents: Emens Deroutte, Axiosere (1 jump, Federation Navy); Berwelet Trisevent, Lustre (3 jumps, Sisters of EVE); Annve Hoddoren / Ongunbjer Hetinold, Tourier (5 jumps). Needs a combat-capable ship; time one mission.",
+   "where": "Axiosere"
   },
   {
    "id": "agent_l2_security",
@@ -210,7 +211,8 @@
    "minutes": 30,
    "risk": "low",
    "requires": {},
-   "how": "Distribution (courier) agents: L1 Trenck Larcacraine, Agrallarier (7 jumps); L2 Dire Serin, Foves (11), Ivonalle Galelare, Slays (11). Or Contracts > Courier along a route you fly anyway."
+   "how": "Distribution (courier) agents: L1 Trenck Larcacraine, Agrallarier (7 jumps); L2 Dire Serin, Foves (11), Ivonalle Galelare, Slays (11). Or Contracts > Courier along a route you fly anyway.",
+   "where": "Agrallarier"
   },
   {
    "id": "lp_store",
@@ -338,7 +340,8 @@
    "minutes": 40,
    "risk": "low",
    "requires": {},
-   "how": "Talk to Cassandra Ahfrim, Manifest V - AIR Laboratories (3 jumps). Chapters: Holographic Reenactment, Caldari Prime Breakout, Travel to the Minmatar, Battle of Pator, Travel to the Amarr... 0 of 8 done. Epic arcs are one-time with big rewards; time each chapter as its own run."
+   "how": "Talk to Cassandra Ahfrim, Manifest V - AIR Laboratories (3 jumps). Chapters: Holographic Reenactment, Caldari Prime Breakout, Travel to the Minmatar, Battle of Pator, Travel to the Amarr... 0 of 8 done. Epic arcs are one-time with big rewards; time each chapter as its own run.",
+   "where": "Manifest"
   },
   {
    "id": "epic_other",
@@ -409,7 +412,8 @@
    "minutes": 25,
    "risk": "low",
    "requires": {},
-   "how": "Emps Metyt, Axiosere (1 jump, Astral Mining): ore delivery. Others 6 jumps (Arant, Hotak, Tindfjalla)."
+   "how": "Emps Metyt, Axiosere (1 jump, Astral Mining): ore delivery. Others 6 jumps (Arant, Hotak, Tindfjalla).",
+   "where": "Axiosere"
   },
   {
    "id": "agent_rd",

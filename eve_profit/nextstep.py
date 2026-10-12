@@ -818,7 +818,7 @@ def next_action(con, g, p, full=False, ahead=False):
         last_exp = int(meta.get("last_exp", 0))
         seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
         best_known = max((c[0] for c in cands), default=0.0)
-        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen)
+        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen, here=p.current_system)
         if "seen_unlocked" not in meta:                          # first ever call: just remember what is already unlocked
             con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
         if act:

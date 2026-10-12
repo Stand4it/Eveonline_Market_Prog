@@ -148,3 +148,4 @@
 - 2026-10-12 trade FLY step: destination = only the NEXT system on the way; item/price/station lines are 'LATER:' lines shown in next --plan only; BUY step shows them when you are at the buy system.
 - 2026-10-12 BUY step names the real station (local table, else ESI /universe/stations/{id}, cached) and sets the in-game destination to that station id.
 - 2026-10-12 trades are live-checked before they are offered: ESI per-item refresh for both regions (tradestep.fresh); a vanished order drops the trade and the next one is offered. Tests set EVE_NO_LIVE (tests/test_00_env.py).
+- 2026-10-12 model-building tests tied to a place (activity_catalog 'where': courier=Agrallarier, security/mining agents=Axiosere, epic arc=Manifest) are offered only when you are in that system. Recorded Cassandra Ahfrim epic arc ch1 'Holographic Reenactment' (42k + 54k bonus, report to Kita-Aino V, 2 jumps) as an open offer at Manifest; Trenck (Agrallarier) needs an in-person visit.

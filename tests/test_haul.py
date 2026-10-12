@@ -126,3 +126,14 @@ class StationLookupTests(unittest.TestCase):
         self.assertEqual(tradestep._station(con, 7291, 5, 0, G()), (60000001, "Manifest V - AIR Laboratories Trade Center"))
         tradestep.STATION["STEP: BUY at X"] = 42
         self.assertEqual(tradestep.station_of(">> STEP: BUY at X\n more"), 42)
+
+
+class ExperimentWhereTests(unittest.TestCase):
+    def test_place_bound_test_only_when_there(self):
+        from eve_profit import catalog
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        acts = [a for a in catalog.status(con, 1e9) if a["id"] == "courier"]
+        self.assertEqual(acts[0].get("where"), "Agrallarier")
+        elsewhere = catalog.pick_experiment(con, 1e9, 1000.0, 99, 0, {"courier"}, here="Manifest")[0]
+        self.assertTrue(elsewhere is None or elsewhere["id"] != "courier")
