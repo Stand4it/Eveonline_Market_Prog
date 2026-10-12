@@ -624,6 +624,10 @@ def _name_of(step):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: fly") and "hauling your stock to" in lo:
         return "Hauling: fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: deliver"):
+        return "Deliver freelance job"
+    if lo.startswith("step: accept freelance job -"):
+        return "Accept freelance job " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: accept freelance job"):
         return "Accept freelance job " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: undock"):
@@ -737,6 +741,13 @@ def next_action(con, g, p, full=False, ahead=False):
         _w = _wc(con, g, p)
         if _w:
             cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
+    except Exception:                                            # noqa: BLE001
+        pass
+    try:                                                         # a freelance delivery job paid from stock you hold here: accept, fly, deliver
+        from .jobchain import candidate as _jc
+        _j = _jc(con, g, p)
+        if _j:
+            cands.append((_j[0], "freelance job delivery", _j[1], "from stock, more than selling"))
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # AIR Social goals: 25,000 ISK + 10 career points for a one-minute click task
@@ -920,6 +931,8 @@ def next_action(con, g, p, full=False, ahead=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     try:
+        from .jobchain import mark_shown as _jms
+        _jms(con, steps[0] if steps else "")
         from .social import mark_shown as _ms
         from .screens import wanted_mark_shown as _wms
         _ms(con, steps[0] if steps else "")

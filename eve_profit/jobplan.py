@@ -30,7 +30,7 @@ def options(con, g, p, max_jumps=5):
     sells, buys = load_books(con, set(reach))
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
-    stock = {r[0]: r[1] for r in con.execute("SELECT type_id,SUM(quantity) FROM inventory GROUP BY type_id")}
+    stock = {r[0]: r[1] for r in con.execute("SELECT type_id,SUM(quantity) FROM inventory WHERE system_id=? GROUP BY type_id", (cur,))}      # only what is HERE
     try:
         from .sellplan import is_ore, ore_hold_m3
         orehold = ore_hold_m3(con, p)

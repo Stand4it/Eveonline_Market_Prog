@@ -342,3 +342,17 @@ class JobPlanTests(unittest.TestCase):
         self.assertEqual(rows[0]["kind"], "deliver")
         self.assertEqual(rows[0]["units"], 100)
         self.assertAlmostEqual(rows[0]["net"], 100 * (9 - 5))
+
+
+class JobChainTests(unittest.TestCase):
+    def test_accept_then_fly_then_deliver_state(self):
+        from eve_profit import jobchain
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        jobchain._save(con, {"id": "j", "name": "any scordite", "item": "Scordite", "units": 10, "stage": "accept"})
+        jobchain.mark_shown(con, "STEP: ACCEPT FREELANCE JOB - any scordite (about 1 minute)\n x")
+        self.assertIn("accepted", jobchain.done(con))
+        self.assertEqual(jobchain._load(con)["stage"], "fly")
+        jobchain.mark_shown(con, "STEP: DELIVER 10 x Scordite for the freelance job (about 3 minutes)")
+        self.assertIn("delivered", jobchain.done(con))
+        self.assertIsNone(jobchain._load(con))
