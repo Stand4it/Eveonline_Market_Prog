@@ -600,7 +600,10 @@ def _run(a):
         print(summary(con))
     elif a.cmd == "done":
         from .dailygoals import chain_done
-        if a.goal.lower().startswith("job "):
+        if a.goal.lower().startswith("seen "):
+            from .screens import mark_seen
+            print(mark_seen(con, a.goal[5:].strip()))
+        elif a.goal.lower().startswith("job "):
             from .mining import accept_job
             print(accept_job(a.goal[4:].strip(), con))
         elif a.goal:

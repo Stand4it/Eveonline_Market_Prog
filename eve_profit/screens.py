@@ -219,3 +219,17 @@ def wanted_done(con, changed=None):
     con.commit()
     more = f" This one comes back in about {iv:.0f} h." if item.get("repeat") else ""
     return f"Thank you.{more} {len(wanted_unseen(con))} more screen(s) wanted. Run  python -m eve_profit next"
+
+
+def mark_seen(con, part):
+    """`done --goal "seen <part of the id>"`: I already got that screenshot (the step was not on screen when you sent it). -> message."""
+    try:
+        items = json.load(open(WANTED_FILE, encoding="utf-8")).get("items", []) + _dynamic()
+    except (OSError, ValueError):
+        items = []
+    hit = next((i for i in items if part.lower() in i["id"].lower()), None)
+    if not hit:
+        return "No such wanted screen. Known: " + ", ".join(i["id"] for i in items)
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (SHOWN_KEY, hit["id"]))
+    con.commit()
+    return wanted_done(con)

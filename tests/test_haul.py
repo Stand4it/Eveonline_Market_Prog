@@ -260,3 +260,12 @@ class ListingOriginTests(unittest.TestCase):
         self.assertFalse(listings.is_gone(con, "freelance", "b|mine"))     # b is just out of range from the new place
         listings.apply(con, {"list": "freelance", "ts": "t3", "complete": True, "origin": "Rotonos", "items": [a]})
         self.assertTrue(listings.is_gone(con, "freelance", "b|mine"))      # same place twice: now it really is gone
+
+
+class MarkSeenTests(unittest.TestCase):
+    def test_mark_seen_by_part_of_id(self):
+        from eve_profit import screens
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        self.assertIn("Thank you", screens.mark_seen(con, "anymining"))
+        self.assertNotIn("freelance_detail_anymining", [i["id"] for i in screens.wanted_unseen(con)])

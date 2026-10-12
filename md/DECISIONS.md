@@ -177,3 +177,4 @@
 - 2026-10-12 freelance detail seen: 'Compressed Scordite III-Grade 90%Jita' pays 19.59 ISK/item = 11% BELOW market (priced at 90% of Jita value, destination Tongofur VIII, expires in 14 h): skip all '90%Jita' jobs. 'any scordite' mining job detail still wanted.
 - 2026-10-12 new command esiroutes: downloads the public ESI route list and prints routes matching words (default project, freelance, opportunity) with their scopes: answers whether Freelance Jobs can be read by program (sandbox cannot reach ESI, so the user runs it).
 - 2026-10-12 freelance 'ore mining job: mine/deliver any scordite' (INVISION HORIZON): Deliver, 9.00 ISK per item, dock at Botane/Manarq/Hek/... (10 stations), expires 2026-10-27: beats Scordite buy orders (~5-8); not wired into sellplan yet (BACKLOG virtual buyers).
+- 2026-10-12 done --goal "seen <part of id>" marks a wanted screenshot as received when it was sent without the step on screen.
