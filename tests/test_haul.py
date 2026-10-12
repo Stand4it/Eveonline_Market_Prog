@@ -308,3 +308,37 @@ class FreelanceParseDetailTests(unittest.TestCase):
         self.assertEqual(j["items"], [("ore_group", 462)])
         self.assertTrue(alive(lst))
         self.assertFalse(alive({**lst, "reward": {"initial": 50, "remaining": 0}}))
+
+
+class JobPlanTests(unittest.TestCase):
+    def test_deliver_job_beats_buying_cost(self):
+        import json
+        from eve_profit import jobplan
+        from eve_profit.config import Profile
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        con.execute("CREATE TABLE IF NOT EXISTS freelance_raw(job_id TEXT PRIMARY KEY, fetched REAL, listing TEXT, detail TEXT)")
+        con.execute("INSERT INTO types(type_id,name,volume,group_id,capacity) VALUES(1230,'Scordite',0.15,460,0)")
+        con.execute("INSERT INTO orders VALUES(1,1230,60000001,1,10000001,0,5.0,100000,1,'',1)")
+        lst = {"id": "j", "name": "any scordite", "state": "Active", "progress": {"current": 0, "desired": 1000000}, "reward": {"initial": 9000000, "remaining": 9000000}}
+        det = {"details": {"expires": "2099-01-01T00:00", "creator": {"corporation": {"name": "C"}}}, "configuration": {"method": "DeliverItem", "parameters": {"corporation_item_delivery": {"corporation_item_delivery": {"item_type": {"values": [{"value_type": "item_type", "values": ["1230"]}]}}}}},
+               "contribution": {"reward_per_contribution": 9}, "access_and_visibility": {"broadcast_locations": [{"id": 1, "name": "A"}]}}
+        con.execute("INSERT INTO freelance_raw VALUES('j',0,?,?)", (json.dumps(lst), json.dumps(det)))
+
+        class R:
+            def __init__(self, j):
+                self.jumps = j
+
+        class G:
+            name = {1: "A"}
+
+            def id_of(self, n):
+                return 1
+
+            def reach(self, a, j, y):
+                return {1: R(0)}
+        p = Profile(cargo_m3=15.0, wallet_isk=1e6, current_system="A")
+        rows = jobplan.options(con, G(), p)
+        self.assertEqual(rows[0]["kind"], "deliver")
+        self.assertEqual(rows[0]["units"], 100)
+        self.assertAlmostEqual(rows[0]["net"], 100 * (9 - 5))

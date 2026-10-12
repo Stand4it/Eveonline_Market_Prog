@@ -626,9 +626,14 @@ def _run(a):
         else:
             print(settle_run(con, esi, cid, a.apply))
     elif a.cmd == "jobs":
-        from .freelance import report
+        from .freelance import report as _list
         from .graph import Graph
-        print(report(con, Graph(con), p, max_jumps=a.hours and int(a.hours) or 5))
+        from .jobplan import report as _plan
+        g_ = Graph(con)
+        mj = a.hours and int(a.hours) or 5
+        print(_plan(con, g_, p, mj))
+        if a.all:
+            print("\n" + _list(con, g_, p, mj))
     elif a.cmd == "grabs":
         from .grabs import run_due
         print("\n".join(run_due(con, force=a.all)) or "Nothing is due: every programmatic data grab is fresh.")

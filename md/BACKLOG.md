@@ -20,3 +20,4 @@
 - Add to GRABS as ESI routes are found: agent / career program / goals routes (esiroutes), accepted freelance jobs (character route), notifications summary.
 - Ship modeling: fitting window screenshot -> combatfit numbers; later compare to mission enemy DPS/EHP for a win chance; user will learn Pyfa (free fitting tool) or the in-game fitting simulator. Combat is routed only when the modeled win chance is above 99 percent.
 - Ship-loss farming model: value of a lost cheap ship = AIR goals (25k + 10 CP each at 55k/CP) + insurance payout + freelance insurance jobs - hull cost; verify whether self-destruct counts and voids insurance; only spare ships, never in safe-space ganking or griefing.
+- jobplan: add as a next candidate (one step at a time: buy, fly, deliver) with tripplus extras along the route; compare with world prices (worldprices.best_far) for the same goods.
