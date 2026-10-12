@@ -241,5 +241,8 @@ DONE  -  mark the optional step of the daily-goals chain (epic arc) as done or s
 HOURS  -  hours played as far as timed runs show, and career points per hour
    example: python -m eve_profit hours
 
+ALERTS  -  recent game notifications (skill finished, alerts)
+   example: python -m eve_profit alerts --n 10
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```

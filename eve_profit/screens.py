@@ -6,7 +6,7 @@ import os
 import time
 
 KEY = "screens_ts"
-EVERY_H = 12.0
+EVERY_H = 72.0          # the agent windows were all recorded: ask again only every 3 days
 MINUTES = 3.0
 VALUE_ISK = 60_000.0          # what the step is worth: the data it brings makes every later step better (editable here)
 
@@ -41,7 +41,7 @@ def _agents():
 
 def rate():
     """When it is due it comes FIRST (it takes 3 minutes and every later step depends on the data): bigger than any hauling or trading rate."""
-    return 1e8
+    return 6e6                                  # below the one-minute AIR goals (about 7M/hr): quick high-value steps first
 
 
 IDX_KEY = "screens_idx"
@@ -94,6 +94,10 @@ def step(con=None):
 def goto(con, n):
     """`done --screen N`: several screens were sent at once; show screen N next."""
     its = items()
+    if n > len(its):                                                    # past the end = skip the whole step for now
+        con.execute("DELETE FROM meta WHERE key=?", (IDX_KEY,))
+        mark(con)
+        return "OK, the game-screens step is skipped until it is due again."
     i = max(0, min(n - 1, len(its) - 1))
     con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (IDX_KEY, str(i)))
     con.commit()

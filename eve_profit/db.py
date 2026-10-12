@@ -115,6 +115,7 @@ CREATE INDEX IF NOT EXISTS ix_gank_sys ON gank_events(system_id);
 CREATE TABLE IF NOT EXISTS my_ships(
   item_id INTEGER PRIMARY KEY, type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, location_id INTEGER);
 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
+CREATE TABLE IF NOT EXISTS notifications(notification_id INTEGER PRIMARY KEY, type TEXT, ts TEXT, is_read INTEGER, text TEXT);
 """
 
 

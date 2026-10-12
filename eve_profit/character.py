@@ -113,6 +113,17 @@ def _sync_daily_goal(con, esi, cid):
     return None
 
 
+def _sync_notifications(con, esi, cid):
+    """The game's notification feed (needs esi-characters.read_notifications.v1; without it this quietly does nothing). -> rows stored or None."""
+    try:
+        rows = esi.get(f"/characters/{cid}/notifications/")[0]
+    except Exception:                                                   # noqa: BLE001
+        return None
+    con.executemany("INSERT OR REPLACE INTO notifications VALUES(?,?,?,?,?)",
+                    [(r["notification_id"], r.get("type", ""), r.get("timestamp", ""), int(bool(r.get("is_read"))), (r.get("text") or "")[:400]) for r in rows])
+    return len(rows)
+
+
 def sync_character(con, esi, cid, profile):
     """Fills profile (system, ship, cargo, wallet, tax) and inventory. -> summary dict."""
     loc = esi.get(f"/characters/{cid}/location/")[0]
@@ -182,6 +193,7 @@ def sync_character(con, esi, cid, profile):
     fit_n = 0
     known = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
     known.update({r[0]: r[1] for r in con.execute("SELECT structure_id,system_id FROM structures WHERE system_id>0")})
+    _sync_notifications(con, esi, cid)
     skipped = kept = ships = lookups = 0
     cur_ship = ship.get("ship_item_id")
     for a in esi.paged(f"/characters/{cid}/assets/"):
