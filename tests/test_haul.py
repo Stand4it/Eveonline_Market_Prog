@@ -165,3 +165,16 @@ class WantedScreensTests(unittest.TestCase):
         self.assertIn("Thank you", screens.wanted_done(con))
         _, text2 = screens.wanted_candidate(con)
         self.assertNotEqual(text, text2)
+
+
+class DoneOrderTests(unittest.TestCase):
+    def test_done_marks_shown_social_goal_before_advancing_screens(self):
+        from eve_profit import social
+        from eve_profit.dailygoals import chain_done
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        _, text = social.candidate(con, 245000.0)
+        social.mark_shown(con, text)
+        self.assertIn("marked done", chain_done(con))
+        self.assertIn("Add a new Contact", social.candidate(con, 1.0)[1])
+        self.assertIn("marked done", social.mark_goal_done(con, "mail"))

@@ -46,6 +46,12 @@ def candidate(con, value_isk):
 
 
 def mark_shown(con, text):
+    """Remember WHICH goal is on screen (and forget it when another kind of step is shown), so `done` marks the right thing."""
+    try:
+        con.execute("DELETE FROM meta WHERE key IN (?,?)", (SHOWN, "wanted_shown"))
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass
     first = (text or "").split("\n", 1)[0]
     if first.startswith("STEP: AIR SOCIAL GOAL - "):
         name = first[len("STEP: AIR SOCIAL GOAL - "):].split(" (about")[0]
@@ -66,3 +72,16 @@ def done(con):
     con.commit()
     left = len(pending(con))
     return f"OK, '{name}' is marked done. {left} social goal(s) left. Run  python -m eve_profit next"
+
+
+def mark_goal_done(con, name):
+    """`done --goal NAME`: mark a social goal you already did by hand (partial name ok). -> message."""
+    hit = next((g[0] for g in GOALS if name.lower() in g[0].lower()), None)
+    if not hit:
+        return "No such social goal. Known: " + ", ".join(g[0] for g in GOALS)
+    d = done_list(con)
+    if hit not in d:
+        d.append(hit)
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (KEY, json.dumps(d)))
+    con.commit()
+    return f"OK, '{hit}' is marked done. {len(pending(con))} social goal(s) left. Run  python -m eve_profit next"

@@ -339,12 +339,6 @@ def chain_clear(con):
 def chain_done(con):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
     try:
-        from .screens import advance, due
-        if due(con):                                                    # the game-screens step is the one on screen: that screen was sent, on to the next
-            return advance(con)
-    except Exception:                                                   # noqa: BLE001
-        pass
-    try:
         from .screens import wanted_done
         m = wanted_done(con)
         if m:
@@ -356,6 +350,12 @@ def chain_done(con):
         m = _social_done(con)
         if m:
             return m
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
+        from .screens import advance, due
+        if due(con):                                                    # the game-screens step is the one on screen: that screen was sent, on to the next
+            return advance(con)
     except Exception:                                                   # noqa: BLE001
         pass
     st = _chain_load(con)
