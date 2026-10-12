@@ -11,7 +11,39 @@
    "reward_guess": false,
    "career_points": 10,
    "progress": "missions 1-3 of 10 done (35/750 career points; seen again 2026-10-12, same). Mission 1: 25,000 ISK + 10 career points, risk none, est. 5 min. 3 missions = 35 points, so points per mission differ (10, then more).",
-   "note": "Mission 1 pays 25,000 ISK + 10 career points. Later mission rewards not seen yet; assumed the same."
+   "note": "Missions 1-5 each 25,000 ISK + 10 career points (est. 5,5,5,5,10 min, risk none), seen 2026-10-12 hover tooltips. Missions 6-10 not seen yet. Missions 1-3 done = 30 CP but the circle shows 35/750: 5 CP came from elsewhere in this career (unknown).",
+   "missions": {
+    "1": {
+     "isk": 25000,
+     "cp": 10,
+     "min": 5,
+     "done": true
+    },
+    "2": {
+     "isk": 25000,
+     "cp": 10,
+     "min": 5,
+     "done": true
+    },
+    "3": {
+     "isk": 25000,
+     "cp": 10,
+     "min": 5,
+     "done": true
+    },
+    "4": {
+     "isk": 25000,
+     "cp": 10,
+     "min": 5,
+     "done": false
+    },
+    "5": {
+     "isk": 25000,
+     "cp": 10,
+     "min": 10,
+     "done": false
+    }
+   }
   },
   {
    "name": "AIR reward bundle: Earn 100,000 ISK on the Market",

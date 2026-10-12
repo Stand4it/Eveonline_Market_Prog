@@ -154,3 +154,4 @@
 - 2026-10-12 milestone SP amounts 50k/75k/100k/125k are the non-Omega (Alpha) track; Omega amounts not given.
 - 2026-10-12 AIR overall career points: 475/3,000 seen; 750/1,500/2,250/3,000 CP = 50k/75k/100k/125k SP. Each career point valued at 22,000 ISK-equivalent (progress_values.json career_point_isk) and added to career agent offer values in next.
 - 2026-10-12 new command 'hours': timed hours, runs, date span and AIR career points per timed hour (upper bound).
+- 2026-10-12 AIR Soldier of Fortune missions 1-5: 25,000 ISK + 10 CP each (est 5/5/5/5/10 min); 6-10 still to hover.
