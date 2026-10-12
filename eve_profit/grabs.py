@@ -12,7 +12,7 @@ def _freelance(con):
 
 
 # id, label, start hours between runs, fastest, slowest, function
-GRABS = [("freelance", "Freelance Jobs (ESI, public)", 1.0, 0.25, 24.0, _freelance)]
+GRABS = [("freelance", "Freelance Jobs (ESI, public; about 4,500 jobs worldwide, a pull takes ~2 min)", 6.0, 1.0, 48.0, _freelance)]
 
 
 def _ts(con, gid):

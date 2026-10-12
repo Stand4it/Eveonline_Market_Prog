@@ -119,7 +119,7 @@ def sample(con, n=3):
     return "\n".join(f"{j['name'][:48]:<48} {per_unit(j):>10,.2f} ISK per unit  {(j.get('progress') or {}).get('current', 0):,}/{(j.get('progress') or {}).get('desired', 0):,}" for j in rows)
 
 
-def detail_sample(con, pattern, n=1, width=3500):
+def detail_sample(con, pattern, n=4, width=2200):
     """The detail of the first jobs matching the pattern WITHOUT the long description, so the rules (configuration) fit on screen."""
     out = []
     for r in con.execute("SELECT listing, detail FROM freelance_raw WHERE detail IS NOT NULL"):
