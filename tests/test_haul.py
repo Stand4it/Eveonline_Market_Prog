@@ -201,3 +201,24 @@ class MiningChainTests(unittest.TestCase):
         t = prestep(con, None, None, "STEP: TEST Freelance belt mining (Venture) (x)\n  how")
         self.assertIn("STEP: ACCEPT FREELANCE JOB 1 of 3", t)
         self.assertEqual(prestep(con, None, None, "STEP: SELL NOW"), "STEP: SELL NOW")
+
+
+class AdaptiveScreensTests(unittest.TestCase):
+    def test_interval_adapts(self):
+        from eve_profit import screens
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        def ask():
+            left = [i for i in screens.wanted_unseen(con) if i["id"] == "freelance_list"]
+            self.assertTrue(left)
+            screens.wanted_mark_shown(con, "STEP: SHOW ME A SCREEN - x\n   DO ONLY THIS: open  " + left[0]["where"])
+        ask()
+        self.assertIn("12 h", screens.wanted_done(con))                  # first time: base interval
+        self.assertFalse([i for i in screens.wanted_unseen(con) if i["id"] == "freelance_list"])   # not due right away
+        con.execute("UPDATE meta SET value=replace(value, '\"ts\"', '\"ts\"') WHERE key='wanted_state'")
+        import json, time
+        st = json.loads(con.execute("SELECT value FROM meta WHERE key='wanted_state'").fetchone()[0])
+        st["freelance_list"]["ts"] = time.time() - 13 * 3600
+        con.execute("INSERT OR REPLACE INTO meta VALUES('wanted_state',?)", (json.dumps(st),))
+        ask()
+        self.assertIn("6 h", screens.wanted_done(con, True))             # it changed: twice as often, floor 6 h

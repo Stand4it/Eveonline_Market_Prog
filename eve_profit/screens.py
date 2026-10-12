@@ -117,13 +117,28 @@ def _meta(con, key, default=None):
         return default
 
 
+def _state(con):
+    try:
+        st = json.loads(_meta(con, "wanted_state", "{}"))
+    except ValueError:
+        st = {}
+    for i in json.loads(_meta(con, SEEN_KEY, "[]")):                    # older one-time record
+        st.setdefault(i, {"ts": 0.0, "int": 0, "n": 1, "chg": 0, "legacy": True})
+    return st
+
+
 def wanted_unseen(con):
+    """The screens that are due: never sent, or a repeating one whose (adaptive) interval has passed."""
     try:
         items = json.load(open(WANTED_FILE, encoding="utf-8")).get("items", [])
-        seen = set(json.loads(_meta(con, SEEN_KEY, "[]")))
     except (OSError, ValueError):
         return []
-    return [i for i in items if i["id"] not in seen]
+    st, now, out = _state(con), time.time(), []
+    for i in items:
+        s_ = st.get(i["id"])
+        if not s_ or (i.get("repeat") and not s_.get("legacy") and now - s_["ts"] >= s_["int"] * 3600.0):
+            out.append(i)
+    return out
 
 
 def wanted_candidate(con):
@@ -137,7 +152,8 @@ def wanted_candidate(con):
                       f"   Show me: {i['show']}.",
                       f"   Why: {i['why']}.",
                       "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
-                      "   When it is sent run:  python -m eve_profit done"])
+                      ("   When it is sent run:  python -m eve_profit done --changed   (it looks different from last time)   or   python -m eve_profit done --same"
+                       if i.get("repeat") else "   When it is sent run:  python -m eve_profit done")])
     return WANTED_RATE, text
 
 
@@ -150,15 +166,28 @@ def wanted_mark_shown(con, text):
                 return
 
 
-def wanted_done(con):
-    """`done`: the shown screen was sent. -> message or None."""
+def wanted_done(con, changed=None):
+    """`done` [--changed | --same]: the shown screen was sent. A repeating screen's interval adapts: changed -> half as long (not below min_h),
+    same -> 1.5x as long (not above max_h). -> message or None."""
     wid = _meta(con, SHOWN_KEY)
     if not wid:
         return None
-    seen = json.loads(_meta(con, SEEN_KEY, "[]"))
-    if wid not in seen:
-        seen.append(wid)
-    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (SEEN_KEY, json.dumps(seen)))
+    try:
+        item = next(i for i in json.load(open(WANTED_FILE, encoding="utf-8"))["items"] if i["id"] == wid)
+    except (OSError, ValueError, StopIteration, KeyError):
+        item = {"id": wid}
+    st = _state(con)
+    old = st.get(wid) or {"int": item.get("base_h", 0), "n": 0, "chg": 0}
+    n, chg, iv = old["n"] + 1, old["chg"] + (1 if changed else 0), old["int"] or item.get("base_h", 0)
+    if item.get("repeat"):
+        lo, hi = item.get("min_h", 6), item.get("max_h", 168)
+        if changed is True:
+            iv = max(lo, iv / 2.0)
+        elif changed is False:
+            iv = min(hi, iv * 1.5)
+    st[wid] = {"ts": time.time(), "int": iv, "n": n, "chg": chg}
+    con.execute("INSERT OR REPLACE INTO meta VALUES('wanted_state',?)", (json.dumps(st),))
     con.execute("DELETE FROM meta WHERE key=?", (SHOWN_KEY,))
     con.commit()
-    return f"Thank you. {len(wanted_unseen(con))} more screen(s) wanted. Run  python -m eve_profit next"
+    more = f" This one comes back in about {iv:.0f} h." if item.get("repeat") else ""
+    return f"Thank you.{more} {len(wanted_unseen(con))} more screen(s) wanted. Run  python -m eve_profit next"

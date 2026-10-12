@@ -87,6 +87,8 @@ def main(argv=None):
     ap.add_argument("--ago", type=float, default=0.0, help="log: how many minutes ago you finished (default 0 = just now)")
     ap.add_argument("--apply", action="store_true", help="settle: save the proposed changes (default is a dry run)")
     ap.add_argument("--id", type=int, default=0, help="fixlast: the # of the run to change (shown by history); default = the newest")
+    ap.add_argument("--changed", action="store_true", help="done: the screen you sent differed from last time (asked more often)")
+    ap.add_argument("--same", action="store_true", help="done: the screen you sent was the same as last time (asked less often)")
     ap.add_argument("--goal", default="", help="done: mark an AIR social goal you already did by hand, e.g. --goal chat")
     ap.add_argument("--screen", type=int, default=0, help="done: jump to this screen number (when you sent several at once)")
     ap.add_argument("--n", type=int, default=15, help="history: how many completed steps to show")
@@ -608,7 +610,7 @@ def _run(a):
             from .screens import goto
             print(goto(con, a.screen))
         else:
-            print(chain_done(con))
+            print(chain_done(con, True if a.changed else (False if a.same else None)))
     elif a.cmd == "settle":
         from . import sso
         from .esi import ESI

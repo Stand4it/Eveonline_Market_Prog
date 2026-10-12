@@ -1,6 +1,26 @@
 {
- "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why.",
+ "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why. Items with repeat=true come back on an interval that ADAPTS: after sending the screen run `done --changed` (it differed from last time: asked sooner) or `done --same` (asked less often). base_h/min_h/max_h are the starting, fastest and slowest intervals in hours.",
  "items": [
+  {
+   "id": "freelance_list",
+   "repeat": true,
+   "base_h": 12,
+   "min_h": 6,
+   "max_h": 168,
+   "where": "Neocom > Freelance Jobs > Opportunities (sort by newest if possible)",
+   "show": "the first screen of the list (job names, budgets, distance) plus the Active tab if you accepted any",
+   "why": "jobs appear and run out; mining and delivery jobs add ISK on top of what you already do"
+  },
+  {
+   "id": "air_overall",
+   "repeat": true,
+   "base_h": 24,
+   "min_h": 12,
+   "max_h": 168,
+   "where": "AIR Career Program (Neocom) > the start screen with the four careers",
+   "show": "the four careers with their points and the Overall Progress bar",
+   "why": "career points drive the skill point milestones"
+  },
   {
    "id": "freelance_detail",
    "where": "Freelance Jobs > click the job 'COMPRESSED SCORDITE' (Rigor, 1 jump); then the same for 'Get started mining Veldspar'",
