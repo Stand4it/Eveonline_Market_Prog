@@ -222,3 +222,14 @@ def report(con, g, p, max_jumps=5, top=20):
         what = ", ".join(item_names(con, j["items"])[:2]) or j["name"][:40]
         L.append(f"{j['jumps']:>5} {j['per_unit']:>9,.2f}  {j['method']:<13} {what[:46]} ({j['corp'][:22]})" + (f"  max age {j['max_age_days']} d" if j["max_age_days"] else ""))
     return "\n".join(L)
+
+
+def stats(con):
+    """One line each: job states, how many are alive, look like mining/delivery, and already have their details."""
+    from collections import Counter
+    js = jobs(con)
+    st = Counter(j.get("state", "?") for j in js)
+    al = [j for j in js if alive(j)]
+    kw = [j for j in al if KEYWORDS.search(j.get("name", "")) and per_unit(j) < 50000]
+    det = con.execute("SELECT COUNT(*) FROM freelance_raw WHERE detail IS NOT NULL").fetchone()[0]
+    return f"states {dict(st)}; alive {len(al)}; mining/delivery-like {len(kw)}; details stored {det}"

@@ -103,8 +103,9 @@ def main(argv=None):
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
     if a.char:
-        from .active import match
+        from .active import match, remember as _rem
         a.char = match(a.char)
+        _rem(os.path.dirname(a.db) or ".", a.char)                          # --char NAME also becomes the one used by default
     elif a.cmd not in ("init", "mock", "sde", "universe", "esimap", "login", "chars", "update") and a.client_id:
         from .active import pick
         a.char = pick(a.client_id, os.path.dirname(a.db) or ".")
@@ -224,7 +225,9 @@ def _run(a):
                 from .active import register, remember
                 r = sso.login(a.client_id, path="tokens_pending.json")
                 label, name = register()
-                remember(os.path.dirname(a.db) or ".", label)
+                from .active import _last
+                if not _last(os.path.dirname(a.db) or "."):             # logging in an ALT must not switch the character you play
+                    remember(os.path.dirname(a.db) or ".", label)
                 print(f"Logged in as {name}. From now on the tool finds this character by itself (no --char needed).")
         else:
             from .character import sync_character
@@ -637,10 +640,17 @@ def _run(a):
     elif a.cmd == "grabs":
         from .grabs import run_due
         print("\n".join(run_due(con, force=a.all)) or "Nothing is due: every programmatic data grab is fresh.")
+        try:
+            from .freelance import stats
+            print(stats(con))
+        except Exception:                                               # noqa: BLE001
+            pass
     elif a.cmd == "freelance":
         from .freelance import fetch, sample
         n, d = fetch(con, details=bool(a.item), only=a.item or None)
         print(f"{n} freelance jobs downloaded from ESI, {d} details stored (table freelance_raw in your database).")
+        from .freelance import stats
+        print(stats(con))
         print(sample(con))
         if a.item:
             from .freelance import detail_sample
