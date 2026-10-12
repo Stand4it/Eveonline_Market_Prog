@@ -17,3 +17,4 @@
 - Value AIR career points: milestone SP rewards (50k/75k/100k/125k) at ~1,667 ISK/SP; need points-per-milestone (hover the diamonds) then add career_points to agent offer value in next.
 - Freelance Veldspar mining job (5 ISK/unit, cap 1M, expires 2026-10-28): keep ranked every step; accept it when mining wins or ore buy prices drop (then 'done --goal "job veldspar"').
 - Virtual buyers: let accepted/available freelance DELIVERY jobs (e.g. any scordite 9.00 ISK/item at Botane/Manarq/Hek) compete with buy orders in sellplan/reprocess; needs the job cap/budget and an accept state.
+- Add to GRABS as ESI routes are found: agent / career program / goals routes (esiroutes), accepted freelance jobs (character route), notifications summary.

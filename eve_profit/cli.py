@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -625,6 +625,9 @@ def _run(a):
             print(show(esi, cid, a.n))
         else:
             print(settle_run(con, esi, cid, a.apply))
+    elif a.cmd == "grabs":
+        from .grabs import run_due
+        print("\n".join(run_due(con, force=a.all)) or "Nothing is due: every programmatic data grab is fresh.")
     elif a.cmd == "freelance":
         from .freelance import fetch, sample
         n, d = fetch(con, details=not a.fast)
@@ -831,6 +834,9 @@ def _now(a):
     stage("1/4 your character: assets, wallet, location", "sync")
     if not a.fast:
         stage("2/4 market prices (live)", "scan", live=True, top=5)
+    gl = stage("2b/4 other game data that is due (freelance jobs ...)", "grabs")
+    if gl and "Nothing is due" not in gl:
+        print("   " + gl.replace("\n", "\n   "), flush=True)
     checks = []
     try:
         from .along import plan_along

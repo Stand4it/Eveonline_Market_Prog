@@ -20,7 +20,7 @@ def _get(path, params=""):
     raise RuntimeError(err)
 
 
-def fetch(con, details=True, log=print, cap=300):
+def fetch(con, details=True, log=print, cap=300, reuse_h=24.0):
     """Download the list (all pages) and, for each job, its detail. -> (jobs, details stored)."""
     con.execute("CREATE TABLE IF NOT EXISTS freelance_raw(job_id TEXT PRIMARY KEY, fetched REAL, listing TEXT, detail TEXT)")
     first, pages = _get("/freelance-jobs")
@@ -29,9 +29,13 @@ def fetch(con, details=True, log=print, cap=300):
         more, _ = _get("/freelance-jobs", f"?page={pg}")
         rows += list(more if isinstance(more, list) else more.get("jobs", more.get("items", [])))
     now, n_det = time.time(), 0
+    have = {r[0]: r[1] for r in con.execute("SELECT job_id,fetched FROM freelance_raw WHERE detail IS NOT NULL")}
     for r in rows[:cap]:
         jid = str(r.get("job_id", r.get("id", r)) if isinstance(r, dict) else r)
         det = None
+        if details and jid in have and now - have[jid] < reuse_h * 3600.0:      # a detail fetched recently is kept: only new jobs cost a call
+            con.execute("UPDATE freelance_raw SET listing=? WHERE job_id=?", (json.dumps(r, ensure_ascii=False), jid))
+            continue
         if details:
             try:
                 det, _ = _get(f"/freelance-jobs/{jid}")
