@@ -178,3 +178,10 @@ class DoneOrderTests(unittest.TestCase):
         self.assertIn("marked done", chain_done(con))
         self.assertIn("Add a new Contact", social.candidate(con, 1.0)[1])
         self.assertIn("marked done", social.mark_goal_done(con, "mail"))
+
+
+class FreelanceMiningTests(unittest.TestCase):
+    def test_bonus_only_when_accepted(self):
+        from eve_profit.mining import freelance_bonus
+        self.assertEqual(freelance_bonus("Veldspar"), (0.0, 0))          # shipped as not accepted
+        self.assertEqual(freelance_bonus("Scordite"), (0.0, 0))

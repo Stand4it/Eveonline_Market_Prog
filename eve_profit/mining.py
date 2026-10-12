@@ -5,6 +5,20 @@ from .risk import route_risk
 from .skills import have, type_missing
 
 
+def freelance_bonus(ore):
+    """(ISK per unit, remaining unit cap) a freelance 'Mine Materials' job you ACCEPTED pays for this ore on top of selling it (freelance_jobs.json)."""
+    import json
+    import os
+    try:
+        f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
+        for j in json.load(open(f, encoding="utf-8")).get("mining_jobs", []):
+            if j.get("accepted") and j["ore"].lower() == str(ore).lower():
+                return float(j["isk_per_unit"]), max(0, int(j["cap_units"]) - int(j.get("mined_so_far", 0)))
+    except (OSError, ValueError, KeyError):
+        pass
+    return 0.0, 0
+
+
 def find_mining(con, g, p):
     if p.mining_yield_m3_s <= 0 or not p.minable_ores:
         return []
@@ -26,6 +40,8 @@ def find_mining(con, g, p):
             sold, net = sell_into_bids(bids, units, p.sales_tax)
             if sold == 0:
                 continue
+            fb, cap = freelance_bonus(name)
+            net += fb * min(units, cap)                               # an accepted freelance job pays per unit mined on top of the sale
             rt = reach[b]
             loss, wait = route_risk(g, rt.path, p.ship_value_isk + net)
             secs = (mine_s + 2 * rt.jumps * p.jump_seconds + p.dock_overhead_s
@@ -37,3 +53,17 @@ def find_mining(con, g, p):
                 {"type_id": row["type_id"], "units": sold, "mine_minutes": mine_s / 60},
                 waypoints=rt.path[1:]))
     return out
+
+
+def accept_job(ore):
+    """`done --goal "job veldspar"`: you pressed Accept on that freelance mining job. -> message."""
+    import json
+    import os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
+    d = json.load(open(f, encoding="utf-8"))
+    hit = [j for j in d.get("mining_jobs", []) if j["ore"].lower() == ore.lower()]
+    if not hit:
+        return "No such freelance mining job recorded: " + ", ".join(j["ore"] for j in d.get("mining_jobs", []))
+    hit[0]["accepted"] = True
+    json.dump(d, open(f, "w", encoding="utf-8"), indent=1)
+    return f"OK, the {hit[0]['ore']} job pays {hit[0]['isk_per_unit']:.2f} ISK per unit mined on top of the ore sale; mining plans now count it. Run  python -m eve_profit next"

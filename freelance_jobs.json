@@ -9,5 +9,28 @@
  ],
  "warnings": [
   "Never accept a job that makes you join a corporation or hand over ISK or items before the pay is clear; huge budgets (100,000,000 for one grade) may be traps or placeholders."
- ]
+ ],
+ "mining_jobs": [
+  {
+   "ore": "Veldspar",
+   "corp": "Corp Borp",
+   "isk_per_unit": 5.0,
+   "cap_units": 1000000,
+   "mined_so_far": 0,
+   "expires": "2026-10-28",
+   "accepted": false,
+   "where": "any location",
+   "note": "seen 2026-10-12: 5.00 ISK per unit MINED (you keep the ore), your cap 1,000,000 units = 5,000,000 ISK, 97 active participants, 31% of 250,000,000 done. Set accepted true after pressing Accept (max 3 accepted jobs)."
+  }
+ ],
+ "delivery_jobs_seen": [
+  {
+   "item": "Compressed Scordite",
+   "corp": "H8N LOYALS",
+   "isk_per_item": 16.0,
+   "vs_market": "-19% (worse than selling)",
+   "verdict": "skip: pays 19% below market"
+  }
+ ],
+ "rule": "Freelance mining jobs ADD to the ore's market value (the ore stays yours). Delivery jobs only help when they pay above the best buy order."
 }
