@@ -150,3 +150,4 @@
 - 2026-10-12 trades are live-checked before they are offered: ESI per-item refresh for both regions (tradestep.fresh); a vanished order drops the trade and the next one is offered. Tests set EVE_NO_LIVE (tests/test_00_env.py).
 - 2026-10-12 model-building tests tied to a place (activity_catalog 'where': courier=Agrallarier, security/mining agents=Axiosere, epic arc=Manifest) are offered only when you are in that system. Recorded Cassandra Ahfrim epic arc ch1 'Holographic Reenactment' (42k + 54k bonus, report to Kita-Aino V, 2 jumps) as an open offer at Manifest; Trenck (Agrallarier) needs an in-person visit.
 - 2026-10-12 AIR career window re-seen: unchanged (missions 1-3 done, 35/750 points); note that points per mission differ.
+- 2026-10-12 AIR overall-progress milestones recorded: 50k/75k/100k/125k skill points (about 1,667 ISK/SP at injector price = ~83M ISK for the first); points needed per milestone still unseen; not yet in the valuation (BACKLOG).
