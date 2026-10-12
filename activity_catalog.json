@@ -341,7 +341,8 @@
    "risk": "low",
    "requires": {},
    "how": "Talk to Cassandra Ahfrim, Manifest V - AIR Laboratories (3 jumps). Chapters: Holographic Reenactment, Caldari Prime Breakout, Travel to the Minmatar, Battle of Pator, Travel to the Amarr... 0 of 8 done. Epic arcs are one-time with big rewards; time each chapter as its own run.",
-   "where": "Manifest"
+   "where": "Manifest",
+   "offer_agent": "Cassandra Ahfrim"
   },
   {
    "id": "epic_other",
@@ -413,7 +414,8 @@
    "risk": "low",
    "requires": {},
    "how": "Emps Metyt, Axiosere (1 jump, Astral Mining): ore delivery. Others 6 jumps (Arant, Hotak, Tindfjalla).",
-   "where": "Axiosere"
+   "where": "Axiosere",
+   "offer_agent": "Emps Metyt"
   },
   {
    "id": "agent_rd",

@@ -356,3 +356,20 @@ class JobChainTests(unittest.TestCase):
         jobchain.mark_shown(con, "STEP: DELIVER 10 x Scordite for the freelance job (about 3 minutes)")
         self.assertIn("delivered", jobchain.done(con))
         self.assertIsNone(jobchain._load(con))
+
+
+class AgentChainTests(unittest.TestCase):
+    def test_accept_first_then_done_advances(self):
+        from eve_profit import agentchain
+        from eve_profit.db import connect
+        con = connect(":memory:")
+
+        class P:
+            current_system = "Manifest"
+            avoid_yellow = True
+        o = {"agent": "Cassandra Ahfrim (Security)", "mission": "chapter 1: report to Holorelay: Heika Torigo at Kita-Aino V", "isk": 42000, "bonus": 54000, "to_system": "Kita-Aino", "where": "Kita-Aino V"}
+        t = agentchain.stage_text(con, None, P(), o)
+        self.assertIn("STEP: ACCEPT Cassandra Ahfrim's MISSION", t)
+        agentchain.mark_shown(con, t)
+        self.assertIn("accepted", agentchain.done(con))
+        self.assertEqual(agentchain._load(con)["stage"], "go")

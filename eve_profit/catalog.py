@@ -82,14 +82,14 @@ def models_report(con, wallet=0.0):
     return "\n".join(L)
 
 
-def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen, here=None):
+def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen, here=None, covered=()):
     """Which unmodeled, unlocked activity should be offered now? -> (activity or None, reason, new_seen_ids)
     NEW unlock => immediately; otherwise every EVERY-th step the highest value-of-information one."""
     st = status(con, wallet)
     unlocked = [a for a in st if a["unlocked"]]
     new_ids = [a["id"] for a in unlocked if a["id"] not in seen]
     unmodeled = [a for a in unlocked if a["state"] != "MODELED" and a["id"] != "agent_career"
-                 and not (here and a.get("where") and a["where"].lower() != str(here).lower())]      # a test tied to a place is offered only when you are there
+                 and not (here and a.get("where") and a["where"].lower() != str(here).lower()) and a["id"] not in covered]      # a test tied to a place is offered only when you are there
     fresh = [a for a in unmodeled if a["id"] in new_ids and seen]        # first call just records what is already unlocked
     if fresh:
         a = max(fresh, key=lambda x: voi(x, best_known_rate))
@@ -105,3 +105,15 @@ def experiment_step(a, reason):
     lo, hi = a["prior"]
     return (f"STEP: TEST {a['name']} ({reason})\n   {a['how']}\n   about {a['minutes']} min. Unmodeled: it could pay {lo:,.0f} - {hi:,.0f} ISK/hr; "
             f"{MODELED_RUNS} timed runs turn the guess into your own number.")
+
+
+def covered_by_offers():
+    """Activity ids whose agent has an OPEN offer in agent_offers.json: the agent-mission step already covers them, so no separate 'test' turn."""
+    import json
+    import os
+    try:
+        offers = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json"), encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        return ()
+    open_ = {o.get("agent", "").split(" (")[0] for o in offers if o.get("available")}
+    return tuple(a["id"] for a in load() if a.get("offer_agent") and a["offer_agent"] in open_)

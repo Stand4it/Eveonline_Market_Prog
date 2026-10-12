@@ -551,12 +551,16 @@ def _unit_price(con, item, est):
     return float(est or 0)
 
 
+LAST_OFFER = {}
+
+
 def _agent_step(con, g, p):
     """The ONE best agent offer as an ordered chain of sub-steps (go, accept, time, buy, deliver, stop); (None, 0) if no offer."""
     rows = offers_rows(con, g, p)
     if not rows:
         return None, 0.0
     (rate, net, minutes, o, tags), career, known = pick_offers(rows, measured_careers(con), 1)[0]
+    LAST_OFFER["o"] = o
     agents = o.get("agents") or [o["agent"]]
     n = 0
     L = [f"AGENT MISSION: {o['agent']}",
@@ -894,7 +898,7 @@ def next_action(con, g, p, full=False, ahead=False):
         last_exp = int(meta.get("last_exp", 0))
         seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
         best_known = max((c[0] for c in cands), default=0.0)
-        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen, here=p.current_system)
+        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen, here=p.current_system, covered=__import__('eve_profit.catalog', fromlist=['x']).covered_by_offers())
         if "seen_unlocked" not in meta:                          # first ever call: just remember what is already unlocked
             con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
         if act:
@@ -967,6 +971,8 @@ def next_action(con, g, p, full=False, ahead=False):
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     try:
+        from .agentchain import mark_shown as _ams
+        _ams(con, steps[0] if steps else "")
         from .jobchain import mark_shown as _jms
         _jms(con, steps[0] if steps else "")
         from .social import mark_shown as _ms

@@ -339,6 +339,13 @@ def chain_clear(con):
 def chain_done(con, changed=None):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
     try:
+        from .agentchain import done as _adone
+        m = _adone(con)
+        if m:
+            return m
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
         from .jobchain import done as _jdone
         m = _jdone(con)
         if m:
