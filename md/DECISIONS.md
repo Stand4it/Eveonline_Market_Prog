@@ -151,3 +151,4 @@
 - 2026-10-12 model-building tests tied to a place (activity_catalog 'where': courier=Agrallarier, security/mining agents=Axiosere, epic arc=Manifest) are offered only when you are in that system. Recorded Cassandra Ahfrim epic arc ch1 'Holographic Reenactment' (42k + 54k bonus, report to Kita-Aino V, 2 jumps) as an open offer at Manifest; Trenck (Agrallarier) needs an in-person visit.
 - 2026-10-12 AIR career window re-seen: unchanged (missions 1-3 done, 35/750 points); note that points per mission differ.
 - 2026-10-12 AIR overall-progress milestones recorded: 50k/75k/100k/125k skill points (about 1,667 ISK/SP at injector price = ~83M ISK for the first); points needed per milestone still unseen; not yet in the valuation (BACKLOG).
+- 2026-10-12 milestone SP amounts 50k/75k/100k/125k are the non-Omega (Alpha) track; Omega amounts not given.

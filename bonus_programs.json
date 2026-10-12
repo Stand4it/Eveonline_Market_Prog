@@ -152,18 +152,19 @@
   {
    "name": "AIR Career Program overall progress milestones",
    "kind": "milestones",
-   "reward": "skill points (user 2026-10-12): milestone 1 = 50,000 SP, then 75,000, 100,000 and 125,000 SP (4 milestones on the Overall Progress bar)",
-   "milestone_sp": [
+   "reward": "skill points on the Overall Progress bar, two tracks: Omega (top row) = larger amounts, NOT given yet; non-Omega/Alpha (bottom row) = 50,000, 75,000, 100,000 and 125,000 SP at the 4 milestones (user 2026-10-12)",
+   "points_needed": "NOT SEEN: hover each diamond on the bar; by the bar position the first one may be near 55 career points (a guess from pixels)",
+   "sp_value_isk_guess": 1667,
+   "sp_value_note": "Large Skill Injector 833,600,000 ISK for 500,000 SP seen on the ticker = about 1,667 ISK per SP, so 50,000 SP is worth about 83M ISK if valued at injector price. Career points toward a milestone are therefore worth far more than the 25,000 ISK per mission.",
+   "reward_isk": 0,
+   "reward_guess": true,
+   "milestone_sp_alpha": [
     50000,
     75000,
     100000,
     125000
    ],
-   "points_needed": "NOT SEEN: hover each diamond on the bar; by the bar position the first one may be near 55 career points (a guess from pixels)",
-   "sp_value_isk_guess": 1667,
-   "sp_value_note": "Large Skill Injector 833,600,000 ISK for 500,000 SP seen on the ticker = about 1,667 ISK per SP, so 50,000 SP is worth about 83M ISK if valued at injector price. Career points toward a milestone are therefore worth far more than the 25,000 ISK per mission.",
-   "reward_isk": 0,
-   "reward_guess": true
+   "note": "This character looks Alpha (new, no Omega seen): use the Alpha amounts. Alpha cannot extract/inject beyond its cap, so SP are valued at injector price only as a rough worth."
   }
  ]
 }
