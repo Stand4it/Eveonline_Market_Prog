@@ -222,3 +222,10 @@ class AdaptiveScreensTests(unittest.TestCase):
         con.execute("INSERT OR REPLACE INTO meta VALUES('wanted_state',?)", (json.dumps(st),))
         ask()
         self.assertIn("6 h", screens.wanted_done(con, True))             # it changed: twice as often, floor 6 h
+
+
+class DynamicDetailScreensTests(unittest.TestCase):
+    def test_unverified_job_asks_for_its_detail_page(self):
+        from eve_profit import screens
+        ids = [i["id"] for i in screens._dynamic()]
+        self.assertIn("jobdetail_plagioclase", ids)

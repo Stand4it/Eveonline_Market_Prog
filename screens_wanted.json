@@ -22,12 +22,6 @@
    "why": "career points drive the skill point milestones"
   },
   {
-   "id": "freelance_detail",
-   "where": "Freelance Jobs > click the job 'COMPRESSED SCORDITE' (Rigor, 1 jump); then the same for 'Get started mining Veldspar'",
-   "show": "the whole detail page: what to deliver or mine, reward per unit or per job, minimum amount, time limit, who pays (corporation)",
-   "why": "the big ISK number on a card is the corporation's total budget, not your pay; the detail page shows what YOU get per unit and whether it beats selling to buy orders"
-  },
-  {
    "id": "air_industrialist",
    "where": "AIR Career Program (Neocom) > click Industrialist, then click each bubble in turn",
    "show": "the circle with its goals, and the hover box of one goal (ISK and career points)",

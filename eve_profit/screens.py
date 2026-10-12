@@ -127,10 +127,25 @@ def _state(con):
     return st
 
 
+def _dynamic():
+    """Detail pages the data itself says are missing (freelance_jobs.json: jobs marked unverified)."""
+    out = []
+    try:
+        jobs = json.load(open(os.path.join(os.path.dirname(WANTED_FILE), "freelance_jobs.json"), encoding="utf-8")).get("mining_jobs", [])
+    except (OSError, ValueError):
+        return out
+    for j in jobs:
+        if j.get("unverified"):
+            out.append({"id": "jobdetail_" + j["ore"].lower(), "where": f"Freelance Jobs > click the job '{j.get('title', 'Mine ' + j['ore'])}'",
+                        "show": "the whole detail page: reward per unit mined, your cap, expiry, eligible locations, number of participants",
+                        "why": f"the {j['ore']} job's pay per unit is only assumed ({j['isk_per_unit']:.2f} ISK) until the page is seen"})
+    return out
+
+
 def wanted_unseen(con):
     """The screens that are due: never sent, or a repeating one whose (adaptive) interval has passed."""
     try:
-        items = json.load(open(WANTED_FILE, encoding="utf-8")).get("items", [])
+        items = json.load(open(WANTED_FILE, encoding="utf-8")).get("items", []) + _dynamic()
     except (OSError, ValueError):
         return []
     st, now, out = _state(con), time.time(), []
@@ -173,7 +188,7 @@ def wanted_done(con, changed=None):
     if not wid:
         return None
     try:
-        item = next(i for i in json.load(open(WANTED_FILE, encoding="utf-8"))["items"] if i["id"] == wid)
+        item = next(i for i in json.load(open(WANTED_FILE, encoding="utf-8"))["items"] + _dynamic() if i["id"] == wid)
     except (OSError, ValueError, StopIteration, KeyError):
         item = {"id": wid}
     st = _state(con)
