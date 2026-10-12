@@ -13,12 +13,22 @@ def programs():
         return []
 
 
+def _cp_value():
+    try:
+        from .progress import values
+        return float(values().get("career_point_isk", 0))
+    except Exception:                                                   # noqa: BLE001
+        return 0.0
+
+
 def offer_bonus(career, progs=None):
     """(extra ISK, text) a program pays when this agent offer's career completes one of its missions."""
     isk, parts = 0.0, []
     for pr in progs if progs is not None else programs():
         if pr.get("kind") == "career_missions" and career in pr.get("careers", []) and pr.get("safe", True):
             isk += pr.get("reward_isk", 0)
+            cp_isk = pr.get("career_points", 0) * _cp_value()                       # career points count toward the skill point milestones
+            isk += cp_isk
             parts.append(f"{pr['name']}: +{pr.get('reward_isk', 0):,.0f} ISK" + (f" +{pr['career_points']} career points" if pr.get("career_points") else ""))
     return isk, "; ".join(parts)
 

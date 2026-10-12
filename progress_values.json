@@ -3,6 +3,14 @@
  "agent_step": 30000,
  "new_career_run": 60000,
  "career_runs_until_measured": 3,
- "priors_isk_hr": {"Project Discovery": 120000, "Mining": 150000},
- "prior_minutes": {"Project Discovery": 30, "Mining": 45}
+ "priors_isk_hr": {
+  "Project Discovery": 120000,
+  "Mining": 150000
+ },
+ "prior_minutes": {
+  "Project Discovery": 30,
+  "Mining": 45
+ },
+ "career_point_isk": 22000,
+ "career_point_note": "ISK-equivalent of ONE AIR career point: 66.7 SP per point x ~1,667 ISK per SP (injector price) = ~111,000, discounted to 20% because the character is Alpha and SP cannot be extracted: 22,000. Edit if you disagree."
 }

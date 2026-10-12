@@ -365,7 +365,8 @@ class BonusTests(unittest.TestCase):
                  {"name": "M", "market": True, "target_isk": 100, "progress_isk": 0},
                  {"name": "Done", "market": True, "target": 5, "progress": 5},
                  {"name": "Unsafe", "market": True, "safe": False, "target": 5, "progress": 0}]
-        self.assertEqual(offer_bonus("Soldier of Fortune", progs)[0], 25000)
+        from eve_profit.bonus import _cp_value
+        self.assertEqual(offer_bonus("Soldier of Fortune", progs)[0], 25000 + 10 * _cp_value())
         self.assertEqual(offer_bonus("Explorer", progs)[0], 0)
         lines = market_lines(progs)
         self.assertEqual(len(lines), 1)

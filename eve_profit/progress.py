@@ -7,7 +7,7 @@ import os
 from .careers import MIN_RUNS, career_of_activity
 
 _FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "progress_values.json")
-DEFAULTS = {"agent_step": 30000.0, "new_career_run": 60000.0, "career_runs_until_measured": MIN_RUNS,
+DEFAULTS = {"career_point_isk": 22000.0, "agent_step": 30000.0, "new_career_run": 60000.0, "career_runs_until_measured": MIN_RUNS,
             "priors_isk_hr": {"Project Discovery": 120000.0, "Mining": 150000.0}, "prior_minutes": {"Project Discovery": 30, "Mining": 45}}
 
 
