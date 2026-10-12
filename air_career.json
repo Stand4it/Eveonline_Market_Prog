@@ -71,7 +71,8 @@
      "Join a Corporation": "0/1"
     },
     "not yet seen": "Capacitor Warfare 0/6, Electronic Warfare 0/5, PvP 0/4, Faction Warfare 0/5"
-   }
+   },
+   "goal_reward_seen": "Send a Message in Chat: 25,000 ISK + 10 CP, risk none. Lose 5 Ships: 25,000 ISK + 10 CP, risk HIGH (corvettes do not count). Goals appear to pay 25,000 ISK + 10 CP each, like the missions. Combat tooltip not captured."
   }
  },
  "overall": {

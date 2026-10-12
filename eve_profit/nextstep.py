@@ -619,6 +619,8 @@ def _name_of(step):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: fly") and "hauling your stock to" in lo:
         return "Hauling: fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: air social goal"):
+        return "AIR social goal " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: fly to"):
         return "Fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
     if lo.startswith("step: buy at"):
@@ -717,6 +719,15 @@ def next_action(con, g, p, full=False, ahead=False):
             _pl = _dg_plan(con, dg["reward_isk"], g=g, p=p)
             _rate = _pl["best"]["rate"] if _pl["best"] else dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20)
             cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
+    except Exception:                                            # noqa: BLE001
+        pass
+    try:                                                         # AIR Social goals: 25,000 ISK + 10 career points for a one-minute click task
+        from .social import candidate as _soc
+        from .progress import values as _vals
+        _v = _vals()
+        _sc = _soc(con, 25000.0 + 10 * float(_v.get("career_point_isk", 0)))
+        if _sc:
+            cands.append((_sc[0], "AIR social goal", _sc[1], "25,000 ISK + 10 career points each"))
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # screenshots the tool needs from the game: a short step now and then (data makes later steps better)
@@ -890,6 +901,11 @@ def next_action(con, g, p, full=False, ahead=False):
         bl = market_lines()
         if bl:
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
+    try:
+        from .social import mark_shown as _ms
+        _ms(con, steps[0] if steps else "")
+    except Exception:                                            # noqa: BLE001
+        pass
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
         first = steps[0]

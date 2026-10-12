@@ -137,3 +137,17 @@ class ExperimentWhereTests(unittest.TestCase):
         self.assertEqual(acts[0].get("where"), "Agrallarier")
         elsewhere = catalog.pick_experiment(con, 1e9, 1000.0, 99, 0, {"courier"}, here="Manifest")[0]
         self.assertTrue(elsewhere is None or elsewhere["id"] != "courier")
+
+
+class SocialGoalTests(unittest.TestCase):
+    def test_one_goal_at_a_time_and_done_marks_it(self):
+        from eve_profit import social
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        rate, text = social.candidate(con, 245000.0)
+        self.assertIn("Send a Message in Chat", text)
+        self.assertGreater(rate, 1e6)
+        social.mark_shown(con, text)
+        self.assertIn("marked done", social.done(con))
+        _, text2 = social.candidate(con, 245000.0)
+        self.assertIn("Add a new Contact", text2)

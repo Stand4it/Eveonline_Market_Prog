@@ -158,3 +158,4 @@
 - 2026-10-12 AIR Soldier of Fortune missions 6-10 rewards: 25k ISK + 10 CP each; #10 also a free Soldier of Fortune Expert System. Whole path = 250k ISK + 100 CP.
 - 2026-10-12 air_career.json: CP per career (Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 35 of 750 each = 475 overall), Soldier of Fortune bubbles and graduation reward (100k SP + 4 SKINs). Other careers' bubbles still to send.
 - 2026-10-12 air_career.json: Soldier of Fortune goal lists (Destruction, Support, Combat, Duels, Social); CP per goal unseen.
+- 2026-10-12 AIR goals pay 25,000 ISK + 10 CP each (chat message seen; Lose 5 Ships too, risk high). New social.py: one-minute Social goals (chat, contact, EVE mail) offered as steps by value (25k + 10 CP x 22k = 245k each = ~7M/hr), 'done' marks them; fleet/corp goals never offered.

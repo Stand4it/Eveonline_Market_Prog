@@ -344,6 +344,13 @@ def chain_done(con):
             return advance(con)
     except Exception:                                                   # noqa: BLE001
         pass
+    try:
+        from .social import done as _social_done
+        m = _social_done(con)
+        if m:
+            return m
+    except Exception:                                                   # noqa: BLE001
+        pass
     st = _chain_load(con)
     if st:
         st["epic_done"] = True
