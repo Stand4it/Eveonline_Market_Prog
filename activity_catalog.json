@@ -451,6 +451,29 @@
    "requires": {},
    "blocked": "tracks other players: skipped (stay good)",
    "how": "Skipped."
+  },
+  {
+   "id": "pvp_goals",
+   "name": "Player-vs-player career goals (Duels, PvP, Faction Warfare)",
+   "area": "combat",
+   "match": [
+    "duel",
+    "pvp",
+    "faction warfare"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {
+    "Gallente Frigate": 5,
+    "Gunnery": 5,
+    "Spaceship Command": 5
+   },
+   "blocked": "LATER: needs very high skills and a strong, well-defended and well-armed ship (user, 2026-10-12). Not routed for a new character. Duels are consensual and cost no ship, but need a willing opponent. Re-check when skills and ship allow.",
+   "how": "Later in the game: AIR Duels / PvP / Faction Warfare goals (each goal 25,000 ISK + 10 career points)."
   }
  ]
 }
