@@ -2,3 +2,4 @@
 import os
 
 os.environ["EVE_NO_LIVE"] = "1"
+os.environ["EVE_NO_GUARD"] = "1"

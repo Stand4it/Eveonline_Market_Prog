@@ -17,6 +17,31 @@ def default_db_path() -> str:
     return os.path.join("data", "eve_profit.db")
 
 
+def guard_db(path):
+    """Never silently start a SECOND database: if the folder the tool used last time (e.g. E:\\EveProfit) is not there now (drive unplugged, other letter),
+    stop with a clear message instead of creating an empty database in ./data. The last folder is remembered in .last_db."""
+    if os.environ.get("EVE_NO_GUARD"):
+        return
+    if (platform.system() == "Windows" and not os.environ.get("EVE_PROFIT_DB") and not os.environ.get("EVE_PROFIT_ALLOW_DATA")
+            and os.path.normpath(path) == os.path.normpath(os.path.join("data", "eve_profit.db")) and not os.path.isdir("E:\\")):
+        raise SystemExit("STOP: the E: drive (E:\\EveProfit, where your database lives) is not available, so the tool would fall back to an EMPTY database in the project's data folder. "
+                         "Reconnect the E: drive and run again. (To use data\\ on purpose: set the environment variable EVE_PROFIT_ALLOW_DATA=1, or pass --db PATH.)")
+    here = os.path.dirname(os.path.abspath(path))
+    try:
+        last = open(".last_db", encoding="utf-8").read().strip() if os.path.exists(".last_db") else ""
+    except OSError:
+        last = ""
+    if last and os.path.normcase(last) != os.path.normcase(here) and not os.path.isdir(last):
+        raise SystemExit(f"STOP: your database folder {last} is not available now (is the E: drive connected?). I will NOT create a new empty database in {here}. "
+                         f"Reconnect the drive and run again, or choose another place with  --db PATH  /  the EVE_PROFIT_DB environment variable. "
+                         f"To start fresh on purpose, delete the file .last_db in the project folder.")
+    if os.path.isdir(here):
+        try:
+            open(".last_db", "w", encoding="utf-8").write(here)
+        except OSError:
+            pass
+
+
 @dataclass
 class Profile:
     """What the planner knows about you. Stage 3 fills this from ESI."""

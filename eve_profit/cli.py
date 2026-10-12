@@ -102,6 +102,9 @@ def main(argv=None):
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
     a.client_id = resolve_client_id(a.client_id)
+    if a.cmd not in ("init", "mock", "docs", "login", "chars", "esiroutes"):
+        from .config import guard_db
+        guard_db(a.db)
     if a.char:
         from .active import match, remember as _rem
         a.char = match(a.char)
