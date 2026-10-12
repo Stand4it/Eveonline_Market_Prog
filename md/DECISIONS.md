@@ -174,3 +174,4 @@
 - 2026-10-12 all three characters are on ONE OMEGA account (user): career point value raised to 55,000 ISK (50% of injector price, SP extractable); no Alpha limits assumed.
 - 2026-10-12 freelance list complete: 63 jobs (snapshots/freelance/2026-10-12_b.json, complete). Jobs are corporation jobs within 5 jumps. New: 'Compressed X 90%Jita' and 'ore mining job: mine/deliver any <ore>' (1.1-1.4B budgets): detail pages wanted.
 - 2026-10-12 location-aware lists: freelance snapshots carry an origin system; the Freelance screen is also due when you are 3+ jumps from the last scan origin; a job missing from a snapshot taken at a DIFFERENT origin is not marked gone (only same-origin complete scans do that).
+- 2026-10-12 freelance detail seen: 'Compressed Scordite III-Grade 90%Jita' pays 19.59 ISK/item = 11% BELOW market (priced at 90% of Jita value, destination Tongofur VIII, expires in 14 h): skip all '90%Jita' jobs. 'any scordite' mining job detail still wanted.

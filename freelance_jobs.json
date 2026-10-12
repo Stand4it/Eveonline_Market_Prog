@@ -55,7 +55,16 @@
    "isk_per_item": 16.0,
    "vs_market": "-19% (worse than selling)",
    "verdict": "skip: pays 19% below market"
+  },
+  {
+   "item": "Compressed Scordite III-Grade 90%Jita",
+   "corp": "Tilean Silver Lion Company",
+   "isk_per_item": 19.59,
+   "vs_market": "-11% (game's own marker)",
+   "dest": "Tongofur VIII - Kaalakiota Corporation Warehouse (0.6)",
+   "expires": "2026-10-13 01:15",
+   "verdict": "skip: '90%Jita' means the job pays 90% of Jita value, below what buy orders pay; all '90%Jita' jobs are the same"
   }
  ],
- "rule": "Freelance mining jobs ADD to the ore's market value (the ore stays yours). Delivery jobs only help when they pay above the best buy order."
+ "rule": "Freelance mining jobs ADD to the ore's market value (the ore stays yours). Delivery jobs only help when they pay above the best buy order. '90%Jita' jobs pay 10% under Jita value: never better than selling to buy orders."
 }
