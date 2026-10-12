@@ -244,4 +244,7 @@ ALERTS  -  recent game notifications (skill finished, alerts)
 ESIROUTES  -  which ESI routes exist for a word (default: project, freelance, opportunity)
    example: python -m eve_profit esiroutes --item project,freelance
 
+FREELANCE  -  download all Freelance Jobs from ESI (public, no screenshots)
+   example: python -m eve_profit freelance
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.

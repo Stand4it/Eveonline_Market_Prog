@@ -43,7 +43,7 @@ def regions_near(con, p):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes"])
+    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -625,6 +625,11 @@ def _run(a):
             print(show(esi, cid, a.n))
         else:
             print(settle_run(con, esi, cid, a.apply))
+    elif a.cmd == "freelance":
+        from .freelance import fetch, sample
+        n, d = fetch(con, details=not a.fast)
+        print(f"{n} freelance jobs downloaded from ESI, {d} details stored (table freelance_raw in your database).")
+        print(sample(con))
     elif a.cmd == "esiroutes":
         from .esiroutes import find
         print(find(a.item.split(",") if a.item else ["project", "freelance", "opportunit"]))

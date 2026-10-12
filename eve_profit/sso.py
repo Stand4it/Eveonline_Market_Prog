@@ -35,6 +35,7 @@ SCOPES = [
     "esi-universe.read_structures.v1",
     "esi-characters.read_loyalty.v1",
     "esi-characters.read_standings.v1",
+    "esi-characters.read_freelance_jobs.v1",   # which freelance jobs you accepted and your progress (read-only)
     "esi-characters.read_notifications.v1",   # skill finished, contracts, alerts: read-only (mail is NOT requested)
     "esi-ui.write_waypoint.v1",      # Stage 6 route automation (sets waypoints only)
 ]
