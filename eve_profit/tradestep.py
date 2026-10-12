@@ -5,20 +5,33 @@ from .orders import load_books, walk_trade
 PENDING = {}            # step text -> haul dict, so next_action can start the chain when this step wins
 
 
+STATION = {}            # step headline -> station id, so `next` can set the in-game destination to that station
+
+
 def _station(con, tid, sysid, is_buy, g):
+    """-> (location id or 0, name) of the cheapest ask / best bid in the system. An NPC station missing from the local table is asked from ESI (public) and cached."""
+    lid = 0
     try:
         r = con.execute("SELECT location_id FROM orders WHERE type_id=? AND system_id=? AND is_buy=? ORDER BY price " + ("DESC" if is_buy else "ASC") + " LIMIT 1",
                         (tid, sysid, is_buy)).fetchone()
-        if r and r[0]:
-            n = con.execute("SELECT name FROM stations WHERE station_id=?", (r[0],)).fetchone()
+        lid = int(r[0]) if r and r[0] else 0
+        if lid:
+            n = con.execute("SELECT name FROM stations WHERE station_id=?", (lid,)).fetchone()
             if n and n[0]:
-                return n[0]
-            n = con.execute("SELECT name FROM structures WHERE structure_id=?", (r[0],)).fetchone()
+                return lid, n[0]
+            n = con.execute("SELECT name FROM structures WHERE structure_id=?", (lid,)).fetchone()
             if n and n[0]:
-                return n[0]
+                return lid, n[0]
+            if lid < 10 ** 12:
+                from .esi import ESI
+                d = ESI(timeout=8).get(f"/universe/stations/{lid}/")[0]
+                con.execute("INSERT OR REPLACE INTO stations(station_id,system_id,name,corporation_id) VALUES(?,?,?,?)",
+                            (lid, int(d.get("system_id", sysid)), d.get("name"), d.get("owner")))
+                con.commit()
+                return lid, d.get("name") or f"station {lid}"
     except Exception:                                                   # noqa: BLE001
         pass
-    return f"the market in {g.name[sysid]}"
+    return lid, f"the market in {g.name[sysid]}"
 
 
 def trade_step(con, g, p, o):
@@ -34,7 +47,7 @@ def trade_step(con, g, p, o):
     by_price = {}
     for take, ask, _ in trace:
         by_price[ask] = by_price.get(ask, 0) + take
-    st_buy = _station(con, tid, a, 0, g)
+    st_id, st_buy = _station(con, tid, a, 0, g)
     buy_lines = [f"   buy {q:,} x {name} at {ask:,.0f} each ({q * ask:,.0f} ISK)" for ask, q in sorted(by_price.items())] or [f"   buy {units:,} x {name}"]
     item = f"      {units:,} x {name}"
     top = max(by_price) if by_price else 0
@@ -50,6 +63,8 @@ def trade_step(con, g, p, o):
                          + [f"   DO ONLY THIS: dock at {st_buy}, open Market, search {name}, buy {units:,} at the lowest sell orders (price per unit above; stop if it is above {top * 1.05:,.0f} each).",
                             "   Then run  python -m eve_profit next  (it flies your cargo on, one jump at a time)."])
         PENDING[text] = h
+        if st_id:
+            STATION[text.split("\n", 1)[0]] = st_id
         return text
     hop, left = a, 0                                                    # the destination is only the NEXT system on the way, never the far end
     try:
@@ -64,3 +79,9 @@ def trade_step(con, g, p, o):
 
 def pending(text):
     return PENDING.get(text)
+
+
+def station_of(text):
+    """The station id a 'STEP: BUY at <station>' step wants as the in-game destination (0 if unknown)."""
+    first = (text or "").strip().split("\n", 1)[0].replace(">> ", "").strip()
+    return STATION.get(first, 0)

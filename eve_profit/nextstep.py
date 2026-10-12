@@ -831,7 +831,7 @@ def next_action(con, g, p, full=False, ahead=False):
                         from .tradestep import trade_step as _ts
                         step_txt = _ts(con, g, p, o_) if o_.kind == "trade" else None
                         if step_txt:
-                            step_txt = step_txt.replace("\n   DO ONLY THIS", "\n   (model-building turn: " + reason + ")\n   DO ONLY THIS", 1) + "\n   Unmodeled: 3 timed runs turn the guess into your own number."
+                            step_txt = step_txt.replace("\n   DO ONLY THIS", "\n   (" + reason + ")\n   DO ONLY THIS", 1) + "\n   Unmodeled: 3 timed runs turn the guess into your own number."
                         else:
                             step_txt = (f"STEP: TEST Station / hub trading ({reason})\n   Best trade right now: {o_.description}\n"
                                         f"   about {o_.net_isk:,.0f} ISK in {o_.hours * 60:.0f} min ({o_.isk_per_hour:,.0f} ISK/hr). Confirm live prices first:  "

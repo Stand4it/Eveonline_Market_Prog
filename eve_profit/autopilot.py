@@ -64,6 +64,18 @@ def auto_destination(text, g, client_id):
     """`next` for a fly step: put that system into the game's autopilot as the ONLY waypoint (you still press autopilot). -> one line."""
     name = destination_of(text)
     if not name:
+        try:                                                            # a BUY step: the destination is the station itself, so the autopilot docks there
+            from .tradestep import station_of
+            sid = station_of(text)
+            if sid:
+                from . import sso
+                from .esi import ESI
+                esi = ESI()
+                esi.token, _ = sso.get_token(client_id)
+                esi.post("/ui/autopilot/waypoint/", destination_id=sid, add_to_beginning="false", clear_other_waypoints="true")
+                return "Destination set in your game: the station to buy at  (dock there; I cannot fly or dock for you)"
+        except Exception as e:                                          # noqa: BLE001
+            return f"Destination not set automatically ({type(e).__name__}); in game: Map > the station > Set Destination."
         return ""
     try:
         sid = g.id_of(name)

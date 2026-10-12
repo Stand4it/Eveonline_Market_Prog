@@ -111,3 +111,18 @@ class ThreadsTests(unittest.TestCase):
         self.assertEqual(t["ISK: trading and hauling"][0], 5e6)
         self.assertIn("AIR career and agent missions", t)
         self.assertIn("teaching the model", t)
+
+
+class StationLookupTests(unittest.TestCase):
+    def test_station_name_from_table_and_id_kept_for_destination(self):
+        from eve_profit import tradestep
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        con.execute("INSERT INTO stations(station_id,system_id,name) VALUES(60000001,5,'Manifest V - AIR Laboratories Trade Center')")
+        con.execute("INSERT INTO orders VALUES(1,7291,60000001,5,10000001,0,55000.0,3,1,'',1)")
+
+        class G:
+            name = {5: "Manifest"}
+        self.assertEqual(tradestep._station(con, 7291, 5, 0, G()), (60000001, "Manifest V - AIR Laboratories Trade Center"))
+        tradestep.STATION["STEP: BUY at X"] = 42
+        self.assertEqual(tradestep.station_of(">> STEP: BUY at X\n more"), 42)
