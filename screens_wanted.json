@@ -2,10 +2,16 @@
  "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why. Items with repeat=true come back on an interval that ADAPTS: after sending the screen run `done --changed` (it differed from last time: asked sooner) or `done --same` (asked less often). base_h/min_h/max_h are the starting, fastest and slowest intervals in hours.",
  "items": [
   {
-   "id": "freelance_rest",
-   "where": "Freelance Jobs > Opportunities: scroll down past 'ALL TYPES OF PLAGIOCLASE' to the bottom of the list",
-   "show": "every remaining screen in order (about 25 more jobs); say 'bottom' on the last one",
-   "why": "a COMPLETE list lets the tool see which jobs are new and which are gone"
+   "id": "freelance_detail_90jita",
+   "where": "Freelance Jobs > click 'Compressed Scordite' (Botane, 3 jumps) and 'Compressed Scordite II-Grade 90%Jita'",
+   "show": "the whole detail page: reward per item, what '90%Jita' means, destination station, minimum amounts",
+   "why": "if they pay 90% of the Jita price for compressed ore, that may beat local buy orders"
+  },
+  {
+   "id": "freelance_detail_anymining",
+   "where": "Freelance Jobs > click 'ore mining job: mine/deliver any scordite' (Manarq, 3 jumps)",
+   "show": "the whole detail page: reward per unit, what counts (mined or delivered), cap, destination",
+   "why": "1.4 billion ISK budget: the per-unit pay may beat the 5 ISK Veldspar mining job"
   },
   {
    "id": "freelance_list",
