@@ -51,13 +51,15 @@ def trade_step(con, g, p, o):
                             "   Then run  python -m eve_profit next  (it flies your cargo on, one jump at a time)."])
         PENDING[text] = h
         return text
-    jumps = ""
+    hop, left = a, 0                                                    # the destination is only the NEXT system on the way, never the far end
     try:
-        jumps = f" ({g.route(g.id_of(here), a, 60, p.avoid_yellow).jumps} jumps)"
+        r = g.route(g.id_of(here), a, 60, p.avoid_yellow)
+        hop, left = (r.path[1] if len(r.path) > 1 else a), r.jumps
     except Exception:                                                   # noqa: BLE001
         pass
-    return "\n".join([f"STEP: FLY to {g.name[a]}", item] + buy_lines + [f"   at {st_buy}",
-                      f"   DO ONLY THIS: fly to {g.name[a]}{jumps} and dock at {st_buy}. Then run  python -m eve_profit next  (it gives the BUY step there)."])
+    return "\n".join([f"STEP: FLY to {g.name[hop]}",
+                      f"   DO ONLY THIS: fly to {g.name[hop]} and stop there. Then run  python -m eve_profit next  (it plans again from there).",
+                      f"   LATER: {units:,} x {name}: " + "; ".join(f"buy {q:,} at {ask:,.0f} each" for ask, q in sorted(by_price.items())) + f" at {st_buy} in {g.name[a]} ({left} jumps from here)"])
 
 
 def pending(text):

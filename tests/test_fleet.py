@@ -351,8 +351,8 @@ class NextStepTests(unittest.TestCase):
         con.execute("DELETE FROM orders WHERE order_id>=9800")
         txt = next_action(con, g, p, ahead=True)                             # --plan shows the whole chain
         self.assertIn("STEP: FLY to", txt)                                   # a trade starts with the flight to where you buy
-        self.assertIn(" each (", txt)                                        # price per unit
-        self.assertIn("(it gives the BUY step there)", txt)
+        self.assertIn("LATER:", txt)                                         # the buy details are a later step: in the plan only
+        self.assertIn(" each", txt)                                          # price per unit
 
 
 class KeepTests(unittest.TestCase):
