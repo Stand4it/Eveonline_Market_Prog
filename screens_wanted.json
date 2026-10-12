@@ -2,10 +2,10 @@
  "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why.",
  "items": [
   {
-   "id": "freelance_jobs",
-   "where": "Neocom > Freelance Jobs (or the 'Open Freelance Jobs' button in the AIR window)",
-   "show": "the list of jobs: name, reward, what to do, distance",
-   "why": "Freelance Jobs pay ISK and career points for tasks you may already do; the mail even mentions an NPC-kill one in Strokar"
+   "id": "freelance_detail",
+   "where": "Freelance Jobs > click the job 'COMPRESSED SCORDITE' (Rigor, 1 jump); then the same for 'Get started mining Veldspar'",
+   "show": "the whole detail page: what to deliver or mine, reward per unit or per job, minimum amount, time limit, who pays (corporation)",
+   "why": "the big ISK number on a card is the corporation's total budget, not your pay; the detail page shows what YOU get per unit and whether it beats selling to buy orders"
   },
   {
    "id": "air_industrialist",
