@@ -154,7 +154,8 @@ def _next_action_core(con, g, p):
     if opps:
         o = opps[0]
         if o.kind == "trade":
-            from .tradestep import trade_step
+            from .tradestep import fresh, trade_step
+            o = next((x for x in (fresh(con, g, p, y) for y in opps[:3] if y.kind == "trade") if x), o)
             ts = trade_step(con, g, p, o)
             if ts:
                 return ts + "\n" + AFTER
@@ -826,6 +827,8 @@ def next_action(con, g, p, full=False, ahead=False):
                 try:
                     opps_ = plan(con, p, 5, False)
                     step_txt = None                               # no ranked trade right now: do not offer an empty test
+                    from .tradestep import fresh as _fresh
+                    opps_ = [x for x in (_fresh(con, g, p, y) if y.kind == "trade" else y for y in opps_[:3]) if x]      # live check of the item before it is offered
                     if opps_:
                         o_ = opps_[0]
                         from .tradestep import trade_step as _ts

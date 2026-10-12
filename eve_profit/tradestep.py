@@ -85,3 +85,24 @@ def station_of(text):
     """The station id a 'STEP: BUY at <station>' step wants as the in-game destination (0 if unknown)."""
     first = (text or "").strip().split("\n", 1)[0].replace(">> ", "").strip()
     return STATION.get(first, 0)
+
+
+def fresh(con, g, p, o):
+    """Ask ESI for the newest orders of this ONE item in both regions, then re-price the trade. -> the fresh Opportunity, None if it no longer pays
+    (the order was taken / expired), or `o` itself when ESI cannot be reached (then the planner's last scan is all there is)."""
+    import os
+    d = o.detail or {}
+    if "type_id" not in d or os.environ.get("EVE_NO_LIVE"):
+        return o
+    try:
+        from .esi import ESI, refresh_item
+        from .trade import find_trades
+        regions = sorted({g.region[d["from_sys"]], g.region[d["to_sys"]]})
+        refresh_item(con, ESI(timeout=12), regions, d["type_id"])
+    except Exception:                                                   # noqa: BLE001
+        return o
+    for x in find_trades(con, g, p):
+        xd = x.detail
+        if xd.get("type_id") == d["type_id"] and xd.get("from_sys") == d["from_sys"] and xd.get("to_sys") == d["to_sys"]:
+            return x
+    return None

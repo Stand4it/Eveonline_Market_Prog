@@ -147,3 +147,4 @@
 - 2026-10-12 trades are one step at a time (tradestep.py): FLY to the buy system (destination set in game; per-unit buy prices + station name), BUY step there (starts the haul chain), then the chain flies the cargo hop by hop and sells. TEST station-trading turn uses it too. Chrome/evemarketbrowser not needed: ESI per-item orders (check/bestprice) are the fast single-item refresh.
 - 2026-10-12 trade FLY step: destination = only the NEXT system on the way; item/price/station lines are 'LATER:' lines shown in next --plan only; BUY step shows them when you are at the buy system.
 - 2026-10-12 BUY step names the real station (local table, else ESI /universe/stations/{id}, cached) and sets the in-game destination to that station id.
+- 2026-10-12 trades are live-checked before they are offered: ESI per-item refresh for both regions (tradestep.fresh); a vanished order drops the trade and the next one is offered. Tests set EVE_NO_LIVE (tests/test_00_env.py).
