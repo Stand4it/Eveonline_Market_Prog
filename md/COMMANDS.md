@@ -253,5 +253,8 @@ FREELANCE  -  download all Freelance Jobs from ESI (public, no screenshots)
 GRABS  -  run the programmatic data grabs that are due (--all forces them)
    example: python -m eve_profit grabs --all
 
+JOBS  -  Freelance Jobs near you (ISK per unit, method, jumps) from the downloaded list
+   example: python -m eve_profit jobs
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```

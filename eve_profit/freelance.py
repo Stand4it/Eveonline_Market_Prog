@@ -131,3 +131,94 @@ def detail_sample(con, pattern, n=4, width=2200):
             if len(out) >= n:
                 break
     return "\n---\n".join(out)
+
+
+KEYWORDS = re.compile(r"mine|mining|ore|deliver|compressed|veldspar|scordite|plagioclase|pyroxeres|omber|kernite|jaspet|hemorphite|hedbergite|crokite|gneiss|ochre|spodumain|bistot|arkonor|mercoxit|ice|insurance|replacement|haul|courier|buy ?back", re.I)
+
+
+def alive(j):
+    """A job that can still be worked: Active with ISK left (the list also holds old, used-up jobs)."""
+    return j.get("state") == "Active" and (j.get("reward") or {}).get("remaining", 0) > 0 and (j.get("progress") or {}).get("desired", 0) > 0
+
+
+def fetch_details(con, max_n=150, log=print):
+    """Details (rules, broadcast systems) for the jobs that look like mining / delivery / insurance and have none yet, best pay per unit first. -> number fetched."""
+    todo = [j for j in jobs(con) if alive(j) and KEYWORDS.search(j.get("name", "")) and per_unit(j) < 50000
+            and not con.execute("SELECT 1 FROM freelance_raw WHERE job_id=? AND detail IS NOT NULL", (j["id"],)).fetchone()]
+    todo.sort(key=lambda j: -(j.get("reward") or {}).get("remaining", 0))
+    n = 0
+    for j in todo[:max_n]:
+        try:
+            d = _get(f"/freelance-jobs/{j['id']}")
+            con.execute("UPDATE freelance_raw SET detail=? WHERE job_id=?", (json.dumps(d, ensure_ascii=False), j["id"]))
+            n += 1
+            time.sleep(0.15)
+        except Exception as e:                                          # noqa: BLE001
+            log(f"   detail {j['id']} failed: {e}")
+    con.commit()
+    return n
+
+
+def parse(lst, det):
+    """One job -> a flat dict (method, pay per unit, per-person cap, items, destinations, broadcast systems, expiry). Unknown shapes give empty fields."""
+    cfg, con_ = (det.get("configuration") or {}), (det.get("contribution") or {})
+    par = cfg.get("parameters") or {}
+    out = {"id": lst["id"], "name": lst.get("name", ""), "method": cfg.get("method", ""), "per_unit": con_.get("reward_per_contribution") or per_unit(lst),
+           "cap_pp": con_.get("contribution_per_participant_limit"), "remaining_isk": (lst.get("reward") or {}).get("remaining", 0),
+           "expires": (det.get("details") or {}).get("expires", ""), "corp": (((det.get("details") or {}).get("creator") or {}).get("corporation") or {}).get("name", ""),
+           "broadcast": [(b["id"], b.get("name", "")) for b in (det.get("access_and_visibility") or {}).get("broadcast_locations", [])],
+           "max_age_days": ((det.get("access_and_visibility") or {}).get("restrictions") or {}).get("maximum_age"), "items": [], "dest": []}
+    ore = (par.get("ore") or {}).get("matcher", {}).get("values", [])
+    for v in ore:
+        out["items"] += [(v["value_type"], int(x)) for x in v["values"]]
+    deliv = (par.get("corporation_item_delivery") or {}).get("corporation_item_delivery") or {}
+    for v in (deliv.get("item_type") or {}).get("values", []):
+        out["items"] += [(v["value_type"], int(x)) for x in v["values"]]
+    for v in (deliv.get("corporation_office_location") or {}).get("values", []):
+        out["dest"] += [(v["value_type"], int(x)) for x in v["values"]]
+    return out
+
+
+def near(con, g, p, max_jumps=5):
+    """Detailed, alive jobs shown within max_jumps of where you are (distance to the nearest broadcast system), as parsed dicts with a 'jumps' field."""
+    try:
+        reach = g.reach(g.id_of(p.current_system), max_jumps, p.avoid_yellow)
+    except Exception:                                                   # noqa: BLE001
+        return []
+    out = []
+    for r in con.execute("SELECT listing, detail FROM freelance_raw WHERE detail IS NOT NULL"):
+        lst, det = json.loads(r[0]), json.loads(r[1])
+        if not alive(lst) or str((det.get("details") or {}).get("expires", "9")) < time.strftime("%Y-%m-%dT%H:%M"):
+            continue
+        j = parse(lst, det)
+        d = [reach[b[0]].jumps for b in j["broadcast"] if b[0] in reach]
+        if d:
+            j["jumps"] = min(d)
+            out.append(j)
+    return sorted(out, key=lambda j: (j["jumps"], -j["per_unit"]))
+
+
+def item_names(con, items):
+    """(value_type, id) pairs -> readable names (types / groups from the SDE tables)."""
+    names = []
+    for vt, i in items:
+        try:
+            if vt == "item_type":
+                r = con.execute("SELECT name FROM types WHERE type_id=?", (i,)).fetchone()
+            else:
+                r = con.execute("SELECT GROUP_CONCAT(name, '/') FROM (SELECT name FROM types WHERE group_id=? LIMIT 6)", (i,)).fetchone()
+            names.append((r[0] if r and r[0] else f"{vt} {i}"))
+        except Exception:                                               # noqa: BLE001
+            names.append(f"{vt} {i}")
+    return names
+
+
+def report(con, g, p, max_jumps=5, top=20):
+    rows = near(con, g, p, max_jumps)
+    if not rows:
+        return "No detailed freelance jobs near you yet: run  python -m eve_profit grabs --all  (it fetches details for mining and delivery jobs, 150 per run)."
+    L = [f"{'jumps':>5} {'ISK/unit':>9}  method        what (corporation)"]
+    for j in rows[:top]:
+        what = ", ".join(item_names(con, j["items"])[:2]) or j["name"][:40]
+        L.append(f"{j['jumps']:>5} {j['per_unit']:>9,.2f}  {j['method']:<13} {what[:46]} ({j['corp'][:22]})" + (f"  max age {j['max_age_days']} d" if j["max_age_days"] else ""))
+    return "\n".join(L)

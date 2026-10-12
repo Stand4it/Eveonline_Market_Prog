@@ -293,3 +293,18 @@ class FreelanceParseTests(unittest.TestCase):
         m = freelance.mining_jobs(con)
         self.assertEqual(m[0]["ore"], "Veldspar")
         self.assertAlmostEqual(m[0]["isk_per_unit"], 5.0)
+
+
+class FreelanceParseDetailTests(unittest.TestCase):
+    def test_parse_mine_and_deliver(self):
+        from eve_profit.freelance import alive, parse
+        lst = {"id": "a", "name": "Get started mining Veldspar", "state": "Active", "progress": {"current": 1, "desired": 10}, "reward": {"initial": 50, "remaining": 40}}
+        det = {"details": {"expires": "2099-01-01T00:00:00Z", "creator": {"corporation": {"name": "Corp Borp"}}},
+               "configuration": {"method": "MineOre", "parameters": {"ore": {"matcher": {"values": [{"value_type": "ore_group", "values": ["462"]}]}}}},
+               "contribution": {"reward_per_contribution": 5, "contribution_per_participant_limit": 1000000},
+               "access_and_visibility": {"broadcast_locations": [{"id": 30100032, "name": "Manifest"}], "restrictions": {"maximum_age": 14}}}
+        j = parse(lst, det)
+        self.assertEqual((j["method"], j["per_unit"], j["cap_pp"], j["max_age_days"]), ("MineOre", 5, 1000000, 14))
+        self.assertEqual(j["items"], [("ore_group", 462)])
+        self.assertTrue(alive(lst))
+        self.assertFalse(alive({**lst, "reward": {"initial": 50, "remaining": 0}}))

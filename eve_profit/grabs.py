@@ -5,8 +5,9 @@ import time
 
 def _freelance(con):
     """-> (summary, share of the list that changed, ESI cache end as an HTTP date or None)."""
-    from .freelance import LAST, fetch
+    from .freelance import LAST, fetch, fetch_details
     n, d = fetch(con)
+    d += fetch_details(con, 150)                                       # rules and broadcast systems of the mining / delivery / insurance jobs, a batch per run
     frac = (LAST.get("new", 0) + LAST.get("gone", 0)) / float(max(LAST.get("total", n), 1))
     return f"{n} jobs, {LAST.get('new', 0)} new, {LAST.get('gone', 0)} gone, {d} details", frac, LAST.get("expires")
 
