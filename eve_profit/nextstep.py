@@ -600,6 +600,42 @@ def _timer(name, con=None):
     return f'   Time it:  python -m eve_profit start --activity "{name}"'
 
 
+def finish_block(step):
+    """The ONE step followed by its commands in the order you type them: start the timer, do it, done (if the step has one), stop, sync, next.
+    The step's own 'When it is done run ...' lines and its Time it / Timer line are folded into that list so nothing appears twice."""
+    import re
+    lines, timer, needs_done = [], None, False
+    for ln in step.split("\n"):
+        if re.match(r"^\s*(Time it:|Timer:)", ln):
+            timer = ln.strip()
+            continue
+        if re.match(r"^\s*When (it is |)(done|sent|accepted)[^:]*run:", ln, re.I) or ("python -m eve_profit done" in ln and ln.strip().lower().startswith("when")):
+            needs_done = True
+            continue
+        if "python -m eve_profit done" in ln:
+            needs_done = True
+        lines.append(ln)
+    while lines and not lines[-1].strip():
+        lines.pop()
+    out = lines + ["", "   COMMANDS FOR THIS STEP, IN ORDER:"]
+    n = 1
+    if timer and timer.startswith("Time it:"):
+        out.append(f"   {n}. Start the timer:  " + timer.split("Time it:", 1)[1].strip())
+        n += 1
+    elif timer:
+        out.append(f"   {n}. {timer}")
+        n += 1
+    out.append(f"   {n}. Do the step above.")
+    n += 1
+    if needs_done:
+        out.append(f"   {n}. When it is finished:  python -m eve_profit done")
+        n += 1
+    out += [f"   {n}. Stop the timer:  python -m eve_profit stop   (agent missions: wait 2 minutes first)",
+            f"   {n + 1}. Update from the game:  python -m eve_profit sync",
+            f"   {n + 2}. Next step:  python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"]
+    return "\n".join(out)
+
+
 def _name_of(step):
     """Activity name for a step from its first line (kept stable so repeated runs add up)."""
     first = step.splitlines()[0]
@@ -948,8 +984,8 @@ def next_action(con, g, p, full=False, ahead=False):
         if first.startswith("STEP: FLY to") and "hauling your stock to" in first:
             from .haul import hop_only
             first = hop_only(first, p.current_system)
-        out = first + "\n\n" + DONE
-        out += "\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
+        out = finish_block(first)
+        out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
     out += "\n(everything: python -m eve_profit next --all)"
