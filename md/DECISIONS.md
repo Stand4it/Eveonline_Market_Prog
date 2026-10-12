@@ -153,3 +153,4 @@
 - 2026-10-12 AIR overall-progress milestones recorded: 50k/75k/100k/125k skill points (about 1,667 ISK/SP at injector price = ~83M ISK for the first); points needed per milestone still unseen; not yet in the valuation (BACKLOG).
 - 2026-10-12 milestone SP amounts 50k/75k/100k/125k are the non-Omega (Alpha) track; Omega amounts not given.
 - 2026-10-12 AIR overall career points: 475/3,000 seen; 750/1,500/2,250/3,000 CP = 50k/75k/100k/125k SP. Each career point valued at 22,000 ISK-equivalent (progress_values.json career_point_isk) and added to career agent offer values in next.
+- 2026-10-12 new command 'hours': timed hours, runs, date span and AIR career points per timed hour (upper bound).

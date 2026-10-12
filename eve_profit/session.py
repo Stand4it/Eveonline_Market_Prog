@@ -193,3 +193,26 @@ def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False, row_id=0)
     con.commit()
     return (f"Updated '{r['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / max(hours, 1e-9):,.0f} ISK/hr "
             f"(was {r['isk']:,.0f} ISK in {r['hours'] * 60:.0f} min).")
+
+
+def hours_report(con):
+    """Hours played as far as the tool knows: the timed runs (activity_log), the first and last run, and the AIR career points per timed hour."""
+    import datetime as _dt
+    import json
+    import os
+    rows = con.execute("SELECT activity,hours,ts FROM activity_log ORDER BY ts").fetchall()
+    if not rows:
+        return "No timed runs yet: nothing to measure. Time steps with start / stop."
+    hrs = sum(r[1] for r in rows)
+    first, last = rows[0][2], rows[-1][2]
+    fmt = lambda t: _dt.datetime.fromtimestamp(t).strftime("%Y-%m-%d %H:%M")
+    L = [f"{len(rows)} timed runs, {hrs:.1f} hours counted (minutes you really worked), from {fmt(first)} to {fmt(last)} = {(last - first) / 86400:.1f} days",
+         "Only timed steps are counted; play you did not time (exploring, waiting, untimed missions) is not in this number."]
+    try:
+        f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "bonus_programs.json")
+        cp = next(p for p in json.load(open(f, encoding="utf-8"))["programs"] if p.get("kind") == "milestones")["overall_cp"]
+        L.append(f"AIR career points {cp}: at most {cp / hrs:,.0f} points per timed hour so far (an upper bound, other play also earned points); "
+                 f"{(750 - cp) / max(cp / hrs, 0.001):.1f} more timed hours to the first milestone (750 = 50,000 skill points) at that pace.")
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return "\n".join(L)

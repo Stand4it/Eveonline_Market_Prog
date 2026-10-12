@@ -238,5 +238,8 @@ SETTLE  -  match market sales and fees to the step that listed them (dry run; --
 DONE  -  mark the optional step of the daily-goals chain (epic arc) as done or skipped
    example: python -m eve_profit done
 
+HOURS  -  hours played as far as timed runs show, and career points per hour
+   example: python -m eve_profit hours
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```
