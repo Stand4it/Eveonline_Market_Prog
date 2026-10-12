@@ -26,5 +26,6 @@ def find(words):
             if any(w.lower() in text for w in words):
                 sec = op.get("security") or []
                 scopes = sorted({s for d in sec for v in d.values() for s in v})
-                out.append(f"{method.upper():5} {path}   {op.get('summary', '')}" + (f"   needs: {', '.join(scopes)}" if scopes else "   (public)"))
+                params = [x.get("name", "?") + ("*" if x.get("required") else "") for x in op.get("parameters", []) if isinstance(x, dict) and x.get("in") in ("query", "header")]
+                out.append(f"{method.upper():5} {path}   {op.get('summary', '')}" + (f"   params: {', '.join(params)}" if params else "") + (f"   needs: {', '.join(scopes)}" if scopes else "   (public)"))
     return "\n".join(sorted(out)) or "No ESI route mentions: " + ", ".join(words)
