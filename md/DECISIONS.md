@@ -160,3 +160,4 @@
 - 2026-10-12 air_career.json: Soldier of Fortune goal lists (Destruction, Support, Combat, Duels, Social); CP per goal unseen.
 - 2026-10-12 AIR goals pay 25,000 ISK + 10 CP each (chat message seen; Lose 5 Ships too, risk high). New social.py: one-minute Social goals (chat, contact, EVE mail) offered as steps by value (25k + 10 CP x 22k = 245k each = ~7M/hr), 'done' marks them; fleet/corp goals never offered.
 - 2026-10-12 PvP career goals (duels, PvP, faction warfare) added to the activity catalog as LATER/blocked: need very high skills and a strong ship; revisit when the character can.
+- 2026-10-12 screens_wanted.json: screens the model still needs (other AIR careers, wallet journal, skill queue, industry, standings, Agency encounters/harvesting) are asked ONE at a time as 'STEP: SHOW ME A SCREEN' (menu path + what must be visible + why); done marks it seen. Add new needs to the file.

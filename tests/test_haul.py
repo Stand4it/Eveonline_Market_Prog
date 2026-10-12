@@ -151,3 +151,17 @@ class SocialGoalTests(unittest.TestCase):
         self.assertIn("marked done", social.done(con))
         _, text2 = social.candidate(con, 245000.0)
         self.assertIn("Add a new Contact", text2)
+
+
+class WantedScreensTests(unittest.TestCase):
+    def test_wanted_screens_one_at_a_time(self):
+        from eve_profit import screens
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        rate, text = screens.wanted_candidate(con)
+        self.assertIn("STEP: SHOW ME A SCREEN", text)
+        self.assertIn("python -m eve_profit done", text)
+        screens.wanted_mark_shown(con, text)
+        self.assertIn("Thank you", screens.wanted_done(con))
+        _, text2 = screens.wanted_candidate(con)
+        self.assertNotEqual(text, text2)

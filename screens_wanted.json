@@ -1,0 +1,15 @@
+{
+ "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why.",
+ "items": [
+  {"id": "air_industrialist", "where": "AIR Career Program (Neocom) > click Industrialist, then click each bubble in turn", "show": "the circle with its goals, and the hover box of one goal (ISK and career points)", "why": "Industrialist has 255 of 750 career points: where they came from and what is left"},
+  {"id": "air_enforcer", "where": "AIR Career Program > Enforcer", "show": "the circle with its goals, and one goal's hover box", "why": "Enforcer has 125 of 750 career points"},
+  {"id": "air_explorer", "where": "AIR Career Program > Explorer", "show": "the circle with its goals, and one goal's hover box", "why": "Explorer has 60 of 750 career points"},
+  {"id": "air_combat_goal", "where": "AIR Career Program > Soldier of Fortune > Combat > hover 'Kill 75 enemies with a Frigate'", "show": "the hover box with rewards, risk and time", "why": "kills count toward career points and the daily goal"},
+  {"id": "wallet_journal", "where": "Neocom > Wallet > Journal tab (newest at top)", "show": "the top 15 lines with amounts and descriptions", "why": "checks that mission payouts, goal rewards and fees are what the model thinks"},
+  {"id": "skills_queue", "where": "Neocom > Skills > Training Queue", "show": "the queue with times, and the Skill Points shown at the top", "why": "skill points and training time feed the long-term plan"},
+  {"id": "industry_window", "where": "Neocom > Industry > Jobs", "show": "running jobs and free slots", "why": "build time and slots for make-or-buy and the daily goal 'Manufacture an Item'"},
+  {"id": "standings", "where": "Neocom > Character Sheet > Standings", "show": "the agent / corporation / faction standings list", "why": "standings gate higher level agents and better prices"},
+  {"id": "agency_encounters", "where": "Agency (left side) > Encounters", "show": "the list with distances and rewards", "why": "new content ('New!' tag): possible ISK per minute activities"},
+  {"id": "agency_resource_harvesting", "where": "Agency > Resource Harvesting", "show": "the nearest mining sites and ore types", "why": "mining site choice and ore values"}
+ ]
+}

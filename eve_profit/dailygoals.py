@@ -345,6 +345,13 @@ def chain_done(con):
     except Exception:                                                   # noqa: BLE001
         pass
     try:
+        from .screens import wanted_done
+        m = wanted_done(con)
+        if m:
+            return m
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
         from .social import done as _social_done
         m = _social_done(con)
         if m:

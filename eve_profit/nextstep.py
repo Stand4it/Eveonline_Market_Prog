@@ -619,6 +619,8 @@ def _name_of(step):
         return "Test " + first.split("TEST ", 1)[-1].split(" (")[0]
     if lo.startswith("step: fly") and "hauling your stock to" in lo:
         return "Hauling: fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: show me a screen"):
+        return "Show a screen " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: air social goal"):
         return "AIR social goal " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: fly to"):
@@ -719,6 +721,13 @@ def next_action(con, g, p, full=False, ahead=False):
             _pl = _dg_plan(con, dg["reward_isk"], g=g, p=p)
             _rate = _pl["best"]["rate"] if _pl["best"] else dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20)
             cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
+    except Exception:                                            # noqa: BLE001
+        pass
+    try:                                                         # a screen the model still needs (screens_wanted.json): asked once each, one at a time
+        from .screens import wanted_candidate as _wc
+        _w = _wc(con)
+        if _w:
+            cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # AIR Social goals: 25,000 ISK + 10 career points for a one-minute click task
@@ -903,7 +912,9 @@ def next_action(con, g, p, full=False, ahead=False):
             steps[0 if selling else -1] += "\n" + "\n".join(bl)
     try:
         from .social import mark_shown as _ms
+        from .screens import wanted_mark_shown as _wms
         _ms(con, steps[0] if steps else "")
+        _wms(con, steps[0] if steps else "")
     except Exception:                                            # noqa: BLE001
         pass
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
