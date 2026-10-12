@@ -79,14 +79,17 @@ def options(con, g, p, max_jumps=5):
             if p.wallet_isk and cost > p.wallet_isk:
                 continue
             revenue = units * j["per_unit"]
-            alt = 0.0                                                   # what the same goods would fetch from the best buy order near you
+            alt = alt_stock = 0.0                                       # what the same goods would fetch from the best buy order near you
             for s, bids in buys.get(t, {}).items():
                 if s in reach and reach[s].jumps <= 2:
                     alt = max(alt, sell_into_bids(bids, units, p.sales_tax)[1])
+                    if use_stock:
+                        alt_stock = max(alt_stock, sell_into_bids(bids, use_stock, p.sales_tax)[1])
             secs = 2 * j["jumps"] * p.jump_seconds + 2 * DOCK_S + TRADE_S
             net = revenue - cost
-            row = {"kind": "deliver", "job": j, "what": name.get(t, str(t)), "units": units, "jumps": j["jumps"], "revenue": revenue, "cost": cost, "net": net,
-                   "alt_sell": alt, "minutes": secs / 60.0, "isk_hr": net * 3600.0 / secs, "from_stock": use_stock, "buy_at": g.name[ask_sys] if ask_sys else None}
+            gain = net - alt_stock                                      # stock you already own could be sold instead: only the EXTRA counts
+            row = {"kind": "deliver", "job": j, "what": name.get(t, str(t)), "units": units, "jumps": j["jumps"], "revenue": revenue, "cost": cost, "net": net, "gain": gain,
+                   "alt_sell": alt, "minutes": secs / 60.0, "isk_hr": gain * 3600.0 / secs, "from_stock": use_stock, "buy_at": g.name[ask_sys] if ask_sys else None}
             if best is None or row["isk_hr"] > best["isk_hr"]:
                 best = row
         if best:
@@ -96,9 +99,9 @@ def options(con, g, p, max_jumps=5):
 
 
 def report(con, g, p, max_jumps=5, top=12):
-    rows = options(con, g, p, max_jumps)
+    rows = [r for r in options(con, g, p, max_jumps) if r["isk_hr"] > 0]
     if not rows:
-        return "No nearby freelance jobs worth planning yet: run  python -m eve_profit grabs --all  (details come 150 per run)."
+        return "No nearby freelance job beats simply selling yet (jobs that lose money are hidden). More details arrive 150 per run:  python -m eve_profit grabs --all"
     L = [f"{'ISK/hr':>10} {'jumps':>5}  job"]
     for r in rows[:top]:
         j = r["job"]
@@ -106,5 +109,5 @@ def report(con, g, p, max_jumps=5, top=12):
             L.append(f"{r['isk_hr']:>10,.0f} {r['jumps']:>5}  MINE {r['what']}: {r['note']} ({j['corp'][:20]})")
         else:
             L.append(f"{r['isk_hr']:>10,.0f} {r['jumps']:>5}  DELIVER {r['units']:,} x {r['what']}: pay {r['revenue']:,.0f}, cost {r['cost']:,.0f} ({'stock ' + str(r['from_stock']) if r['from_stock'] else 'buy at ' + str(r['buy_at'])})"
-                     f" = {r['net']:,.0f} net in {r['minutes']:.0f} min; selling instead: {r['alt_sell']:,.0f} ({j['corp'][:18]})")
+                     f" = {r['net']:,.0f} net, {r['gain']:,.0f} MORE than selling, in {r['minutes']:.0f} min ({j['corp'][:18]})")
     return "\n".join(L)
