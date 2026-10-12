@@ -75,7 +75,12 @@ def task_block(text):
             out.append("")
     for ln in text.split("\n"):
         s = ln.strip()
-        if first and s:
+        if ln.startswith("§"):
+            out.append(hue(ln[1:]))
+        elif first and s and "COMMANDS FOR THIS STEP" in s:
+            first = False
+            out.append(ln)
+        elif first and s:
             out.append(hue(">> " + s.lstrip("> ").strip()))
             first = False
         elif "DO ONLY THIS" in ln:

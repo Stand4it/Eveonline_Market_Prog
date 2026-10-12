@@ -1153,7 +1153,7 @@ class DetourStepTests(unittest.TestCase):
             txt = next_action(con, g, p)
         finally:
             sp.sell_plan = old
-        first = txt.splitlines()[0]
+        first = next(l.strip().lstrip("§ ") for l in txt.splitlines() if "STEP:" in l)           # the step now sits at its number in the command list
         self.assertTrue(first.startswith("STEP: SELL SCORDITE 0-GRADE 1 JUMP AWAY in "), first)
         self.assertIn("HOW:", txt)
         self.assertIn("Load 33,333 x Scordite 0-Grade", txt)                    # 66,666 in 2 trips of the 5,000 m3 hold

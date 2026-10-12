@@ -621,7 +621,8 @@ def finish_block(step):
         lines.append(ln)
     while lines and not lines[-1].strip():
         lines.pop()
-    out = lines + ["", "   COMMANDS FOR THIS STEP, IN ORDER:"]
+    body = ["§   " + l.strip() if l.strip() else "" for l in lines]            # '§' = highlighted by style.task_block (the step sits at its number)
+    out = ["   COMMANDS FOR THIS STEP, IN ORDER:"]
     n = 1
     if timer and timer.startswith("Time it:"):
         out.append(f"   {n}. Start the timer:  " + timer.split("Time it:", 1)[1].strip())
@@ -629,7 +630,8 @@ def finish_block(step):
     elif timer:
         out.append(f"   {n}. {timer}")
         n += 1
-    out.append(f"   {n}. Do the step above.")
+    out.append(f"   {n}. DO THIS:")
+    out += body
     n += 1
     if needs_done:
         out.append(f"   {n}. When it is finished:  python -m eve_profit done")
