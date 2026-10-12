@@ -269,3 +269,27 @@ class MarkSeenTests(unittest.TestCase):
         con = connect(":memory:")
         self.assertIn("Thank you", screens.mark_seen(con, "anymining"))
         self.assertNotIn("freelance_detail_anymining", [i["id"] for i in screens.wanted_unseen(con)])
+
+
+class GrabIntervalTests(unittest.TestCase):
+    def test_interval_follows_change_rate(self):
+        from eve_profit.grabs import next_interval
+        self.assertEqual(next_interval(1.0, 0.5, 0.25, 24), 0.5)       # a lot changed: pull twice as often
+        self.assertEqual(next_interval(1.0, 0.0, 0.25, 24), 1.5)       # nothing changed: pull less often
+        self.assertEqual(next_interval(0.25, 0.9, 0.25, 24), 0.25)     # never faster than the floor
+        self.assertEqual(next_interval(20.0, 0.0, 0.25, 24), 24)       # nor slower than the ceiling
+
+
+class FreelanceParseTests(unittest.TestCase):
+    def test_per_unit_and_mining_jobs(self):
+        import json
+        from eve_profit import freelance
+        from eve_profit.db import connect
+        con = connect(":memory:")
+        con.execute("CREATE TABLE IF NOT EXISTS freelance_raw(job_id TEXT PRIMARY KEY, fetched REAL, listing TEXT, detail TEXT)")
+        j = {"id": "x", "name": "Get started mining Veldspar (Read Description)", "state": "Active", "progress": {"current": 1, "desired": 250000000}, "reward": {"initial": 1250000000, "remaining": 1}}
+        con.execute("INSERT INTO freelance_raw VALUES('x',0,?,NULL)", (json.dumps(j),))
+        self.assertAlmostEqual(freelance.per_unit(j), 5.0)
+        m = freelance.mining_jobs(con)
+        self.assertEqual(m[0]["ore"], "Veldspar")
+        self.assertAlmostEqual(m[0]["isk_per_unit"], 5.0)

@@ -26,9 +26,11 @@ def freelance_bonus(ore, con=None):
     import os
     try:
         acc = accepted_jobs(con) if con is not None else set()
+        from .freelance import mining_jobs as _live
+        live = _live(con) if con is not None else []
         f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "freelance_jobs.json")
-        for j in json.load(open(f, encoding="utf-8")).get("mining_jobs", []):
-            if j["ore"] in acc and j["ore"].lower() == str(ore).lower() and not (con is not None and _gone(con, j)):
+        for j in (live or json.load(open(f, encoding="utf-8")).get("mining_jobs", [])):        # the downloaded list wins over my screenshot notes
+            if j["ore"] in acc and j["ore"].lower() == str(ore).lower() and not (con is not None and not live and _gone(con, j)):
                 return float(j["isk_per_unit"]), max(0, int(j["cap_units"]) - int(j.get("mined_so_far", 0)))
     except (OSError, ValueError, KeyError):
         pass

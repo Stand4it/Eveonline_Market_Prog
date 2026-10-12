@@ -26,7 +26,9 @@ def prestep(con, g, p, text):
         return text
     from .mining import accepted_jobs
     from .listings import is_gone, key_of
-    jobs, acc = [j for j in _jobs() if not is_gone(con, "freelance", key_of(j.get("title", ""), "mine"))], accepted_jobs(con)   # a withdrawn / finished job is not offered
+    from .freelance import mining_jobs as _live
+    live = _live(con)
+    jobs, acc = (live or [j for j in _jobs() if not is_gone(con, "freelance", key_of(j.get("title", ""), "mine"))]), accepted_jobs(con)   # a withdrawn / finished job is not offered
     n_acc = sum(1 for j in jobs if j["ore"] in acc)
     todo = [j for j in jobs if j["ore"] not in acc]
     if todo and n_acc < MAX_ACCEPTED:

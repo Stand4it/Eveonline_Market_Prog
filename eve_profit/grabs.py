@@ -4,12 +4,15 @@ import time
 
 
 def _freelance(con):
-    from .freelance import fetch
+    """-> (summary, share of the list that changed, ESI cache end as an HTTP date or None)."""
+    from .freelance import LAST, fetch
     n, d = fetch(con)
-    return f"{n} jobs, {d} new details"
+    frac = (LAST.get("new", 0) + LAST.get("gone", 0)) / float(max(LAST.get("total", n), 1))
+    return f"{n} jobs, {LAST.get('new', 0)} new, {LAST.get('gone', 0)} gone, {d} details", frac, LAST.get("expires")
 
 
-GRABS = [("freelance", "Freelance Jobs (ESI, public)", 1.0, _freelance)]
+# id, label, start hours between runs, fastest, slowest, function
+GRABS = [("freelance", "Freelance Jobs (ESI, public)", 1.0, 0.25, 24.0, _freelance)]
 
 
 def _ts(con, gid):
@@ -20,17 +23,46 @@ def _ts(con, gid):
         return 0.0
 
 
+def _meta(con, key, default=None):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
+        return r[0] if r else default
+    except Exception:                                                   # noqa: BLE001
+        return default
+
+
+def next_interval(iv, frac, lo, hi):
+    """The more a list changes between pulls, the more often it is pulled; when it hardly changes, less often (never outside lo..hi hours)."""
+    if frac >= 0.2:
+        return max(lo, iv / 2.0)
+    if frac < 0.05:
+        return min(hi, iv * 1.5)
+    return iv
+
+
 def run_due(con, force=False):
-    """Run the grabs whose time has come. -> list of result lines."""
+    """Run the grabs whose time has come (their own adaptive interval AND ESI's cache end). -> list of result lines."""
+    from email.utils import parsedate_to_datetime
     out, now = [], time.time()
-    for gid, label, every_h, fn in GRABS:
-        if not force and now - _ts(con, gid) < every_h * 3600.0:
+    for gid, label, start_h, lo, hi, fn in GRABS:
+        iv = float(_meta(con, "grab_int_" + gid, start_h))
+        if not force and (now - _ts(con, gid) < iv * 3600.0 or now < float(_meta(con, "grab_exp_" + gid, 0))):
             continue
         try:
             res = fn(con)
+            text, frac, exp = res if isinstance(res, tuple) else (res, 0.1, None)
             con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", ("grab_ts_" + gid, str(now)))
+            new_iv = next_interval(iv, frac, lo, hi)
+            con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", ("grab_int_" + gid, str(new_iv)))
+            try:
+                if exp:
+                    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", ("grab_exp_" + gid, str(parsedate_to_datetime(exp).timestamp())))
+            except Exception:                                           # noqa: BLE001
+                pass
             con.commit()
-            out.append(f"{label}: {res}")
+            out.append(f"{label}: {text}  (next pull in about {new_iv:.1f} h)")
         except Exception as e:                                          # noqa: BLE001
-            out.append(f"{label}: failed ({type(e).__name__}: {str(e)[:120]})")
+            con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", ("grab_int_" + gid, str(min(hi, iv * 2.0))))     # failing: back off, do not hammer
+            con.commit()
+            out.append(f"{label}: failed ({type(e).__name__}: {str(e)[:120]}); backing off")
     return out
