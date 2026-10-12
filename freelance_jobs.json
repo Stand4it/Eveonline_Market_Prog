@@ -64,6 +64,27 @@
    "dest": "Tongofur VIII - Kaalakiota Corporation Warehouse (0.6)",
    "expires": "2026-10-13 01:15",
    "verdict": "skip: '90%Jita' means the job pays 90% of Jita value, below what buy orders pay; all '90%Jita' jobs are the same"
+  },
+  {
+   "item": "ore mining job: mine/deliver any scordite",
+   "corp": "INVISION HORIZON",
+   "isk_per_item": 9.0,
+   "method": "Deliver (you must be DOCKED at one of the destinations)",
+   "expires": "2026-10-27 21:15",
+   "dest": [
+    "Azer - IChooseYou Market",
+    "Botane - IChooseYou",
+    "Fram - IChooseYou Market",
+    "Hampinen - Abyssal R (red text: standing)",
+    "Hek - IChooseYou Market",
+    "Manarq - IChooseYou",
+    "Orvolle - IChooseYou M",
+    "Sobaseki - T2 Refiner",
+    "Tash-Murkon Prime",
+    "Teonusude - Tax 2.5% Nexus Galactic Max Refinery"
+   ],
+   "nearest": "Botane or Manarq (3 jumps from Manifest)",
+   "verdict": "CANDIDATE: 9.00 ISK per Scordite delivered is above the ~5-8 ISK buy orders seen for Scordite; budget/cap not shown on the page. Compare with the sell price each time (not yet automatic)."
   }
  ],
  "rule": "Freelance mining jobs ADD to the ore's market value (the ore stays yours). Delivery jobs only help when they pay above the best buy order. '90%Jita' jobs pay 10% under Jita value: never better than selling to buy orders."
