@@ -1,14 +1,99 @@
 {
  "_help": "AIR Career Program (seen 2026-10-12). Four careers, each 750 career points (CP) to graduate; overall 3,000 CP. Sub-goals are bubbles inside each career. Edit from screenshots.",
  "careers": {
-  "Enforcer": {"cp": 125, "of": 750},
-  "Explorer": {"cp": 60, "of": 750},
-  "Industrialist": {"cp": 255, "of": 750},
-  "Soldier of Fortune": {"cp": 35, "of": 750,
-    "graduation_reward": ["100,000 Skill Points (Omega row) / 100,000 Skill Points", "Phantasm Aspirant Soldier SKIN", "Orthrus Aspirant Soldier SKIN", "Stratios Aspirant Soldier SKIN", "Cynabal Aspirant Soldier SKIN"],
-    "bubbles": {"Career Agent Missions": "3/10 (each 25,000 ISK + 10 CP)", "Destruction": "1/5", "Duels": "0/4", "Social": "0/5", "Electronic Warfare": "0/5", "Combat": "0/3",
-                "PvP": "0/4", "Capacitor Warfare": "0/6", "Faction Warfare": "0/5", "Support": "0/6"},
-    "note": "35 CP = 30 from three missions + 5 from Destruction 1/5 (so Destruction goals likely give 5 CP each). Bubble rewards other than Career Agent Missions not seen yet."}
+  "Enforcer": {
+   "cp": 125,
+   "of": 750
+  },
+  "Explorer": {
+   "cp": 60,
+   "of": 750
+  },
+  "Industrialist": {
+   "cp": 255,
+   "of": 750
+  },
+  "Soldier of Fortune": {
+   "cp": 35,
+   "of": 750,
+   "graduation_reward": [
+    "100,000 Skill Points (Omega row) / 100,000 Skill Points",
+    "Phantasm Aspirant Soldier SKIN",
+    "Orthrus Aspirant Soldier SKIN",
+    "Stratios Aspirant Soldier SKIN",
+    "Cynabal Aspirant Soldier SKIN"
+   ],
+   "bubbles": {
+    "Career Agent Missions": "3/10 (each 25,000 ISK + 10 CP)",
+    "Destruction": "1/5",
+    "Duels": "0/4",
+    "Social": "0/5",
+    "Electronic Warfare": "0/5",
+    "Combat": "0/3",
+    "PvP": "0/4",
+    "Capacitor Warfare": "0/6",
+    "Faction Warfare": "0/5",
+    "Support": "0/6"
+   },
+   "note": "35 CP = 30 from three missions + 5 from Destruction 1/5 (so Destruction goals likely give 5 CP each). Bubble rewards other than Career Agent Missions not seen yet. Goal list seen 2026-10-12; career points per goal NOT seen (hover one goal bubble). Social goals are one-click cheap: chat message, add contact, EVE mail, join fleet; 'Join a Corporation' changes your corp, do not do it blindly.",
+   "goals": {
+    "Destruction (lose ships)": {
+     "Lose 1 Ship": "1/1 done",
+     "Lose 5 Ships": "2/5",
+     "Lose 10 Ships": "2/10",
+     "Lose 15 Ships": "2/15",
+     "Lose 20 Ships": "2/20"
+    },
+    "Support (help other capsuleers)": {
+     "Remote Repair 500 Armor HP": "0/500",
+     "Remote Repair 1,000": "0/1,000",
+     "Remote Repair 2,500": "0/2,500",
+     "Remote Boost 500 Shield HP": "0/500",
+     "Remote Boost 1,000": "0/1,000",
+     "Remote Boost 2,500": "0/2,500"
+    },
+    "Combat (kills)": {
+     "Kill 75 enemies with a Frigate": "14/75",
+     "Kill 75 with a Cruiser": "0/75",
+     "Kill 75 with a Destroyer": "0/75"
+    },
+    "Duels (PvP: not routed)": {
+     "Challenge another capsuleer to a Duel": "0/1",
+     "Participate in 5 Duels": "0/5",
+     "10 Duels": "0/10",
+     "15 Duels": "0/15"
+    },
+    "Social (cheap)": {
+     "Send a Message in Chat": "0/1",
+     "Add a new Contact": "0/1",
+     "Send an EVE Mail": "0/1",
+     "Join a Fleet": "0/1",
+     "Join a Corporation": "0/1"
+    },
+    "not yet seen": "Capacitor Warfare 0/6, Electronic Warfare 0/5, PvP 0/4, Faction Warfare 0/5"
+   }
+  }
  },
- "overall": {"cp": 475, "of": 3000, "milestones": [[750, 50000], [1500, 75000], [2250, 100000], [3000, 125000]]}
+ "overall": {
+  "cp": 475,
+  "of": 3000,
+  "milestones": [
+   [
+    750,
+    50000
+   ],
+   [
+    1500,
+    75000
+   ],
+   [
+    2250,
+    100000
+   ],
+   [
+    3000,
+    125000
+   ]
+  ]
+ }
 }
