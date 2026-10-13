@@ -14,7 +14,7 @@
    "of": 750
   },
   "Soldier of Fortune": {
-   "cp": 35,
+   "cp": 65,
    "of": 750,
    "graduation_reward": [
     "100,000 Skill Points (Omega row) / 100,000 Skill Points",
@@ -96,5 +96,6 @@
     125000
    ]
   ]
- }
+ },
+ "_seen_2026-10-13": "Start screen: Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 65 = 505/3000 CP (was 475: +30 = 3 social goals x 10). Reward 'Send an EVE Mail' 25,000 ISK claimed. Aura tip: Freelance Jobs."
 }

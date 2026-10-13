@@ -197,3 +197,4 @@
 - 2026-10-12: next prints the step AT its number 2 in the command list ('2. DO THIS:'), highlighted (yellow on black); no separate copy above.
 - 2026-10-12: Freelance Jobs window can only sort by Relevance, Name, Number of Jumps, Time Remaining (no pay/ISK sort): screenshots can't rank by pay, so ranking stays ESI-based (freelance grab); for screenshots use Sort By 'Number of Jumps' (nearest first).
 - 2026-10-13: screens_wanted items with "esi": true (freelance list/detail) are never asked as screenshot steps (ESI grab covers them); step text indented under '2. DO THIS:'.
+- 2026-10-13: AIR start screen: 505/3000 CP (SoF 65, Industrialist 255, Enforcer 125, Explorer 60); +30 since 475.
