@@ -79,7 +79,7 @@
     "Duels": "0/4",
     "Social": "0/5",
     "Electronic Warfare": "0/5",
-    "Combat": "0/3",
+    "Combat": "0/3 (Frigate 14/75, Cruiser 0/75, Destroyer 0/75)",
     "PvP": "0/4",
     "Capacitor Warfare": "0/6",
     "Faction Warfare": "0/5",
@@ -122,7 +122,12 @@
     },
     "not yet seen": "Capacitor Warfare 0/6, Electronic Warfare 0/5, PvP 0/4, Faction Warfare 0/5"
    },
-   "goal_reward_seen": "Send a Message in Chat: 25,000 ISK + 10 CP, risk none. Lose 5 Ships: 25,000 ISK + 10 CP, risk HIGH (corvettes do not count). Goals appear to pay 25,000 ISK + 10 CP each, like the missions. Combat tooltip not captured."
+   "goal_reward_seen": "Send a Message in Chat: 25,000 ISK + 10 CP, risk none. Lose 5 Ships: 25,000 ISK + 10 CP, risk HIGH (corvettes do not count). Goals appear to pay 25,000 ISK + 10 CP each, like the missions. Combat tooltip not captured.",
+   "combat_goals": {
+    "Kill 75 enemies with a Frigate": "14/75",
+    "Kill 75 enemies with a Cruiser": "0/75",
+    "Kill 75 enemies with a Destroyer": "0/75"
+   }
   }
  },
  "overall": {

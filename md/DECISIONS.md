@@ -204,3 +204,4 @@
 - 2026-10-13: Enforcer bubbles recorded (Standings 4/4, Market 3/4 = 125 CP; Career Agent Missions 0/10 = 100 CP still open).
 - 2026-10-13: model-building TEST turns skip catalog entries whose 'how' starts with 'Later' (not doable yet, e.g. other epic arcs before the current one is finished).
 - 2026-10-13: Explorer bubbles recorded (60 CP from 5 goals; Career Agent Missions 2/5).
+- 2026-10-13: SoF Combat goals: kill 75 enemies with a Frigate 14/75, Cruiser 0/75, Destroyer 0/75 (kills count by ship class used; Venture is a mining frigate: check it counts).
