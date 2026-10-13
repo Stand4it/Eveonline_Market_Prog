@@ -201,3 +201,4 @@
 - 2026-10-13: Industrialist bubbles recorded (7 of 9 sub-goals started; non-mission goals avg ~26 CP each, hover to confirm; Market 4/5).
 - 2026-10-13: Industrialist Market goals: earn 50k/100k/250k/500k done, 1M at 597,700 (402,300 left): ordinary trading completes it. Bubbles open by CLICK, not hover.
 - 2026-10-13: 'stop' now runs 'done' first for screen/social/agent/job steps (one command fewer); the step's command list no longer has a separate done line (done still works alone, e.g. without a timer).
+- 2026-10-13: Enforcer bubbles recorded (Standings 4/4, Market 3/4 = 125 CP; Career Agent Missions 0/10 = 100 CP still open).

@@ -3,7 +3,20 @@
  "careers": {
   "Enforcer": {
    "cp": 125,
-   "of": 750
+   "of": 750,
+   "bubbles": {
+    "Career Agent Missions": "0/10",
+    "Loyalty Points": "0/5",
+    "Security Agent": "0/5",
+    "Abyssal Deadspace": "0/4",
+    "Combat": "0/5",
+    "Bounties": "0/4",
+    "Combat Sites": "0/3",
+    "Epic Arc": "0/5",
+    "Market": "3/4",
+    "Standings": "4/4"
+   },
+   "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist."
   },
   "Explorer": {
    "cp": 60,
