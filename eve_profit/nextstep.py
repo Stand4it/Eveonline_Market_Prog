@@ -101,6 +101,11 @@ def _next_action_core(con, g, p):
             pass
     if sells:
         total = sum(d["net"] for d in sells)
+        try:                                                     # so `stop` can take exactly these stacks out of the stock (ESI assets lag an hour)
+            from .invoverlay import remember_sell_step
+            remember_sell_step(con, g.id_of(where), [(d["tid"], d["sold"]) for d in sells])
+        except Exception:                                        # noqa: BLE001
+            pass
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
         for d in sells[:8]:

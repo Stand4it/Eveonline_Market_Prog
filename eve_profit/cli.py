@@ -305,6 +305,11 @@ def _run(a):
                 loot = value_loot(con, Graph(con), p, gains(before, snapshot(con)))
             try:
                 act = (_json.loads(row[0]).get("activity", "") if row else "").lower()
+                if act.startswith("market sell stock"):
+                    from .invoverlay import confirm_sold
+                    _cs = confirm_sold(con)
+                    if _cs:
+                        print(_cs)
                 if act.startswith("air daily goals"):
                     from .dailygoals import mark_bought
                     _mb = mark_bought(con)
@@ -621,6 +626,9 @@ def _run(a):
         if a.goal.lower().startswith("seen "):
             from .screens import mark_seen
             print(mark_seen(con, a.goal[5:].strip()))
+        elif a.goal.lower() == "sold":
+            from .invoverlay import confirm_sold
+            print(confirm_sold(con) or "No sell step is waiting to be confirmed (run  next  to show it, then sell, then  stop  or  done --goal sold).")
         elif a.goal.lower().startswith("job "):
             from .mining import accept_job
             print(accept_job(a.goal[4:].strip(), con))

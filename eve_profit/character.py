@@ -248,6 +248,11 @@ def sync_character(con, esi, cid, profile):
     names = [r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id "
                                                "WHERE f.flag LIKE '%Slot%'")]
     profile.can_salvage = any("salvager" in n for n in names)
+    try:
+        from .invoverlay import after_sync
+        after_sync(con)                    # a sale ESI has not caught up with (assets cache ~1 h) stays out of the stock
+    except Exception:                      # noqa: BLE001
+        pass
     con.commit()
     return {"fitted_items": fit_n, "salvager_fitted": profile.can_salvage, "system": profile.current_system, "ship": profile.ship_name,
             "cargo_m3": profile.cargo_m3, "wallet": wallet, "accounting": lvl,
