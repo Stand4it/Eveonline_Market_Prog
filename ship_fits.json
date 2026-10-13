@@ -25,24 +25,31 @@
   }
  ],
  "combat_goal": {
-  "status": "blocked: the Venture does 6.8 dps / 915 EHP (win chance far below 99%)",
+  "status": "blocked: the Venture does 6.8 dps / 915 EHP; you already own a Velator and an Imicus (frigates) plus 2 railguns, a blaster, afterburner, warp disruptor: the gap is ammo and tank, then a fit-window check",
   "why": "combat opens several career goals and events and may eventually be the best ISK/hr when the safer options are used up; it needs a combat hull + a fit that wins above 99%",
   "buy": [
    {
-    "item": "Incursus",
-    "qty": 1,
-    "for": "Gallente frigate hull (Gallente Frigate skill is partly trained)"
-   },
-   {
-    "item": "Light Neutron Blaster I",
-    "qty": 3,
-    "for": "guns for the Incursus (check fit window for CPU/PG)"
+    "item": "Antimatter Charge S",
+    "qty": 500,
+    "for": "hybrid ammo: you own 2 railguns and a blaster but NO charges"
    },
    {
     "item": "Small Armor Repairer I",
     "qty": 1,
-    "for": "tank"
+    "for": "tank (you only own a Damage Control I)"
    }
   ]
+ },
+ "owned_2026-10-13": {
+  "ships": [
+   "Imicus",
+   "Velator",
+   "Venture x2"
+  ],
+  "weapons": "2x 150mm Carbide Railgun I (dmg x3.18, optimal 12.6km, cpu 19 pg 9, cap 2.22), 1x Light Electron Blaster I fitted (dmg x1.84, optimal 1km, cpu 8 pg 4)",
+  "tackle_speed": "Civilian Warp Disruptor (fitted, 20 km), 1MN Afterburner I (fitted)",
+  "tank": "Damage Control I only (no armor/shield modules owned)",
+  "ammo": "NONE for guns (only Core Scanner Probes and 200 Crimson Scythes Firework): railguns/blasters need hybrid charges",
+  "mining": "3x Miner I, Civilian Miner, 6x Civilian Mining Laser Upgrade, 1x Mining Laser Upgrade I, 2x Expanded Cargohold I, Salvager I (fitted)"
  }
 }
