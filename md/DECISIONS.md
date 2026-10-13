@@ -207,3 +207,4 @@
 - 2026-10-13: SoF Combat goals: kill 75 enemies with a Frigate 14/75, Cruiser 0/75, Destroyer 0/75 (kills count by ship class used; Venture is a mining frigate: check it counts).
 - 2026-10-13: Wallet screenshot confirms: Daily Goal Reward 445,000 ISK paid 10-11 11:37 and 10-12 01:18 (once per UTC day); AIR Career Program rewards 25,000 / 50,000 / 62,500 ISK; sales tax 36,601 on 488,024 = 7.5% (Accounting 0 as modeled); wallet 9,285,533 = tool's number.
 - 2026-10-13: Skills screenshot: 797,096 total SP, 170,352 UNALLOCATED SP (not used anywhere yet), queue 6 skills 32d16h50m (Broker Relations IV/V, Retail IV/V, Light Drone Op V, Contracting V), tracked plan 'AIR Industrialist - Entrepreneur' 22h43m. sync now stores sp_total / sp_unallocated in meta.
+- 2026-10-13: 'Apply Skill Points' window (Skills > Training Queue > +) recorded; one-time screen step spend_unallocated_sp added (show the window before Confirm; untick non-ISK skills).

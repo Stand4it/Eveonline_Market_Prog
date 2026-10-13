@@ -2,6 +2,12 @@
  "_help": "Screenshots the model still needs, asked ONE at a time as a step in `next` (once each; `done` marks it seen). Add items here whenever a screen is needed. id, where (the menu path), show (what must be visible), why. Items with repeat=true come back on an interval that ADAPTS: after sending the screen run `done --changed` (it differed from last time: asked sooner) or `done --same` (asked less often). base_h/min_h/max_h are the starting, fastest and slowest intervals in hours. 'moves': the screen is also due when you are this many jumps from where its list was last scanned (lists like Freelance Jobs show what is near YOU).",
  "items": [
   {
+   "id": "spend_unallocated_sp",
+   "where": "Skills > Training Queue panel > the + button (bottom right, next to the pause and link buttons) > 'Apply Skill Points' window",
+   "show": "the list of skills with 'Est. time saved' and the tick boxes on the right, BEFORE pressing Confirm (untick skills that do not make ISK, e.g. Light Drone Operation V)",
+   "why": "you have 170,352 unallocated skill points: spending them on Broker Relations / Retail saves days of training that raise ISK/hr"
+  },
+  {
    "id": "freelance_detail_anymining",
    "where": "Freelance Jobs > click 'ore mining job: mine/deliver any scordite' (Manarq, 3 jumps)",
    "show": "the whole detail page: reward per unit, what counts (mined or delivered), cap, destination",
