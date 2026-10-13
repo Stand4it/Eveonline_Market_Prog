@@ -8,6 +8,12 @@
    "why": "you have 170,352 unallocated skill points: spending them on Broker Relations / Retail saves days of training that raise ISK/hr"
   },
   {
+   "id": "crimson_harvest",
+   "where": "the Agency (Neocom) > Encounters > Crimson Harvest",
+   "show": "the whole window: challenges, points needed, rewards and how long the event runs",
+   "why": "a new event 'complete challenges to earn points and receive rewards': free ISK / items may beat normal ISK per hour"
+  },
+  {
    "id": "freelance_detail_anymining",
    "where": "Freelance Jobs > click 'ore mining job: mine/deliver any scordite' (Manarq, 3 jumps)",
    "show": "the whole detail page: reward per unit, what counts (mined or delivered), cap, destination",
