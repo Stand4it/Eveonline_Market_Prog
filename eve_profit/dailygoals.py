@@ -339,6 +339,12 @@ def chain_clear(con):
 def chain_done(con, changed=None):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
     try:
+        mb = mark_bought(con)                                           # at the chain's home with the shopping not yet seen: `done` = "I bought it"
+        if mb:
+            return mb
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
         from .agentchain import done as _adone
         m = _adone(con)
         if m:
@@ -384,6 +390,23 @@ def chain_done(con, changed=None):
         st["epic_done"] = True
         _chain_save(con, st)
     return "OK, that step is marked done. Run  python -m eve_profit next  for the next one."
+
+
+def mark_bought(con):
+    """`stop` on the buy step: you did the purchase; ESI assets are cached for an hour, so the hangar may not show it yet. Mark the chain's shopping as done
+    when you are at the chain's home system and have not bought yet. -> message or ''."""
+    st = _chain_load(con)
+    if not st or st.get("bought"):
+        return ""
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='here_system'").fetchone()
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    if not r or r[0] != st.get("home"):
+        return ""
+    st["bought"] = True
+    _chain_save(con, st)
+    return "OK, the shopping is marked as bought (the game's asset list is cached for an hour, so sync may not show it yet). Run  python -m eve_profit next  for the next step."
 
 
 def _chain_from_plan(pl, here):
