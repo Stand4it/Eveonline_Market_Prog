@@ -51,5 +51,12 @@
   "tank": "Damage Control I only (no armor/shield modules owned)",
   "ammo": "NONE for guns (only Core Scanner Probes and 200 Crimson Scythes Firework): railguns/blasters need hybrid charges",
   "mining": "3x Miner I, Civilian Miner, 6x Civilian Mining Laser Upgrade, 1x Mining Laser Upgrade I, 2x Expanded Cargohold I, Salvager I (fitted)"
- }
+ },
+ "ship_locations_2026-10-13": {
+  "Imicus": "Rotonos IV - Moon 2 - Center for Advanced Studies",
+  "Velator": "Rotonos IV - Moon 2 - Center for Advanced Studies",
+  "Venture #1": "Rotonos IV - Moon 2 - Center for Advanced Studies",
+  "Venture #2 (active)": "Manifest V - AIR Laboratories Trade Center"
+ },
+ "_note_fitting": "The fitting window only lets you change/simulate a ship in the station where it is parked: the Velator/Imicus fit test happens at Rotonos IV, not at Manifest."
 }
