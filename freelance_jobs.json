@@ -37,15 +37,21 @@
   },
   {
    "ore": "Pyroxeres",
-   "corp": "unknown",
+   "corp": "Corp Borp",
    "isk_per_unit": 5.0,
    "cap_units": 1000000,
    "mined_so_far": 0,
-   "expires": "unknown",
+   "expires": "2026-10-28 18:00",
    "accepted": false,
-   "unverified": true,
+   "unverified": false,
    "title": "Get started mining Pyroxeres (Read Description)",
-   "note": "card shows 5,000,000 ISK available like Veldspar: pay per unit assumed 5.00 until the detail page is seen"
+   "note": "VERIFIED 2026-10-13 from the detail page: 5.00 ISK per unit mined (group Pyroxeres, any location), your cap 1,000,000 units = 5,000,000 ISK. Only for capsuleers no more than 14 days old: Stand4it Dahl was born 2026-10-06, so eligible until 2026-10-20. Funded by the eve recruitment program (description asks you to click 'Log in to Become a Recruit': an external link, ignore it, the pay does not depend on it).",
+   "location": "Any (job shown in Manifest)",
+   "max_age_days": 14,
+   "participants": "70 active / 124 total",
+   "progress": "12,744,229 / 150,000,000 (8%)",
+   "remaining_isk": 686278855,
+   "creator": "Kristian Pistian"
   }
  ],
  "delivery_jobs_seen": [

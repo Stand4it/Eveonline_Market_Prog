@@ -37,6 +37,15 @@ def describe(esi, tid):
     return slot, nums
 
 
+def _place(esi, loc):
+    try:
+        if 60000000 <= loc < 64000000:
+            return esi.get(f"/universe/stations/{loc}/")[0]["name"]
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return "ship/container or player structure"
+
+
 def report(con, esi, cid):
     owned = collect(con, esi, cid)
     if not owned:
@@ -54,6 +63,8 @@ def report(con, esi, cid):
                 slot, nums = "", {}
             extra = ", ".join(f"{k} {v}" for k, v in nums.items())
             fit = f" ({d['fitted']} fitted)" if d["fitted"] else ""
+            if cat == "ship":
+                fit += "  at " + " | ".join(sorted({_place(esi, w) for w in d["where"]}))
             lines.append(f"   {d['qty']:>6,} x {d['name']}{fit}" + (f"  [{slot}]" if slot else "") + (f"  {extra}" if extra else ""))
         lines.append("")
     lines.append("Compare with the in-game Fitting window (Simulate): drag a piece on, read dps / ehp / cap, and send me the screen; the model uses the game's own numbers.")
