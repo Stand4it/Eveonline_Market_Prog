@@ -621,7 +621,7 @@ def finish_block(step):
         lines.append(ln)
     while lines and not lines[-1].strip():
         lines.pop()
-    body = ["§   " + l.strip() if l.strip() else "" for l in lines]            # '§' = highlighted by style.task_block (the step sits at its number)
+    body = ["§      " + l.strip() if l.strip() else "" for l in lines]            # '§' = highlighted by style.task_block (the step sits at its number)
     out = ["   COMMANDS FOR THIS STEP, IN ORDER:"]
     n = 1
     if timer and timer.startswith("Time it:"):

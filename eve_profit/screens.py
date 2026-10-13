@@ -171,7 +171,7 @@ def wanted_unseen(con, g=None, p=None):
 
 def wanted_candidate(con, g=None, p=None):
     """(rate, step text) for the next screenshot the model needs, or None."""
-    left = wanted_unseen(con, g, p)
+    left = [i for i in wanted_unseen(con, g, p) if not i.get("esi")]          # "esi": the data comes from ESI (a grab), no screenshot step
     if not left:
         return None
     i = left[0]

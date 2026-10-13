@@ -5,7 +5,8 @@
    "id": "freelance_detail_anymining",
    "where": "Freelance Jobs > click 'ore mining job: mine/deliver any scordite' (Manarq, 3 jumps)",
    "show": "the whole detail page: reward per unit, what counts (mined or delivered), cap, destination",
-   "why": "1.4 billion ISK budget: the per-unit pay may beat the 5 ISK Veldspar mining job"
+   "why": "1.4 billion ISK budget: the per-unit pay may beat the 5 ISK Veldspar mining job",
+   "esi": true
   },
   {
    "id": "freelance_list",
@@ -20,7 +21,8 @@
    "moves": {
     "list": "freelance",
     "jumps": 3
-   }
+   },
+   "esi": true
   },
   {
    "id": "air_overall",
