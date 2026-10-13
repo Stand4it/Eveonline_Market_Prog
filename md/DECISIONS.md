@@ -199,3 +199,4 @@
 - 2026-10-13: screens_wanted items with "esi": true (freelance list/detail) are never asked as screenshot steps (ESI grab covers them); step text indented under '2. DO THIS:'.
 - 2026-10-13: AIR start screen: 505/3000 CP (SoF 65, Industrialist 255, Enforcer 125, Explorer 60); +30 since 475.
 - 2026-10-13: Industrialist bubbles recorded (7 of 9 sub-goals started; non-mission goals avg ~26 CP each, hover to confirm; Market 4/5).
+- 2026-10-13: Industrialist Market goals: earn 50k/100k/250k/500k done, 1M at 597,700 (402,300 left): ordinary trading completes it. Bubbles open by CLICK, not hover.

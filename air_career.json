@@ -28,7 +28,14 @@
     "100,000 Skill Points",
     "Venture/Retriever/Procurer/Covetor Aspirant Industrialist SKINs"
    ],
-   "note": "Seen 2026-10-13. 255 CP = 7 missions x10 = 70 + 185 from 7 other goals (4 Market,1 Salvage,1 Resource Harvesting,1 Manufacturing): ~26 CP each on average, so these goals pay MORE CP than missions: hover each to see. Market 4/5 means one more Market goal is probably cheap."
+   "note": "Seen 2026-10-13. 255 CP = 7 missions x10 = 70 + 185 from 7 other goals (4 Market,1 Salvage,1 Resource Harvesting,1 Manufacturing): ~26 CP each on average, so these goals pay MORE CP than missions: hover each to see. Market 4/5 means one more Market goal is probably cheap. Market goals are cumulative 'Earn X ISK on the Market' (click the bubble to open its sub-circle; hover does not). Last one: 402,300 ISK left; trading finishes it.",
+   "market_goals": {
+    "Earn 50,000 ISK on the Market": "done",
+    "Earn 100,000": "done",
+    "Earn 250,000": "done",
+    "Earn 500,000": "done",
+    "Earn 1,000,000": "597,700/1,000,000 (402,300 ISK still to earn on the market)"
+   }
   },
   "Soldier of Fortune": {
    "cp": 65,
