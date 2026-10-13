@@ -633,10 +633,8 @@ def finish_block(step):
     out.append(f"   {n}. DO THIS:")
     out += body
     n += 1
-    if needs_done:
-        out.append(f"   {n}. When it is finished:  python -m eve_profit done")
-        n += 1
-    out += [f"   {n}. Stop the timer:  python -m eve_profit stop   (agent missions: wait 2 minutes first)",
+    stop_txt = "Stop the timer (also marks the step done):  python -m eve_profit stop" if needs_done else "Stop the timer:  python -m eve_profit stop"
+    out += [f"   {n}. {stop_txt}   (agent missions: wait 2 minutes first)",
             f"   {n + 1}. Update from the game:  python -m eve_profit sync",
             f"   {n + 2}. Next step:  python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"]
     return "\n".join(out)

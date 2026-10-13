@@ -304,6 +304,13 @@ def _run(a):
                 from .loot import gains, snapshot, value_loot
                 loot = value_loot(con, Graph(con), p, gains(before, snapshot(con)))
             try:
+                act = (_json.loads(row[0]).get("activity", "") if row else "").lower()
+                if act.startswith(("show a screen", "air social goal", "agent ", "job ")):         # these steps end with `done`: stop does it first
+                    from .dailygoals import chain_done
+                    print(chain_done(con, True if a.changed else (False if a.same else None)))
+            except Exception:                                                   # noqa: BLE001
+                pass
+            try:
                 print(stop(con, esi, a.isk, ship=p.ship_name, paused_min=a.paused - a.add_min, loot=loot, work_min=a.minutes or None, wallet_now=p.wallet_isk))
             except ValueError as e:
                 raise SystemExit(str(e))
