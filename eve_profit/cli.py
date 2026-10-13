@@ -51,7 +51,7 @@ def print(*args, sep=" ", **kw):                                          # noqa
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "stopsync"])
+    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "stopsync"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -112,7 +112,7 @@ def main(argv=None):
     if a.cmd == "stopsync":                                               # `stop` then `sync`, in that order (steps that need both)
         raw = list(sys.argv[1:] if argv is None else argv)
         for cmd in ("stop", "sync"):
-            main([cmd if x == "stopsync" else x for x in raw])
+            main([cmd if x.lower() == "stopsync" else x for x in raw])
         return
     a.client_id = resolve_client_id(a.client_id)
     if a.cmd not in ("init", "mock", "docs", "login", "chars", "esiroutes"):
