@@ -56,7 +56,8 @@ def send_route(esi, g, waypoints, send=False, pause=0.3, stops=None):
 def destination_of(text):
     """The system a step tells you to fly to: 'STEP: FLY to <system> ...' -> name, else None."""
     import re
-    m = re.match(r"\s*(?:>> )*STEP: FLY to ([^\n]+?)(?: - |$|\n)", text or "")
+    from .tradestep import first_step_line
+    m = re.match(r"\s*(?:>> )*STEP: FLY to ([^\n]+?)(?: - |$|\n)", first_step_line(text))
     return m.group(1).strip() if m else None
 
 

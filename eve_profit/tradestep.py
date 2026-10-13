@@ -81,10 +81,18 @@ def pending(text):
     return PENDING.get(text)
 
 
+def first_step_line(text):
+    """The 'STEP: ...' headline of a step text, also when the step sits inside the numbered command list (lines marked with '§')."""
+    for ln in (text or "").split("\n"):
+        t = ln.strip().lstrip("§").strip().replace(">> ", "").strip()
+        if t.startswith("STEP:"):
+            return t
+    return (text or "").strip().split("\n", 1)[0].replace(">> ", "").strip()
+
+
 def station_of(text):
     """The station id a 'STEP: BUY at <station>' step wants as the in-game destination (0 if unknown)."""
-    first = (text or "").strip().split("\n", 1)[0].replace(">> ", "").strip()
-    return STATION.get(first, 0)
+    return STATION.get(first_step_line(text), 0)
 
 
 def fresh(con, g, p, o):
