@@ -142,6 +142,10 @@ def sync_character(con, esi, cid, profile):
         profile.current_system = row[0]
     else:                    # universe not loaded yet: ask ESI for the name
         profile.current_system = esi.get(f"/universe/systems/{loc['solar_system_id']}/")[0]["name"]
+    try:
+        con.execute("INSERT OR REPLACE INTO meta VALUES('here_system', ?)", (profile.current_system,))
+    except Exception:                                                   # noqa: BLE001
+        pass
     profile.current_location_id = loc.get("station_id") or loc.get("structure_id") or 0
     try:                                         # home station: needs the clones permission (log in again to grant it)
         home = esi.get(f"/characters/{cid}/clones/")[0].get("home_location") or {}

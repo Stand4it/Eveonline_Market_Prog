@@ -24,9 +24,23 @@ def ore_price_per_m3(con, name):
     return (r[1] / r[0]) if r and r[0] and r[1] else None
 
 
+def _here(con):
+    """The system you are in (stored by sync as meta 'here_system')."""
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='here_system'").fetchone()
+        return r[0] if r else None
+    except Exception:                                                   # noqa: BLE001
+        return None
+
+
 def rank_sites(con, max_sec_floor=0.5):
     out = []
+    here = _here(con)
     for s in sites():
+        if here and (s.get("jumps_from") or {}).get(here) is not None:          # jumps seen from where you are now beat the old numbers
+            s = {**s, "jumps": s["jumps_from"][here]}
+        elif here and s.get("jumps_from") and here not in s["jumps_from"] and s.get("jumps", 99) >= 99:
+            continue                                                       # only known from another system: skip
         if s["kind"] == "ice" or s["sec"] < max_sec_floor or not s["ores"]:
             continue
         prices = [(ore_price_per_m3(con, o), o) for o in s["ores"]]

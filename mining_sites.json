@@ -1,16 +1,203 @@
 {
  "why": "Mining sites read from Agency > Resource Harvesting (2026-10-10). jumps are from Rotonos. kind: anomaly = Federation Managed belt seen under Ore Anomalies. Add more from screenshots. Ice belts and Phased Fields are far / low-null, so not routed.",
  "sites": [
-  {"system": "Rotonos", "sec": 1.0, "jumps": 0, "belts": 2, "kind": "anomaly", "ores": ["Veldspar 0-Grade", "Scordite 0-Grade", "Pyroxeres 0-Grade"], "hostiles": "unknown"},
-  {"system": "Tiberis", "sec": 1.0, "jumps": 1, "belts": 3, "kind": "anomaly", "ores": ["Veldspar 0-Grade", "Scordite 0-Grade", "Pyroxeres 0-Grade"], "hostiles": "unknown"},
-  {"system": "Ligare", "sec": 1.0, "jumps": 1, "belts": 2, "kind": "anomaly", "ores": ["Veldspar 0-Grade", "Scordite 0-Grade", "Pyroxeres 0-Grade"], "hostiles": "unknown"},
-  {"system": "Axiosere", "sec": 1.0, "jumps": 1, "belts": 2, "kind": "anomaly", "ores": ["Veldspar 0-Grade", "Scordite 0-Grade", "Pyroxeres 0-Grade"], "hostiles": "unknown"},
-  {"system": "Yulai", "sec": 0.9, "jumps": 4, "belts": 10, "kind": "belt", "ores": ["Scordite", "Scordite II-Grade", "Scordite III-Grade", "Veldspar", "Veldspar II-Grade", "Veldspar III-Grade"], "hostiles": "Blood Raider Covenant"},
-  {"system": "Ourapheh", "sec": 0.9, "jumps": 5, "belts": 7, "kind": "belt", "ores": [], "hostiles": "?"},
-  {"system": "Kemerk", "sec": 0.8, "jumps": 5, "belts": 18, "kind": "belt", "ores": [], "hostiles": "?"},
-  {"system": "Tourier", "sec": 0.9, "jumps": 5, "belts": 7, "kind": "belt", "ores": [], "hostiles": "?"},
-  {"system": "Manatirid", "sec": 0.5, "jumps": 7, "belts": 1, "kind": "ice", "ores": [], "hostiles": "Blood Raider Covenant"},
-  {"system": "Cairgnottin", "sec": 0.6, "jumps": 8, "belts": 1, "kind": "ice", "ores": [], "hostiles": "?"}
+  {
+   "system": "Rotonos",
+   "sec": 1.0,
+   "jumps": 0,
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Tiberis",
+   "sec": 1.0,
+   "jumps": 1,
+   "belts": 3,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Ligare",
+   "sec": 1.0,
+   "jumps": 1,
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Axiosere",
+   "sec": 1.0,
+   "jumps": 1,
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Yulai",
+   "sec": 0.9,
+   "jumps": 4,
+   "belts": 10,
+   "kind": "belt",
+   "ores": [
+    "Scordite",
+    "Scordite II-Grade",
+    "Scordite III-Grade",
+    "Veldspar",
+    "Veldspar II-Grade",
+    "Veldspar III-Grade"
+   ],
+   "hostiles": "Blood Raider Covenant",
+   "jumps_from": {
+    "Manifest": 1
+   },
+   "ores_seen": "Scordite, II, III grade; Veldspar, II, III grade; 10 belts"
+  },
+  {
+   "system": "Ourapheh",
+   "sec": 0.9,
+   "jumps": 5,
+   "belts": 7,
+   "kind": "belt",
+   "ores": [],
+   "hostiles": "?",
+   "jumps_from": {
+    "Manifest": 2
+   }
+  },
+  {
+   "system": "Kemerk",
+   "sec": 0.8,
+   "jumps": 5,
+   "belts": 18,
+   "kind": "belt",
+   "ores": [],
+   "hostiles": "?",
+   "jumps_from": {
+    "Manifest": 2
+   }
+  },
+  {
+   "system": "Tourier",
+   "sec": 0.9,
+   "jumps": 5,
+   "belts": 7,
+   "kind": "belt",
+   "ores": [],
+   "hostiles": "?",
+   "jumps_from": {
+    "Manifest": 2
+   }
+  },
+  {
+   "system": "Manatirid",
+   "sec": 0.5,
+   "jumps": 7,
+   "belts": 1,
+   "kind": "ice",
+   "ores": [],
+   "hostiles": "Blood Raider Covenant",
+   "jumps_from": {
+    "Manifest": 4
+   }
+  },
+  {
+   "system": "Cairgnottin",
+   "sec": 0.6,
+   "jumps": 8,
+   "belts": 1,
+   "kind": "ice",
+   "ores": [],
+   "hostiles": "?"
+  },
+  {
+   "system": "Fortitude",
+   "sec": 1.0,
+   "jumps": 99,
+   "jumps_from": {
+    "Manifest": 1
+   },
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Celerity",
+   "sec": 1.0,
+   "jumps": 99,
+   "jumps_from": {
+    "Manifest": 1
+   },
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Rigor",
+   "sec": 1.0,
+   "jumps": 99,
+   "jumps_from": {
+    "Manifest": 1
+   },
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  },
+  {
+   "system": "Steadfast",
+   "sec": 1.0,
+   "jumps": 99,
+   "jumps_from": {
+    "Manifest": 1
+   },
+   "belts": 2,
+   "kind": "anomaly",
+   "ores": [
+    "Veldspar 0-Grade",
+    "Scordite 0-Grade",
+    "Pyroxeres 0-Grade"
+   ],
+   "hostiles": "unknown"
+  }
  ],
- "not_routed": ["Phased Fields (low/null only, Erratic Ore: not safe)", "Ice belts below 0.5 security (Hulmate 0.4, Aeschee 0.2, Palmon 0.4)"]
+ "not_routed": [
+  "Phased Fields (low/null only, Erratic Ore: not safe)",
+  "Ice belts below 0.5 security (Hulmate 0.4, Aeschee 0.2, Palmon 0.4)"
+ ],
+ "_manifest": "2026-10-13 from Manifest: Agency shows Yulai 1j, Ourapheh/Kemerk/Tourier 2j; ORE Managed anomalies Fortitude/Celerity/Rigor/Steadfast 1j (2 belts each, Veldspar/Scordite/Pyroxeres 0-Grade); ice Manatirid 4j, Hulmate 4j (0.4), Aeschee 5j (0.2), Agal 6j (0.5). jumps_from overrides jumps when your system matches."
 }
