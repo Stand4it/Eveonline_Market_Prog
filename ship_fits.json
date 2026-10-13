@@ -5,7 +5,13 @@
    "seen": "2026-10-13",
    "ship": "Venture - Stand4it Dahl (Venture)",
    "fitted": "mining lasers + salvager (16 fitted items per sync); modules visible in the browser list: 150mm Carbide x2 (S), Miner I",
-   "capacitor": {"total_gj": 287.0, "recharge": "1m 46s", "delta_gj_per_s": -2.2, "delta_pct": -33.1, "depletes_in": "1:10 min (unstable)"},
+   "capacitor": {
+    "total_gj": 287.0,
+    "recharge": "1m 46s",
+    "delta_gj_per_s": -2.2,
+    "delta_pct": -33.1,
+    "depletes_in": "1:10 min (unstable)"
+   },
    "offense_dps": 6.8,
    "defense_ehp": 915,
    "targeting_km": 16.5,
@@ -17,5 +23,26 @@
    "hull_value_isk": 893000,
    "verdict": "NOT a combat ship: 6.8 dps and 915 EHP cannot pass the 99% win rule against any real NPC; capacitor runs dry in 70 s with the current load (mining lasers drain 2.2 GJ/s): fine for mining in short cycles but check the cap before long runs."
   }
- ]
+ ],
+ "combat_goal": {
+  "status": "blocked: the Venture does 6.8 dps / 915 EHP (win chance far below 99%)",
+  "why": "combat opens several career goals and events and may eventually be the best ISK/hr when the safer options are used up; it needs a combat hull + a fit that wins above 99%",
+  "buy": [
+   {
+    "item": "Incursus",
+    "qty": 1,
+    "for": "Gallente frigate hull (Gallente Frigate skill is partly trained)"
+   },
+   {
+    "item": "Light Neutron Blaster I",
+    "qty": 3,
+    "for": "guns for the Incursus (check fit window for CPU/PG)"
+   },
+   {
+    "item": "Small Armor Repairer I",
+    "qty": 1,
+    "for": "tank"
+   }
+  ]
+ }
 }

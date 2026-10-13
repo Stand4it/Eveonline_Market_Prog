@@ -954,6 +954,12 @@ def next_action(con, g, p, full=False, ahead=False):
             steps.append(enabler_step(an_["enabler"], an_["base"]))
     except Exception:                                            # noqa: BLE001
         long_view = ""
+    try:                                                         # standing purchase goal: what to buy to make combat possible (plan view only)
+        from .combatgoal import format_goal
+        cg = format_goal(con)
+        long_view = (long_view + "\n\n" + cg) if (long_view and cg) else (long_view or cg)
+    except Exception:                                            # noqa: BLE001
+        pass
     if cands:
         steps.append(cands[0][2])
         trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
