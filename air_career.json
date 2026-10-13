@@ -11,7 +11,24 @@
   },
   "Industrialist": {
    "cp": 255,
-   "of": 750
+   "of": 750,
+   "bubbles": {
+    "Career Agents Missions": "7/10",
+    "Market": "4/5",
+    "Research": "0/4",
+    "Mining Agent": "0/5",
+    "Distribution Agent": "0/5",
+    "Salvage": "1/3",
+    "Resource Harvesting": "1/5",
+    "Manufacturing": "1/4",
+    "Refining": "0/5"
+   },
+   "graduation_reward": [
+    "100,000 Skill Points (Omega row)",
+    "100,000 Skill Points",
+    "Venture/Retriever/Procurer/Covetor Aspirant Industrialist SKINs"
+   ],
+   "note": "Seen 2026-10-13. 255 CP = 7 missions x10 = 70 + 185 from 7 other goals (4 Market,1 Salvage,1 Resource Harvesting,1 Manufacturing): ~26 CP each on average, so these goals pay MORE CP than missions: hover each to see. Market 4/5 means one more Market goal is probably cheap."
   },
   "Soldier of Fortune": {
    "cp": 65,
