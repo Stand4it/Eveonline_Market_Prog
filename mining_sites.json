@@ -199,5 +199,12 @@
   "Phased Fields (low/null only, Erratic Ore: not safe)",
   "Ice belts below 0.5 security (Hulmate 0.4, Aeschee 0.2, Palmon 0.4)"
  ],
- "_manifest": "2026-10-13 from Manifest: Agency shows Yulai 1j, Ourapheh/Kemerk/Tourier 2j; ORE Managed anomalies Fortitude/Celerity/Rigor/Steadfast 1j (2 belts each, Veldspar/Scordite/Pyroxeres 0-Grade); ice Manatirid 4j, Hulmate 4j (0.4), Aeschee 5j (0.2), Agal 6j (0.5). jumps_from overrides jumps when your system matches."
+ "_manifest": "2026-10-13 from Manifest: Agency shows Yulai 1j, Ourapheh/Kemerk/Tourier 2j; ORE Managed anomalies Fortitude/Celerity/Rigor/Steadfast 1j (2 belts each, Veldspar/Scordite/Pyroxeres 0-Grade); ice Manatirid 4j, Hulmate 4j (0.4), Aeschee 5j (0.2), Agal 6j (0.5). jumps_from overrides jumps when your system matches.",
+ "planetary_industry_seen_2026-10-13": {
+  "Manifest": "current system, 1.0, 11 planets: I Barren, II Plasma, III Lava, IV Gas, V Temperate ...; Manifest I resources: Carbon Compounds, Microorganisms, Base Metals, Aqueous Liquids, Noble Metals; 'Buy command center' button",
+  "Yulai": "0.9, 1 jump, 11 planets",
+  "Fortitude": "1.0, 1 jump, 9 planets",
+  "Celerity": "1.0, 1 jump, 8 planets",
+  "Rigor": "1.0, 1 jump"
+ }
 }
