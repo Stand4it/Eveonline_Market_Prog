@@ -205,3 +205,4 @@
 - 2026-10-13: model-building TEST turns skip catalog entries whose 'how' starts with 'Later' (not doable yet, e.g. other epic arcs before the current one is finished).
 - 2026-10-13: Explorer bubbles recorded (60 CP from 5 goals; Career Agent Missions 2/5).
 - 2026-10-13: SoF Combat goals: kill 75 enemies with a Frigate 14/75, Cruiser 0/75, Destroyer 0/75 (kills count by ship class used; Venture is a mining frigate: check it counts).
+- 2026-10-13: Wallet screenshot confirms: Daily Goal Reward 445,000 ISK paid 10-11 11:37 and 10-12 01:18 (once per UTC day); AIR Career Program rewards 25,000 / 50,000 / 62,500 ISK; sales tax 36,601 on 488,024 = 7.5% (Accounting 0 as modeled); wallet 9,285,533 = tool's number.
