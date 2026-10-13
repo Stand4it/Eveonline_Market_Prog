@@ -203,3 +203,4 @@
 - 2026-10-13: 'stop' now runs 'done' first for screen/social/agent/job steps (one command fewer); the step's command list no longer has a separate done line (done still works alone, e.g. without a timer).
 - 2026-10-13: Enforcer bubbles recorded (Standings 4/4, Market 3/4 = 125 CP; Career Agent Missions 0/10 = 100 CP still open).
 - 2026-10-13: model-building TEST turns skip catalog entries whose 'how' starts with 'Later' (not doable yet, e.g. other epic arcs before the current one is finished).
+- 2026-10-13: Explorer bubbles recorded (60 CP from 5 goals; Career Agent Missions 2/5).
