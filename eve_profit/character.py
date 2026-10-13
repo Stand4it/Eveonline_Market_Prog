@@ -129,7 +129,13 @@ def sync_character(con, esi, cid, profile):
     loc = esi.get(f"/characters/{cid}/location/")[0]
     ship = esi.get(f"/characters/{cid}/ship/")[0]
     wallet = esi.get(f"/characters/{cid}/wallet/")[0]
-    skills = esi.get(f"/characters/{cid}/skills/")[0]["skills"]
+    sk_all = esi.get(f"/characters/{cid}/skills/")[0]
+    skills = sk_all["skills"]
+    try:                                         # total and unallocated skill points (unallocated can be spent instantly in the Skills window)
+        con.execute("INSERT OR REPLACE INTO meta VALUES('sp_total', ?)", (str(sk_all.get("total_sp", 0)),))
+        con.execute("INSERT OR REPLACE INTO meta VALUES('sp_unallocated', ?)", (str(sk_all.get("unallocated_sp", 0)),))
+    except Exception:                            # noqa: BLE001
+        pass
     row = con.execute("SELECT name FROM systems WHERE system_id=?",
                       (loc["solar_system_id"],)).fetchone()
     if row:
