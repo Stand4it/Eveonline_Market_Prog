@@ -209,3 +209,4 @@
 - 2026-10-13: Skills screenshot: 797,096 total SP, 170,352 UNALLOCATED SP (not used anywhere yet), queue 6 skills 32d16h50m (Broker Relations IV/V, Retail IV/V, Light Drone Op V, Contracting V), tracked plan 'AIR Industrialist - Entrepreneur' 22h43m. sync now stores sp_total / sp_unallocated in meta.
 - 2026-10-13: 'Apply Skill Points' window (Skills > Training Queue > +) recorded; one-time screen step spend_unallocated_sp added (show the window before Confirm; untick non-ISK skills).
 - 2026-10-13: User applied the 170,352 unallocated SP (Broker Relations IV, Retail IV done; Broker V ~11%); removed Contracting V and Light Drone Op V from the queue. Queue now: Broker Relations V (8d20h), Retail V (9d23h) = 18d18h. Idea: add Gallente Frigate (1d17h) and Gallente Hauler to the queue front.
+- 2026-10-13: Industry is not an icon on the user's left Neocom bar: path now 'main menu (hamburger) > Business > Industry or Alt+S'.
