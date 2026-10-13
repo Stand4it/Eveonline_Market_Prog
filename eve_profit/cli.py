@@ -250,9 +250,17 @@ def _run(a):
             from .esi import ESI
             esi = ESI()
             esi.token, cid = sso.get_token(a.client_id)
-            print(sync_character(con, esi, cid, p))
+            res_ = sync_character(con, esi, cid, p)
+            print(res_)
             p.save(a.profile)
             print("Profile updated:", a.profile)
+            try:
+                from .walletdiff import report as _wd
+                _w = _wd(con, esi, cid, res_.get("wallet", 0) if isinstance(res_, dict) else 0)
+                if _w:
+                    print(_w)
+            except Exception:                                              # noqa: BLE001
+                pass
     elif a.cmd == "go":
         from .autopilot import route_alerts, send_route
         from .graph import Graph
