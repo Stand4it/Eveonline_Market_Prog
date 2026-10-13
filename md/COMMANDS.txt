@@ -256,4 +256,7 @@ JOBS  -  Freelance Jobs near you (ISK per unit, method, jumps) from the download
 FITSTOCK  -  modules, charges, drones and ships you own with slot and fighting numbers (to improve a fit)
    example: python -m eve_profit fitstock
 
+STOPSYNC  -  stop the timer, then sync with the game (both, in the right order)
+   example: python -m eve_profit stopsync
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
