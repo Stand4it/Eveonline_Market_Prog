@@ -41,6 +41,14 @@ def regions_near(con, p):
     return sorted({g.region[s] for s in reach})
 
 
+import builtins as _builtins
+
+
+def print(*args, sep=" ", **kw):                                          # noqa: A001  every printed date and clock time gets the yellow hue (only on a color terminal)
+    from .style import dates
+    _builtins.print(dates(sep.join(str(a) for a in args)), **kw)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
     ap.add_argument("cmd", choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock"])

@@ -74,7 +74,6 @@ def _detour_step(con, g, p, where, sells, d, b):
     others = [x for x in sells[1:6]]
     if others:
         L.append(f"   also sell here in {where}: " + "; ".join(f"{x['sold']:,} x {x['name']} (~{x['net']:,.0f})" for x in others))
-    L.append("   bonus: counts toward 'Crimson Harvest: Items traded' (0/150)")
     L.append(AFTER)
     return "\n".join(L)
 

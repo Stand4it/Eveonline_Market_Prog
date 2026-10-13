@@ -106,7 +106,8 @@
    "progress": 0,
    "reward_isk": 0,
    "reward_guess": true,
-   "note": "Trading 150 items counts. Safe: do it with normal market trades."
+   "safe": false,
+   "note": "CORRECTED 2026-10-13 from the challenge text: 'Receive 150 items from Item Traders' (250 pts) at NPC Item Trader sites in Blood Raider (KFIE-Z, Anila, Sosala, Ahtila), Order of Tetrimon (Ibani, Kamela, Sakenta, Shera) and Triglavian (Raravoss, Vale, Otela, Gammel) systems; extra items do not count for other challenges. NOT normal market sales; locations/security not checked, so not routed."
   },
   {
    "name": "Crimson Harvest: Tetrimon/Pochven kills, node hacks, Criterion of Fitness",

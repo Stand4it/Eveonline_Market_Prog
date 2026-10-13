@@ -8,12 +8,6 @@
    "why": "you have 170,352 unallocated skill points: spending them on Broker Relations / Retail saves days of training that raise ISK/hr"
   },
   {
-   "id": "crimson_challenges_rest",
-   "where": "the Agency (Neocom) > Encounters > Crimson Harvest, scroll the ACTIVE CHALLENGES list down",
-   "show": "the other 4 of the 7 active challenges (points and progress for each)",
-   "why": "one challenge is 'Items traded 150' (market, safe): the safe ones can earn the first reward tiers (SKIN at 50, booster at 90 points) without combat"
-  },
-  {
    "id": "crimson_harvest",
    "where": "the Agency (Neocom) > Encounters > Crimson Harvest",
    "show": "the whole window: challenges, points needed, rewards and how long the event runs",

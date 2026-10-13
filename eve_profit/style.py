@@ -96,3 +96,13 @@ def task_block(text):
         else:
             out.append(ln)
     return "\n".join(out)
+
+
+_DATE = re.compile(r"\b\d{4}[-.]\d{2}[-.]\d{2}(?:[ T]\d{1,2}:\d{2}(?::\d{2})?)?\b|\b\d{1,2}:\d{2}(?::\d{2})?\b")
+
+
+def dates(text):
+    """Every date and clock time in the text in the same yellow-on-black as the task lines (lines that already carry color are left alone)."""
+    if not enabled() or "\x1b" in text:
+        return text
+    return "\n".join(_DATE.sub(lambda m: hue(m.group(0)), ln) for ln in text.split("\n"))
