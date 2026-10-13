@@ -78,7 +78,7 @@
   },
   {
    "id": "industry_window",
-   "where": "the Neocom main menu (the three-line button at the top of the left bar) > Business > Industry (or press Alt+S), Jobs tab",
+   "where": "the Neocom main menu (the three-line button at the top of the left bar) > Industry, then the Jobs tab",
    "show": "running jobs and free slots",
    "why": "build time and slots for make-or-buy and the daily goal 'Manufacture an Item'"
   },
