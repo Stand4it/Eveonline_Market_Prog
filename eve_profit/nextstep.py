@@ -638,7 +638,9 @@ def finish_block(step):
     out.append(f"   {n}. DO THIS:")
     out += body
     n += 1
-    stop_txt = "Stop the timer (also marks the step done):  python -m eve_profit stop" if needs_done else "Stop the timer:  python -m eve_profit stop"
+    is_sell = step.lstrip().upper().startswith("STEP: SELL NOW")
+    stop_txt = ("Stop the timer (also marks the step done):  python -m eve_profit stop" if needs_done else
+                "Stop the timer (also takes the sold items out of your stock):  python -m eve_profit stop" if is_sell else "Stop the timer:  python -m eve_profit stop")
     out += [f"   {n}. {stop_txt}   (agent missions: wait 2 minutes first)",
             f"   {n + 1}. Update from the game:  python -m eve_profit sync",
             f"   {n + 2}. Next step:  python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"]
