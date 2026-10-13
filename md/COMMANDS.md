@@ -256,5 +256,8 @@ GRABS  -  run the programmatic data grabs that are due (--all forces them)
 JOBS  -  Freelance Jobs near you (ISK per unit, method, jumps) from the downloaded list
    example: python -m eve_profit jobs
 
+FITSTOCK  -  modules, charges, drones and ships you own with slot and fighting numbers (to improve a fit)
+   example: python -m eve_profit fitstock
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.
 ```
