@@ -1,0 +1,21 @@
+{
+ "_help": "Ship fits read from the in-game Fitting window (screenshots), for the combat-win-chance and mining models. Add one entry per ship/fit. Stats are the game's own simulate numbers.",
+ "fits": [
+  {
+   "seen": "2026-10-13",
+   "ship": "Venture - Stand4it Dahl (Venture)",
+   "fitted": "mining lasers + salvager (16 fitted items per sync); modules visible in the browser list: 150mm Carbide x2 (S), Miner I",
+   "capacitor": {"total_gj": 287.0, "recharge": "1m 46s", "delta_gj_per_s": -2.2, "delta_pct": -33.1, "depletes_in": "1:10 min (unstable)"},
+   "offense_dps": 6.8,
+   "defense_ehp": 915,
+   "targeting_km": 16.5,
+   "speed_ms": 415.1,
+   "drones_dps": 0.0,
+   "cpu": "205.8/288.0",
+   "powergrid": "36.0/54.0",
+   "cargo_m3": "45.4/50.0 (second bay 0/10.0)",
+   "hull_value_isk": 893000,
+   "verdict": "NOT a combat ship: 6.8 dps and 915 EHP cannot pass the 99% win rule against any real NPC; capacitor runs dry in 70 s with the current load (mining lasers drain 2.2 GJ/s): fine for mining in short cycles but check the cap before long runs."
+  }
+ ]
+}
