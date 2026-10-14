@@ -213,6 +213,9 @@ def sync_character(con, esi, cid, profile):
             if flag.endswith(("Slot0", "Slot1", "Slot2", "Slot3", "Slot4", "Slot5", "Slot6", "Slot7")) or flag in ("DroneBay", "Cargo"):
                 con.execute("INSERT INTO fitted VALUES(?,?,?)", (a["type_id"], flag, a.get("quantity", 1)))
                 fit_n += 1
+            if flag == "Cargo" and loc.get("solar_system_id"):       # hauled goods are stock in the system you are in (ESI may show them up to an hour late)
+                con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) DO UPDATE SET quantity=quantity+excluded.quantity",
+                            (a["type_id"], loc["solar_system_id"], a.get("quantity", 1)))
             continue
         if lid not in known and lookups < 200 and (lt == "station" or (lt == "other" and lid >= 10**12)):
             lookups += 1                       # station/structure not in our data: ask ESI once

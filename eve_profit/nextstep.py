@@ -945,6 +945,8 @@ def next_action(con, g, p, full=False, ahead=False):
                                         + "   Unmodeled: 3 timed runs turn the guess into your own number.")
                 except Exception:                                # noqa: BLE001
                     step_txt = None
+            if step_txt and step_txt.lstrip().startswith("STEP: FLY to"):          # a test that only sends you travelling for a guessed gain is not offered
+                step_txt = None
             if step_txt is None:
                 act = None
         if act:
