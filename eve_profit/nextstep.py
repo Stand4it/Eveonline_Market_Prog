@@ -936,7 +936,7 @@ def next_action(con, g, p, full=False, ahead=False):
                                            "First confirm the price in the game (Market > the item > Details: the buy orders at the far station) or on the website. "
                                            "If it still pays: take the stock into your ship, run  python -m eve_profit go --pick 1 --send  (sets the route), fly there and sell to the highest buy order. "
                                            "(`check` only works on buy-and-sell trades, not on selling stock you already own.)\n")
-                                        "   Unmodeled: 3 timed runs turn the guess into your own number.")
+                                        + "   Unmodeled: 3 timed runs turn the guess into your own number.")
                 except Exception:                                # noqa: BLE001
                     step_txt = None
             if step_txt is None:
