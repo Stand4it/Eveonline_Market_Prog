@@ -158,10 +158,12 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         listed = set()
     keep = keep_names(con)
     held_gear = {}
+    on_market = []
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
         if tid in listed:
+            on_market.append(name.get(tid, tid))
             continue
         if str(name.get(tid, "")).lower() in keep:
             held_gear[str(name.get(tid, "")).lower()] = (tid, qty)
@@ -239,7 +241,7 @@ def plan_along(con, g, p, dest_name, slots_override=None):
                       "level": "DANGER" if g.is_hot(s) else ("CAUTION" if (g.is_yellow(s) or ships or gk) else "ok")})
     upgrades = gear_upgrades(con, g, p, held_gear, keep_rules(con))
     return {"upgrades": upgrades, "watch": watch, "dock_known": bool(dock), "empty": n_here == 0, "here_name": p.current_system, "path": [g.name[s] for s in path], "sell_here": sorted(here, key=lambda d: -d["net"]),
-            "slots": slots, "losses": losses, "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
+            "slots": slots, "losses": losses, "on_market": on_market, "kept_gear": sorted(held_gear), "carry": load, "used_m3": p.cargo_m3 - room, "jumps": route.jumps}
 
 
 def _watch_lines(watch):

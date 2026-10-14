@@ -110,6 +110,16 @@ def _next_action_core(con, g, p):
                     sells.remove(d)
         except Exception:                                        # noqa: BLE001
             pass
+    try:                                                         # stacks in this station that are skipped for other reasons: say why (plan view)
+        for l in res.get("losses", []):
+            keep_lines.append(f"   keep {l['qty']:,} x {l['name']}: the best price here ({l['best_here']:,.0f}) is BELOW what you paid ({l['cost']:,.0f})"
+                              + (f"; {l['alt_name']} pays {l['alt'][0]:,.0f} ({l['alt_jumps']} jumps)" if l.get("alt") else ""))
+        for n in res.get("on_market", []):
+            keep_lines.append(f"   keep {n}: you already have a sell order for it on the market")
+        for n in res.get("kept_gear", []):
+            keep_lines.append(f"   keep {n}: on your keep list (gear you will use)")
+    except Exception:                                            # noqa: BLE001
+        pass
     KEEP_NOTES.extend(keep_lines)
     if sells:
         total = sum(d["net"] for d in sells)

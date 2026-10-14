@@ -258,3 +258,4 @@
 - 2026-10-14: stop on 'Show a screen/social/agent/job' steps no longer runs mark_bought (stale daily-goals chain at home printed 'shopping marked as bought' and left the screen step undone, so it repeated). chain_done(bought_ok=False) from the stop hook.
 - 2026-10-14: all printed clock times (and date+time) are shown in 12-hour am/pm (style.dates, applied by the print wrapper to every command); elapsed counters like '5:30 elapsed' stay as they are.
 - 2026-10-14: stock held back from SELL NOW (HOLD list or far market pays 2x+) was silently dropped, so the step moved on with no explanation; now listed in 'next --plan' under STOCK HERE I AM NOT SELLING.
+- 2026-10-14: 'next --plan' STOCK HERE I AM NOT SELLING now also lists stacks skipped because the price is below what you paid, you already have a sell order, or they are on the keep list (the 6 cannons were skipped silently for one of these reasons).
