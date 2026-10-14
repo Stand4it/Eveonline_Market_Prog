@@ -98,11 +98,34 @@ def task_block(text):
     return "\n".join(out)
 
 
-_DATE = re.compile(r"\b\d{4}[-.]\d{2}[-.]\d{2}(?:[ T]\d{1,2}:\d{2}(?::\d{2})?)?\b|\b\d{1,2}:\d{2}(?::\d{2})?\b")
+_DATE = re.compile(r"\b(\d{4}[-.]\d{2}[-.]\d{2})(?:([ T])(\d{1,2}):(\d{2})(?::(\d{2}))?)?\b|(?<![\d:.])(\d{1,2}):(\d{2})(?::(\d{2}))?(?![\d:])(?! elapsed)")
+
+
+def _ampm(h, m, sec):
+    h = int(h)
+    if h > 23:
+        return None
+    suffix = "AM" if h < 12 else "PM"
+    return f"{h % 12 or 12}:{m}" + (f":{sec}" if sec else "") + f" {suffix}"
+
+
+def _fmt(m):
+    """One date and/or clock time -> same date, clock in 12-hour am/pm."""
+    if m.group(1):
+        if m.group(3) is None:
+            return m.group(1)
+        t = _ampm(m.group(3), m.group(4), m.group(5))
+        return m.group(0) if t is None else f"{m.group(1)} {t}"
+    t = _ampm(m.group(6), m.group(7), m.group(8))
+    return m.group(0) if t is None else t
 
 
 def dates(text):
-    """Every date and clock time in the text in the same yellow-on-black as the task lines (lines that already carry color are left alone)."""
-    if not enabled() or "\x1b" in text:
-        return text
-    return "\n".join(_DATE.sub(lambda m: hue(m.group(0)), ln) for ln in text.split("\n"))
+    """Every date and clock time in the text in 12-hour am/pm and in the same yellow-on-black as the task lines (lines that already carry color keep their color)."""
+    on = enabled()
+    out = []
+    for ln in text.split("\n"):
+        colored = "\x1b" in ln
+        ln = _DATE.sub(lambda m: (lambda t: hue(t) if on and not colored else t)(_fmt(m)), ln)
+        out.append(ln)
+    return "\n".join(out)

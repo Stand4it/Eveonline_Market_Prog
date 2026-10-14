@@ -256,3 +256,4 @@
 - 2026-10-14: Emps Metyt offer (Augumene Allergen) expired unanswered (agent mail); marked available:false in agent_offers.json. Lesson: accept or decline an offer rather than leaving it open.
 - 2026-10-14: AIR screen: Enforcer 175 (+50), Explorer 60, Industrialist 255, Soldier of Fortune 65 = 555/3000 CP overall (was 505).
 - 2026-10-14: stop on 'Show a screen/social/agent/job' steps no longer runs mark_bought (stale daily-goals chain at home printed 'shopping marked as bought' and left the screen step undone, so it repeated). chain_done(bought_ok=False) from the stop hook.
+- 2026-10-14: all printed clock times (and date+time) are shown in 12-hour am/pm (style.dates, applied by the print wrapper to every command); elapsed counters like '5:30 elapsed' stay as they are.
