@@ -373,3 +373,15 @@ class AgentChainTests(unittest.TestCase):
         agentchain.mark_shown(con, t)
         self.assertIn("accepted", agentchain.done(con))
         self.assertEqual(agentchain._load(con)["stage"], "go")
+
+
+class HopOnlyAgentLineTests(unittest.TestCase):
+    def test_agent_lines_for_other_systems_are_dropped_from_the_one_step(self):
+        from eve_profit.haul import hop_only
+        txt = ("STEP: FLY to Meves - jump 1 of 2, hauling your stock to Lirsautton\n   6 x Thing\n"
+               "      AGENT at Lirsautton: Wemire (rd, level 1): look at the offer when you stop there\n"
+               "      AGENTS at Lirsautton: 4 level-1 - open their windows\n"
+               "      AGENT at Dodixie: Someone (security, level 1): look at the offer\n")
+        out = hop_only(txt, "Dodixie")
+        self.assertNotIn("Lirsautton", out.split("\n", 1)[1])
+        self.assertIn("AGENT at Dodixie", out)

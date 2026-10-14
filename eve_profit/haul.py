@@ -254,6 +254,9 @@ def hop_only(text, here=None):
             m = re.search(r"(?:buy .*? at|sell .*? at|need anyway: .*? at) (.+?)(?: \(| on the route|$)", ln)
             if m and m.group(1).strip().lower() != here.lower():
                 continue
+        am = re.match(r"^\s*AGENTS? at (.+?):", ln)
+        if am and (not here or am.group(1).strip().lower() != str(here).lower()):          # agents in a system you are NOT in belong to `next --plan`, not to this step
+            continue
         if ln.startswith("STEP: FLY to"):
             ln = re.sub(r", hauling your stock to .*$", "", ln)
             ln = re.sub(r" - jump \d+ of \d+", "", ln)

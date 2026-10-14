@@ -243,3 +243,4 @@
 - 2026-10-14: BUG: the 'Test Station / hub trading' step told the user to run 'check --pick 1' for a stock-sale opportunity but check only handles buy-and-sell trades ('check works on a ranked trade'). Step text now gives the right instructions for stock sales (confirm price in game/website, go --pick 1 --send, fly, sell).
 - 2026-10-14: fixed a syntax error I pushed in nextstep.py (missing +) one commit earlier; RULE for me: gate commit/push on the test run (&&), never on a pipe to tail.
 - 2026-10-14: stopsync no longer aborts when no timer is running: it prints '(stop skipped: ...)' and still syncs.
+- 2026-10-14: hop_only drops 'AGENT(S) at <system>' lines for systems you are NOT in (they belong to next --plan, not the one step). The shell/disk-full session crash lost an unpushed 'liquidate_step' edit; not needed: the haul chain now produces 'FLY to Meves' with the stock by itself. agent_offers.json last_checked updated.

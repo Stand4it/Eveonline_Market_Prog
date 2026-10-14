@@ -561,5 +561,5 @@
  ],
  "min_per_jump": 3.0,
  "note_accept": "Missions cannot be accepted remotely: go to the agent's station first (agent_system). jumps = distance agent -> mission target.",
- "last_checked": "2026-10-10: all six open missions re-screenshotted; no new rewards except Arnelin step 10 (still cut off)"
+ "last_checked": "2026-10-14: station agent list screenshot: Arabeton, Arnelin, Beradaillot, Ormelace, Rounaminck (Rotonos 1.0, 7 jumps) and Cassandra (Manifest 1.0, 4 jumps) all show Offered; no new reward details"
 }
