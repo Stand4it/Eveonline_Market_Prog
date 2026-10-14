@@ -45,3 +45,12 @@ class RestoreTests(unittest.TestCase):
         self.assertIn("back", iv.restore(c, "entropic"))
         self.assertEqual(c.execute("SELECT quantity FROM inventory WHERE type_id=1").fetchone()[0], 33333)
         self.assertEqual(c.execute("SELECT COUNT(*) FROM inventory WHERE type_id=2").fetchone()[0], 0)
+
+
+class HoldTests(unittest.TestCase):
+    def test_hold_add_release(self):
+        c = db()
+        iv.hold_add(c, "Entropic Rose Metallic - Limited")
+        self.assertIn("entropic rose metallic - limited", iv.hold_names(c))
+        iv.hold_release(c, "entropic rose")
+        self.assertEqual(iv.hold_names(c), set())

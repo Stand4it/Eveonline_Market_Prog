@@ -94,4 +94,25 @@ def restore(con, name):
     p["items"] = keep
     _put(con, "pending_sold", p)
     con.commit()
-    return f"OK, {q:,} x {nm} is back in your stock."
+    hold_add(con, nm)                                                   # you kept it for a better price: do not offer it as a sale again
+    return f"OK, {q:,} x {nm} is back in your stock and on your HOLD list (`next` will not offer to sell it; release with  done --goal \"release {nm}\")."
+
+
+def hold_names(con):
+    """Items you decided to HOLD for a better market (never offered as 'SELL NOW'): lower-case names."""
+    return set(_get(con, "hold_items") or [])
+
+
+def hold_add(con, name):
+    names = hold_names(con)
+    names.add(name.strip().lower())
+    _put(con, "hold_items", sorted(names))
+    con.commit()
+    return f"OK, '{name.strip()}' is on your HOLD list: `next` will not offer it as a sale (release it with  done --goal \"release {name.strip()}\")."
+
+
+def hold_release(con, name):
+    names = {n for n in hold_names(con) if name.strip().lower() not in n}
+    _put(con, "hold_items", sorted(names))
+    con.commit()
+    return f"OK, '{name.strip()}' is no longer on your HOLD list."

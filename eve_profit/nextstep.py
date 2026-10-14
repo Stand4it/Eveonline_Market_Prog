@@ -85,6 +85,14 @@ def _next_action_core(con, g, p):
     docked = "" if p.current_location_id else f"(undocked? dock at a {where} station first)\n"
     sells = [d for d in here if d["advice"] != "LIST" and d["net"] >= 50_000]
     better, keep_lines = {}, []
+    try:                                                         # items you chose to hold for a better market are never offered for sale
+        from .invoverlay import hold_names
+        _hold = hold_names(con)
+        for d in [x for x in sells if x["name"].lower() in _hold]:
+            keep_lines.append(f"   keep {d['sold']:,} x {d['name']}: on your HOLD list (better price elsewhere; release: done --goal \"release {d['name']}\")")
+            sells.remove(d)
+    except Exception:                                            # noqa: BLE001
+        pass
     if sells:
         better = _better_places(con, g, p)
         try:                                                     # light stacks that pay several times more far away: keep them, do not dump them here

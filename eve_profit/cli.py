@@ -647,6 +647,12 @@ def _run(a):
         if a.goal.lower().startswith("seen "):
             from .screens import mark_seen
             print(mark_seen(con, a.goal[5:].strip()))
+        elif a.goal.lower().startswith("hold "):
+            from .invoverlay import hold_add
+            print(hold_add(con, a.goal[5:]))
+        elif a.goal.lower().startswith("release "):
+            from .invoverlay import hold_release
+            print(hold_release(con, a.goal[8:]))
         elif a.goal.lower().startswith("kept "):
             from .invoverlay import restore
             print(restore(con, a.goal[5:]))
