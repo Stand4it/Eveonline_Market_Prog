@@ -54,3 +54,11 @@ class HoldTests(unittest.TestCase):
         self.assertIn("entropic rose metallic - limited", iv.hold_names(c))
         iv.hold_release(c, "entropic rose")
         self.assertEqual(iv.hold_names(c), set())
+
+
+class HoldMatchTests(unittest.TestCase):
+    def test_partial_name_matches_the_full_item_name(self):
+        c = db()
+        iv.hold_add(c, "Entropic Rose")
+        holds = iv.hold_names(c)
+        self.assertTrue(any(h in "Entropic Rose Metallic - Limited".lower() for h in holds))

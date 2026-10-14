@@ -88,7 +88,7 @@ def _next_action_core(con, g, p):
     try:                                                         # items you chose to hold for a better market are never offered for sale
         from .invoverlay import hold_names
         _hold = hold_names(con)
-        for d in [x for x in sells if x["name"].lower() in _hold]:
+        for d in [x for x in sells if any(h and h in x["name"].lower() for h in _hold)]:        # the part of the name you typed is enough
             keep_lines.append(f"   keep {d['sold']:,} x {d['name']}: on your HOLD list (better price elsewhere; release: done --goal \"release {d['name']}\")")
             sells.remove(d)
     except Exception:                                            # noqa: BLE001
