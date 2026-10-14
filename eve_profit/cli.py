@@ -346,7 +346,7 @@ def _run(a):
                         print(_mb)
                 if act.startswith(("show a screen", "air social goal", "agent ", "job ")):         # these steps end with `done`: stop does it first
                     from .dailygoals import chain_done
-                    print(chain_done(con, True if a.changed else (False if a.same else None)))
+                    print(chain_done(con, True if a.changed else (False if a.same else None), bought_ok=False))
             except Exception:                                                   # noqa: BLE001
                 pass
             try:

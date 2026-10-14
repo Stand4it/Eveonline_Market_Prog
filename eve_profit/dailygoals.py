@@ -336,10 +336,10 @@ def chain_clear(con):
         pass
 
 
-def chain_done(con, changed=None):
+def chain_done(con, changed=None, bought_ok=True):
     """`done`: mark the current optional step (the epic arc at the far system) as finished or skipped. -> message."""
     try:
-        mb = mark_bought(con)                                           # at the chain's home with the shopping not yet seen: `done` = "I bought it"
+        mb = mark_bought(con) if bought_ok else ""                      # at the chain's home with the shopping not yet seen: `done` = "I bought it"
         if mb:
             return mb
     except Exception:                                                   # noqa: BLE001
