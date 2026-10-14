@@ -61,12 +61,13 @@ def candidate(con, g, p):
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
     items = [f"      {q:>9,} x {n:<32} ~{net:>11,.0f} at {dest}" for n, q, net, local in st["items"][:6]]
+    if here != dest and st.get("arrived"):                              # you were at the destination and have left: the haul is over (no trip back)
+        clear(con)
+        return None
     if here == dest:
-        if st.get("arrived"):                                           # the sell step was shown once already: the haul is over
-            clear(con)
-            return None
-        st["arrived"] = True
-        save(con, st)
+        if not st.get("arrived"):
+            st["arrived"] = True
+            save(con, st)                                               # the sell step stays until you stop its timer (or `done --goal sold`)
         text = "\n".join([f"STEP: SELL YOUR HAULED STOCK in {dest} - about {st['net']:,.0f} ISK", "   DO ONLY THIS: dock and sell to the HIGHEST buy orders (Market > item > Sell):"] + items
                          + ["   After this `next` chooses the best step from here: there is no planned trip back."])
         return 1e12, text                                               # you are there with the goods: finishing the sale comes first

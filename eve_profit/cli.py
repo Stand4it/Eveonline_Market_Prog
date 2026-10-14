@@ -331,6 +331,9 @@ def _run(a):
                 loot = value_loot(con, Graph(con), p, gains(before, snapshot(con)))
             try:
                 act = (_json.loads(row[0]).get("activity", "") if row else "").lower()
+                if "hauled stock" in act or act.startswith("sell your hauled"):
+                    from .haulchain import clear as _hclear
+                    _hclear(con)                                           # the hauled stock was sold: the haul is over
                 if act.startswith("market sell stock"):
                     from .invoverlay import confirm_sold
                     _cs = confirm_sold(con)
@@ -671,7 +674,9 @@ def _run(a):
             print(restore(con, a.goal[5:]))
         elif a.goal.lower() == "sold":
             from .invoverlay import confirm_sold
-            print(confirm_sold(con) or "No sell step is waiting to be confirmed (run  next  to show it, then sell, then  stop  or  done --goal sold).")
+            from .haulchain import clear as _hclear2
+            _hclear2(con)
+            print(confirm_sold(con) or "OK, the hauled stock is marked as sold. (No other sell step is waiting to be confirmed (run  next  to show it, then sell, then  stop  or  done --goal sold).")
         elif a.goal.lower().startswith("job "):
             from .mining import accept_job
             print(accept_job(a.goal[4:].strip(), con))

@@ -1428,7 +1428,8 @@ class HaulChainTests(unittest.TestCase):
         self.assertIn("SELL YOUR HAULED STOCK", text3)
         self.assertIn("no planned trip back", text3)
         self.assertGreater(rate3, 1e9)
-        self.assertIsNone(candidate(con, g, mk(far)))                              # the next call: the haul is over, the best step is chosen fresh
+        self.assertIn("SELL YOUR HAULED STOCK", candidate(con, g, mk(far))[1])      # still at the destination: the sell step stays until you stop its timer
+        self.assertIsNone(candidate(con, g, mk(mid)))                              # you left the destination: the haul is over, the best step is chosen fresh
         self.assertIsNone(load(con))
 
     def test_haul_minutes_are_one_way_for_a_single_load(self):
