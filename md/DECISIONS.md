@@ -245,3 +245,4 @@
 - 2026-10-14: stopsync no longer aborts when no timer is running: it prints '(stop skipped: ...)' and still syncs.
 - 2026-10-14: hop_only drops 'AGENT(S) at <system>' lines for systems you are NOT in (they belong to next --plan, not the one step). The shell/disk-full session crash lost an unpushed 'liquidate_step' edit; not needed: the haul chain now produces 'FLY to Meves' with the stock by itself. agent_offers.json last_checked updated.
 - 2026-10-14: 'syncstop' is an alias of 'stopsync' (the user typed it the other way round); it still stops first, then syncs.
+- 2026-10-14: BUG: at Lirsautton (the sell destination of a haul) 'next' showed a model-building TEST 'FLY to Meves' (prior 1,000,000,000,000 ISK/hr from a ~0-minute candidate) instead of the SELL step, and the user flew back. Fixes: a haul under way (haul_chain) is never interrupted by a test turn; the best-known rate used for tests is capped at 5M ISK/hr.

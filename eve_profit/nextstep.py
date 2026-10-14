@@ -911,8 +911,14 @@ def next_action(con, g, p, full=False, ahead=False):
         counter = int(meta.get("start_count", 0))                # counts timers you START, not times you look at `next`
         last_exp = int(meta.get("last_exp", 0))
         seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
-        best_known = max((c[0] for c in cands), default=0.0)
+        best_known = min(max((c[0] for c in cands), default=0.0), 5_000_000.0)      # a near-zero-minute step gives absurd ISK/hr: cap it
         act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen, here=p.current_system, covered=__import__('eve_profit.catalog', fromlist=['x']).covered_by_offers())
+        try:                                                     # a haul under way (cargo to deliver / sell) is never interrupted by a model-building test
+            from .haulchain import load as _hload
+            if _hload(con):
+                act, reason = None, ""
+        except Exception:                                        # noqa: BLE001
+            pass
         if "seen_unlocked" not in meta:                          # first ever call: just remember what is already unlocked
             con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
         if act:
