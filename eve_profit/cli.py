@@ -112,7 +112,12 @@ def main(argv=None):
     if a.cmd == "stopsync":                                               # `stop` then `sync`, in that order (steps that need both)
         raw = list(sys.argv[1:] if argv is None else argv)
         for cmd in ("stop", "sync"):
-            main([cmd if x.lower() == "stopsync" else x for x in raw])
+            try:
+                main([cmd if x.lower() == "stopsync" else x for x in raw])
+            except SystemExit as e:                                         # no timer running: say so, but still sync
+                if cmd != "stop":
+                    raise
+                print(f"(stop skipped: {e})" if e.code not in (0, None) else "")
         return
     a.client_id = resolve_client_id(a.client_id)
     if a.cmd not in ("init", "mock", "docs", "login", "chars", "esiroutes"):

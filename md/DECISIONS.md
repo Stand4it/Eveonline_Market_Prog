@@ -242,3 +242,4 @@
 - 2026-10-14: BUG fixed: HOLD matched only the exact full item name, so 'hold Entropic Rose' did nothing; now the typed part of the name is enough (substring).
 - 2026-10-14: BUG: the 'Test Station / hub trading' step told the user to run 'check --pick 1' for a stock-sale opportunity but check only handles buy-and-sell trades ('check works on a ranked trade'). Step text now gives the right instructions for stock sales (confirm price in game/website, go --pick 1 --send, fly, sell).
 - 2026-10-14: fixed a syntax error I pushed in nextstep.py (missing +) one commit earlier; RULE for me: gate commit/push on the test run (&&), never on a pipe to tail.
+- 2026-10-14: stopsync no longer aborts when no timer is running: it prints '(stop skipped: ...)' and still syncs.
