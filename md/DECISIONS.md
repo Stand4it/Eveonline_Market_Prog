@@ -254,3 +254,4 @@
 - 2026-10-14: Miner II requires Mining IV (20h 42m Omega, 37,255 SP; user screenshot). Not usable now; do not buy until Mining IV is trained. Jita bundle item stays but is gated on Mining IV. Miner I keeps working for the Pyroxeres job (eligible to 2026-10-20).
 - 2026-10-14: gear upgrade step no longer suggests an item whose skill requirement you lack (Miner II needs Mining IV); along.gear_upgrades uses type_skills plus KNOWN_REQS fallback.
 - 2026-10-14: Emps Metyt offer (Augumene Allergen) expired unanswered (agent mail); marked available:false in agent_offers.json. Lesson: accept or decline an offer rather than leaving it open.
+- 2026-10-14: AIR screen: Enforcer 175 (+50), Explorer 60, Industrialist 255, Soldier of Fortune 65 = 555/3000 CP overall (was 505).

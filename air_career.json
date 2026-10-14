@@ -2,7 +2,7 @@
  "_help": "AIR Career Program (seen 2026-10-12). Four careers, each 750 career points (CP) to graduate; overall 3,000 CP. Sub-goals are bubbles inside each career. Edit from screenshots.",
  "careers": {
   "Enforcer": {
-   "cp": 125,
+   "cp": 175,
    "of": 750,
    "bubbles": {
     "Career Agent Missions": "0/10",
@@ -131,7 +131,7 @@
   }
  },
  "overall": {
-  "cp": 475,
+  "cp": 555,
   "of": 3000,
   "milestones": [
    [
