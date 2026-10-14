@@ -647,6 +647,9 @@ def _run(a):
         if a.goal.lower().startswith("seen "):
             from .screens import mark_seen
             print(mark_seen(con, a.goal[5:].strip()))
+        elif a.goal.lower().startswith("kept "):
+            from .invoverlay import restore
+            print(restore(con, a.goal[5:]))
         elif a.goal.lower() == "sold":
             from .invoverlay import confirm_sold
             print(confirm_sold(con) or "No sell step is waiting to be confirmed (run  next  to show it, then sell, then  stop  or  done --goal sold).")

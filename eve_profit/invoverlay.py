@@ -50,7 +50,15 @@ def confirm_sold(con):
     _subtract(con, st["sid"], st["items"])
     _put(con, "last_sell_step", None)
     con.commit()
-    return f"Noted: {len(st['items'])} stack(s) sold are taken out of your stock now (ESI shows the new hangar within about an hour)."
+    names = []
+    for tid, q in st["items"]:
+        try:
+            r = con.execute("SELECT name FROM types WHERE type_id=?", (tid,)).fetchone()
+        except Exception:                                               # noqa: BLE001
+            r = None
+        names.append(f"{q:,} x {r[0] if r else tid}")
+    return (f"Noted: taken out of your stock now: {'; '.join(names)} (ESI shows the real hangar within about an hour). "
+            f"Did you keep one? run  python -m eve_profit done --goal \"kept NAME\"  to put it back.")
 
 
 def after_sync(con):
@@ -62,3 +70,28 @@ def after_sync(con):
         _put(con, "pending_sold", None)                                # fresh data (or too old): the real hangar wins
         return
     _subtract(con, p["sid"], p["items"])
+
+
+def restore(con, name):
+    """`done --goal "kept NAME"`: that stack was NOT sold after all: put it back into inventory and out of the pending sale. -> text."""
+    p = _get(con, "pending_sold")
+    if not p:
+        return "Nothing is pending: the stock already matches the game (or the sale note is older than 2 hours)."
+    keep, back = [], None
+    for tid, q in p["items"]:
+        try:
+            r = con.execute("SELECT name FROM types WHERE type_id=?", (tid,)).fetchone()
+        except Exception:                                               # noqa: BLE001
+            r = None
+        if r and name.strip().lower() in r[0].lower() and back is None:
+            back = (tid, q, r[0])
+        else:
+            keep.append([tid, q])
+    if not back:
+        return f"No pending sale matches '{name}'."
+    tid, q, nm = back
+    con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) DO UPDATE SET quantity=quantity+excluded.quantity", (tid, p["sid"], q))
+    p["items"] = keep
+    _put(con, "pending_sold", p)
+    con.commit()
+    return f"OK, {q:,} x {nm} is back in your stock."

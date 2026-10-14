@@ -17,7 +17,7 @@ class OverlayTests(unittest.TestCase):
     def test_sold_stack_stays_out_while_esi_is_stale_and_returns_to_truth_when_fresh(self):
         c = db()
         iv.remember_sell_step(c, 10, [(1, 33333)])
-        self.assertIn("1 stack", iv.confirm_sold(c))
+        self.assertIn("taken out of your stock", iv.confirm_sold(c))
         self.assertEqual(c.execute("SELECT COUNT(*) FROM inventory WHERE type_id=1").fetchone()[0], 0)
         c.execute("INSERT INTO inventory VALUES(1,10,33333)")            # sync rebuilt from the OLD cached asset list
         iv.after_sync(c)
@@ -33,3 +33,15 @@ class OverlayTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RestoreTests(unittest.TestCase):
+    def test_kept_stack_comes_back(self):
+        c = db()
+        c.execute("CREATE TABLE types(type_id INTEGER, name TEXT)")
+        c.execute("INSERT INTO types VALUES(1,'Entropic Rose'),(2,'Lorentz Fluid')")
+        iv.remember_sell_step(c, 10, [(1, 33333), (2, 5)])
+        iv.confirm_sold(c)
+        self.assertIn("back", iv.restore(c, "entropic"))
+        self.assertEqual(c.execute("SELECT quantity FROM inventory WHERE type_id=1").fetchone()[0], 33333)
+        self.assertEqual(c.execute("SELECT COUNT(*) FROM inventory WHERE type_id=2").fetchone()[0], 0)
