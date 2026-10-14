@@ -513,6 +513,14 @@ def _run(a):
         from .graph import Graph
         from .nextstep import next_action
         from .style import task_block
+        try:
+            from .livepos import refresh as _refresh_pos
+            _was = p.current_system
+            _now = _refresh_pos(con, p, a.client_id)
+            if _now and _now != _was:
+                print(f"(you are in {_now} now; the last sync said {_was})")
+        except Exception:                                              # noqa: BLE001
+            pass
         txt = next_action(con, Graph(con), p, full=a.all, ahead=a.plan)
         print(txt if (a.all or a.plan) else task_block(txt))
         if not (a.all or a.plan):
