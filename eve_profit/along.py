@@ -96,6 +96,19 @@ def keep_names(con=None):
     return set(keep_rules(con))
 
 
+# fallback when the SDE has no type_skills rows: (skill id, level) seen in the game's Requirements tab
+KNOWN_REQS = {"miner ii": [(3386, 4)]}                                  # Mining IV (user screenshot 2026-10-14)
+
+
+def _cannot_use(con, name, type_id):
+    """True when the character lacks a skill the item needs (an upgrade we cannot fit is not an upgrade)."""
+    from . import skills
+    h = skills.have(con)
+    if not h:
+        return False
+    return bool(skills.type_missing(con, type_id, h) or skills.missing(KNOWN_REQS.get(name.lower(), []), h))
+
+
 def gear_upgrades(con, g, p, held, rules):
     """For kept items with an `upgrade`: sell the old, buy the better one when the out-of-pocket cost is small next to your wallet.
     held = {lower name: (type_id, qty)}. -> [{item, qty, upgrade, sell_net, new_cost, out_of_pocket}]"""
@@ -108,6 +121,8 @@ def gear_upgrades(con, g, p, held, rules):
         n = min(qty, rule["qty"]) if rule.get("qty") else qty
         up_row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (up,)).fetchone()
         if not up_row:
+            continue
+        if _cannot_use(con, up, up_row[0]):
             continue
         cur = g.id_of(p.current_system)
         new_ask = regional_ask(con, g, up_row[0], cur)
