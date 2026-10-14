@@ -78,6 +78,9 @@ def _detour_step(con, g, p, where, sells, d, b):
     return "\n".join(L)
 
 
+KEEP_NOTES = []                                                  # why stacks here were NOT offered for sale (shown in `next --plan`)
+
+
 def _next_action_core(con, g, p):
     res = plan_along(con, g, p, p.current_system)
     here = res["sell_here"]
@@ -85,6 +88,7 @@ def _next_action_core(con, g, p):
     docked = "" if p.current_location_id else f"(undocked? dock at a {where} station first)\n"
     sells = [d for d in here if d["advice"] != "LIST" and d["net"] >= 50_000]
     better, keep_lines = {}, []
+    KEEP_NOTES.clear()
     try:                                                         # items you chose to hold for a better market are never offered for sale
         from .invoverlay import hold_names
         _hold = hold_names(con)
@@ -106,6 +110,7 @@ def _next_action_core(con, g, p):
                     sells.remove(d)
         except Exception:                                        # noqa: BLE001
             pass
+    KEEP_NOTES.extend(keep_lines)
     if sells:
         total = sum(d["net"] for d in sells)
         try:                                                     # so `stop` can take exactly these stacks out of the stock (ESI assets lag an hour)
@@ -979,6 +984,9 @@ def next_action(con, g, p, full=False, ahead=False):
             steps.append(enabler_step(an_["enabler"], an_["base"]))
     except Exception:                                            # noqa: BLE001
         long_view = ""
+    if KEEP_NOTES:
+        kn = "STOCK HERE I AM NOT SELLING (on purpose):\n" + "\n".join(KEEP_NOTES)
+        long_view = (long_view + "\n\n" + kn) if long_view else kn
     try:                                                         # standing purchase goal: what to buy to make combat possible (plan view only)
         from .combatgoal import format_goal
         cg = format_goal(con)
