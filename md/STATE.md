@@ -6,7 +6,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 273 | commands in code: 59
 
 Open agent offers (agent_offers.json):
 - Rounaminck Folle: step 3 of 5: Data Site Scanning (needs Civilian Data Analyze
-- Emps Metyt: step 1: Augumene Allergen (333 ore)
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
 - Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
 - Beradaillot Audates: step 7 'Balancing the Books' (7 of 10): scan down the ancien
