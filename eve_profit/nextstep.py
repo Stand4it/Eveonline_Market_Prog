@@ -196,6 +196,19 @@ def _next_action_core(con, g, p):
             ts = trade_step(con, g, p, o)
             if ts:
                 return ts + "\n" + AFTER
+        if o.kind == "liquidate" and getattr(o, "waypoints", None):          # stock to sell elsewhere: ONE action = the next jump; the sale comes up when you are there
+            hop = g.name[o.waypoints[0]]
+            load = ""
+            try:
+                if (o.detail or {}).get("from_sys") == g.id_of(p.current_system):          # the stock lies in this hangar: load it first (same action, then jump)
+                    import re as _re
+                    mm = _re.match(r"Collect \+ sell ([\d,]+ x .+?) \(stock at", o.description)
+                    if mm:
+                        load = f"load {mm.group(1)} into your ship, then "
+            except Exception:                                    # noqa: BLE001
+                pass
+            return (f"STEP: FLY to {hop}\n   DO ONLY THIS: {load}fly to {hop} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
+                    f"   LATER: {o.description}: about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr; confirm the buy-order price in the game before you sell)\n" + AFTER)
         L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
              f"   {o.description}",
              f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)"]
