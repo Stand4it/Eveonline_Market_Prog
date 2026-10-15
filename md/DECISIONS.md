@@ -261,3 +261,4 @@
 - 2026-10-14: 'next --plan' STOCK HERE I AM NOT SELLING now also lists stacks skipped because the price is below what you paid, you already have a sell order, or they are on the keep list (the 6 cannons were skipped silently for one of these reasons).
 - 2026-10-14: auto_keep_fitted kept EVERY unit of a fitted module type (6 cannons = 888,000 ISK were never offered for sale because 1 cannon is fitted). Now it keeps one spare set (qty = number fitted) and the rest is for sale; keep rules are qty-aware in along.plan_along and haul (keep_split).
 - 2026-10-14: HyperNet Relay screenshot recorded in BACKLOG (raffle offers; not modeled, not recommended now).
+- 2026-10-14: stop counted 6 cannons carried from Lirsautton to Meves as 888,000 ISK loot for 'Fly to Meves' (10M ISK/hr logged). loot.gains now compares per item type over all systems, so moving a stack is not loot.

@@ -12,13 +12,27 @@ def snapshot(con):
 
 
 def gains(before, after):
-    """[(type_id, system_id, units gained)] for stacks that grew since the snapshot."""
-    out = []
+    """[(type_id, system_id, units gained)]: units of a type that grew since the snapshot. Compared per TYPE over all systems, so
+    moving a stack from one station to another (you fly, the cargo lands under a new system) is not counted as loot."""
+    tot_b, tot_a, pos = {}, {}, {}
+    for k, q in before.items():
+        t = k.split(":")[0]
+        tot_b[t] = tot_b.get(t, 0) + q
     for k, q in after.items():
+        t, s_ = k.split(":")
+        tot_a[t] = tot_a.get(t, 0) + q
         d = q - before.get(k, 0)
         if d > 0:
-            t, s = k.split(":")
-            out.append((int(t), int(s), d))
+            pos.setdefault(t, []).append((int(s_), d))
+    out = []
+    for t, rows in pos.items():
+        room = tot_a[t] - tot_b.get(t, 0)
+        for s_, d in rows:
+            if room <= 0:
+                break
+            take = min(d, room)
+            out.append((int(t), s_, take))
+            room -= take
     return out
 
 
