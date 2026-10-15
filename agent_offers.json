@@ -1,566 +1,583 @@
 {
-  "_help": "Level 1 agent offers currently open (from screenshots). isk = cash reward, bonus = time-bonus ISK, taxed = 11% corp tax applies (Rounaminck step 1 paid untaxed; step 2 unknown so treated as taxed). loot = items you receive (priced from the scanned market, else 'est' per unit). cost = items you must buy to finish. granted = items given on accept (not counted). Edit this file after each new screenshot. task_min = your time at the agent's station for the task; jumps = jumps from Rotonos to the agent (travel counted both ways at min_per_jump minutes per jump); available=false hides an agent with no current offer. Verified payouts: Rounaminck step 2 paid 119,000+123,000 with 11% tax each (net 215,380); Beradaillot step 3 bonus 212,000 -23,320 tax (net 188,680). Rounaminck step 1 was untaxed. Arnelin step 3 (afterburner) DONE; Arnelin now at step 4. Arabeton, Ormelace, Emps and Rounaminck(step 3) unchanged. Arnelin step 4 (Tritanium) DONE; Arnelin now offers the 4-jump courier (step 5). Beradaillot step 4 (listening post) DONE; she now offers a courier to the same station as Arnelin's courier - combine them. Arabeton step 1 (The Swap) DONE 10:23 and paid 98,000 + 97,000 with NO tax. Arabeton step 2 assumed untaxed too (verify). Explorer step 1 and Soldier step 1 were untaxed; Industrialist and Explorer step 2+ were taxed 11%. Arabeton step 2 (Maulus) DONE 10:38 paid 88,000+92,000 untaxed. Arabeton is now at step 3 (96,000 + 107,000, assumed untaxed). Also: AIR Career Program rewards paid 212,500 untaxed at 10:26 - check that window for more tasks. Arabeton step 3 (warp disruptor) DONE: paid 96,000 + 95,230 time bonus (bonus shrinks with time; it took ~23 min active, so expect ~95k not 107k at that pace) + 4,800 bounty, untaxed; measured 417k ISK/hr over 28 min incl. 5 min worked while paused. Arabeton now has a new step 4 offer (needs screenshot). 10-07 screenshots: Arabeton step 4 (A Friend in Need): reward item Remote ... + bonus 97,000 ISK untaxed, standing 2.12, granted Civilian Small Remote Armor Repairer. Ormelace step 1 (Cash Flow for Capsuleers): rewards 75mm Gatling Rail I + 2,000 Antimatter (ammo), no ISK, standing 0.82. task_min 25 = first-time estimate (twice the guess; the time bonus shrinks with time). Fields to_system (system name of the destination) and m3 (cargo the job uses) let `next` also look for profitable trades on the way there and back. 10-07 later: dual couriers DONE. New: Arnelin step 6 (20 Cap Booster 25, 166,000 + 233,000 taxed, grants the blueprint) and Beradaillot step 6 'Balancing the Books' (1 Civilian Armor Repairer, grants the Broker Relations skill book; ISK rewards not visible in the screenshot). one_way:true = you are already 4 jumps from the drop-off, so travel is counted once. Standing 3.28 with both.",
-  "tax": 0.11,
-  "offers": [
+ "_help": "Level 1 agent offers currently open (from screenshots). isk = cash reward, bonus = time-bonus ISK, taxed = 11% corp tax applies (Rounaminck step 1 paid untaxed; step 2 unknown so treated as taxed). loot = items you receive (priced from the scanned market, else 'est' per unit). cost = items you must buy to finish. granted = items given on accept (not counted). Edit this file after each new screenshot. task_min = your time at the agent's station for the task; jumps = jumps from Rotonos to the agent (travel counted both ways at min_per_jump minutes per jump); available=false hides an agent with no current offer. Verified payouts: Rounaminck step 2 paid 119,000+123,000 with 11% tax each (net 215,380); Beradaillot step 3 bonus 212,000 -23,320 tax (net 188,680). Rounaminck step 1 was untaxed. Arnelin step 3 (afterburner) DONE; Arnelin now at step 4. Arabeton, Ormelace, Emps and Rounaminck(step 3) unchanged. Arnelin step 4 (Tritanium) DONE; Arnelin now offers the 4-jump courier (step 5). Beradaillot step 4 (listening post) DONE; she now offers a courier to the same station as Arnelin's courier - combine them. Arabeton step 1 (The Swap) DONE 10:23 and paid 98,000 + 97,000 with NO tax. Arabeton step 2 assumed untaxed too (verify). Explorer step 1 and Soldier step 1 were untaxed; Industrialist and Explorer step 2+ were taxed 11%. Arabeton step 2 (Maulus) DONE 10:38 paid 88,000+92,000 untaxed. Arabeton is now at step 3 (96,000 + 107,000, assumed untaxed). Also: AIR Career Program rewards paid 212,500 untaxed at 10:26 - check that window for more tasks. Arabeton step 3 (warp disruptor) DONE: paid 96,000 + 95,230 time bonus (bonus shrinks with time; it took ~23 min active, so expect ~95k not 107k at that pace) + 4,800 bounty, untaxed; measured 417k ISK/hr over 28 min incl. 5 min worked while paused. Arabeton now has a new step 4 offer (needs screenshot). 10-07 screenshots: Arabeton step 4 (A Friend in Need): reward item Remote ... + bonus 97,000 ISK untaxed, standing 2.12, granted Civilian Small Remote Armor Repairer. Ormelace step 1 (Cash Flow for Capsuleers): rewards 75mm Gatling Rail I + 2,000 Antimatter (ammo), no ISK, standing 0.82. task_min 25 = first-time estimate (twice the guess; the time bonus shrinks with time). Fields to_system (system name of the destination) and m3 (cargo the job uses) let `next` also look for profitable trades on the way there and back. 10-07 later: dual couriers DONE. New: Arnelin step 6 (20 Cap Booster 25, 166,000 + 233,000 taxed, grants the blueprint) and Beradaillot step 6 'Balancing the Books' (1 Civilian Armor Repairer, grants the Broker Relations skill book; ISK rewards not visible in the screenshot). one_way:true = you are already 4 jumps from the drop-off, so travel is counted once. Standing 3.28 with both.",
+ "tax": 0.11,
+ "offers": [
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
+   "isk": 0,
+   "bonus": 185000,
+   "taxed": true,
+   "loot": [
     {
-      "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-      "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
-      "isk": 0,
-      "bonus": 185000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Expanded Cargohold I",
-          "qty": 1,
-          "est": 15000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Inertial Stabilizers I"
-      ],
-      "task_min": 3,
-      "jumps": 4,
-      "available": false,
-      "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
-      "to_system": "Repute",
-      "m3": 0.1
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 5: courier 1 Crates of Electronic Parts (40 m3) from this station to Repute IV - AIR Laboratories, 4 jumps (travel counted both ways in case you must return; one way only ~15 min)",
-      "isk": 0,
-      "bonus": 224000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Expanded Cargohold I",
-          "qty": 1,
-          "est": 15000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "1MN Afterburner I"
-      ],
-      "task_min": 3,
-      "jumps": 4,
-      "available": false,
-      "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
-      "to_system": "Repute",
-      "m3": 40.0
-    },
-    {
-      "agent": "Rounaminck Folle (Explorer)",
-      "mission": "step 3 of 5: Data Site Scanning (needs Civilian Data Analyzer fitted + Core Scanner Probes) (Civilian Data Analyzer already granted by Beradaillot's listening-post mission)",
-      "isk": 103000,
-      "bonus": 111000,
-      "taxed": true,
-      "loot": [],
-      "cost": [],
-      "granted": [],
-      "task_min": 25,
-      "jumps": 0,
-      "available": true,
-      "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)",
-      "timer_name": "Agent L1 step 3 Explorer data site",
-      "agent_system": "Rotonos",
-      "note": "standing 1.47"
-    },
-    {
-      "agent": "Arabeton Spilmottin (Soldier of Fortune)",
-      "mission": "step 3: warp-disrupt the fleeing pirate with the granted Civilian Warp Disruptor (kill escorts, NOT the primary target)",
-      "isk": 96000,
-      "bonus": 107000,
-      "taxed": false,
-      "loot": [],
-      "cost": [],
-      "granted": [
-        "Civilian Warp Disruptor"
-      ],
-      "task_min": 12,
-      "jumps": 0,
-      "available": false,
-      "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)"
-    },
-    {
-      "agent": "Ormelace Vaille (Enforcer)",
-      "mission": "step 1: Cash Flow for Capsuleers",
-      "isk": 0,
-      "bonus": 0,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "75mm Gatling Rail I",
-          "qty": 1,
-          "est": 8000
-        },
-        {
-          "item": "Antimatter Charge S",
-          "qty": 2000,
-          "est": 30
-        }
-      ],
-      "cost": [],
-      "granted": [],
-      "task_min": 10,
-      "jumps": 0,
-      "available": false,
-      "where": "Rotonos IV Moon 2 (no offer showing in the agent list right now)",
-      "timer_name": "Agent L1 step 1 Enforcer cash flow"
-    },
-    {
-      "agent": "Emps Metyt (Mining, Axiosere)",
-      "mission": "step 1: Augumene Allergen (333 ore)",
-      "isk": 36000,
-      "bonus": 26000,
-      "taxed": true,
-      "loot": [],
-      "cost": [
-        {
-          "item": "Augumene",
-          "qty": 333,
-          "est": 60
-        }
-      ],
-      "granted": [],
-      "task_min": 15,
-      "jumps": 0,
-      "available": false,
-      "where": "Axiosere VII - Astral Mining Inc. Mining Outpost (agent's station; accept in person)",
-      "to_system": "Axiosere",
-      "m3": 0,
-      "timer_name": "Agent L1 step 1 Mining augumene",
-      "agent_system": "Axiosere",
-      "note": "offer expired 2026-10-14 01:33 (mail: agent displeased by indecisiveness); a new offer appears when you talk to the agent"
-    },
-    {
-      "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-      "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
-      "isk": 0,
-      "bonus": 185000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Expanded Cargohold I",
-          "qty": 1,
-          "est": 15000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Inertial Stabilizers I"
-      ],
-      "task_min": 3,
-      "jumps": 4,
-      "available": false,
-      "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
-      "to_system": "Repute",
-      "m3": 0.1
-    },
-    {
-      "agent": "BOTH COURIERS in ONE trip (Arnelin crates + Beradaillot data chip)",
-      "mission": "accept both, fly once to Repute IV - AIR Laboratories (4 jumps), hand in both: 40.1 m3 fits your 135 m3 hold",
-      "isk": 0,
-      "bonus": 409000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Expanded Cargohold I",
-          "qty": 2,
-          "est": 15000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "1MN Afterburner I",
-        "Inertial Stabilizers I"
-      ],
-      "task_min": 5,
-      "jumps": 4,
-      "available": false,
-      "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
-      "to_system": "Repute",
-      "m3": 40.1
-    },
-    {
-      "agent": "Arabeton Spilmottin (Soldier of Fortune)",
-      "mission": "step 4 'A Friend in Need' (4 of 10): find the disabled vessel in Rotonos and REPAIR it with the granted Civilian Small Remote Armor Repairer (do NOT shoot it)",
-      "isk": 0,
-      "bonus": 97000,
-      "taxed": false,
-      "loot": [
-        {
-          "item": "Small Remote Armor Repairer I",
-          "qty": 1,
-          "est": 10000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Civilian Small Remote Armor Repairer"
-      ],
-      "task_min": 25,
-      "jumps": 0,
-      "available": true,
-      "where": "Rotonos (this system)",
-      "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need",
-      "agent_system": "Rotonos",
-      "note": "standing 2.12; reward item Small Remote Armor Repairer I"
-    },
-    {
-      "agent": "Ormelace Vaille (Enforcer)",
-      "mission": "step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli thug pirates from the asteroid belt in Rotonos (needs a weapon fitted)",
-      "isk": 0,
-      "bonus": 0,
-      "taxed": false,
-      "loot": [
-        {
-          "item": "75mm Gatling Rail I",
-          "qty": 1,
-          "est": 15000
-        },
-        {
-          "item": "Antimatter Charge S",
-          "qty": 2000,
-          "est": 20
-        }
-      ],
-      "cost": [],
-      "granted": [],
-      "task_min": 25,
-      "jumps": 0,
-      "available": true,
-      "where": "Rotonos (this system)",
-      "note": "bounties from the kills are extra (about 5k per pirate so far); no ISK reward shown, only items; standing 0.82",
-      "timer_name": "Agent L1 step 1 Enforcer cash flow",
-      "agent_system": "Rotonos"
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 6: acquire 20 x Cap Booster 25 (20 m3) and bring them to Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps from where you are; buying them is allowed: only holding them counts)",
-      "isk": 166000,
-      "bonus": 233000,
-      "taxed": true,
-      "loot": [],
-      "cost": [
-        {
-          "item": "Cap Booster 25",
-          "qty": 20,
-          "est": 800
-        }
-      ],
-      "granted": [
-        "Cap Booster 25 Blueprint"
-      ],
-      "task_min": 10,
-      "jumps": 0,
-      "one_way": true,
-      "m3": 20,
-      "available": false,
-      "to_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
-      "timer_name": "Agent L1 step 6 Industrialist cap boosters",
-      "agent_system": "Rotonos"
-    },
-    {
-      "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-      "mission": "step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian Armor Repairer (5 m3) and bring it to Rotonos IV - Moon 2 - CAS (4 jumps). GRANTS the Broker Relations skill book. Rewards: 1 Nanofiber (item) + bonus 204,000 ISK (no plain ISK)",
-      "isk": 0,
-      "bonus": 204000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Broker Relations",
-          "qty": 1,
-          "est": 20000
-        },
-        {
-          "item": "Nanofiber",
-          "qty": 1,
-          "est": 10000
-        }
-      ],
-      "cost": [
-        {
-          "item": "Civilian Armor Repairer",
-          "qty": 1,
-          "est": 20000
-        }
-      ],
-      "granted": [
-        "Broker Relations (skill book)"
-      ],
-      "task_min": 8,
-      "jumps": 0,
-      "one_way": true,
-      "m3": 5,
-      "available": false,
-      "to_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
-      "timer_name": "Agent L1 step 6 Entrepreneur armor repairer",
-      "agent_system": "Rotonos"
-    },
-    {
-      "agent": "BOTH in ONE trip (Arnelin 20 Cap Booster 25 + Beradaillot Civilian Armor Repairer)",
-      "mission": "accept both, buy the 20 boosters + 1 repairer, carry 25 m3 to Rotonos IV - CAS (same drop-off, 4 jumps), hand in both",
-      "isk": 166000,
-      "bonus": 437000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Broker Relations",
-          "qty": 1,
-          "est": 20000
-        },
-        {
-          "item": "Nanofiber",
-          "qty": 1,
-          "est": 10000
-        }
-      ],
-      "cost": [
-        {
-          "item": "Cap Booster 25",
-          "qty": 20,
-          "est": 350
-        },
-        {
-          "item": "Civilian Armor Repairer",
-          "qty": 1,
-          "est": 20000
-        }
-      ],
-      "granted": [
-        "Cap Booster 25 Blueprint",
-        "Broker Relations (skill book)"
-      ],
-      "task_min": 14,
-      "jumps": 0,
-      "one_way": true,
-      "m3": 25,
-      "available": false,
-      "to_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
-      "timer_name": "Agent L1 step 6 both (cap boosters + armor repairer)",
-      "agent_system": "Rotonos",
-      "agents": [
-        "Arnelin Ygegnere",
-        "Beradaillot Audates"
-      ],
-      "accept": [
-        {
-          "agent": "Arnelin Ygegnere",
-          "task": "acquire 20 x Cap Booster 25, bring to Rotonos IV (CAS)",
-          "grants": "Cap Booster 25 Blueprint"
-        },
-        {
-          "agent": "Beradaillot Audates",
-          "task": "acquire 1 x Civilian Armor Repairer, bring to Rotonos IV (CAS)",
-          "grants": "Broker Relations skill book: inject it and queue it"
-        }
-      ]
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 7: transport 20 x Cap Booster 25 (20 m3, pick them up from your hangar here) to Tiberis VII - Moon 1 - President Bureau, 1 jump",
-      "isk": 0,
-      "bonus": 138000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Damage Control I",
-          "qty": 1,
-          "est": 20000
-        }
-      ],
-      "cost": [],
-      "granted": [],
-      "task_min": 5,
-      "jumps": 1,
-      "m3": 20,
-      "available": false,
-      "agent_system": "Rotonos",
-      "to_system": "Tiberis",
-      "where": "Tiberis VII - Moon 1 - President Bureau (1 jump from Rotonos)",
-      "career": "Industrialist",
-      "timer_name": "Agent L1 step 7 Industrialist cap booster courier"
-    },
-    {
-      "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
-      "mission": "step 7 'Balancing the Books' (7 of 10): scan down the ancient (relic) site in Rotonos with the granted Civilian Relic Analyzer (needs Core Scanner Probes; Serpentis ships there), bring 1 x Datacore - Elementary Civilian Tech (1 m3) back to Rotonos IV - CAS",
-      "isk": 0,
-      "bonus": 178000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "1MN Afterburner I",
-          "qty": 1,
-          "est": 5000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Civilian Relic Analyzer"
-      ],
-      "task_min": 30,
-      "jumps": 0,
-      "m3": 1,
-      "available": true,
-      "agent_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
-      "career": "Industrialist",
-      "timer_name": "Agent L1 step 7 Entrepreneur relic site",
-      "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it",
-      "note": "standing 3.80; cargo 1 x Datacore - Elementary Civilian Tech"
-    },
-    {
-      "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
-      "mission": "accept both at Rotonos IV; do the 1-jump courier to Tiberis, then the relic site in Rotonos, hand in both",
-      "isk": 0,
-      "bonus": 316000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Damage Control I",
-          "qty": 1,
-          "est": 20000
-        },
-        {
-          "item": "1MN Afterburner I",
-          "qty": 1,
-          "est": 5000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Civilian Relic Analyzer"
-      ],
-      "task_min": 30,
-      "jumps": 1,
-      "m3": 21,
-      "available": false,
-      "agent_system": "Rotonos",
-      "to_system": "Tiberis",
-      "where": "Tiberis VII (courier, 1 jump) then Rotonos site and Rotonos IV CAS",
-      "career": "Industrialist",
-      "accept": [
-        {
-          "agent": "Arnelin Ygegnere",
-          "task": "transport 20 x Cap Booster 25 to Tiberis VII - President Bureau (1 jump)",
-          "grants": "Damage Control I on completion"
-        },
-        {
-          "agent": "Beradaillot Audates",
-          "task": "relic site in Rotonos, bring back 1 x Datacore - Elementary Civilian Tech",
-          "grants": "Civilian Relic Analyzer now; 1MN Afterburner I on completion"
-        }
-      ],
-      "timer_name": "Agent L1 step 7 both (courier + relic site)"
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 x Civilian Gallente Shuttle (PACKAGED, 500 m3) for Rotonos IV - CAS. NOT SOLD ON THE MARKET (searched in game): BUILD it from the Civilian Gallente Shuttle Blueprint you are granted on accepting (Industry > Manufacturing at Rotonos; materials and build time not seen yet)",
-      "isk": 211000,
-      "bonus": 248000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Civilian Gallente Shuttle Blueprint",
-          "qty": 1,
-          "est": 20000
-        }
-      ],
-      "cost": [],
-      "granted": [
-        "Civilian Gallente Shuttle Blueprint"
-      ],
-      "task_min": 15,
-      "jumps": 0,
-      "m3": 500,
-      "one_way": true,
-      "available": false,
-      "agent_system": "Rotonos",
-      "to_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
-      "career": "Industrialist",
-      "timer_name": "Agent L1 step 8 Industrialist shuttle",
-      "needs": "build slot + materials (see the blueprint in Industry once accepted); then hand in at Rotonos IV"
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 9 (name not seen; 9 of 10 presumed): decoy mining in Rotonos. Fly to the objective site in this system, MINE ore until pirates show up, DESTROY them, bring 1 x Production Assistant (3 m3, dropped there) back to Rotonos IV - CAS. You keep the ore",
-      "isk": 239000,
-      "bonus": 237000,
-      "taxed": true,
-      "loot": [],
-      "cost": [],
-      "granted": [],
-      "task_min": 22,
-      "jumps": 0,
-      "m3": 3,
-      "available": false,
-      "agent_system": "Rotonos",
-      "where": "objective site in Rotonos, then Rotonos IV - Moon 2 - CAS",
-      "career": "Industrialist",
-      "needs": "a ship with a mining laser (3 x Miner I) AND something to kill L1 pirates (guns or drones); low but real risk of losing the ship: do not use the Imicus you salvage with",
-      "timer_name": "Agent L1 step 9 Industrialist decoy mining"
-    },
-    {
-      "agent": "Arnelin Ygegnere (Industrialist - Producer)",
-      "mission": "step 10 of 10 'Making Mountains of Molehills' (FINAL): acquire 1 x Navitas (PACKAGED frigate, 2,500 m3) for Rotonos IV - CAS. You are granted the Navitas Blueprint on accepting: buy a Navitas if the market has one, or BUILD it. 2,500 m3 does not fit your Imicus (400 m3): buy/build it AT Rotonos. REWARDS (seen): 1 x Nereus (hauler frigate) + bonus 175,000 ISK; standing 5.04",
-      "isk": 0,
-      "bonus": 175000,
-      "taxed": true,
-      "loot": [
-        {
-          "item": "Nereus",
-          "qty": 1,
-          "est": 2000000
-        }
-      ],
-      "cost": [
-        {
-          "item": "Navitas",
-          "qty": 1,
-          "est": 400000
-        }
-      ],
-      "granted": [
-        "Navitas Blueprint"
-      ],
-      "task_min": 20,
-      "jumps": 0,
-      "m3": 2500,
-      "one_way": true,
-      "available": true,
-      "agent_system": "Rotonos",
-      "to_system": "Rotonos",
-      "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
-      "career": "Industrialist",
-      "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
-      "timer_name": "Agent L1 step 10 Industrialist Navitas"
-    },
-    {
-      "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
-      "mission": "chapter 1 of 8 'Holographic Reenactment': report to Holorelay: Heika Torigo at Kita-Aino V - Moon 8 - Chief Executive Panel Bureau (2 jumps from Manifest). Rewards 42,000 ISK + bonus 54,000 ISK; objective details not seen (drone actors / battle reenactment); standing 0.00",
-      "isk": 42000,
-      "bonus": 54000,
-      "taxed": false,
-      "loot": [],
-      "cost": [],
-      "granted": [],
-      "task_min": 25,
-      "jumps": 2,
-      "available": true,
-      "where": "Manifest V - AIR Laboratories Trade Center (agent); Kita-Aino V (report to)",
-      "agent_system": "Manifest",
-      "to_system": "Kita-Aino",
-      "career": "Epic arc",
-      "timer_name": "Agent L1 epic Visions of Greatness ch1"
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
     }
-  ],
-  "min_per_jump": 3.0,
-  "note_accept": "Missions cannot be accepted remotely: go to the agent's station first (agent_system). jumps = distance agent -> mission target.",
-  "last_checked": "2026-10-14: station agent list screenshot: Arabeton, Arnelin, Beradaillot, Ormelace, Rounaminck (Rotonos 1.0, 7 jumps) and Cassandra (Manifest 1.0, 4 jumps) all show Offered; no new reward details"
+   ],
+   "cost": [],
+   "granted": [
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": false,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
+   "to_system": "Repute",
+   "m3": 0.1
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 5: courier 1 Crates of Electronic Parts (40 m3) from this station to Repute IV - AIR Laboratories, 4 jumps (travel counted both ways in case you must return; one way only ~15 min)",
+   "isk": 0,
+   "bonus": 224000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "1MN Afterburner I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": false,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
+   "to_system": "Repute",
+   "m3": 40.0
+  },
+  {
+   "agent": "Rounaminck Folle (Explorer)",
+   "mission": "step 3 of 5: Data Site Scanning (needs Civilian Data Analyzer fitted + Core Scanner Probes) (Civilian Data Analyzer already granted by Beradaillot's listening-post mission)",
+   "isk": 103000,
+   "bonus": 111000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 25,
+   "jumps": 0,
+   "available": true,
+   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)",
+   "timer_name": "Agent L1 step 3 Explorer data site",
+   "agent_system": "Rotonos",
+   "note": "standing 1.47"
+  },
+  {
+   "agent": "Arabeton Spilmottin (Soldier of Fortune)",
+   "mission": "step 3: warp-disrupt the fleeing pirate with the granted Civilian Warp Disruptor (kill escorts, NOT the primary target)",
+   "isk": 96000,
+   "bonus": 107000,
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [
+    "Civilian Warp Disruptor"
+   ],
+   "task_min": 12,
+   "jumps": 0,
+   "available": false,
+   "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)"
+  },
+  {
+   "agent": "Ormelace Vaille (Enforcer)",
+   "mission": "step 1: Cash Flow for Capsuleers",
+   "isk": 0,
+   "bonus": 0,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "75mm Gatling Rail I",
+     "qty": 1,
+     "est": 8000
+    },
+    {
+     "item": "Antimatter Charge S",
+     "qty": 2000,
+     "est": 30
+    }
+   ],
+   "cost": [],
+   "granted": [],
+   "task_min": 10,
+   "jumps": 0,
+   "available": false,
+   "where": "Rotonos IV Moon 2 (no offer showing in the agent list right now)",
+   "timer_name": "Agent L1 step 1 Enforcer cash flow"
+  },
+  {
+   "agent": "Emps Metyt (Mining, Axiosere)",
+   "mission": "step 1: Augumene Allergen (333 ore)",
+   "isk": 36000,
+   "bonus": 26000,
+   "taxed": true,
+   "loot": [],
+   "cost": [
+    {
+     "item": "Augumene",
+     "qty": 333,
+     "est": 60
+    }
+   ],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Axiosere VII - Astral Mining Inc. Mining Outpost (agent's station; accept in person)",
+   "to_system": "Axiosere",
+   "m3": 0,
+   "timer_name": "Agent L1 step 1 Mining augumene",
+   "agent_system": "Axiosere",
+   "note": "offer expired 2026-10-14 01:33 (mail: agent displeased by indecisiveness); a new offer appears when you talk to the agent"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 5: courier 1 Encoded Data Chip (0.1 m3) to Repute IV - AIR Laboratories, 4 jumps (same destination as Arnelin's courier)",
+   "isk": 0,
+   "bonus": 185000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 1,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 3,
+   "jumps": 4,
+   "available": false,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
+   "to_system": "Repute",
+   "m3": 0.1
+  },
+  {
+   "agent": "BOTH COURIERS in ONE trip (Arnelin crates + Beradaillot data chip)",
+   "mission": "accept both, fly once to Repute IV - AIR Laboratories (4 jumps), hand in both: 40.1 m3 fits your 135 m3 hold",
+   "isk": 0,
+   "bonus": 409000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Expanded Cargohold I",
+     "qty": 2,
+     "est": 15000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "1MN Afterburner I",
+    "Inertial Stabilizers I"
+   ],
+   "task_min": 5,
+   "jumps": 4,
+   "available": false,
+   "where": "Repute IV - AIR Laboratories (4 jumps from Rotonos)",
+   "to_system": "Repute",
+   "m3": 40.1
+  },
+  {
+   "agent": "Arabeton Spilmottin (Soldier of Fortune)",
+   "mission": "step 4 'A Friend in Need' (4 of 10): find the disabled vessel in Rotonos and REPAIR it with the granted Civilian Small Remote Armor Repairer (do NOT shoot it)",
+   "isk": 0,
+   "bonus": 97000,
+   "taxed": false,
+   "loot": [
+    {
+     "item": "Small Remote Armor Repairer I",
+     "qty": 1,
+     "est": 10000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Small Remote Armor Repairer"
+   ],
+   "task_min": 25,
+   "jumps": 0,
+   "available": true,
+   "where": "Rotonos (this system)",
+   "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need",
+   "agent_system": "Rotonos",
+   "note": "standing 2.12; reward item Small Remote Armor Repairer I"
+  },
+  {
+   "agent": "Ormelace Vaille (Enforcer)",
+   "mission": "step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli thug pirates from the asteroid belt in Rotonos (needs a weapon fitted)",
+   "isk": 0,
+   "bonus": 0,
+   "taxed": false,
+   "loot": [
+    {
+     "item": "75mm Gatling Rail I",
+     "qty": 1,
+     "est": 15000
+    },
+    {
+     "item": "Antimatter Charge S",
+     "qty": 2000,
+     "est": 20
+    }
+   ],
+   "cost": [],
+   "granted": [],
+   "task_min": 25,
+   "jumps": 0,
+   "available": true,
+   "where": "Rotonos (this system)",
+   "note": "bounties from the kills are extra (about 5k per pirate so far); no ISK reward shown, only items; standing 0.82",
+   "timer_name": "Agent L1 step 1 Enforcer cash flow",
+   "agent_system": "Rotonos"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 6: acquire 20 x Cap Booster 25 (20 m3) and bring them to Rotonos IV - Moon 2 - Center for Advanced Studies (4 jumps from where you are; buying them is allowed: only holding them counts)",
+   "isk": 166000,
+   "bonus": 233000,
+   "taxed": true,
+   "loot": [],
+   "cost": [
+    {
+     "item": "Cap Booster 25",
+     "qty": 20,
+     "est": 800
+    }
+   ],
+   "granted": [
+    "Cap Booster 25 Blueprint"
+   ],
+   "task_min": 10,
+   "jumps": 0,
+   "one_way": true,
+   "m3": 20,
+   "available": false,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
+   "timer_name": "Agent L1 step 6 Industrialist cap boosters",
+   "agent_system": "Rotonos"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 6 'Balancing the Books' (6 of 10): acquire 1 x Civilian Armor Repairer (5 m3) and bring it to Rotonos IV - Moon 2 - CAS (4 jumps). GRANTS the Broker Relations skill book. Rewards: 1 Nanofiber (item) + bonus 204,000 ISK (no plain ISK)",
+   "isk": 0,
+   "bonus": 204000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Broker Relations",
+     "qty": 1,
+     "est": 20000
+    },
+    {
+     "item": "Nanofiber",
+     "qty": 1,
+     "est": 10000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Civilian Armor Repairer",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "granted": [
+    "Broker Relations (skill book)"
+   ],
+   "task_min": 8,
+   "jumps": 0,
+   "one_way": true,
+   "m3": 5,
+   "available": false,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
+   "timer_name": "Agent L1 step 6 Entrepreneur armor repairer",
+   "agent_system": "Rotonos"
+  },
+  {
+   "agent": "BOTH in ONE trip (Arnelin 20 Cap Booster 25 + Beradaillot Civilian Armor Repairer)",
+   "mission": "accept both, buy the 20 boosters + 1 repairer, carry 25 m3 to Rotonos IV - CAS (same drop-off, 4 jumps), hand in both",
+   "isk": 166000,
+   "bonus": 437000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Broker Relations",
+     "qty": 1,
+     "est": 20000
+    },
+    {
+     "item": "Nanofiber",
+     "qty": 1,
+     "est": 10000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Cap Booster 25",
+     "qty": 20,
+     "est": 350
+    },
+    {
+     "item": "Civilian Armor Repairer",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "granted": [
+    "Cap Booster 25 Blueprint",
+    "Broker Relations (skill book)"
+   ],
+   "task_min": 14,
+   "jumps": 0,
+   "one_way": true,
+   "m3": 25,
+   "available": false,
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; buy there and hand in)",
+   "timer_name": "Agent L1 step 6 both (cap boosters + armor repairer)",
+   "agent_system": "Rotonos",
+   "agents": [
+    "Arnelin Ygegnere",
+    "Beradaillot Audates"
+   ],
+   "accept": [
+    {
+     "agent": "Arnelin Ygegnere",
+     "task": "acquire 20 x Cap Booster 25, bring to Rotonos IV (CAS)",
+     "grants": "Cap Booster 25 Blueprint"
+    },
+    {
+     "agent": "Beradaillot Audates",
+     "task": "acquire 1 x Civilian Armor Repairer, bring to Rotonos IV (CAS)",
+     "grants": "Broker Relations skill book: inject it and queue it"
+    }
+   ]
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 7: transport 20 x Cap Booster 25 (20 m3, pick them up from your hangar here) to Tiberis VII - Moon 1 - President Bureau, 1 jump",
+   "isk": 0,
+   "bonus": 138000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Damage Control I",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [],
+   "granted": [],
+   "task_min": 5,
+   "jumps": 1,
+   "m3": 20,
+   "available": false,
+   "agent_system": "Rotonos",
+   "to_system": "Tiberis",
+   "where": "Tiberis VII - Moon 1 - President Bureau (1 jump from Rotonos)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 7 Industrialist cap booster courier"
+  },
+  {
+   "agent": "Beradaillot Audates (Industrialist - Entrepreneur)",
+   "mission": "step 7 'Balancing the Books' (7 of 10): scan down the ancient (relic) site in Rotonos with the granted Civilian Relic Analyzer (needs Core Scanner Probes; Serpentis ships there), bring 1 x Datacore - Elementary Civilian Tech (1 m3) back to Rotonos IV - CAS",
+   "isk": 0,
+   "bonus": 178000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "1MN Afterburner I",
+     "qty": 1,
+     "est": 5000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Relic Analyzer"
+   ],
+   "task_min": 30,
+   "jumps": 0,
+   "m3": 1,
+   "available": true,
+   "agent_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 7 Entrepreneur relic site",
+   "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it",
+   "note": "standing 3.80; cargo 1 x Datacore - Elementary Civilian Tech"
+  },
+  {
+   "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
+   "mission": "accept both at Rotonos IV; do the 1-jump courier to Tiberis, then the relic site in Rotonos, hand in both",
+   "isk": 0,
+   "bonus": 316000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Damage Control I",
+     "qty": 1,
+     "est": 20000
+    },
+    {
+     "item": "1MN Afterburner I",
+     "qty": 1,
+     "est": 5000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Relic Analyzer"
+   ],
+   "task_min": 30,
+   "jumps": 1,
+   "m3": 21,
+   "available": false,
+   "agent_system": "Rotonos",
+   "to_system": "Tiberis",
+   "where": "Tiberis VII (courier, 1 jump) then Rotonos site and Rotonos IV CAS",
+   "career": "Industrialist",
+   "accept": [
+    {
+     "agent": "Arnelin Ygegnere",
+     "task": "transport 20 x Cap Booster 25 to Tiberis VII - President Bureau (1 jump)",
+     "grants": "Damage Control I on completion"
+    },
+    {
+     "agent": "Beradaillot Audates",
+     "task": "relic site in Rotonos, bring back 1 x Datacore - Elementary Civilian Tech",
+     "grants": "Civilian Relic Analyzer now; 1MN Afterburner I on completion"
+    }
+   ],
+   "timer_name": "Agent L1 step 7 both (courier + relic site)"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 8 'Making Mountains of Molehills' (8 of 10): acquire 1 x Civilian Gallente Shuttle (PACKAGED, 500 m3) for Rotonos IV - CAS. NOT SOLD ON THE MARKET (searched in game): BUILD it from the Civilian Gallente Shuttle Blueprint you are granted on accepting (Industry > Manufacturing at Rotonos; materials and build time not seen yet)",
+   "isk": 211000,
+   "bonus": 248000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Civilian Gallente Shuttle Blueprint",
+     "qty": 1,
+     "est": 20000
+    }
+   ],
+   "cost": [],
+   "granted": [
+    "Civilian Gallente Shuttle Blueprint"
+   ],
+   "task_min": 15,
+   "jumps": 0,
+   "m3": 500,
+   "one_way": true,
+   "available": false,
+   "agent_system": "Rotonos",
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
+   "career": "Industrialist",
+   "timer_name": "Agent L1 step 8 Industrialist shuttle",
+   "needs": "build slot + materials (see the blueprint in Industry once accepted); then hand in at Rotonos IV"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 9 (name not seen; 9 of 10 presumed): decoy mining in Rotonos. Fly to the objective site in this system, MINE ore until pirates show up, DESTROY them, bring 1 x Production Assistant (3 m3, dropped there) back to Rotonos IV - CAS. You keep the ore",
+   "isk": 239000,
+   "bonus": 237000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 22,
+   "jumps": 0,
+   "m3": 3,
+   "available": false,
+   "agent_system": "Rotonos",
+   "where": "objective site in Rotonos, then Rotonos IV - Moon 2 - CAS",
+   "career": "Industrialist",
+   "needs": "a ship with a mining laser (3 x Miner I) AND something to kill L1 pirates (guns or drones); low but real risk of losing the ship: do not use the Imicus you salvage with",
+   "timer_name": "Agent L1 step 9 Industrialist decoy mining"
+  },
+  {
+   "agent": "Arnelin Ygegnere (Industrialist - Producer)",
+   "mission": "step 10 of 10 'Making Mountains of Molehills' (FINAL): acquire 1 x Navitas (PACKAGED frigate, 2,500 m3) for Rotonos IV - CAS. You are granted the Navitas Blueprint on accepting: buy a Navitas if the market has one, or BUILD it. 2,500 m3 does not fit your Imicus (400 m3): buy/build it AT Rotonos. REWARDS (seen): 1 x Nereus (hauler frigate) + bonus 175,000 ISK; standing 5.04",
+   "isk": 0,
+   "bonus": 175000,
+   "taxed": true,
+   "loot": [
+    {
+     "item": "Nereus",
+     "qty": 1,
+     "est": 2000000
+    }
+   ],
+   "cost": [
+    {
+     "item": "Navitas",
+     "qty": 1,
+     "est": 400000
+    }
+   ],
+   "granted": [
+    "Navitas Blueprint"
+   ],
+   "task_min": 20,
+   "jumps": 0,
+   "m3": 2500,
+   "one_way": true,
+   "available": true,
+   "agent_system": "Rotonos",
+   "to_system": "Rotonos",
+   "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
+   "career": "Industrialist",
+   "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
+   "timer_name": "Agent L1 step 10 Industrialist Navitas"
+  },
+  {
+   "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
+   "mission": "chapter 1 of 8 'Holographic Reenactment': report to Holorelay: Heika Torigo at Kita-Aino V - Moon 8 - Chief Executive Panel Bureau (2 jumps from Manifest). Rewards 42,000 ISK + bonus 54,000 ISK; objective details not seen (drone actors / battle reenactment); standing 0.00",
+   "isk": 42000,
+   "bonus": 54000,
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 25,
+   "jumps": 2,
+   "available": true,
+   "where": "Manifest V - AIR Laboratories Trade Center (agent); Kita-Aino V (report to)",
+   "agent_system": "Manifest",
+   "to_system": "Kita-Aino",
+   "career": "Epic arc",
+   "timer_name": "Agent L1 epic Visions of Greatness ch1"
+  },
+  {
+   "agent": "Avrue Auz (Event - Distribution, L1, Lirsautton I CreoDron Factory)",
+   "mission": "License To Fly (prequel): bring 1 Gallente Graduation Certificate (signed, 0.1 m3) to this station. Agent says she has nothing unless a subordinate sent you: certificates are found in Data Centers in Muer, Abenynd and Ekuenbiron. Declining more than once per 4 h can cost standing.",
+   "isk": 110000,
+   "bonus": 127000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Lirsautton I - CreoDron Factory (drop-off = same station); item must be acquired first (not located yet)",
+   "to_system": "Lirsautton",
+   "m3": 0.1,
+   "note": "Seen 2026-10-14. Bonus needs completion within 4 h 54 min of accepting, so do NOT accept until the certificate is in hand. Wemire Ghynosseil (R&D, L1) here: only 'Start Research' (no mission)."
+  }
+ ],
+ "min_per_jump": 3.0,
+ "note_accept": "Missions cannot be accepted remotely: go to the agent's station first (agent_system). jumps = distance agent -> mission target.",
+ "last_checked": "2026-10-14"
 }
