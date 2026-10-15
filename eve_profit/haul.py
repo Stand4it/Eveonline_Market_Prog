@@ -3,7 +3,7 @@ other activity: (extra ISK vs selling it right here) / (the trip ONE WAY + docki
 return: `next` plans again at every stop, so at the destination the best next step is chosen fresh. Ore may ride in a mining ship's ore hold."""
 import math
 
-from .along import keep_names
+from .along import keep_rules, keep_split
 from .orders import load_books, sell_into_bids
 from .sellplan import is_ore, ore_hold_m3
 
@@ -23,11 +23,12 @@ def haul_option(con, g, p):
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     ore_cap, cargo = ore_hold_m3(con, p), max(p.cargo_m3, 1.0)
-    keep = keep_names(con)                                   # gear you plan to use (probes, miners...) is never hauled off to sell
+    keep = keep_rules(con)                                   # gear you plan to use (probes, miners...) is never hauled off to sell
     per_dest = {}
     for inv in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = inv["type_id"], inv["quantity"]
-        if str(name.get(tid, "")).lower() in keep:
+        _k, qty = keep_split(keep, name.get(tid, ""), qty)
+        if qty <= 0:
             continue
         _, local = sell_into_bids(buys.get(tid, {}).get(cur, []), qty, p.sales_tax)
         best = None

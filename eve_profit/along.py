@@ -85,11 +85,20 @@ def keep_rules(con=None):
         rules[e["item"].lower()] = {"qty": e.get("qty"), "upgrade": e.get("upgrade"), "item": e["item"]}
     if d.get("auto_keep_fitted") and con is not None:
         try:
-            for (n,) in con.execute("SELECT DISTINCT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id"):
-                rules.setdefault(n.lower(), {"qty": None, "upgrade": None, "item": n})
+            for n, c in con.execute("SELECT t.name, SUM(f.quantity) FROM fitted f JOIN types t ON t.type_id=f.type_id GROUP BY t.name"):
+                rules.setdefault(n.lower(), {"qty": int(c or 1), "upgrade": None, "item": n})      # one spare set, not every unit you ever hold
         except Exception:                                               # noqa: BLE001
             pass
     return rules
+
+
+def keep_split(rules, name, qty):
+    """(units to keep, units free to sell) for a stack: the rule's qty is how many to keep; no qty = keep the whole stack."""
+    r = rules.get(str(name).lower())
+    if not r:
+        return 0, qty
+    k = qty if r.get("qty") is None else min(qty, int(r["qty"]))
+    return k, qty - k
 
 
 def keep_names(con=None):
@@ -156,7 +165,7 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         listed = {r[0] for r in con.execute("SELECT type_id FROM my_orders WHERE is_buy=0")}     # already on the market: never advise listing it again
     except Exception:                                                   # noqa: BLE001
         listed = set()
-    keep = keep_names(con)
+    keep = keep_rules(con)
     held_gear = {}
     on_market = []
     n_here = con.execute("SELECT COUNT(*) FROM inventory WHERE system_id=?", (cur,)).fetchone()[0]
@@ -165,9 +174,11 @@ def plan_along(con, g, p, dest_name, slots_override=None):
         if tid in listed:
             on_market.append(name.get(tid, tid))
             continue
-        if str(name.get(tid, "")).lower() in keep:
-            held_gear[str(name.get(tid, "")).lower()] = (tid, qty)
-            continue                                        # on the keep list: you will use it, rebuying costs more
+        kept, qty = keep_split(keep, name.get(tid, ""), qty)
+        if kept:
+            held_gear[str(name.get(tid, "")).lower()] = (tid, kept)
+            if qty <= 0:
+                continue                                    # on the keep list: you will use it, rebuying costs more; only the units above the keep qty are for sale
         used_in, own_use = _material_use(con, tid)
         opts = []
         for i, s in enumerate(path):
