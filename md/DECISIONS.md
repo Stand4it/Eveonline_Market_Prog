@@ -274,3 +274,4 @@
 - 2026-10-14: a LIQUIDATE opportunity (stock sold elsewhere) is now ONE step: 'STEP: FLY to <next jump>' (with 'load X into your ship' when the stock lies in this hangar); the plan and numbers are on the LATER line (plan view only), the destination is set automatically.
 - 2026-10-15: 'now' looked hung during the sync/scan stages: the 30 s heartbeat wrote to the redirected stdout of the stage (hidden), and a second Ctrl+C only skipped the next stage. Heartbeat now writes to the real stdout; Ctrl+C twice within 5 s stops the whole command.
 - 2026-10-15: Agent screenshot: Ansotte Melania (Mining L1, Harerget V Moon 1 CreoDron Factory) 'Starting Simple': mine+deliver 20,000 Banidine (2,000 m3), 39,000 ISK + 57 LP, bonus 48,000 within 1 h 26 min. Recorded available:false (about 130k ISK/hr estimate, jumps unknown).
+- 2026-10-15: AIR screen: Enforcer 175, Explorer 80 (+20), Industrialist 305 (+50), Soldier of Fortune 65 = 625/3000 CP (was 555).

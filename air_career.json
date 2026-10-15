@@ -19,7 +19,7 @@
    "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist."
   },
   "Explorer": {
-   "cp": 60,
+   "cp": 80,
    "of": 750,
    "bubbles": {
     "Career Agent Missions": "2/5",
@@ -36,7 +36,7 @@
    "note": "Seen 2026-10-13. 60 CP = 5 goals done (2 missions + Hacking 1 + Combat Sites 1 + Navigation 1): 12 CP each on average. Only 5 career agent missions here. Graduation: 100,000 SP (Omega) + 100,000 SP + Heron/Magnate/Imicus/Probe/Astero Aspirant Explorer SKINs."
   },
   "Industrialist": {
-   "cp": 255,
+   "cp": 305,
    "of": 750,
    "bubbles": {
     "Career Agents Missions": "7/10",
@@ -131,7 +131,7 @@
   }
  },
  "overall": {
-  "cp": 555,
+  "cp": 625,
   "of": 3000,
   "milestones": [
    [
