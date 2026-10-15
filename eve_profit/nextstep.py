@@ -950,14 +950,7 @@ def next_action(con, g, p, full=False, ahead=False):
                         step_txt = _ts(con, g, p, o_) if o_.kind == "trade" else None
                         if step_txt:
                             step_txt = step_txt.replace("\n   DO ONLY THIS", "\n   (" + reason + ")\n   DO ONLY THIS", 1) + "\n   Unmodeled: 3 timed runs turn the guess into your own number."
-                        else:
-                            step_txt = (f"STEP: TEST Station / hub trading ({reason})\n   Best trade right now: {o_.description}\n"
-                                        f"   about {o_.net_isk:,.0f} ISK in {o_.hours * 60:.0f} min ({o_.isk_per_hour:,.0f} ISK/hr). "
-                                        + ("Confirm live prices first:  python -m eve_profit check --pick 1   then   python -m eve_profit go --pick 1 --send\n" if o_.kind == "trade" else
-                                           "First confirm the price in the game (Market > the item > Details: the buy orders at the far station) or on the website. "
-                                           "If it still pays: take the stock into your ship, run  python -m eve_profit go --pick 1 --send  (sets the route), fly there and sell to the highest buy order. "
-                                           "(`check` only works on buy-and-sell trades, not on selling stock you already own.)\n")
-                                        + "   Unmodeled: 3 timed runs turn the guess into your own number.")
+                        # selling stock you already own somewhere else is not a test: the normal haul step below handles it (one hop at a time)
                 except Exception:                                # noqa: BLE001
                     step_txt = None
             if step_txt and step_txt.lstrip().startswith("STEP: FLY to"):          # a test that only sends you travelling for a guessed gain is not offered
