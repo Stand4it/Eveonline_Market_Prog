@@ -230,13 +230,60 @@ def jumps_option(con, places=None, g=None, p=None, idx=0):
             "how": how, "dest": dest, "dest_system": sysname}
 
 
+def today_goals():
+    """The goal names the Opportunities window showed today (daily_goals_today.json), or None when the file is not from today."""
+    import json
+    import os
+    if os.environ.get("EVE_NO_LIVE") and not os.environ.get("EVE_TODAY_FILE"):         # tests: the real file must not change their goal set
+        return None
+    f = os.environ.get("EVE_TODAY_FILE") or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "daily_goals_today.json")
+    try:
+        d = json.load(open(f, encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return d.get("goals") if d.get("seen") == time.strftime("%Y-%m-%d") else None
+
+
+def mine_option(con):
+    """'Mine 2000 units of Ore': 2000 units is only a few hundred m3 (about 5-10 minutes with the Venture's lasers)."""
+    fitted = _fitted_names(con)
+    if not any("miner" in n or "mining laser" in n for n in fitted):
+        return {"goal": "Mine 2000 units of Ore", "ok": False, "why_not": "no mining laser fitted", "minutes": 0, "cash": 0}
+    jumps, where = 0, "the nearest belt"
+    try:
+        from .mining_sites import rank_sites
+        top = rank_sites(con)
+        if top:
+            jumps, where = top[0]["jumps"], f"{top[0]['system']} ({top[0]['jumps']} jumps)"
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return {"goal": "Mine 2000 units of Ore", "ok": True, "minutes": 10.0 + 2 * jumps * PER_JUMP_MIN, "cash": 0.0, "jumps_away": jumps,
+            "how": f"mine 2000 units of any ore in {where} (a few hundred m3, about 10 minutes); the Pyroxeres freelance job and the Banidine agent mission count too  (?)"}
+
+
+def lp_option(con):
+    return {"goal": "Earn 50 LP for any corporation", "ok": False, "minutes": 0, "cash": 0,
+            "why_not": "needs a mission that pays 50+ LP (Ansotte Melania at Harerget: 57 LP for mining 20,000 Banidine); not routed yet"}
+
+
+def fw_option(con):
+    return {"goal": "Defend Contested FW Complex", "ok": False, "minutes": 0, "cash": 0,
+            "why_not": "Faction Warfare complex defence is combat: not routed"}
+
+
 def options(con, places=None, g=None, p=None, idx=0):
     jumps = jumps_option(con, places, g, p, idx)
     build = build_option(con, g, p)
     route = _route_ids(g, p, jumps.get("dest_system"))
     if route and build.get("ok"):                                       # the same build when you shop on the jumps trip you are making anyway
         build["with_jumps"] = build_option(con, g, p, free=route)
-    return [jumps, build, scan_option(con), destroy_option(con), repair_option(con)]
+    allopts = [jumps, build, scan_option(con), destroy_option(con), repair_option(con), mine_option(con), lp_option(con), fw_option(con)]
+    today = today_goals()
+    if today:                                                           # the pool rotates: only the five goals the window showed today
+        allopts = [o for o in allopts if o["goal"] in today]
+    else:
+        allopts = [o for o in allopts if o["goal"] in ("Complete 3 Jumps", "Manufacture an Item", "Scan 5 Signatures", "Destroy 25 non-capsuleers", "Armor Repair other Capsuleers")]
+    return allopts
 
 
 def plan(con, reward=445000.0, free_ride=False, places=None, g=None, p=None):
