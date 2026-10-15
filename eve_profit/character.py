@@ -196,6 +196,10 @@ def sync_character(con, esi, cid, profile):
     con.executemany("INSERT INTO my_blueprints VALUES(?,?,?,?)",
                     [(b["type_id"], b["material_efficiency"], b["time_efficiency"], b["runs"])
                      for b in bps])
+    try:                                                                # where each blueprint lies (a build needs it in THIS station)
+        con.execute("INSERT OR REPLACE INTO meta VALUES('bp_locations', ?)", (__import__("json").dumps({str(b["type_id"]): b.get("location_id") for b in bps}),))
+    except Exception:                                                   # noqa: BLE001
+        pass
 
     con.execute("DELETE FROM inventory")
     con.execute("DELETE FROM my_ships")

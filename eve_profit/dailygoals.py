@@ -2,6 +2,7 @@
 Every goal is costed in minutes (travel included) and ISK to get it done; jumps are free when the trip is going there anyway.
 Numbers marked '?' are guesses: edit the "plan" block of a goal in bonus_programs.json (minutes, cash, feasible, why_not) after you time one."""
 import itertools
+import time
 
 PER_JUMP_MIN = 3.0           # minutes per jump (same as agent_offers.json min_per_jump)
 JUMPS_FREE_MIN = 1.0         # extra minutes the 3-jump goal costs when you are travelling that far anyway
@@ -68,8 +69,50 @@ def _far_places(con, mining=None, offers=None):
     return out
 
 
+def usable_blueprint(con, p):
+    """-> (True, '') when you own a blueprint you have the skills for and that lies in THIS station (or whose place is unknown); else (False, reason)."""
+    import json
+    try:
+        from .skills import blueprint_missing, have
+        h = have(con)
+        rows = _q(con, "SELECT blueprint_id FROM my_blueprints")
+        if not rows:
+            return False, "you own no blueprint"
+        try:
+            r = con.execute("SELECT value FROM meta WHERE key='bp_locations'").fetchone()
+            loc = json.loads(r[0]) if r else {}
+        except Exception:                                               # noqa: BLE001
+            loc = {}
+        here_sys = getattr(p, "current_system", "")
+        why = []
+        for (bp,) in rows:
+            if h and blueprint_missing(con, bp, h):
+                why.append("you lack the skills for your blueprint")
+                continue
+            lid = loc.get(str(bp))
+            if lid:
+                sid = None
+                for tbl, col in (("stations", "station_id"), ("structures", "structure_id")):
+                    row = con.execute(f"SELECT system_id FROM {tbl} WHERE {col}=?", (lid,)).fetchone()
+                    if row:
+                        sid = row[0]
+                        break
+                nm = con.execute("SELECT name FROM systems WHERE system_id=?", (sid,)).fetchone() if sid else None
+                if nm and nm[0] != here_sys:
+                    why.append(f"your blueprint is in {nm[0]}, not in {here_sys}")
+                    continue
+            return True, ""
+        return False, why[0] if why else "no usable blueprint"
+    except Exception:                                                   # noqa: BLE001
+        return True, ""
+
+
 def build_option(con, g=None, p=None, free=None):
     """The best build to start from where you stand (make-or-buy, with what it is worth afterwards). Without a map: the plain cheapest build."""
+    if p is not None:
+        ok_, why_ = usable_blueprint(con, p)
+        if not ok_:
+            return {"goal": "Manufacture an Item", "ok": False, "why_not": why_, "minutes": 0, "cash": 0}
     if g is not None and p is not None:
         try:
             from .makebuy import describe, options as mb
@@ -405,6 +448,7 @@ def mark_bought(con):
     if not r or r[0] != st.get("home"):
         return ""
     st["bought"] = True
+    st["bought_t"] = time.time()
     _chain_save(con, st)
     return "OK, the shopping is marked as bought (the game's asset list is cached for an hour, so sync may not show it yet). Run  python -m eve_profit next  for the next step."
 
@@ -501,6 +545,14 @@ def _on_the_way(con, g, p, dest):
 
 def chain_step(con, g, p, pl, reward_ok=True):
     """The ONE step the daily goals chain is at right now, or None when the chain does not apply (then the caller shows the plain checklist)."""
+    ok_bp, _why = usable_blueprint(con, p)
+    if not ok_bp:                                                       # nothing can be built here / with your skills: the stored chain is void
+        try:
+            con.execute("DELETE FROM meta WHERE key=?", (CHAIN_KEY,))
+            con.commit()
+        except Exception:                                               # noqa: BLE001
+            pass
+        return None
     st = _chain_load(con)
     if st is None:
         st = _chain_from_plan(pl, p.current_system)
@@ -516,6 +568,8 @@ def chain_step(con, g, p, pl, reward_ok=True):
 
     def done_checks():
         nonlocal changed
+        if st["bought"] and not st["started"] and time.time() - st.get("bought_t", 0) > 2 * 3600 and not all(_held(con, x["item"], x["system"], g) >= x["qty"] for x in st["buy"]):
+            st["bought"], changed = False, True                          # "bought" was marked long ago but the materials are not in the hangar: not bought
         if not st["bought"] and all(_held(con, x["item"], x["system"], g) >= x["qty"] for x in st["buy"]) :
             st["bought"], changed = True, True
         if st["bought"] and not st["started"] and here == home and slots_used > 0:
