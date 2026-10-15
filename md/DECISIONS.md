@@ -263,3 +263,4 @@
 - 2026-10-14: HyperNet Relay screenshot recorded in BACKLOG (raffle offers; not modeled, not recommended now).
 - 2026-10-14: stop counted 6 cannons carried from Lirsautton to Meves as 888,000 ISK loot for 'Fly to Meves' (10M ISK/hr logged). loot.gains now compares per item type over all systems, so moving a stack is not loot.
 - 2026-10-14: the 'TEST Station / hub trading' turn no longer wraps a stock sale elsewhere (liquidate/haul of stock you own); that is not a test, the normal best-trade/haul step is shown instead (it only ever offers the next hop).
+- 2026-10-14: LIQUIDATE step no longer tells you to run 'check --pick 1' (it only works on buy-and-sell trades and printed nothing); says to confirm the buy-order price in game.

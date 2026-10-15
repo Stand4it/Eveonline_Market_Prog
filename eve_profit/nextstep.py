@@ -189,8 +189,10 @@ def _next_action_core(con, g, p):
         L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
              f"   {o.description}",
              f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)"]
-        if o.kind in ("trade", "liquidate"):
+        if o.kind == "trade":
             L.append("   FIRST confirm live prices:   python -m eve_profit check --pick 1")
+        elif o.kind == "liquidate":
+            L.append("   (`check` does not work on stock you own: confirm the buy-order price in the game before you sell.)")
         L.append("   then route:                  python -m eve_profit go --pick 1 --send")
         L.append(AFTER)
         return "\n".join(L)
