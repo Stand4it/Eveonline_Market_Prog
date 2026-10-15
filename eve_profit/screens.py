@@ -49,7 +49,8 @@ IDX_KEY = "screens_idx"
 
 def items():
     """The screens to send, one per step: the AIR benefits window, then each agent window with an open offer."""
-    out = [("the AIR benefits / rewards window (claim anything with a Claim button)", "goals, progress, time limits")]
+    out = [("the AIR Opportunities window with its top tabs visible (Opportunities | Active | Rewards)",
+            "the Daily Goals and the tab bar: an amber number in brackets next to Rewards = rewards waiting to be claimed (claim them); no number = nothing to claim, no Rewards screenshot needed")]
     out.append(("the Agency window > Agents & Missions > Mission Agents (left-side Agency button), sorted by distance",
                 "the list of agents: name, level, corporation, jumps away, standing needed (tip: use the Filters on the left: Level, Location, Security, Faction)"))
     out.append(("the Agency window > Agents & Missions > Epic Arcs",
