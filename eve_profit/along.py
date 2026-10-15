@@ -85,7 +85,7 @@ def keep_rules(con=None):
         rules[e["item"].lower()] = {"qty": e.get("qty"), "upgrade": e.get("upgrade"), "item": e["item"]}
     if d.get("auto_keep_fitted") and con is not None:
         try:
-            for n, c in con.execute("SELECT t.name, SUM(f.quantity) FROM fitted f JOIN types t ON t.type_id=f.type_id GROUP BY t.name"):
+            for n, c in con.execute("SELECT t.name, SUM(f.quantity) FROM fitted f JOIN types t ON t.type_id=f.type_id WHERE f.flag LIKE '%Slot%' GROUP BY t.name"):
                 rules.setdefault(n.lower(), {"qty": int(c or 1), "upgrade": None, "item": n})      # one spare set, not every unit you ever hold
         except Exception:                                               # noqa: BLE001
             pass
