@@ -151,7 +151,7 @@ def main(argv=None):
         try:
             if a.cmd in ("login", "watch"):                       # these wait for you or loop on purpose
                 return _run(a)
-            with Heartbeat(30.0):                                 # anything slower than 30 s prints a positive line every 30 s
+            with Heartbeat(30.0, out=sys.stdout):                 # anything slower than 30 s prints a positive line every 30 s (the REAL stdout: stages redirect it)
                 return _run(a)
         finally:
             if stamped:
@@ -912,6 +912,8 @@ def _now(a):
                     sys.__stdout__.flush()
             return len(text)
 
+    _last_int = [0.0]
+
     def stage(label, cmd, **kw):
         b = copy.copy(a)
         b.cmd, b.sync = cmd, False
@@ -924,7 +926,11 @@ def _now(a):
             with contextlib.redirect_stdout(buf):
                 _run(b)
         except KeyboardInterrupt:
-            print("   stopped with Ctrl+C: carrying on with the data already stored")
+            now_ = time.time()
+            if now_ - _last_int[0] < 5.0:                                # Ctrl+C twice in a row: stop the whole command, not just this stage
+                raise SystemExit("stopped with Ctrl+C (twice): nothing more is run")
+            _last_int[0] = now_
+            print("   stopped with Ctrl+C: carrying on with the data already stored  (press Ctrl+C again within 5 s to stop everything)")
         except SystemExit as e:
             print(f"   skipped: {e}")
         except Exception as e:                  # one failed stage must not stop the rest
