@@ -267,3 +267,4 @@
 - 2026-10-14: 'next --plan' also lists stacks with no buy order at your docked station (buyers elsewhere in the system) - suspected reason the 6 cannons got no SELL NOW step at Lirsautton and the planner looped Lirsautton-Meves.
 - 2026-10-14: 'along' now prints NOT OFFERED FOR SALE HERE (and why) so a missing sell step can be diagnosed from one command.
 - 2026-10-14: ROOT CAUSE of the cannon sell loop: the 'fitted' table also holds Cargo and DroneBay items, so auto_keep_fitted kept everything in your ship's cargo as 'fitted gear' (6 cannons never offered for sale, planner looped Lirsautton-Meves). keep_rules now counts only real slot items (flag LIKE %Slot%).
+- 2026-10-14: SELL NOW step now sets the game destination to the station with the best buy order (clears the stale Meves waypoint; the user had to be routed to the selling station, not just told to sell).

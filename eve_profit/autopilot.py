@@ -74,7 +74,7 @@ def auto_destination(text, g, client_id):
                 esi = ESI()
                 esi.token, _ = sso.get_token(client_id)
                 esi.post("/ui/autopilot/waypoint/", destination_id=sid, add_to_beginning="false", clear_other_waypoints="true")
-                return "Destination set in your game: the station to buy at  (dock there; I cannot fly or dock for you)"
+                return "Destination set in your game: the station for this step (the best buy order or the sell order)  (dock there; I cannot fly or dock for you)"
         except Exception as e:                                          # noqa: BLE001
             return f"Destination not set automatically ({type(e).__name__}); in game: Map > the station > Set Destination."
         return ""

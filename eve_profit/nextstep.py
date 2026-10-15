@@ -157,6 +157,14 @@ def _next_action_core(con, g, p):
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
         L += keep_lines
+        try:                                                     # the game's destination = the station with the best buy order (also clears an old waypoint)
+            from .tradestep import STATION
+            row = con.execute("SELECT location_id FROM orders WHERE is_buy=1 AND system_id=? AND type_id=? AND volume_remain>0 AND location_id IS NOT NULL "
+                              "ORDER BY price DESC LIMIT 1", (g.id_of(where), sells[0]["tid"])).fetchone()
+            if row:
+                STATION[L[0]] = int(row[0])
+        except Exception:                                        # noqa: BLE001
+            pass
         big = sells[0]
         if big["net"] >= 5_000_000:
             L.append(f"   BIG ONE: before selling {big['name']}, compare other markets:  python -m eve_profit bestprice --item \"{big['name']}\"")
