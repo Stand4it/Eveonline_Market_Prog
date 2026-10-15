@@ -28,8 +28,9 @@ def report(con, esi, cid, wallet_now):
     if not last:
         return ""
     delta = wallet_now - last["isk"]
+    late = _late_report(con, esi, cid)                                  # an earlier gap the journal may explain by now
     if abs(delta) < 1:
-        return "WALLET since last sync: no change."
+        return "WALLET since last sync: no change." + (("\n" + late) if late else "")
     try:
         rows = esi.get(f"/characters/{cid}/wallet/journal/")[0]
     except Exception:                                                   # noqa: BLE001
@@ -46,4 +47,45 @@ def report(con, esi, cid, wallet_now):
     gap = delta - explained
     if abs(gap) >= 1:
         L.append(f"   {gap:+12,.0f}  not in the journal yet (ESI lags up to an hour: AIR / daily goal rewards and sales often show late)")
+        try:                                                            # remember it: a later sync reports what the journal says about it
+            con.execute("INSERT OR REPLACE INTO meta VALUES('wallet_pending', ?)", (json.dumps({"t": last["t"], "gap": gap, "made": time.time()}),))
+            con.commit()
+        except Exception:                                               # noqa: BLE001
+            pass
+    if late:
+        L.append(late)
+    return "\n".join(L)
+
+
+def _late_report(con, esi, cid):
+    """A gap from an earlier sync: once the journal has entries since then, list them (and forget the gap); give up after 3 hours. -> text or ''."""
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='wallet_pending'").fetchone()
+        pend = json.loads(r[0]) if r else None
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    if not pend:
+        return ""
+    if time.time() - pend["made"] > 3 * 3600:
+        con.execute("DELETE FROM meta WHERE key='wallet_pending'")
+        con.commit()
+        return ""
+    try:
+        rows = esi.get(f"/characters/{cid}/wallet/journal/")[0]
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    by, tot = {}, 0.0
+    for e in rows:
+        if _ts(e.get("date", "")) > pend["t"] - 5 and abs(e.get("amount", 0)) > 0:
+            k = NICE.get(e.get("ref_type", ""), e.get("ref_type", "other"))
+            by[k] = by.get(k, 0.0) + e["amount"]
+            tot += e["amount"]
+    if not by:
+        return ""
+    L = [f"THE JOURNAL NOW EXPLAINS THE EARLIER GAP ({pend['gap']:+,.0f} ISK unexplained at the last sync):"]
+    for k, v in sorted(by.items(), key=lambda kv: -abs(kv[1])):
+        L.append(f"   {v:+12,.0f}  {k}")
+    if abs(tot - pend["gap"]) < 1 or tot >= pend["gap"]:
+        con.execute("DELETE FROM meta WHERE key='wallet_pending'")
+        con.commit()
     return "\n".join(L)
