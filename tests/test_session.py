@@ -342,10 +342,16 @@ class KeepListTests(unittest.TestCase):
         con.execute("INSERT INTO orders VALUES(995002,777002,60000001,1,10000001,0,60000.0,10,1,'',1)")
         con.execute("INSERT INTO inventory VALUES(777001,1,2)")
         g = Graph(con)
-        rich = plan_along(con, g, Profile(current_system="Home", wallet_isk=20e6, current_location_id=60000001), "Home")
-        self.assertEqual([u["upgrade"] for u in rich["upgrades"]], ["Miner II"])
-        poor = plan_along(con, g, Profile(current_system="Home", wallet_isk=1e6, current_location_id=60000001), "Home")
-        self.assertEqual(poor["upgrades"], [])
+        from unittest import mock
+        from eve_profit import along as _along
+        _orig = _along.keep_rules
+        with mock.patch.object(_along, "keep_rules", lambda c=None: {k: {**v, "upgrade_at": None} for k, v in _orig(c).items()}):      # the real list limits Miner II to Jita
+            rich = plan_along(con, g, Profile(current_system="Home", wallet_isk=20e6, current_location_id=60000001), "Home")
+            self.assertEqual([u["upgrade"] for u in rich["upgrades"]], ["Miner II"])
+            poor = plan_along(con, g, Profile(current_system="Home", wallet_isk=1e6, current_location_id=60000001), "Home")
+            self.assertEqual(poor["upgrades"], [])
+        here_ = plan_along(con, g, Profile(current_system="Home", wallet_isk=20e6, current_location_id=60000001), "Home")
+        self.assertEqual(here_["upgrades"], [])                   # Miner II is offered only in Jita (keep_items.json upgrade_at)
 
 
 class RebuyNoteTests(unittest.TestCase):

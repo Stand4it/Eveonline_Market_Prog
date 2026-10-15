@@ -82,7 +82,7 @@ def keep_rules(con=None):
     rules = {}
     for e in d.get("keep", []):
         e = {"item": e} if isinstance(e, str) else e
-        rules[e["item"].lower()] = {"qty": e.get("qty"), "upgrade": e.get("upgrade"), "item": e["item"]}
+        rules[e["item"].lower()] = {"qty": e.get("qty"), "upgrade": e.get("upgrade"), "item": e["item"], "upgrade_at": e.get("upgrade_at")}
     if d.get("auto_keep_fitted") and con is not None:
         try:
             for n, c in con.execute("SELECT t.name, SUM(f.quantity) FROM fitted f JOIN types t ON t.type_id=f.type_id WHERE f.flag LIKE '%Slot%' GROUP BY t.name"):
@@ -126,6 +126,8 @@ def gear_upgrades(con, g, p, held, rules):
         up = rule.get("upgrade")
         if not up or key not in held:
             continue
+        if rule.get("upgrade_at") and str(rule["upgrade_at"]).lower() != str(p.current_system).lower():
+            continue                                        # the upgrade is cheaper elsewhere (e.g. Jita): offered only when you are there
         tid, qty = held[key]
         n = min(qty, rule["qty"]) if rule.get("qty") else qty
         up_row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (up,)).fetchone()

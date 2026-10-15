@@ -5,7 +5,9 @@
   {
    "item": "Miner I",
    "qty": 3,
-   "upgrade": "Miner II"
+   "upgrade": "Miner II",
+   "upgrade_at": "Jita",
+   "upgrade_note": "Miner II needs Mining IV and costs ~518k in Jita vs ~688k locally: offer the upgrade only in Jita (user 2026-10-15); also compare building it from the blueprint"
   },
   {
    "item": "Core Scanner Probe I",
