@@ -1463,7 +1463,7 @@ class ScreensStepTests(unittest.TestCase):
         n = len(screens.items())
         txt = screens.step(con)
         self.assertIn(f"screen 1 of {n}", txt)
-        self.assertIn("AIR benefits", txt)
+        self.assertIn("AIR Opportunities window", txt)
         self.assertEqual(txt.count("DO ONLY THIS"), 1)                          # ONE thing to do
         self.assertIn("Win + Shift + S", txt)                                    # how to send the image
         self.assertIn("python -m eve_profit done", txt)
