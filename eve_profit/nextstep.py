@@ -114,6 +114,8 @@ def _next_action_core(con, g, p):
         for l in res.get("losses", []):
             keep_lines.append(f"   keep {l['qty']:,} x {l['name']}: the best price here ({l['best_here']:,.0f}) is BELOW what you paid ({l['cost']:,.0f})"
                               + (f"; {l['alt_name']} pays {l['alt'][0]:,.0f} ({l['alt_jumps']} jumps)" if l.get("alt") else ""))
+        for n, q in res.get("no_bids", []):
+            keep_lines.append(f"   keep {q:,} x {n}: no buy order for it " + ("at the station you are docked in (" + str(res.get("dock")) + "); the buyers are elsewhere" if res.get("dock") else "on your route here"))
         for n in res.get("on_market", []):
             keep_lines.append(f"   keep {n}: you already have a sell order for it on the market")
         for n in res.get("kept_gear", []):
