@@ -303,6 +303,11 @@ def format_along(res):
                    if d["alt"] and d["alt"][0] > d["cost"] else
                    f"no buyer within reach pays your cost; HOLD or list a sell order above {d['cost'] / max(d['qty'], 1):,.0f} each")
             L.append(f"   {d['qty']:>10,} x {d['name']:<32} paid {d['cost']:>12,.0f}, best here {d['best_here']:>12,.0f} -> {msg}")
+    skipped = ([f"{q:,} x {n}: no buy order at {'your docking station (' + str(res.get('dock')) + ')' if res.get('dock') else 'any station on the route'}" for n, q in res.get("no_bids", [])]
+               + [f"{n}: you already have a sell order for it" for n in res.get("on_market", [])]
+               + [f"{n}: on your keep list" for n in res.get("kept_gear", [])])
+    if skipped:
+        L += ["", "NOT OFFERED FOR SALE HERE (and why):"] + ["   " + x for x in skipped]
     L += ["", f"CARRY ({res['used_m3']:,.0f} m3) and sell on the way:"]
     by = {}
     for d in res["carry"]:

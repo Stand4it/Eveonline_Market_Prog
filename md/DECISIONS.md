@@ -265,3 +265,4 @@
 - 2026-10-14: the 'TEST Station / hub trading' turn no longer wraps a stock sale elsewhere (liquidate/haul of stock you own); that is not a test, the normal best-trade/haul step is shown instead (it only ever offers the next hop).
 - 2026-10-14: LIQUIDATE step no longer tells you to run 'check --pick 1' (it only works on buy-and-sell trades and printed nothing); says to confirm the buy-order price in game.
 - 2026-10-14: 'next --plan' also lists stacks with no buy order at your docked station (buyers elsewhere in the system) - suspected reason the 6 cannons got no SELL NOW step at Lirsautton and the planner looped Lirsautton-Meves.
+- 2026-10-14: 'along' now prints NOT OFFERED FOR SALE HERE (and why) so a missing sell step can be diagnosed from one command.
