@@ -836,6 +836,13 @@ def _name_of(step):
 def _chain(steps):
     """One step = print it as is; several = a numbered chain to do in this order."""
     steps = [x for x in steps if x]
+    seen, uniq = set(), []
+    for x in steps:                                                     # the same step twice (same first line) is one step
+        k = x.strip().split("\n", 1)[0]
+        if k not in seen:
+            seen.add(k)
+            uniq.append(x)
+    steps = uniq
     if len(steps) == 1:
         return steps[0]
     L = [f"TODAY'S CHAIN - {len(steps)} parts, do them in this order, then sync and next:", ""]
@@ -1085,8 +1092,26 @@ def next_action(con, g, p, full=False, ahead=False):
                 _i = next((i for i, c in enumerate(cands) if c[1] == _last), None)
                 if _i is not None and cands[0][0] < cands[_i][0] * 1.15 and cands[0][0] != float("inf"):
                     cands.insert(0, cands.pop(_i))
+            try:                                                 # ARRIVED at the agent you were sent to: accept it first (2 minutes) instead of re-ranking and flying away again
+                _lp = _jj.loads(_r[0]) if _r else {}
+                _ag = _lp.get("agent")
+                if _lp.get("label") == "agent mission" and _ag and (_lp.get("at") != p.current_system):
+                    import json as _j2
+                    _o = next((x for x in _j2.load(open(__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.dirname(__import__("os").path.abspath(__file__))), "agent_offers.json"), encoding="utf-8"))["offers"]
+                               if x.get("agent") == _ag and x.get("available", True) and x.get("agent_system") == p.current_system), None)
+                    if _o:
+                        from .agentchain import stage_text
+                        _t = stage_text(con, g, p, _o)
+                        if _t.startswith("STEP: ACCEPT"):
+                            cands.insert(0, (cands[0][0] * 1.0001 if cands else 1.0, "agent mission", _t, "you flew here for this mission: accept it, then decide"))
+            except Exception:                                    # noqa: BLE001
+                pass
             if cands:
-                con.execute("INSERT OR REPLACE INTO meta VALUES('last_plan', ?)", (_jj.dumps({"label": cands[0][1]}),))
+                _a = LAST_OFFER.get("o", {}).get("agent") if cands[0][1] == "agent mission" else None
+                if cands[0][1] == "agent mission" and cands[0][2].startswith("STEP: ACCEPT"):
+                    _m = __import__("re").match(r"STEP: ACCEPT (.+?)'s MISSION", cands[0][2])
+                    _a = next((x for x in (LAST_OFFER.get("o", {}).get("agent"), _lp.get("agent")) if x and _m and x.startswith(_m.group(1))), _a)
+                con.execute("INSERT OR REPLACE INTO meta VALUES('last_plan', ?)", (_jj.dumps({"label": cands[0][1], "agent": _a, "at": p.current_system}),))
         except Exception:                                        # noqa: BLE001
             pass
         con.commit()
