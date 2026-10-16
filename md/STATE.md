@@ -6,7 +6,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 282 | commands in code: 59
 
 Open agent offers (agent_offers.json):
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
-- Ormelace Vaille: step 1 'Cash Flow for Capsuleers' (1 of 10): clear Coreli th
 - Beradaillot Audates: step 7 'Balancing the Books' (7 of 10): scan down the ancien
 - Arnelin Ygegnere: step 10 of 10 'Making Mountains of Molehills' (FINAL): acqui
 - Cassandra Ahfrim: chapter 1 of 8 'Holographic Reenactment': report to Holorela
