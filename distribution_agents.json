@@ -1,0 +1,245 @@
+{
+ "_help": "Distribution (courier) Mission Agents from the Agency window, screenshots 2026-10-16, 30 results. jumps from where the user stood: 'In Current System' = two level-1 agents right there (the station X-Sense / Stetille area: the system with gates to Adiere and Olelon, 1 jump from Doussivitte and Adiere). Level 2 agents need standing.",
+ "agents": [
+  {
+   "agent": "Asserens Allomieves",
+   "system": "(current system)",
+   "sec": 0.9,
+   "jumps": 0,
+   "corp": "TransStellar Shipping",
+   "level": 1
+  },
+  {
+   "agent": "Octanneve Ametens",
+   "system": "(current system)",
+   "sec": 0.9,
+   "jumps": 0,
+   "corp": "Impetus",
+   "level": 1
+  },
+  {
+   "agent": "Rhovolle Odaelloles",
+   "system": "Doussivitte",
+   "sec": 0.8,
+   "jumps": 1,
+   "corp": "TransStellar Shipping",
+   "level": 1
+  },
+  {
+   "agent": "Olmart Yolelle",
+   "system": "Adiere",
+   "sec": 0.8,
+   "jumps": 1,
+   "corp": "TransStellar Shipping",
+   "level": 1
+  },
+  {
+   "agent": "Oullaerdt Besserilier",
+   "system": "Adiere",
+   "sec": 0.8,
+   "jumps": 1,
+   "corp": "Combined Harvest",
+   "level": 1
+  },
+  {
+   "agent": "Charmes Palinard",
+   "system": "Auberulle",
+   "sec": 0.8,
+   "jumps": 2,
+   "corp": "Combined Harvest",
+   "level": 1
+  },
+  {
+   "agent": "Aulleem Monatave",
+   "system": "Auberulle",
+   "sec": 0.8,
+   "jumps": 2,
+   "corp": "Egonics Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Ophenckbraert Ysevette",
+   "system": "Auberulle",
+   "sec": 0.8,
+   "jumps": 2,
+   "corp": "Egonics Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Andarane Ringilaille",
+   "system": "Harerget",
+   "sec": 0.8,
+   "jumps": 2,
+   "corp": "Federal Navy Academy",
+   "level": 1
+  },
+  {
+   "agent": "Aernoltene Piliette",
+   "system": "Ethernity",
+   "sec": 0.9,
+   "jumps": 3,
+   "corp": "Egonics Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Okila Kavas",
+   "system": "Dodixie",
+   "sec": 0.9,
+   "jumps": 4,
+   "corp": "Nugoeihuvi Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Arnadelau Auvergne",
+   "system": "Alles",
+   "sec": 0.8,
+   "jumps": 4,
+   "corp": "Federal Administration",
+   "level": 1
+  },
+  {
+   "agent": "Dire Serin",
+   "system": "Foves",
+   "sec": 0.6,
+   "jumps": 5,
+   "corp": "Center for Advanced Studies",
+   "level": 2
+  },
+  {
+   "agent": "Erlelinni Bjarad",
+   "system": "Avenod",
+   "sec": 0.4,
+   "jumps": 5,
+   "corp": "Republic Parliament",
+   "level": 1
+  },
+  {
+   "agent": "Ancye Egghonelle",
+   "system": "Egghelende",
+   "sec": 0.4,
+   "jumps": 5,
+   "corp": "University of Caille",
+   "level": 1
+  },
+  {
+   "agent": "Fouinotere Elastault",
+   "system": "Alachene",
+   "sec": 0.3,
+   "jumps": 5,
+   "corp": "Federal Freight",
+   "level": 1
+  },
+  {
+   "agent": "Tavanula Saari",
+   "system": "Siseide",
+   "sec": 0.3,
+   "jumps": 6,
+   "corp": "Expert Distribution",
+   "level": 1
+  },
+  {
+   "agent": "Ohki Okki",
+   "system": "Olettiers",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "Expert Distribution",
+   "level": 1
+  },
+  {
+   "agent": "Huomaila Kebashi",
+   "system": "Olettiers",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "Expert Distribution",
+   "level": 1
+  },
+  {
+   "agent": "Olelie Tralidmel",
+   "system": "Aliette",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "Aliastra",
+   "level": 1
+  },
+  {
+   "agent": "Amanere Yvylier",
+   "system": "Aliette",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "Aliastra",
+   "level": 1
+  },
+  {
+   "agent": "Lyfdevos Armaviere",
+   "system": "Gerper",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "FedMart",
+   "level": 1
+  },
+  {
+   "agent": "Arbame Vimereau",
+   "system": "Gerper",
+   "sec": 0.4,
+   "jumps": 6,
+   "corp": "FedMart",
+   "level": 1
+  },
+  {
+   "agent": "Antree Essoennan",
+   "system": "Groothese",
+   "sec": 0.3,
+   "jumps": 6,
+   "corp": "Egonics Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Armailitte Alonckbraert",
+   "system": "Olide",
+   "sec": 0.7,
+   "jumps": 7,
+   "corp": "Center for Advanced Studies",
+   "level": 2
+  },
+  {
+   "agent": "Assye Fenere",
+   "system": "Floseswin",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "TransStellar Shipping",
+   "level": 1
+  },
+  {
+   "agent": "Elettan Adlistar",
+   "system": "Turnur",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "Freedom Extension",
+   "level": 1
+  },
+  {
+   "agent": "Faneh Neyi",
+   "system": "Lantorn",
+   "sec": 0.3,
+   "jumps": 7,
+   "corp": "Nurtura",
+   "level": 1
+  },
+  {
+   "agent": "Vivanier Amaert",
+   "system": "Heydieles",
+   "sec": 0.3,
+   "jumps": 7,
+   "corp": "Duvolle Laboratories",
+   "level": 1
+  },
+  {
+   "agent": "Ivonalle Galelare",
+   "system": "Slays",
+   "sec": 0.5,
+   "jumps": 12,
+   "corp": "Center for Advanced Studies",
+   "level": 2
+  }
+ ]
+}
