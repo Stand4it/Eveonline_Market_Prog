@@ -24,6 +24,13 @@ class PingPong(unittest.TestCase):
         con = self._con([[now - 900, "A", "B", 1], [now - 600, "B", "A", 1], [now - 300, "A", "B", 1]])
         self.assertEqual(livepos.reversal(con, "A", "B", now), 2)
 
+    def test_last_fly_step_catches_an_unlogged_move(self):
+        now = time.time()
+        con = self._con([])
+        livepos.note_fly(con, "Yulai", "Manifest", now - 600)
+        self.assertGreaterEqual(livepos.reversal(con, "Yulai", "Manifest", now), 1)
+        self.assertEqual(livepos.reversal(con, "Elsewhere", "Manifest", now), 0)
+
     def test_old_moves_do_not_count(self):
         now = time.time()
         con = self._con([[now - 5 * 3600, "A", "B", 1]])

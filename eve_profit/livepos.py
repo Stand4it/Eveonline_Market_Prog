@@ -114,8 +114,26 @@ def reversal(con, fly_target, here, now=None):
         return 0
     now = now or time.time()
     log = [x for x in log if now - x[0] < 3 * 3600]
+    try:                                         # the last FLY step `next` itself gave (A -> B): standing in B and told to go back to A is a reversal even if no move was logged
+        lf = con.execute("SELECT value FROM meta WHERE key='last_fly'").fetchone()
+        lf = json.loads(lf[0]) if lf else None
+        if lf and now - lf[0] < 3 * 3600 and str(lf[1]).lower() == str(fly_target).lower() and str(lf[2]).lower() == str(here).lower():
+            return 2 if (log and log[-1][1] == log[-1][2] or len(log) >= 2) else 1
+    except Exception:                                                   # noqa: BLE001
+        pass
     if not log or not fly_target or str(log[-1][1]).lower() != str(fly_target).lower() or str(log[-1][2]).lower() != str(here).lower():
         return 0
     if len(log) >= 2 and log[-2][1] == log[-1][2] and log[-2][2] == log[-1][1]:
         return 2
     return 1
+
+
+def note_fly(con, here, target, now=None):
+    """Remember the FLY step just given (here -> target) so the next call can tell a reversal."""
+    import json
+    import time
+    try:
+        con.execute("INSERT OR REPLACE INTO meta VALUES('last_fly', ?)", (json.dumps([now or time.time(), here, target]),))
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass

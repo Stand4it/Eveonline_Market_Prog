@@ -126,6 +126,7 @@ def _sync_notifications(con, esi, cid):
 
 def sync_character(con, esi, cid, profile):
     """Fills profile (system, ship, cargo, wallet, tax) and inventory. -> summary dict."""
+    _sys_before = profile.current_system
     loc = esi.get(f"/characters/{cid}/location/")[0]
     ship = esi.get(f"/characters/{cid}/ship/")[0]
     wallet = esi.get(f"/characters/{cid}/wallet/")[0]
@@ -144,6 +145,13 @@ def sync_character(con, esi, cid, profile):
         profile.current_system = esi.get(f"/universe/systems/{loc['solar_system_id']}/")[0]["name"]
     try:
         con.execute("INSERT OR REPLACE INTO meta VALUES('here_system', ?)", (profile.current_system,))
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:                                         # EVERY sync (sync, stopsync, now) logs a system change: the ping-pong guard and the 3-jump goal read this log
+        if profile.current_system != _sys_before:
+            from .graph import Graph
+            from .livepos import record_move
+            record_move(con, Graph(con), _sys_before, profile.current_system)
     except Exception:                                                   # noqa: BLE001
         pass
     profile.current_location_id = loc.get("station_id") or loc.get("structure_id") or 0

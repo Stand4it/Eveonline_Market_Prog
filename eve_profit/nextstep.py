@@ -1129,6 +1129,13 @@ def next_action(con, g, p, full=False, ahead=False):
                 cands[0] = (cands[0][0], cands[0][1], (cands[0][2] or "") + f"\n   (going back to where you just came from: it is still the best plan by {need:g}x, but check it is worth the trip)", cands[0][3])
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # remember the FLY step given, to recognise a reversal at the next stop
+        from .livepos import note_fly as _nf
+        _m = _FLY.search((cands[0][2] if cands else "") or "")
+        if _m:
+            _nf(con, p.current_system, _m.group(1).strip())
+    except Exception:                                            # noqa: BLE001
+        pass
     plans_txt = ""
     if cands:                                                    # every plan on ONE list, best ISK/hr first, each with the step it would take next
         def _first(t):
