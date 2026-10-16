@@ -7,3 +7,4 @@
 - After any `cli.py` edit run the tests (a bad edit once deleted 22 commands). Commit trailers: Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com> and Claude-Session: https://claude.ai/code/session_01FpAeMd8RZSyQpWh3R9Tigo
 - If something looks wrong, say so; do not silently revert the user's changes.
 - Limit token use: do analysis in scripts/code (verifiable, free to rerun), short answers; no runtime AI calls unless the code can verify the answer (see md/DECISIONS.md 2026-10-16).
+- A lead (price gap, trade idea, new ship) is only done when it is the BEST current option by risk-adjusted ISK/hr against everything else; every step re-plans from the live position, ship, skills and the skill-queue completion times (short and long term), never from a fixed plan.
