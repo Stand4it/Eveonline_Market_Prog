@@ -61,11 +61,11 @@
    "granted": [],
    "task_min": 25,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Rotonos IV Moon 2 - Center for Advanced Studies (this station)",
    "timer_name": "Agent L1 step 3 Explorer data site",
    "agent_system": "Rotonos",
-   "note": "standing 1.47"
+   "note": "standing 1.47. Seen again 2026-10-16: the drop-off Rotonos IV is 11 jumps from where the user is. Needs Astrometrics (probe scanning), a Core Probe Launcher fitted (one is in the hangar), Core Scanner Probes and the Civilian Data Analyzer fitted. Marked unavailable until those are done and you are near Rotonos."
   },
   {
    "agent": "Arabeton Spilmottin (Soldier of Fortune)",
