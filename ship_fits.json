@@ -63,5 +63,19 @@
   "ship": "Incursus (user wrote 'Incarus')",
   "how": "granted to the user on 2026-10-16 at the station they are docked in now (a mission/agent grant)",
   "use": "Gallente combat frigate (3 turret hardpoints, hybrid weapons: fits the 2 owned 150mm railguns / blaster) with a hold of about 130 m3 (check in the fitting window): about 5 Ogre I drones (25 m3 each) per trip against 2 in the Venture. Unfitted until checked; ammo (Antimatter Charge S) and tank still missing for combat."
+ },
+ "combat_kit": {
+  "hulls": [
+   "Incursus",
+   "Tristan",
+   "Atron",
+   "Maulus"
+  ],
+  "turrets": 2,
+  "turret_buy": "150mm Carbide Railgun I",
+  "ammo": "Antimatter Charge S",
+  "ammo_qty": 200,
+  "tank_buy": "Small Armor Repairer I",
+  "_note": "What a ship needs before a combat test is valid (combatprep.py). Edit the numbers as the plan learns."
  }
 }

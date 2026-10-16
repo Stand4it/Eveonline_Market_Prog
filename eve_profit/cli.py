@@ -354,6 +354,9 @@ def _run(a):
                     _nm = next((n for n in _G(con).name.values() if n.lower() == act[len("pick up stock "):].strip()), None)
                     if _nm:
                         print(mark_picked(con, _nm))
+                if act.startswith("fitting window "):
+                    from .combatprep import mark_fit_seen
+                    mark_fit_seen(con, act[len("fitting window "):].strip().title())
                 if act.startswith("acquire "):                                   # a purchase step: remember it until ESI shows it
                     import re as _re
                     from .acquire import confirm as _acq

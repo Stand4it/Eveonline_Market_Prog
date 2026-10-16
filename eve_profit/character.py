@@ -210,6 +210,7 @@ def sync_character(con, esi, cid, profile):
     _sync_notifications(con, esi, cid)
     skipped = kept = ships = lookups = 0
     cargo_now = {}
+    deferred = []
     cur_ship = ship.get("ship_item_id")
     for a in esi.paged(f"/characters/{cid}/assets/"):
         lid, lt = a["location_id"], a.get("location_type")
@@ -241,6 +242,8 @@ def sync_character(con, esi, cid, profile):
                 known[lid] = None
         sid = known.get(lid) if lt in ("station", "other") else None
         if sid is None or (cur_ship is not None and a.get("item_id") == cur_ship):
+            if lt == "item" and a.get("item_id") != cur_ship:
+                deferred.append(a)             # inside a parked ship / container: counted after the loop when that ship's place is known
             skipped += 1                       # in a container/ship, unknown structure, or the ship you fly
             continue
         if a.get("is_singleton"):
@@ -254,6 +257,17 @@ def sync_character(con, esi, cid, profile):
         con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) "
                     "DO UPDATE SET quantity=quantity+excluded.quantity", (a["type_id"], sid, a["quantity"]))
         kept += 1
+    try:                                   # what lies inside the ships you parked (guns, ammo in their holds) is stock where that ship is
+        where = {r[0]: r[1] for r in con.execute("SELECT item_id,system_id FROM my_ships")}
+        for a in deferred:
+            sid_ = where.get(a["location_id"])
+            if sid_ is not None and not a.get("is_singleton"):
+                con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) DO UPDATE SET quantity=quantity+excluded.quantity",
+                            (a["type_id"], sid_, a["quantity"]))
+                kept += 1
+                skipped -= 1
+    except Exception:                      # noqa: BLE001
+        pass
     try:                                   # what is in the ship's cargo right now (so a stop-over does not "pick up" what you already carry)
         con.execute("INSERT OR REPLACE INTO meta VALUES('cargo_now', ?)", (__import__("json").dumps({str(k): v for k, v in cargo_now.items()}),))
     except Exception:                      # noqa: BLE001

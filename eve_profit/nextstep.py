@@ -811,6 +811,14 @@ def _name_of(step):
         return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):
         return "Gear upgrade"
+    if lo.startswith("step: show me the fitting window of your "):
+        return "Fitting window " + first.split("window of your ", 1)[-1].split(" (")[0].strip()
+    if lo.startswith("step: board your "):
+        return "Board " + first.split("BOARD your ", 1)[-1].split(" (")[0].strip()
+    if lo.startswith("step: fit "):
+        return "Fit " + first.split("STEP: FIT ", 1)[-1].split(" to your")[0].strip()
+    if lo.startswith("step: load "):
+        return "Load " + first.split("STEP: LOAD ", 1)[-1].split(" into")[0].strip()
     if lo.startswith("step: pick up stock in "):
         return "Pick up stock " + first.split("STEP: PICK UP STOCK in ", 1)[-1].split(" (")[0].strip()
     if lo.startswith("step: acquire "):
@@ -1042,6 +1050,13 @@ def next_action(con, g, p, full=False, ahead=False):
             con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
         if act:
             step_txt = experiment_step(act, reason)
+            if act["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):       # a combat test is only valid with a combat-ready ship: the step is the first missing piece
+                try:
+                    from . import combatprep
+                    _hop = _hop_step(g, p, con)
+                    step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
+                except Exception:                                # noqa: BLE001
+                    pass
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
                 try:
                     opps_ = plan(con, p, 5, False)
