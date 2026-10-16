@@ -2,6 +2,7 @@
 other activity: (extra ISK vs selling it right here) / (the trip ONE WAY + docking; extra loads add their round trips). There is no planned
 return: `next` plans again at every stop, so at the destination the best next step is chosen fresh. Ore may ride in a mining ship's ore hold."""
 import math
+import os
 
 from .along import keep_rules, keep_split
 from .orders import load_books, sell_into_bids
@@ -255,6 +256,14 @@ def hop_only(text, here=None):
             m = re.search(r"(?:buy .*? at|sell .*? at|need anyway: .*? at) (.+?)(?: \(| on the route|$)", ln)
             if m and m.group(1).strip().lower() != here.lower():
                 continue
+        gm = re.match(r"^\s{6}(going|coming back):\s*(.*)$", ln)
+        if gm and here:                                                   # trades of the route: only a buy/sell in THIS system is part of this step; the rest (and the money total) wait for `next --plan` / that system
+            m = re.search(r"(?:buy|sell) .*? at (.+?)(?: \(|$)", gm.group(2))
+            if not m or m.group(1).strip().lower() != here.lower():
+                continue
+        rm = re.match(r"^\s*agent on the route: .*\(\w[\w ]*, ([^)]+)\):", ln)
+        if rm and here and rm.group(1).strip().lower() != str(here).lower():          # an agent in a system you have not reached yet comes up when you are there
+            continue
         am = re.match(r"^\s*AGENTS? at (.+?):", ln)
         if am and (not here or am.group(1).strip().lower() != str(here).lower()):          # agents in a system you are NOT in belong to `next --plan`, not to this step
             continue
@@ -306,3 +315,13 @@ def haul_step(h, g=None, p=None, con=None):
     if not any(x.startswith("ON THE WAY") for x in h.get("extra_lines", [])):
         L.append("   ON THE WAY: nothing worth buying or selling on this route right now.")
     return "\n".join(L)
+
+
+def agents_in_system(g, p):
+    """Known agents in the system you stand in: lines for the current step ('accept a mission in passing')."""
+    import json
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents_nearby.json")
+    try:
+        return _agents_in(json.load(open(f, encoding="utf-8")), {p.current_system})
+    except Exception:                                                   # noqa: BLE001
+        return []

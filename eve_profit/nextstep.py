@@ -1211,6 +1211,14 @@ def next_action(con, g, p, full=False, ahead=False):
         if first.startswith("STEP: FLY to") and "hauling your stock to" in first:
             from .haul import hop_only
             first = hop_only(first, p.current_system)
+        if first.startswith("STEP: FLY to"):                                                                 # a trip: agents in THIS system can be asked in passing, the ones further on wait for their system
+            try:
+                from .haul import agents_in_system as agents_here
+                for _l in agents_here(g, p)[:2]:
+                    if _l.split(":")[1].strip()[:12] not in first:
+                        first += "\n   " + _l.replace("look at the offer when you stop there; a new mission may have appeared", "while you are at this station: look at its offer (a quick accept models the career)")
+            except Exception:                                        # noqa: BLE001
+                pass
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home

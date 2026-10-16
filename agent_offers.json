@@ -594,6 +594,24 @@
    "m3": 2000.0,
    "agent_system": "Harerget",
    "note": "Seen 2026-10-15. Bonus needs completion within 1 h 26 min of accepting. Estimated 40 min of mining for ~87,000 ISK (about 130k ISK/hr): well below the 1M ISK/hr agent steps, so not offered until jumps from here are entered and it beats the alternatives. Needs the ore hold (2,000 m3)."
+  },
+  {
+   "agent": "Bostiers Oderyncke (Security, L1, Alenia V - Duvolle Laboratories Factory)",
+   "mission": "'Mysterious Sightings' (1 of 4): look for signs of 'alien activity' at Vaere (0.8). Pays 23,000 ISK + 33 LP; bonus 29,000 ISK within 1 h 24 min.",
+   "isk": 23000,
+   "bonus": 29000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 2,
+   "available": true,
+   "where": "Alenia V - Duvolle Laboratories Factory (agent); Vaere (objective)",
+   "agent_system": "Alenia",
+   "to_system": "Vaere",
+   "career": "Security",
+   "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each."
   }
  ],
  "min_per_jump": 3.0,
