@@ -209,6 +209,7 @@ def sync_character(con, esi, cid, profile):
     known.update({r[0]: r[1] for r in con.execute("SELECT structure_id,system_id FROM structures WHERE system_id>0")})
     _sync_notifications(con, esi, cid)
     skipped = kept = ships = lookups = 0
+    cargo_now = {}
     cur_ship = ship.get("ship_item_id")
     for a in esi.paged(f"/characters/{cid}/assets/"):
         lid, lt = a["location_id"], a.get("location_type")
@@ -220,6 +221,7 @@ def sync_character(con, esi, cid, profile):
             if flag == "Cargo" and loc.get("solar_system_id"):       # hauled goods are stock in the system you are in (ESI may show them up to an hour late)
                 con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) DO UPDATE SET quantity=quantity+excluded.quantity",
                             (a["type_id"], loc["solar_system_id"], a.get("quantity", 1)))
+                cargo_now[a["type_id"]] = cargo_now.get(a["type_id"], 0) + a.get("quantity", 1)
             continue
         if lid not in known and lookups < 200 and (lt == "station" or (lt == "other" and lid >= 10**12)):
             lookups += 1                       # station/structure not in our data: ask ESI once
@@ -252,6 +254,10 @@ def sync_character(con, esi, cid, profile):
         con.execute("INSERT INTO inventory VALUES(?,?,?) ON CONFLICT(type_id,system_id) "
                     "DO UPDATE SET quantity=quantity+excluded.quantity", (a["type_id"], sid, a["quantity"]))
         kept += 1
+    try:                                   # what is in the ship's cargo right now (so a stop-over does not "pick up" what you already carry)
+        con.execute("INSERT OR REPLACE INTO meta VALUES('cargo_now', ?)", (__import__("json").dumps({str(k): v for k, v in cargo_now.items()}),))
+    except Exception:                      # noqa: BLE001
+        pass
     names = [r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id "
                                                "WHERE f.flag LIKE '%Slot%'")]
     profile.can_salvage = any("salvager" in n for n in names)

@@ -344,6 +344,12 @@ def _run(a):
                     _mb = mark_bought(con)
                     if _mb:
                         print(_mb)
+                if act.startswith("pick up stock "):
+                    from .tripplus import mark_picked
+                    from .graph import Graph as _G
+                    _nm = next((n for n in _G(con).name.values() if n.lower() == act[len("pick up stock "):].strip()), None)
+                    if _nm:
+                        print(mark_picked(con, _nm))
                 if act.startswith("acquire "):                                   # a purchase step: remember it until ESI shows it
                     import re as _re
                     from .acquire import confirm as _acq

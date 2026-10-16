@@ -618,12 +618,19 @@ LAST_OFFER = {}
 AGENT_FIRST = {"text": ""}
 
 
-def _hop_step(g, p):
+def _hop_step(g, p, con_=None):
     def hop_to(system, why, lines):
         from .haul import _hop
         nm, left, total = _hop(g, p, system)
         if not nm:
             return ""
+        try:                                                            # stock lying here: pick it up first (consolidates your inventory as you travel)
+            from .tripplus import pickup_step
+            ps = pickup_step(con_, g, p, system)
+            if ps:
+                return ps
+        except Exception:                                               # noqa: BLE001
+            pass
         return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
                 f"   LATER: {why} ({left} jumps to {system}): " + " | ".join(lines))
     return hop_to
@@ -631,7 +638,7 @@ def _hop_step(g, p):
 
 def _agent_first(con, g, p, o, ways):
     """An agent mission as ONE action: get what it needs where that is cheapest, then fly to the agent (one jump per step), then accept / do / hand in."""
-    hop_to = _hop_step(g, p)
+    hop_to = _hop_step(g, p, con)
     try:
         from .acquire import first_action
         for w_ in ways:
@@ -804,6 +811,8 @@ def _name_of(step):
         return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):
         return "Gear upgrade"
+    if lo.startswith("step: pick up stock in "):
+        return "Pick up stock " + first.split("STEP: PICK UP STOCK in ", 1)[-1].split(" (")[0].strip()
     if lo.startswith("step: acquire "):
         return "Acquire " + first.split("ACQUIRE ", 1)[-1].split(" - ")[0].strip()
     if lo.startswith("step: accept ") and "'s mission" in lo:

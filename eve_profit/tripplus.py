@@ -75,6 +75,11 @@ def extras(con, g, p, dest, m3=0.0):
     if not path:
         return out
     out["lines"] += _agents(g, path)
+    try:                                                                # stock lying in hangars along the route: collect it as you pass (consolidates your inventory)
+        for d in pickups(con, g, p, path, m3):
+            out["lines"].append(f"pick up in {d['system']}: {d['qty']:,} x {d['item']} ({d['m3']:,.0f} m3, ~{d['value']:,.0f} ISK): consolidates your stock, rides along")
+    except Exception:                                                   # noqa: BLE001
+        pass
     try:
         out["lines"] += cheap_needs(con, g, p, path)
     except Exception:                                                   # noqa: BLE001
@@ -116,3 +121,83 @@ def cheap_needs_here(con, g, p, home_name, min_save=0.20, min_isk=3000.0):
         if a_here and a_home and a_here <= a_home * (1 - min_save) and (a_home - a_here) * short >= min_isk:
             out.append(f"{short:,} x {rule['item']} ~{a_here:,.0f} each here (about {a_home:,.0f} at {home_name}): saves ~{(a_home - a_here) * short:,.0f} ISK")
     return out
+
+
+PICKED_KEY = "picked"
+PICKED_MAX_AGE_S = 2 * 3600
+
+
+def _meta_json(con, key):
+    import json
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
+        return json.loads(r[0]) if r else {}
+    except Exception:                                                   # noqa: BLE001
+        return {}
+
+
+def mark_picked(con, system_name):
+    """`stop` on a PICK UP step: that system's stock is on board now (ESI shows the cargo within an hour): do not ask again for 2 h."""
+    import json
+    import time
+    st = _meta_json(con, PICKED_KEY)
+    st[system_name] = time.time()
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (PICKED_KEY, json.dumps(st)))
+    con.commit()
+    return f"Noted: the stock in {system_name} is picked up (it rides along and is sold or delivered where it pays most)."
+
+
+def pickups(con, g, p, system_ids, mission_m3=0.0, limit=6):
+    """Stock lying in hangars at `system_ids` (a trip's route) that fits the free cargo space, best value per m3 first: consolidates your stock as you travel.
+    -> [{system, item, qty, m3, value}]. Gear on the keep list stays where it is; cargo you already carry is not counted."""
+    import time
+    try:
+        from .along import keep_rules
+        keep = keep_rules(con)
+    except Exception:                                                   # noqa: BLE001
+        keep = {}
+    cargo = _meta_json(con, "cargo_now")
+    picked = _meta_json(con, PICKED_KEY)
+    cur = g.id_of(p.current_system)
+    vol = {r[0]: (r[1] or 0.0) for r in con.execute("SELECT type_id,volume FROM types")}
+    used = sum(int(q) * vol.get(int(t), 0.0) for t, q in cargo.items())
+    room = max(0.0, float(p.cargo_m3) - used - float(mission_m3))
+    try:
+        adj = {r[0]: r[1] or 0.0 for r in con.execute("SELECT type_id,adjusted_price FROM prices")}
+    except Exception:                                                   # noqa: BLE001
+        adj = {}
+    rows = []
+    for sid in system_ids:
+        name = g.name[sid]
+        if time.time() - picked.get(name, 0) < PICKED_MAX_AGE_S:
+            continue
+        for r in con.execute("SELECT i.type_id,i.quantity,t.name FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=?", (sid,)):
+            tid, q, nm = r[0], r[1], r[2]
+            if sid == cur:
+                q -= int(cargo.get(str(tid), 0))                        # already in your cargo
+            if q <= 0 or str(nm).lower() in keep:
+                continue
+            m3 = q * vol.get(tid, 0.0)
+            rows.append({"system": name, "item": nm, "qty": q, "m3": m3, "value": q * adj.get(tid, 0.0), "per_m3": q * adj.get(tid, 0.0) / max(m3, 0.0001)})
+    rows.sort(key=lambda d: -d["per_m3"])
+    out = []
+    for d in rows:
+        if d["m3"] <= room + 1e-9:
+            out.append(d)
+            room -= d["m3"]
+        if len(out) >= limit:
+            break
+    return out
+
+
+def pickup_step(con, g, p, next_dest_name):
+    """At a stop on a trip: the ONE step 'pick up the stock lying here' when there is some that fits (else ''). The trip continues afterwards."""
+    cur = g.id_of(p.current_system)
+    rows = [d for d in pickups(con, g, p, [cur]) if d["system"] == p.current_system]
+    if not rows:
+        return ""
+    val = sum(d["value"] for d in rows)
+    lines = [f"      {d['qty']:>9,} x {d['item']}  ({d['m3']:,.0f} m3)" for d in rows]
+    return "\n".join([f"STEP: PICK UP STOCK in {p.current_system} (about {sum(d['m3'] for d in rows):,.0f} m3, worth about {val:,.0f} ISK)",
+                      "   DO ONLY THIS: dock, open the item hangar and move these into your ship's cargo (consolidates your stock; it rides along):"] + lines
+                     + [f"   LATER: the trip continues to {next_dest_name}; the stock is sold or delivered where it pays most"])
