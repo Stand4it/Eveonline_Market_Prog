@@ -1,0 +1,245 @@
+{
+ "_help": "Level 1 Mining Agents from the Agency window (screenshots 2026-10-16, 30 results, all level 1). jumps = from where the user stood when the screenshot was taken (NOT Rotonos; Vionnoreau at Lirsautton showed 4 jumps). Closest first. Only the 0.5+ systems are in Starter Space or near it; <0.5 is low-sec.",
+ "agents": [
+  {
+   "agent": "Tragenire Neylloullon",
+   "system": "Doussivitte",
+   "sec": 0.8,
+   "jumps": 1,
+   "corp": "Combined Harvest",
+   "level": 1
+  },
+  {
+   "agent": "Oraveval Bempiery",
+   "system": "Adreland",
+   "sec": 0.9,
+   "jumps": 2,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Ansotte Melania",
+   "system": "Harerget",
+   "sec": 0.8,
+   "jumps": 2,
+   "corp": "CreoDron",
+   "level": 1
+  },
+  {
+   "agent": "Frat Benkina",
+   "system": "Jolia",
+   "sec": 0.5,
+   "jumps": 4,
+   "corp": "Core Complexion Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Aako Iju",
+   "system": "Jolia",
+   "sec": 0.5,
+   "jumps": 4,
+   "corp": "Wiyrkomi Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Vionnoreau Trillicon",
+   "system": "Lirsautton",
+   "sec": 0.8,
+   "jumps": 4,
+   "corp": "Quafe Company",
+   "level": 1
+  },
+  {
+   "agent": "Bruysene Apilles",
+   "system": "Jaschercis",
+   "sec": 0.6,
+   "jumps": 4,
+   "corp": "Quafe Company",
+   "level": 1
+  },
+  {
+   "agent": "Errye Aurapes",
+   "system": "Frarolle",
+   "sec": 0.8,
+   "jumps": 4,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Brens Tilpourel",
+   "system": "Egghelende",
+   "sec": 0.4,
+   "jumps": 5,
+   "corp": "Chemal Tech",
+   "level": 1
+  },
+  {
+   "agent": "Waldrell Losschyve",
+   "system": "Metserel",
+   "sec": 0.7,
+   "jumps": 5,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Ahrirlyne Bous",
+   "system": "Aufay",
+   "sec": 0.5,
+   "jumps": 5,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Aciane Malanoure",
+   "system": "Aufay",
+   "sec": 0.5,
+   "jumps": 5,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Turegasa Unonikko",
+   "system": "Nausschie",
+   "sec": 0.8,
+   "jumps": 5,
+   "corp": "Wiyrkomi Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Naka Tona",
+   "system": "Dodenvale",
+   "sec": 0.7,
+   "jumps": 5,
+   "corp": "Imperial Armaments",
+   "level": 1
+  },
+  {
+   "agent": "Haskatoh Ihimela",
+   "system": "Hatakani",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Hyasoda Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Kazakoto Yloruga",
+   "system": "Hatakani",
+   "sec": 0.9,
+   "jumps": 5,
+   "corp": "Rapid Assembly",
+   "level": 1
+  },
+  {
+   "agent": "Halderi Sidulfo",
+   "system": "Hagilur",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "Minmatar Mining Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Ats Odebeinn",
+   "system": "Hagilur",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "Minmatar Mining Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Alolur Ernst",
+   "system": "Uisper",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "Minmatar Mining Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Itala Aibi",
+   "system": "Kubinen",
+   "sec": 0.4,
+   "jumps": 7,
+   "corp": "Caldari Steel",
+   "level": 1
+  },
+  {
+   "agent": "Tasuda Iwataya",
+   "system": "Frerstorn",
+   "sec": 0.3,
+   "jumps": 8,
+   "corp": "Ishukone Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Ikkawa Kaarokin",
+   "system": "Mannar",
+   "sec": 0.3,
+   "jumps": 8,
+   "corp": "Wiyrkomi Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Hirasez Malite",
+   "system": "Vecamia",
+   "sec": 0.4,
+   "jumps": 9,
+   "corp": "Ministry of Assessment",
+   "level": 1
+  },
+  {
+   "agent": "Isula Okiainidan",
+   "system": "Schoorasana",
+   "sec": 0.4,
+   "jumps": 10,
+   "corp": "CBD Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Alace Clos",
+   "system": "Aubenall",
+   "sec": 0.4,
+   "jumps": 10,
+   "corp": "Combined Harvest",
+   "level": 1
+  },
+  {
+   "agent": "Helle Roon",
+   "system": "Vitrauze",
+   "sec": 0.3,
+   "jumps": 10,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Ganouel Chatanede",
+   "system": "Atlulle",
+   "sec": 0.4,
+   "jumps": 10,
+   "corp": "CreoDron",
+   "level": 1
+  },
+  {
+   "agent": "Juunigaishi Outoshin",
+   "system": "Atlulle",
+   "sec": 0.4,
+   "jumps": 10,
+   "corp": "Ishukone Corporation",
+   "level": 1
+  },
+  {
+   "agent": "Aernelaert Pinssier",
+   "system": "Palmon",
+   "sec": 0.4,
+   "jumps": 11,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  },
+  {
+   "agent": "Peselien Ennel",
+   "system": "Palmon",
+   "sec": 0.4,
+   "jumps": 11,
+   "corp": "Astral Mining Inc.",
+   "level": 1
+  }
+ ]
+}
