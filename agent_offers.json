@@ -191,7 +191,7 @@
    "taxed": false,
    "loot": [
     {
-     "item": "Small Remote Armor Repairer I",
+     "item": "Remote Armor Repair Systems (skill book, name cut off in the window)",
      "qty": 1,
      "est": 10000
     }
@@ -206,7 +206,7 @@
    "where": "Rotonos (this system)",
    "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need",
    "agent_system": "Rotonos",
-   "note": "standing 2.12; reward item Small Remote Armor Repairer I"
+   "note": "standing 2.12. Seen again 2026-10-16: the reward is a book (1 x 'Remote Armor Repair...', probably the skill book), not the repairer; the bonus is 97,000 ISK. The mission location (Rotonos system) is 11 jumps from where the user is now."
   },
   {
    "agent": "Ormelace Vaille (Enforcer)",
