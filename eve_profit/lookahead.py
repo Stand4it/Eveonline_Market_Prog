@@ -275,5 +275,5 @@ def format_long_view(an):
             L.append(f"          books: {u['book_note']}")
     if an["unmodeled"]:
         L.append(f"   LEARN  unmodeled and unlocked: {', '.join(an['unmodeled'][:4])}" + (f" +{len(an['unmodeled']) - 4} more" if len(an["unmodeled"]) > 4 else "")
-                 + "  (a model-building turn comes every 4th timer)")
+                 + "  (they compete in the same ranking: each one rises or falls with its expected ISK/hr)")
     return "\n".join(L)

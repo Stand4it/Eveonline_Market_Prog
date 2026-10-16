@@ -78,7 +78,7 @@ def models_report(con, wallet=0.0):
     blocked = [a for a in st if a.get("blocked")]
     L += ["", f"MODEL MAP: {len(done)} of {len(ok)} unlocked activities are modeled ({MODELED_RUNS}+ timed runs); {len(st) - len(ok) - len(blocked)} more are locked behind skills or ISK; "
               f"{len(blocked)} are not routed (null-sec/Omega).",
-          "Unmodeled options are offered by `next` every 4th step and the moment they unlock; new game features: add them to activity_catalog.json."]
+          "Unmodeled options compete in the same ranking as everything else (expected ISK/hr + value of information); new game features: add them to activity_catalog.json."]
     return "\n".join(L)
 
 

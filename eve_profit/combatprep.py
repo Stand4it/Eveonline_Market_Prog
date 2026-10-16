@@ -176,19 +176,39 @@ def agent_step(g, p, hop_to):
 
 
 def prep_estimate(con, g, p):
-    """(minutes, ISK) still needed before a combat test is valid: each missing piece (hull, guns, ammo, tank, fitting numbers) about 12 minutes + the market price."""
+    """(minutes, ISK) still needed before a combat test is valid: each missing piece (hull, guns, ammo, tank, fitting numbers) about 12 minutes, plus 3 minutes
+    per jump to the place that has it (where it lies, or the cheapest source), plus the market price."""
     k = kit()
     s = state(con, p)
     mins = isk = 0.0
+
+    def _jumps_to(item, qty):
+        h = _holder(g, p, s["stock"].get(item, [])) if s["stock"].get(item) else None
+        if h:
+            return h[1]
+        try:
+            from .acquire import sources
+            src = sources(con, g, p, item, qty)
+            return src[0]["jumps"] if src else 0
+        except Exception:                                               # noqa: BLE001
+            return 0
+
     if not any(h.lower() in s["hull"].lower() for h in k["hulls"]):
         mins += 12
+        try:
+            reach = g.reach(g.id_of(p.current_system), 40, p.avoid_yellow)
+            js = [reach[sid].jumps for name, sid in s["ships"] if any(h.lower() in name.lower() for h in k["hulls"]) and sid in reach]
+            mins += 3 * (min(js) if js else 0)
+        except Exception:                                               # noqa: BLE001
+            pass
     if sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"])) < k["turrets"]:
-        mins += 12
+        names = [n for n in s["stock"] if any(w in n.lower() for w in k["turret_words"]) and "civilian" not in n.lower()]
+        mins += 12 + 3 * (min((_jumps_to(n, 1) for n in names), default=_jumps_to(k["turret_buy"], k["turrets"])))
     if s["cargo"].get(k["ammo"], 0) < k["ammo_qty"]:
-        mins += 12
+        mins += 12 + 3 * _jumps_to(k["ammo"], k["ammo_qty"])
         isk += 20_000
     if not any(any(w in n.lower() for w in k["tank_words"]) for n, _ in s["fitted"]):
-        mins += 12
+        mins += 12 + 3 * _jumps_to(k["tank_buy"], 1)
         isk += 10_000
     if not _meta(con, "combat_fit_seen").get(s["hull"]):
         mins += 3

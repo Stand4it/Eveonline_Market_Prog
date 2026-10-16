@@ -632,7 +632,7 @@ def _hop_step(g, p, con_=None):
         except Exception:                                               # noqa: BLE001
             pass
         return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
-                f"   LATER: {why} ({left} jumps to {system}): " + " | ".join(lines))
+                f"   LATER: {why} ({left} jumps to {system})" + ((": " + " | ".join(lines)) if lines else ""))
     return hop_to
 
 
