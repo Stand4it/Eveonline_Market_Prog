@@ -51,8 +51,10 @@ def items():
     """The screens to send, one per step: the AIR benefits window, then each agent window with an open offer."""
     out = [("the AIR Opportunities window with its top tabs visible (Opportunities | Active | Rewards)",
             "the Daily Goals and the tab bar: an amber number in brackets next to Rewards = rewards waiting to be claimed (claim them); no number = nothing to claim, no Rewards screenshot needed")]
-    out.append(("the Agency window > Agents & Missions > Mission Agents (left-side Agency button), sorted by distance",
-                "the list of agents: name, level, corporation, jumps away, standing needed (tip: use the Filters on the left: Level, Location, Security, Faction)"))
+    for kind, why in (("Mining Agents", "mining missions: ore delivery (fits your Venture)"), ("Distribution Agents", "courier / cargo moves (no combat)")):
+        out.append((f"the Agency window > Agents & Missions > Mission Agents > {kind} (the third card on the Mission Agents page for Mining, the second for Distribution; "
+                    f"skip Security, R&D and Locator: combat is parked), sorted by distance",
+                    f"the list of {kind}: name, level, corporation, jumps away, standing needed ({why}; tip: Filters on the left: Level 1, Location, Security)"))
     out.append(("the Agency window > Agents & Missions > Epic Arcs",
                 "the arcs offered, their start system and how many jumps away"))
     out += [(f"{a}'s agent window (Start Conversation, so the current mission shows)", "the whole mission window: step title and number, objectives, rewards, bonus reward and its time limit, the agent's standing with you") for a in _agents()[:8]]
