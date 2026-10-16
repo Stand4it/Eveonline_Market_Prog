@@ -207,6 +207,14 @@ def _route_ids(g, p, sysname):
 
 
 def jumps_option(con, places=None, g=None, p=None, idx=0):
+    try:
+        from .livepos import jumps_today
+        done_ = jumps_today(con)
+    except Exception:                                                   # noqa: BLE001
+        done_ = 0
+    if done_ >= 3:                                                      # you already flew them today (next/sync saw your moves): nothing to do
+        return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 0.0, "cash": 0.0, "jumps_away": 0,
+                "how": f"already done: {done_} jumps flown since the daily reset (11:00 UTC); check Opportunities > AIR Daily Goals shows 3/3", "done": True, "dest": "", "dest_system": None}
     places = _far_places(con) if places is None else places
     pl = places[idx] if places and idx < len(places) else None
     dest = pl[1] if pl else "Manifest (epic arc agent, 3 jumps)"

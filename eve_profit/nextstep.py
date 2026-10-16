@@ -1077,6 +1077,18 @@ def next_action(con, g, p, full=False, ahead=False):
                         + (f", about {item['prep_min']:.0f} min of set-up first" if item["prep_min"] else "") + "; timing it teaches the model")
                 cands.append((item["eff"], f"test {act['name']}", txt, note))
         cands.sort(key=lambda c: -c[0])
+        try:                                                     # no flip-flop: stay on the plan you were on unless another one is clearly (15%) better
+            import json as _jj
+            _r = con.execute("SELECT value FROM meta WHERE key='last_plan'").fetchone()
+            _last = (_jj.loads(_r[0]) if _r else {}).get("label")
+            if _last and cands and cands[0][1] != _last:
+                _i = next((i for i, c in enumerate(cands) if c[1] == _last), None)
+                if _i is not None and cands[0][0] < cands[_i][0] * 1.15 and cands[0][0] != float("inf"):
+                    cands.insert(0, cands.pop(_i))
+            if cands:
+                con.execute("INSERT OR REPLACE INTO meta VALUES('last_plan', ?)", (_jj.dumps({"label": cands[0][1]}),))
+        except Exception:                                        # noqa: BLE001
+            pass
         con.commit()
     except Exception:                                            # noqa: BLE001
         pass
@@ -1097,6 +1109,24 @@ def next_action(con, g, p, full=False, ahead=False):
         from .combatgoal import format_goal
         cg = format_goal(con)
         long_view = (long_view + "\n\n" + cg) if (long_view and cg) else (long_view or cg)
+    except Exception:                                            # noqa: BLE001
+        pass
+    try:                                                         # NO PING-PONG: a first step that flies straight back to the system you just left must be clearly better than the best step that does not
+        import re as _re
+        from .livepos import reversal as _rev
+        _FLY = _re.compile(r"STEP: FLY to ([^\n]+?)(?: - |$|\n)")
+
+        def _flip(c):
+            m = _FLY.search(c[2] or "")
+            return _rev(con, m.group(1).strip(), p.current_system) if m else 0
+        if cands and _flip(cands[0]):
+            lvl = _flip(cands[0])
+            alt = next((i for i, c in enumerate(cands[1:], 1) if not _flip(c)), None)
+            need = 2.0 if lvl == 2 else 1.5                      # a loop already under way needs to be twice as good to go back again
+            if alt is not None and cands[0][0] < cands[alt][0] * need:
+                cands.insert(0, cands.pop(alt))
+            elif alt is None or cands[0][0] >= cands[alt][0] * need:
+                cands[0] = (cands[0][0], cands[0][1], (cands[0][2] or "") + f"\n   (going back to where you just came from: it is still the best plan by {need:g}x, but check it is worth the trip)", cands[0][3])
     except Exception:                                            # noqa: BLE001
         pass
     plans_txt = ""

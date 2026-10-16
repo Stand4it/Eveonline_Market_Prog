@@ -53,3 +53,69 @@ def refresh_ship(con, p, client_id):
         return name, old
     except Exception:                                                   # noqa: BLE001
         return None
+
+
+JUMPS_KEY = "jump_log"
+
+
+def _reset_ts(now=None):
+    """The last 11:00 UTC (the daily reset / downtime) as a unix time."""
+    import calendar
+    import time
+    now = now or time.time()
+    t = time.gmtime(now)
+    reset = calendar.timegm((t.tm_year, t.tm_mon, t.tm_mday, 11, 0, 0))
+    return reset if reset <= now else reset - 86400
+
+
+def record_move(con, g, from_name, to_name, now=None):
+    """A system change seen by `next` / `sync`: log how many jumps it was (route length), so the AIR 'Complete 3 Jumps' goal knows what you already flew."""
+    import json
+    import time
+    if not from_name or not to_name or from_name == to_name:
+        return 0
+    try:
+        r = g.route(g.id_of(from_name), g.id_of(to_name), 60, True)
+        jumps = r.jumps if r else 1
+    except Exception:                                                   # noqa: BLE001
+        jumps = 1
+    try:
+        row = con.execute("SELECT value FROM meta WHERE key=?", (JUMPS_KEY,)).fetchone()
+        log = json.loads(row[0]) if row else []
+        log.append([now or time.time(), from_name, to_name, jumps])
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (JUMPS_KEY, json.dumps(log[-200:])))
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return jumps
+
+
+def jumps_today(con, now=None):
+    """Jumps flown since the last daily reset (11:00 UTC), from what `next` / `sync` saw."""
+    import json
+    try:
+        row = con.execute("SELECT value FROM meta WHERE key=?", (JUMPS_KEY,)).fetchone()
+        log = json.loads(row[0]) if row else []
+    except Exception:                                                   # noqa: BLE001
+        return 0
+    since = _reset_ts(now)
+    return sum(int(x[3]) for x in log if x[0] >= since)
+
+
+def reversal(con, fly_target, here, now=None):
+    """Would flying to `fly_target` take you straight back to where you just came from? -> 0 (no), 1 (a first reversal), 2 (the moves already went back and forth:
+    A>B, B>A, A>B...). Used to stop the planner from ping-ponging between two systems."""
+    import json
+    import time
+    try:
+        row = con.execute("SELECT value FROM meta WHERE key=?", (JUMPS_KEY,)).fetchone()
+        log = json.loads(row[0]) if row else []
+    except Exception:                                                   # noqa: BLE001
+        return 0
+    now = now or time.time()
+    log = [x for x in log if now - x[0] < 3 * 3600]
+    if not log or not fly_target or str(log[-1][1]).lower() != str(fly_target).lower() or str(log[-1][2]).lower() != str(here).lower():
+        return 0
+    if len(log) >= 2 and log[-2][1] == log[-1][2] and log[-2][2] == log[-1][1]:
+        return 2
+    return 1
