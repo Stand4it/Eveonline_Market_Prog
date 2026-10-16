@@ -118,3 +118,41 @@ def covered_by_offers():
         return ()
     open_ = {o.get("agent", "").split(" (")[0] for o in offers if o.get("available")}
     return tuple(a["id"] for a in load() if a.get("offer_agent") and a["offer_agent"] in open_)
+
+
+RISK_HAIRCUT = {"none": 0.0, "low": 0.0, "medium": 0.15, "high": 0.3}
+INFO_WEIGHT = 0.25          # share of the value-of-information (ISK/hr) that is added to an untimed option's expected rate
+SKIP_IDS = ("agent_career", "pd", "mining_belt")          # offered by progress.experiment_candidates / the agent step already
+
+
+def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=None):
+    """Every unlocked, unmodeled activity as ONE comparable number so it competes with agents, trades and hauls on the same list (no forced turns):
+    expected ISK/hr = midpoint of its prior x (1 - risk haircut) + INFO_WEIGHT x value of information (it shrinks as you time it and as your best known rate grows).
+    extra_cost(act) -> (prep minutes, prep ISK) for things that need set-up first (a combat ship); the set-up is spread over 5 runs.
+    -> [{act, eff, mid, voi, prep_min}] best first."""
+    out = []
+    for a in status(con, wallet):
+        if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a["id"] in covered or a.get("blocked"):
+            continue
+        if (a.get("how") or "").lower().startswith("later"):
+            continue
+        if here and a.get("where") and a["where"].lower() != str(here).lower():
+            continue
+        lo, hi = a["prior"]
+        if hi <= 0:
+            continue
+        mid = (lo + hi) / 2.0
+        v = voi(a, best_known)
+        eff = mid * (1.0 - RISK_HAIRCUT.get(a.get("risk", "low"), 0.0)) + INFO_WEIGHT * v
+        prep_min = prep_isk = 0.0
+        if extra_cost:
+            try:
+                prep_min, prep_isk = extra_cost(a)
+            except Exception:                                           # noqa: BLE001
+                prep_min = prep_isk = 0.0
+        run_min = float(a.get("minutes") or 30)
+        if prep_min or prep_isk:
+            eff = (eff * run_min / 60.0 * 5 - prep_isk) / (run_min * 5 + prep_min) * 60.0     # 5 runs pay for the set-up
+        out.append({"act": a, "eff": eff, "mid": mid, "voi": v, "prep_min": prep_min})
+    out.sort(key=lambda d: -d["eff"])
+    return out

@@ -173,3 +173,23 @@ def agent_step(g, p, hop_to):
     except Exception:                                                   # noqa: BLE001
         pass
     return ""
+
+
+def prep_estimate(con, g, p):
+    """(minutes, ISK) still needed before a combat test is valid: each missing piece (hull, guns, ammo, tank, fitting numbers) about 12 minutes + the market price."""
+    k = kit()
+    s = state(con, p)
+    mins = isk = 0.0
+    if not any(h.lower() in s["hull"].lower() for h in k["hulls"]):
+        mins += 12
+    if sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"])) < k["turrets"]:
+        mins += 12
+    if s["cargo"].get(k["ammo"], 0) < k["ammo_qty"]:
+        mins += 12
+        isk += 20_000
+    if not any(any(w in n.lower() for w in k["tank_words"]) for n, _ in s["fitted"]):
+        mins += 12
+        isk += 10_000
+    if not _meta(con, "combat_fit_seen").get(s["hull"]):
+        mins += 3
+    return mins, isk

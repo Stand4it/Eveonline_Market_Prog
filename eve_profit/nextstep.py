@@ -1031,68 +1031,52 @@ def next_action(con, g, p, full=False, ahead=False):
         pass
     why = ""
     exp_note = ""
-    try:                                                         # MODEL-BUILDING turn: an unmodeled, unlocked activity goes first now and then
-        import json as _j
-        from .catalog import experiment_step, pick_experiment
-        meta = {r[0]: r[1] for r in con.execute("SELECT key,value FROM meta WHERE key IN ('start_count','last_exp','seen_unlocked')")}
-        counter = int(meta.get("start_count", 0))                # counts timers you START, not times you look at `next`
-        last_exp = int(meta.get("last_exp", 0))
-        seen = set(_j.loads(meta.get("seen_unlocked", "[]")))
+    try:                                                         # UNMODELED activities compete on equal footing: expected ISK/hr (prior x risk + value of information, set-up spread over 5 runs)
+        from .catalog import covered_by_offers, equal_footing, experiment_step
+        from . import combatprep
+        _hop = _hop_step(g, p, con)
         best_known = min(max((c[0] for c in cands), default=0.0), 5_000_000.0)      # a near-zero-minute step gives absurd ISK/hr: cap it
-        act, reason, new_seen = pick_experiment(con, p.wallet_isk, best_known, counter, last_exp, seen, here=p.current_system, covered=__import__('eve_profit.catalog', fromlist=['x']).covered_by_offers())
-        try:                                                     # a haul under way (cargo to deliver / sell) is never interrupted by a model-building test
+        haul_on = False
+        try:                                                     # a haul under way (cargo to deliver / sell) is never interrupted by a test
             from .haulchain import load as _hload
-            if _hload(con):
-                act, reason = None, ""
+            haul_on = bool(_hload(con))
         except Exception:                                        # noqa: BLE001
             pass
-        if "seen_unlocked" not in meta:                          # first ever call: just remember what is already unlocked
-            con.execute("INSERT OR REPLACE INTO meta VALUES('seen_unlocked',?)", (_j.dumps(sorted(new_seen)),))
-        if act:
+
+        def _prep(a_):
+            return combatprep.prep_estimate(con, g, p) if a_["id"] in ("agent_l1_security", "agent_l2_security", "ratting") else (0.0, 0.0)
+
+        def _test_step(act, reason):
             step_txt = experiment_step(act, reason)
             if act["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):       # a combat test is only valid with a combat-ready ship: the step is the first missing piece
-                try:
-                    from . import combatprep
-                    _hop = _hop_step(g, p, con)
-                    step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
-                except Exception:                                # noqa: BLE001
-                    pass
+                step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
-                try:
-                    opps_ = plan(con, p, 5, False)
-                    step_txt = None                               # no ranked trade right now: do not offer an empty test
-                    from .tradestep import fresh as _fresh
-                    opps_ = [x for x in (_fresh(con, g, p, y) if y.kind == "trade" else y for y in opps_[:3]) if x]      # live check of the item before it is offered
-                    if opps_:
-                        o_ = opps_[0]
-                        from .tradestep import trade_step as _ts
-                        step_txt = _ts(con, g, p, o_) if o_.kind == "trade" else None
-                        if step_txt:
-                            step_txt = step_txt.replace("\n   DO ONLY THIS", "\n   (" + reason + ")\n   DO ONLY THIS", 1) + "\n   Unmodeled: 3 timed runs turn the guess into your own number."
-                        # selling stock you already own somewhere else is not a test: the normal haul step below handles it (one hop at a time)
-                except Exception:                                # noqa: BLE001
-                    step_txt = None
-            if step_txt and step_txt.lstrip().startswith("STEP: FLY to"):          # a test that only sends you travelling for a guessed gain is not offered
                 step_txt = None
-            if step_txt is None:
-                act = None
-        if act:
-            if act["id"] == "mining_belt":
+                opps_ = plan(con, p, 5, False)
+                from .tradestep import fresh as _fresh
+                opps_ = [x for x in (_fresh(con, g, p, y) if y.kind == "trade" else y for y in opps_[:3]) if x]      # live check of the item before it is offered
+                if opps_ and opps_[0].kind == "trade":
+                    from .tradestep import trade_step as _ts
+                    step_txt = _ts(con, g, p, opps_[0])
+                    if step_txt:
+                        step_txt += "\n   Unmodeled: 3 timed runs turn the guess into your own number."
+            if step_txt and step_txt.lstrip().startswith("STEP: FLY to") and act["id"] not in ("agent_l1_security", "agent_l2_security", "ratting"):
+                step_txt = None                                   # a test that only sends you travelling for a guessed gain is not offered
+            return step_txt
+
+        if not haul_on:
+            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep)[:3]:
+                act = item["act"]
                 try:
-                    from .mining_sites import recommend
-                    where = recommend(con)
-                    if where:
-                        step_txt = step_txt.replace("\n   about", "\n" + where + "\n   about", 1)
-                        from .mining_sites import rank_sites
-                        from .tripplus import extras as _extras
-                        top_ = rank_sites(con)[0]
-                        ex_ = _extras(con, g, p, top_["system"]) if top_["jumps"] else None
-                        if ex_ and ex_["lines"]:
-                            step_txt += "\n   ALSO ON THE ROUTE:\n" + "\n".join("      " + l for l in ex_["lines"])
+                    txt = _test_step(act, "never timed")
                 except Exception:                                # noqa: BLE001
-                    pass
-            cands.insert(0, (float("inf"), f"TEST {act['name']}", step_txt, reason))
-            exp_note = f"MODEL-BUILDING TURN: {reason}. The best-ISK/hr options stay in the list below."
+                    txt = None
+                if not txt:
+                    continue
+                note = (f"unmodeled: prior {act['prior'][0]:,.0f}-{act['prior'][1]:,.0f} ISK/hr, risk {act.get('risk', 'low')}"
+                        + (f", about {item['prep_min']:.0f} min of set-up first" if item["prep_min"] else "") + "; timing it teaches the model")
+                cands.append((item["eff"], f"test {act['name']}", txt, note))
+        cands.sort(key=lambda c: -c[0])
         con.commit()
     except Exception:                                            # noqa: BLE001
         pass
@@ -1115,6 +1099,15 @@ def next_action(con, g, p, full=False, ahead=False):
         long_view = (long_view + "\n\n" + cg) if (long_view and cg) else (long_view or cg)
     except Exception:                                            # noqa: BLE001
         pass
+    plans_txt = ""
+    if cands:                                                    # every plan on ONE list, best ISK/hr first, each with the step it would take next
+        def _first(t):
+            for ln in (t or "").split("\n"):
+                if ln.strip().startswith(("STEP:", "AGENT MISSION")):
+                    return ln.strip()[:110]
+            return (t or "").strip().split("\n", 1)[0][:110]
+        plans_txt = "ALL PLANS, best ISK/hr first (agents, skills, freelance, trades, hauls, goals and unmodeled activities on the same footing; the top one is your next step):\n" + "\n".join(
+            f"   {i}. {c[0]:>10,.0f} ISK/hr  {c[1]}  ->  {_first(c[2])}" for i, c in enumerate(cands[:10], 1))
     if cands:
         steps.append(cands[0][2])
         trade_text = cands[0][2] if cands[0][1].startswith("best trade") else None
@@ -1154,6 +1147,6 @@ def next_action(con, g, p, full=False, ahead=False):
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home
-    out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
+    out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + plans_txt) if plans_txt else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
     out += "\n(everything: python -m eve_profit next --all)"
     return out + home
