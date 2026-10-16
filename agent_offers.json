@@ -406,13 +406,13 @@
    "task_min": 30,
    "jumps": 0,
    "m3": 1,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station; the site is in Rotonos)",
    "career": "Industrialist",
    "timer_name": "Agent L1 step 7 Entrepreneur relic site",
    "needs": "a combat-capable ship (guns or drones): the pirates at the relic site must be KILLED; plus Civilian Relic Analyzer (granted), Probe Launcher + Core Scanner Probes (you keep 8); Serpentis ships guard it",
-   "note": "standing 3.80; cargo 1 x Datacore - Elementary Civilian Tech"
+   "note": "standing 3.80. Seen again 2026-10-16: scan down an ancient (relic) site in Rotonos (11 jumps from the user), bring back 1 x Datacore - Elementary Civilian Tech (1 m3) to Rotonos IV Moon 2; Serpentis ships guard the site (combat risk); granted Civilian Relic Analyzer; rewards 1 x 1MN Afterburner I + bonus 178,000 ISK. Needs Astrometrics + probe launcher + probes; unavailable until then."
   },
   {
    "agent": "BOTH step 7 (Arnelin cap booster courier + Beradaillot relic site)",
