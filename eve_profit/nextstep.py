@@ -326,8 +326,19 @@ def offers_rows(con, g=None, p=None):
             tags.append(f"{it['qty']:,} x {it['item']} ~{pr * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
         for it in o.get("cost", []):
             pr, src = price(it["item"], it.get("est", 0))
+            how = ""
+            if g is not None and p is not None:
+                try:
+                    from .acquire import best_way
+                    w_ = best_way(con, g, p, it["item"], it["qty"], o.get("agent_system") or o.get("to_system"))
+                    if w_ and w_["mode"] != "held":
+                        pr, src, how = w_["cost"] / max(it["qty"], 1), "mkt", f" ({w_['mode']})"
+                    elif w_:
+                        pr, src, how = 0.0, "mkt", " (held)"
+                except Exception:                                       # noqa: BLE001
+                    pass
             cost += pr * it["qty"]
-            tags.append(f"buy {it['qty']:,} x {it['item']} -{pr * it['qty']:,.0f}{'' if src == 'mkt' else '?'}")
+            tags.append(f"buy {it['qty']:,} x {it['item']} -{pr * it['qty']:,.0f}{how}{'' if src == 'mkt' else '?'}")
         net = cash + loot - cost
         minutes = (o.get("task_min", 10) + (1 if o.get("one_way") else 2) * o.get("jumps", 0) * per_jump
                    + (2 if o.get("jumps", 0) else 0))
@@ -604,6 +615,37 @@ def _unit_price(con, item, est):
 
 
 LAST_OFFER = {}
+AGENT_FIRST = {"text": ""}
+
+
+def _hop_step(g, p):
+    def hop_to(system, why, lines):
+        from .haul import _hop
+        nm, left, total = _hop(g, p, system)
+        if not nm:
+            return ""
+        return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
+                f"   LATER: {why} ({left} jumps to {system}): " + " | ".join(lines))
+    return hop_to
+
+
+def _agent_first(con, g, p, o, ways):
+    """An agent mission as ONE action: get what it needs where that is cheapest, then fly to the agent (one jump per step), then accept / do / hand in."""
+    hop_to = _hop_step(g, p)
+    try:
+        from .acquire import first_action
+        for w_ in ways:
+            if w_ and w_["mode"] != "held":
+                t = first_action(con, g, p, w_, hop_to)
+                if t:
+                    return t
+        agent_sys = o.get("agent_system") or o.get("to_system")
+        if agent_sys and agent_sys != p.current_system:
+            return hop_to(agent_sys, f"{o['agent'].split(' (')[0]}'s mission: accept it in person, then do it (missions cannot be accepted remotely)", [o.get("mission", "")[:120]])
+        from .agentchain import stage_text
+        return stage_text(con, g, p, o)
+    except Exception:                                                   # noqa: BLE001
+        return ""
 
 
 def _agent_step(con, g, p):
@@ -633,13 +675,35 @@ def _agent_step(con, g, p):
         add(f"ACCEPT {x['agent']}'s mission in person" + (f": {x['task']}" if x.get("task") else "")
             + (f"   [you get: {x['grants']}]" if x.get("grants") else ""))
     add(f'Start the timer:  python -m eve_profit start --activity "{o.get("timer_name") or "Agent L1 " + o["agent"].split(" (")[0] + " " + o["mission"][:40]}"')
+    ways = []
     for it in o.get("cost", []):
-        add(f"BUY  {it['qty']:>6,} x {it['item']}  (about {_unit_price(con, it['item'], it.get('est', 0)):,.0f} each):  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
+        w_ = None
+        try:
+            from .acquire import best_way
+            w_ = best_way(con, g, p, it["item"], it["qty"], o.get("agent_system") or o.get("to_system"))
+        except Exception:                                               # noqa: BLE001
+            w_ = None
+        ways.append(w_)
+        if w_ and w_["mode"] == "held":
+            add(f"{it['qty']:>6,} x {it['item']}: you already hold it")
+        elif w_:
+            add(f"GET   {it['qty']:>6,} x {it['item']}: " + " | ".join(w_["lines"]))
+        else:
+            add(f"BUY  {it['qty']:>6,} x {it['item']}  (about {_unit_price(con, it['item'], it.get('est', 0)):,.0f} each):  python -m eve_profit buy --item \"{it['item']}\" --qty {it['qty']}")
     for t in tags:
         if t.startswith("+ TRADES ON THE WAY: "):
             for x in t[len("+ TRADES ON THE WAY: "):].split(" | "):
                 add("On the way: " + x.strip())
     add(f"Hand in / deliver at {o.get('where') or 'the agent'}" + (f" ({o['to_system']})" if o.get("to_system") else "") + " and complete the mission.")
+    try:                                                                # hauling / agents / cheap needs on the way to the agent (plan view)
+        from .tripplus import extras as _extras
+        ex = _extras(con, g, p, o.get("agent_system") or o.get("to_system"))
+        if ex["lines"]:
+            L.append("   ALSO ON THE WAY (to earn more on this trip):")
+            L += ["      " + x for x in ex["lines"][:8]]
+    except Exception:                                                   # noqa: BLE001
+        pass
+    AGENT_FIRST["text"] = _agent_first(con, g, p, o, ways)
     return "\n".join(L), rate
 
 
@@ -740,6 +804,12 @@ def _name_of(step):
         return "Hauling stock to " + first.split(" to ", 1)[-1].split(" (")[0]
     if lo.startswith("step: upgrade gear"):
         return "Gear upgrade"
+    if lo.startswith("step: acquire "):
+        return "Acquire " + first.split("ACQUIRE ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: accept ") and "'s mission" in lo:
+        return "Agent L1 accept " + first.split("ACCEPT ", 1)[-1].split("'S MISSION")[0].split("'s MISSION")[0].strip()
+    if lo.startswith("step: do ") and "'s mission" in lo:
+        return "Agent L1 do " + first.split("STEP: DO ", 1)[-1].split("'s MISSION")[0].strip()
     if lo.startswith("step: "):
         lines = step.splitlines()
         return (first[6:].split("(")[0].strip().title() + " " + (lines[1].strip()[:40] if len(lines) > 1 else "")).strip()
@@ -867,7 +937,7 @@ def next_action(con, g, p, full=False, ahead=False):
             rate_adj = (net_ + progress_isk(career_, counts, vals)) * 60.0 / max(min_, 1.0)
         except Exception:                                        # noqa: BLE001
             pass
-        cands.append((rate_adj, "agent mission", agent,
+        cands.append((rate_adj, "agent mission", (agent if ahead or not AGENT_FIRST["text"] else AGENT_FIRST["text"]),
                       f"{rate:,.0f} cash + progression/model value"))
     try:
         for r_, label_, text_ in experiment_candidates(con, counts, vals):
