@@ -516,7 +516,7 @@
     {
      "item": "Nereus",
      "qty": 1,
-     "est": 2000000
+     "est": 750000
     }
    ],
    "cost": [
@@ -539,7 +539,8 @@
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
    "career": "Industrialist",
    "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
-   "timer_name": "Agent L1 step 10 Industrialist Navitas"
+   "timer_name": "Agent L1 step 10 Industrialist Navitas",
+   "note": "Seen again 2026-10-16: reward 1 x Nereus + bonus 175,000 ISK, standing 5.04; the drop-off Rotonos IV is 11 jumps from where the user is now (the offer's jumps field counts from Rotonos). Nereus valued at about 750,000 ISK (the market price the planner saw), not 2,000,000."
   },
   {
    "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
