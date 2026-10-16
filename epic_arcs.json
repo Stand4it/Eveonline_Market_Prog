@@ -1,0 +1,88 @@
+{
+ "_help": "Epic Arcs list from the Agency (Agents & Missions > Epic Arcs), seen 2026-10-16 from where the user stood (jumps are NOT from Rotonos). 9 arcs; 3 available.",
+ "arcs": [
+  {
+   "arc": "Visions of Greatness",
+   "faction": "Association for Interdisciplinary Research",
+   "start_system": "Manifest",
+   "sec": 1.0,
+   "jumps": 8,
+   "available": true
+  },
+  {
+   "arc": "The Blood-Stained Stars",
+   "faction": "Servant Sisters of EVE",
+   "start_system": "Arnon",
+   "sec": 0.8,
+   "jumps": 9,
+   "available": true
+  },
+  {
+   "arc": "Fractured Legacy",
+   "faction": "ORE",
+   "start_system": "Kisogo",
+   "sec": 0.9,
+   "jumps": 12,
+   "available": true
+  },
+  {
+   "arc": "Syndication",
+   "faction": "Gallente Federation",
+   "start_system": "Dodixie",
+   "sec": 0.9,
+   "jumps": 4,
+   "available": false
+  },
+  {
+   "arc": "Smash and Grab",
+   "faction": "Guristas Pirates",
+   "start_system": "Orvolle",
+   "sec": 0.7,
+   "jumps": 8,
+   "available": false
+  },
+  {
+   "arc": "Wildfire",
+   "faction": "Minmatar Republic",
+   "start_system": "Fram",
+   "sec": 0.8,
+   "jumps": 13,
+   "available": false
+  },
+  {
+   "arc": "Penumbra",
+   "faction": "Caldari State",
+   "start_system": "Josameto",
+   "sec": 0.6,
+   "jumps": 15,
+   "available": false
+  },
+  {
+   "arc": "Angel Sound",
+   "faction": "Angel Cartel",
+   "start_system": "Sendaya",
+   "sec": 0.3,
+   "jumps": 26,
+   "available": false
+  },
+  {
+   "arc": "Right to Rule",
+   "faction": "Amarr Empire",
+   "start_system": "Kor-Azor Prime",
+   "sec": 0.9,
+   "jumps": 28,
+   "available": false
+  }
+ ],
+ "visions_of_greatness_chapters": [
+  "1 Holographic Reenactment (Cassandra Ahfrim, AIR Laboratories, Manifest)",
+  "2 Caldari Prime Breakout",
+  "3 Travel to the Minmatar",
+  "4 Battle of Pator",
+  "5 Travel to the Amarr",
+  "6 Golgothan Fields",
+  "7 (not seen)",
+  "8 (not seen)"
+ ],
+ "progress": "0 of 8 missions completed"
+}
