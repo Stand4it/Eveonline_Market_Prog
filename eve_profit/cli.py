@@ -34,10 +34,11 @@ def resolve_client_id(explicit=""):
 
 
 def regions_near(con, p):
-    """Region ids of every system within 2x your jump radius (so cross-border trades are seen)."""
+    """Region ids of every system within 3x your jump radius, at least 6 jumps (so cross-border trades and gaps between neighbouring regions are seen;
+    regions fetched recently are skipped by --max-age, so repeat runs stay quick)."""
     from .graph import Graph
     g = Graph(con)
-    reach = g.reach(g.id_of(p.current_system), p.max_jumps * 2, p.avoid_yellow)
+    reach = g.reach(g.id_of(p.current_system), max(p.max_jumps * 3, 6), p.avoid_yellow)
     return sorted({g.region[s] for s in reach})
 
 

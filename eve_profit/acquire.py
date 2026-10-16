@@ -121,8 +121,29 @@ def build_cost(con, g, p, item, dest=None):
     return {"cost": total, "lines": lines, "steps": steps}
 
 
-def best_way(con, g, p, item, qty=1, dest=None, can_build=True):
-    """Compare BUY (cheapest reachable source incl. detour) with BUILD. -> dict(mode, cost, src, buy, build, lines) or None when nothing is known."""
+def live_refresh(con, g, p, item, qty=1, dest=None):
+    """Fresh public orders for this ONE item in the regions of its best sources (a few calls): so the trip is planned on today's prices, not on the last
+    scan, and you do not arrive to find it is no longer the best price. -> True when refreshed."""
+    import os
+    if os.environ.get("EVE_NO_LIVE"):
+        return False
+    try:
+        from .esi import ESI, refresh_item
+        tid = _one(con, "SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (item,))
+        if not tid:
+            return False
+        src = sources(con, g, p, item, qty, dest, limit=6)
+        regs = sorted({g.region[x["sid"]] for x in src[:4]} | {g.region[g.id_of(p.current_system)]})
+        refresh_item(con, ESI(timeout=12), regs, tid[0])
+        return True
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
+def best_way(con, g, p, item, qty=1, dest=None, can_build=True, live=False):
+    """Compare BUY (cheapest reachable source incl. detour) with BUILD. -> dict(mode, cost, src, buy, build, lines) or None when nothing is known.
+    live=True first re-reads this item's orders from ESI (use it for the step you are about to act on)."""
+    fresh = live_refresh(con, g, p, item, qty, dest) if live and held(con, item) < qty else False
     n_held = held(con, item)
     if n_held >= qty:
         return {"mode": "held", "cost": 0.0, "item": item, "qty": qty, "lines": [f"{item}: you already hold {n_held:,}"], "buy": None, "build": None, "src": None}
@@ -132,7 +153,7 @@ def best_way(con, g, p, item, qty=1, dest=None, can_build=True):
     build = build_cost(con, g, p, item, dest) if can_build else None
     if buy is None and build is None:
         return None
-    lines = []
+    lines = [] if not fresh else ["prices re-checked live just now"]
     if buy:
         alt = "; next: " + ", ".join(f"{s['system']} {s['price']:,.0f}" for s in src[1:3]) if len(src) > 1 else ""
         lines.append(f"BUY: {buy['price'] * need:,.0f} ISK at {buy['station'] or buy['system']} ({buy['jumps']} jumps from here"

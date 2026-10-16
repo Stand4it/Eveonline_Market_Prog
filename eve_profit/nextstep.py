@@ -687,7 +687,7 @@ def _agent_step(con, g, p):
         w_ = None
         try:
             from .acquire import best_way
-            w_ = best_way(con, g, p, it["item"], it["qty"], o.get("agent_system") or o.get("to_system"))
+            w_ = best_way(con, g, p, it["item"], it["qty"], o.get("agent_system") or o.get("to_system"), live=True)       # today's prices before any trip
         except Exception:                                               # noqa: BLE001
             w_ = None
         ways.append(w_)
