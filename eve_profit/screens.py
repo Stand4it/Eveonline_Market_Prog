@@ -90,8 +90,7 @@ def step(con=None):
     return "\n".join([f"STEP: UPDATE THE MODEL FROM THE GAME - screen {i + 1} of {len(its)} (about 30 seconds)",
                       f"   DO ONLY THIS: open {what}",
                       f"   Show me: {show}.",
-                      "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
-                      "   When it is sent run:  python -m eve_profit done"])
+                      "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me."])
 
 
 def goto(con, n):
@@ -182,9 +181,8 @@ def wanted_candidate(con, g=None, p=None):
                       f"   DO ONLY THIS: open  {i['where']}",
                       f"   Show me: {i['show']}.",
                       f"   Why: {i['why']}.",
-                      "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me.",
-                      ("   When it is sent run:  python -m eve_profit done --changed   (it looks different from last time)   or   python -m eve_profit done --same"
-                       if (i.get("repeat") and not i.get("auto")) else "   When it is sent run:  python -m eve_profit done")])
+                      "   To send it: press  Win + Shift + S , drag a box around the window, then press  Ctrl + V  in the chat with me."]
+                     + (["   (optional: stop --changed if it looks different from last time, stop --same if not; plain stop is fine)"] if (i.get("repeat") and not i.get("auto")) else []))
     return WANTED_RATE, text
 
 

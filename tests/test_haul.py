@@ -160,7 +160,7 @@ class WantedScreensTests(unittest.TestCase):
         con = connect(":memory:")
         rate, text = screens.wanted_candidate(con)
         self.assertIn("STEP: SHOW ME A SCREEN", text)
-        self.assertIn("python -m eve_profit done", text)
+        self.assertNotIn("eve_profit done", text)          # `stop` marks the step done
         screens.wanted_mark_shown(con, text)
         self.assertIn("Thank you", screens.wanted_done(con))
         _, text2 = screens.wanted_candidate(con)
