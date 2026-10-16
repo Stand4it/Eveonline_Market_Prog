@@ -1083,6 +1083,11 @@ def next_action(con, g, p, full=False, ahead=False):
                 note = (f"unmodeled: prior {act['prior'][0]:,.0f}-{act['prior'][1]:,.0f} ISK/hr, risk {act.get('risk', 'low')}"
                         + (f", about {item['prep_min']:.0f} min of set-up first" if item["prep_min"] else "") + "; timing it teaches the model")
                 cands.append((item["eff"], f"test {act['name']}", txt, note))
+        try:                                                     # seen-on-the-map leads (wrecks to salvage ...): unknown = best ISK/hr until timed
+            from .leads import candidates as _leads
+            cands.extend(_leads(con, g, p, best_known, _hop))
+        except Exception:                                        # noqa: BLE001
+            pass
         cands.sort(key=lambda c: -c[0])
         try:                                                     # no flip-flop: stay on the plan you were on unless another one is clearly (15%) better
             import json as _jj

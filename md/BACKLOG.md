@@ -32,3 +32,4 @@
 - Daily goals: the pool rotates (seen 2026-10-15: LP 50, Scan 5, Mine 2000 ore, Defend FW complex, 3 jumps). Update daily_goals_today.json from the Opportunities window each day; reward icon on 2026-10-15 showed 10,000 (not ISK?) - verify. Route 'Earn 50 LP' via an agent mission with LP (Ansotte Melania 57 LP) when it is available.
 - Miner II: compare buying in Jita (~518k) against building it from the Miner II blueprint (needs Mining IV, Industry); decide by cost over time when Mining IV is trained.
 - Cross-plan synergy: score a next step higher when it also advances other top plans (same destination system or route); today only 'ALSO ON THE WAY' lines exist.
+- Add a 'lead' command (system, what, count, activity) so a scan can be recorded without editing leads.json; per-wreck value from real salvage runs.

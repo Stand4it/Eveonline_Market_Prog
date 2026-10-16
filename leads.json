@@ -1,0 +1,15 @@
+{
+ "leads": [
+  {
+   "id": "alenia-wrecks-2026-10-16",
+   "system": "Alenia",
+   "activity": "salvaging",
+   "needs": "salvager",
+   "ship_word": "Imicus",
+   "seen": 1792184297,
+   "life_h": 2,
+   "count": 40,
+   "what": "about 40 small wrecks (Rogue, Angel, Serpentis) on a directional scan, plus 2 live Serpentis Corelum chiefs (medium; do not fight)"
+  }
+ ]
+}
