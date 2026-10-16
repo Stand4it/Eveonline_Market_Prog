@@ -255,8 +255,11 @@ def _run(a):
             from .esi import ESI
             esi = ESI()
             esi.token, cid = sso.get_token(a.client_id)
+            _ship_before = (p.ship_name, p.ship_type_id)
             res_ = sync_character(con, esi, cid, p)
             print(res_)
+            if (p.ship_name, p.ship_type_id) != _ship_before and _ship_before[0]:
+                print(f"SHIP CHANGED: you fly {p.ship_name} now (hold {p.cargo_m3:,.0f} m3); the last sync said {_ship_before[0]}. Plans use this ship from now on.")
             p.save(a.profile)
             print("Profile updated:", a.profile)
             try:
@@ -534,6 +537,11 @@ def _run(a):
             _pos = _refresh_pos(con, p, a.client_id)
             if _pos and _pos != _was:
                 print(f"(you are in {_pos} now; the last sync said {_was})")
+            from .livepos import refresh_ship as _refresh_ship
+            _sh = _refresh_ship(con, p, a.client_id)
+            if _sh:
+                p.save(a.profile)
+                print(f"(you are flying {_sh[0]} now, hold {p.cargo_m3:,.0f} m3; the last sync said {_sh[1]})")
         except Exception:                                              # noqa: BLE001
             pass
         txt = next_action(con, Graph(con), p, full=a.all, ahead=a.plan)

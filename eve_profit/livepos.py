@@ -21,3 +21,35 @@ def refresh(con, p, client_id):
         return row[0]
     except Exception:                                                   # noqa: BLE001
         return None
+
+
+def refresh_ship(con, p, client_id):
+    """The ship you are flying RIGHT NOW (you may have boarded another one since the last sync): update p.ship_name / ship_type_id / cargo_m3 from ESI.
+    -> (new ship name, old ship name) when it changed, else None (also None when ESI could not be read)."""
+    if os.environ.get("EVE_NO_LIVE"):
+        return None
+    try:
+        from . import sso
+        from .character import CAPACITY_ATTR, _hull_cargo_bonus
+        from .esi import ESI
+        esi = ESI()
+        esi.token, cid = sso.get_token(client_id)
+        ship = esi.get(f"/characters/{cid}/ship/")[0]
+        tid = ship["ship_type_id"]
+        name = ship.get("ship_name") or p.ship_name
+        if tid == p.ship_type_id and name == p.ship_name:
+            return None
+        cap = None
+        r = con.execute("SELECT capacity FROM types WHERE type_id=?", (tid,)).fetchone()
+        if r and r[0]:
+            cap = float(r[0])
+        else:
+            cap = next((a["value"] for a in esi.type_info(tid).get("dogma_attributes", []) if a["attribute_id"] == CAPACITY_ATTR), None)
+        skills = [{"skill_id": s[0], "trained_skill_level": s[1]} for s in con.execute("SELECT skill_id,level FROM character_skills")]
+        old = p.ship_name
+        p.ship_name, p.ship_type_id = name, tid
+        if cap:
+            p.cargo_m3 = cap * _hull_cargo_bonus(con, tid, skills)
+        return name, old
+    except Exception:                                                   # noqa: BLE001
+        return None
