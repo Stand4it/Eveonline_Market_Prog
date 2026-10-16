@@ -58,5 +58,10 @@
   "Venture #1": "Rotonos IV - Moon 2 - Center for Advanced Studies",
   "Venture #2 (active)": "Manifest V - AIR Laboratories Trade Center"
  },
- "_note_fitting": "The fitting window only lets you change/simulate a ship in the station where it is parked: the Velator/Imicus fit test happens at Rotonos IV, not at Manifest."
+ "_note_fitting": "The fitting window only lets you change/simulate a ship in the station where it is parked: the Velator/Imicus fit test happens at Rotonos IV, not at Manifest.",
+ "owned_2026-10-16_incursus": {
+  "ship": "Incursus (user wrote 'Incarus')",
+  "how": "granted to the user on 2026-10-16 at the station they are docked in now (a mission/agent grant)",
+  "use": "Gallente combat frigate (3 turret hardpoints, hybrid weapons: fits the 2 owned 150mm railguns / blaster) with a hold of about 130 m3 (check in the fitting window): about 5 Ogre I drones (25 m3 each) per trip against 2 in the Venture. Unfitted until checked; ammo (Antimatter Charge S) and tank still missing for combat."
+ }
 }
