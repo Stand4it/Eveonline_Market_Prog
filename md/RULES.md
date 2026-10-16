@@ -6,3 +6,4 @@
 - Never `git add -A` on the user's PC (tokens_*.json, profile_*.json live there). Add files by name. Develop only on branch claude/dreamy-edison-n9n32f; no PRs unless asked.
 - After any `cli.py` edit run the tests (a bad edit once deleted 22 commands). Commit trailers: Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com> and Claude-Session: https://claude.ai/code/session_01FpAeMd8RZSyQpWh3R9Tigo
 - If something looks wrong, say so; do not silently revert the user's changes.
+- Limit token use: do analysis in scripts/code (verifiable, free to rerun), short answers; no runtime AI calls unless the code can verify the answer (see md/DECISIONS.md 2026-10-16).
