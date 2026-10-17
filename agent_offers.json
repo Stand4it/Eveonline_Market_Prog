@@ -764,6 +764,25 @@
    "career": "Distribution",
    "needs": "nothing special (200 m3 fits the Incursus, no combat), but the jump count Haatomo -> Antiri is not known here: enter it, then set available true. Antiri is probably a detour from Uedama, where the two Uedama missions must be delivered",
    "note": "Seen 2026-10-17 23:12, standing 0.0. 56,000 ISK + 31 LP one way with the bonus. The Uedama missions (Marukaiken Mamareki, Tanatsu Alomoinen) have clocks that run out about 12:10 am and 12:34 am, so only take this if Antiri is close and the deliveries still fit."
+  },
+  {
+   "agent": "Onnomon Aarlunen (Distribution, L1, Haatomo VI - Moon 6 - Zainou Biotech Production)",
+   "mission": "'Party Goods': courier 3 x Crates of Spiced Wine (270 m3) from Haatomo VI - Moon 6 - Zainou Biotech Production to Suroken XI - Caldari Provisions Plantation (0.7). Pays 23,000 ISK + 32 LP; bonus 22,000 ISK within 56 min.",
+   "isk": 23000,
+   "bonus": 22000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Haatomo VI - Moon 6 - Zainou Biotech Production (0.6)",
+   "agent_system": "Haatomo",
+   "to_system": "Suroken",
+   "career": "Distribution",
+   "needs": "nothing special (270 m3, no combat), but the jump count Haatomo -> Suroken is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-17 ~11:40 pm, standing 0.0. 45,000 ISK + 32 LP one way with the bonus: the lowest-paying courier seen. Two other Haatomo couriers (Takashi Shioken 56,000, Marukaiken Mamareki / Tanatsu Alomoinen at Uedama) pay more; take this one only if Suroken is on the way."
   }
  ],
  "min_per_jump": 3.0,
