@@ -783,6 +783,25 @@
    "career": "Distribution",
    "needs": "nothing special (270 m3, no combat), but the jump count Haatomo -> Suroken is not known here: enter it, then set available true",
    "note": "Seen 2026-10-17 ~11:40 pm, standing 0.0. 45,000 ISK + 32 LP one way with the bonus: the lowest-paying courier seen. Two other Haatomo couriers (Takashi Shioken 56,000, Marukaiken Mamareki / Tanatsu Alomoinen at Uedama) pay more; take this one only if Suroken is on the way."
+  },
+  {
+   "agent": "Raddelur Marilhard (Distribution, L1, Haatomo VI - Moon 5 - Core Complexion Inc. Factory)",
+   "mission": "'Cigarettes': courier 3 x Crates of Harroule Dryweed (120 m3) from Haatomo VI - Moon 5 - Core Complexion Inc. Factory to Isikesu IV - Moon 13 - Rapid Assembly Warehouse (0.7). Pays 29,000 ISK + 36 LP; bonus 28,000 ISK within 1 h 2 min.",
+   "isk": 29000,
+   "bonus": 28000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Haatomo VI - Moon 5 - Core Complexion Inc. Factory (0.6)",
+   "agent_system": "Haatomo",
+   "to_system": "Isikesu",
+   "career": "Distribution",
+   "needs": "nothing special (120 m3, no combat), but the jump count Haatomo -> Isikesu is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-17 late evening, standing 0.0. 57,000 ISK + 36 LP one way with the bonus. Haatomo has four courier agents (Takashi Shioken, Onnomon Aarlunen, Raddelur Marilhard, plus the Uedama pair): the best plan chains the ones whose destinations lie on one route."
   }
  ],
  "min_per_jump": 3.0,

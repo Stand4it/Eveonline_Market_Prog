@@ -350,3 +350,4 @@
 - 2026-10-17: docked at Haatomo VI Moon 1: Takashi Shioken 'Miracle Drug' courier recorded (27k+29k, to Antiri; unavailable until the jump count is known).
 - 2026-10-17: Haatomo directional scan (11:37 pm): ~22 small wrecks recorded as a salvage lead.
 - 2026-10-17: Onnomon Aarlunen (Haatomo VI Moon 6) 'Party Goods' recorded (23k+22k, to Suroken; unavailable until the jump count is known).
+- 2026-10-17: Raddelur Marilhard (Haatomo VI Moon 5) 'Cigarettes' recorded (29k+28k, to Isikesu; unavailable until the jump count is known).
