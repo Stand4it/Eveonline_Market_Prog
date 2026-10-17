@@ -49,7 +49,8 @@
    "sec": 0.9,
    "jumps": 5,
    "corp": "Republic Security Services",
-   "level": 1
+   "level": 1,
+   "station": "unknown: NOT in Tourier III - Republic Security Services Assembly Plant (seen 2026-10-17); another Tourier station"
   },
   {
    "agent": "Ongunbjer Hetinold",
@@ -57,7 +58,8 @@
    "sec": 0.9,
    "jumps": 5,
    "corp": "Republic Security Services",
-   "level": 1
+   "level": 1,
+   "station": "Tourier III - Republic Security Services Assembly Plant"
   }
  ],
  "career_agents_here": "Ormelace (Enforcer), Arnelin (Industrialist-Producer), Rounaminck (Explorer), Arabeton (Soldier of Fortune), Beradaillot (Industrialist-Entrepreneur): all In Current Station",

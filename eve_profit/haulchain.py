@@ -128,13 +128,17 @@ def _look_around(con, g, p, st, here):
     lh = st.get("looked_here") or {}
     if lh.get("system") != here:
         lh = {"system": here, "agents": []}
+    here_station = _docked_station(con, p)
+    names = [n for n in names if _agent_here(n, here_station)]          # only agents whose station you are docked in (agents elsewhere in the system wait)
     todo = [n for n in names if n not in lh["agents"]]
     if not todo:
         return ""
     docked = (getattr(p, "current_location_id", 0) or 0) > 0
     st["looked_here"] = lh
     if not docked:
-        sid, sname = _station_of(con, g, here)
+        sid, sname = _agent_station_id(con, g, here, todo[0])                # dock where the agent is
+        if not sid:
+            sid, sname = _station_of(con, g, here)
         head = f"STEP: DOCK at {sname or 'a station'} in {here} (about 1 minute)"
         if sid:
             try:
@@ -152,3 +156,46 @@ def _look_around(con, g, p, st, here):
     return "\n".join([f"STEP: OPEN {agent}'s offer in {here} (about 1 minute)",
                       f"   DO ONLY THIS: station window > Agents tab > {agent} > Start Conversation. Orange 'Offered' = a mission is waiting: send me that window (do not accept yet unless I say so).",
                       more])
+
+
+def _docked_station(con, p):
+    try:
+        r = con.execute("SELECT name FROM stations WHERE station_id=?", (int(getattr(p, "current_location_id", 0) or 0),)).fetchone()
+        return (r[0] or "") if r else ""
+    except Exception:                                                   # noqa: BLE001
+        return ""
+
+
+def _agent_station(name):
+    import json
+    import os
+    try:
+        d = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agents_nearby.json"), encoding="utf-8"))
+        for kind in ("security", "mining", "distribution_nearest", "locator_nearest", "rd_nearest"):
+            for a in d.get(kind, []):
+                if a.get("agent") == name:
+                    return a.get("station", "")
+    except (OSError, ValueError):
+        pass
+    return ""
+
+
+def _agent_here(name, docked_name):
+    """True when the agent may be in the station you are docked in: station unknown (not recorded yet) or equal; False when it is recorded elsewhere."""
+    st = _agent_station(name)
+    if not st:
+        return True
+    if st.lower().startswith("unknown"):
+        return False
+    return not docked_name or st.lower() in docked_name.lower() or docked_name.lower() in st.lower()
+
+
+def _agent_station_id(con, g, here, name):
+    st = _agent_station(name)
+    if not st or st.lower().startswith("unknown"):
+        return 0, ""
+    try:
+        r = con.execute("SELECT station_id,name FROM stations WHERE name LIKE ?", ("%" + st + "%",)).fetchone()
+        return (int(r[0]), r[1]) if r else (0, "")
+    except Exception:                                                   # noqa: BLE001
+        return 0, ""

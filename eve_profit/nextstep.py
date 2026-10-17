@@ -770,6 +770,10 @@ def _name_of(step):
     first = step.splitlines()[0]
     lo = first.lower()
     rest = first.split(":", 1)[-1].strip() if ":" in first else first
+    if lo.startswith("step: open ") and "'s offer" in lo:               # STEP: OPEN <agent>'s offer in <system>
+        return "Agent look " + first[len("STEP: OPEN "):].split("'s offer")[0].strip()
+    if lo.startswith("step: dock at "):
+        return "Travel dock " + first.split(" in ", 1)[-1].split(" (")[0].strip()
     if lo.startswith("step: sell now"):
         return "Market sell stock " + rest.replace("SELL NOW in ", "").split(" - ")[0]
     if lo.startswith("step: sell ") and " away in " in lo:             # SELL SCORDITE 1 JUMP AWAY in Axiosere - ...
