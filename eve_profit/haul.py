@@ -256,7 +256,7 @@ def hop_only(text, here=None):
             m = re.search(r"(?:buy .*? at|sell .*? at|need anyway: .*? at) (.+?)(?: \(| on the route|$)", ln)
             if m and m.group(1).strip().lower() != here.lower():
                 continue
-        gm = re.match(r"^\s{6}(going|coming back):\s*(.*)$", ln)
+        gm = re.match(r"^\s+(going|coming back):\s*(.*)$", ln)
         if gm and here:                                                   # trades of the route: only a buy/sell in THIS system is part of this step; the rest (and the money total) wait for `next --plan` / that system
             m = re.search(r"(?:buy|sell) .*? at (.+?)(?: \(|$)", gm.group(2))
             if not m or m.group(1).strip().lower() != here.lower():

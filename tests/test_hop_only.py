@@ -16,6 +16,11 @@ TXT = """STEP: FLY to Tourier - jump 1 of 1, hauling your stock to Tourier
 
 
 class TestHopOnly(unittest.TestCase):
+    def test_any_indent_and_no_second_action(self):
+        out = hop_only(TXT.replace("      going:", "   going:").replace("      agent", "   agent"), "Alenia")
+        self.assertNotIn("Dodixie", out)
+        self.assertNotIn("trades add", out)
+
     def test_only_this_system_is_kept(self):
         out = hop_only(TXT, "Alenia")
         self.assertNotIn("Dodixie", out)
