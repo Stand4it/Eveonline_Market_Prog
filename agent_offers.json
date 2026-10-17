@@ -232,7 +232,7 @@
    "jumps": 0,
    "available": false,
    "where": "Rotonos (this system)",
-   "note": "Seen again 2026-10-16: standing 1.22 (was 0.82). Rewards: 1 x 75mm Gatling Rail I plus bonus 2,000 x Antimatter Charge S (the ammo the combat goal needs for your railguns). Location Rotonos is 11 jumps from the user. Combat against Coreli thugs: the Venture (6.8 dps / 915 EHP) must not fight, so unavailable until a combat fit passes the 99% win rule (Velator/Imicus + ammo). Bounties from kills are extra.",
+   "note": "Seen again 2026-10-16: standing 1.22 (was 0.82). Rewards: 1 x 75mm Gatling Rail I plus bonus 2,000 x Antimatter Charge S (the ammo the combat goal needs for your railguns). Location Rotonos is 11 jumps from the user. Combat against Coreli thugs: the Venture (6.8 dps / 915 EHP) must not fight, so unavailable until a combat fit passes the 99% win rule (Velator/Imicus + ammo). Bounties from kills are extra. Seen again 2026-10-17 from Tourier: the mission window shows 5 jumps to Rotonos, rewards 1 x 75mm Gatling Rail I, bonus 2,000 x Antimatter Charge S (bonus clock length not shown), still level 1 'Cash Flow for Capsuleers (1 of 10)', standing 1.22. It pays the combat KIT, not ISK: ammo is bought first (500 x ~18 ISK = ~9k) because the ammo is the bonus, then the 2,000 charges refill the hold.",
    "timer_name": "Agent L1 step 1 Enforcer cash flow",
    "agent_system": "Rotonos"
   },
