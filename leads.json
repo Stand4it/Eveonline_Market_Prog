@@ -103,6 +103,26 @@
    "life_h": 24,
    "count": 1,
    "what": "1 unresolved Cosmic Signature (SGF-9, 21 AU): needs probes"
+  },
+  {
+   "id": "tar-class1-holo",
+   "system": "Tar",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792206846,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 resolved 'Class 1 Holo...' sites (HGM-1 2.8 AU, ARX-6 12.9 AU; group starts 'Co', probably combat; the same name was at Tourier): names cut off"
+  },
+  {
+   "id": "tar-sigs-unresolved",
+   "system": "Tar",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792206846,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 unresolved Cosmic Signatures (ESS-4 20.7 AU, ZQA-0 16.5 AU): need probes"
   }
  ]
 }
