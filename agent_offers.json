@@ -605,13 +605,13 @@
    "cost": [],
    "granted": [],
    "task_min": 15,
-   "jumps": 2,
+   "jumps": 1,
    "available": true,
    "where": "Alenia V - Duvolle Laboratories Factory (agent); Vaere (objective)",
    "agent_system": "Alenia",
    "to_system": "Vaere",
    "career": "Security",
-   "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each."
+   "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each. Route checked 2026-10-17: Alenia>Vaere 1 jump, Vaere>Tourier 2; NOT on the Alenia>Tourier route (that is 1 jump), detour +2 jumps."
   }
  ],
  "min_per_jump": 3.0,
