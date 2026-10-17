@@ -23,9 +23,12 @@ class TestLookAround(unittest.TestCase):
     def setUp(self):
         self._old = haul.agents_here
         haul.agents_here = lambda here, g, p: ["HERE in Tourier: Annve (security): x", "HERE in Tourier: Ongunbjer (security): x"]
+        self._cr = haulchain._combat_ready
+        haulchain._combat_ready = lambda con, g, p: True
 
     def tearDown(self):
         haul.agents_here = self._old
+        haulchain._combat_ready = self._cr
 
     def test_dock_first_then_one_agent_per_step_then_fly_on(self):
         con, st = _con(), {"dest": "Jita"}
@@ -39,6 +42,10 @@ class TestLookAround(unittest.TestCase):
         t2 = haulchain._look_around(con, G(), p, st, "Tourier")
         self.assertTrue(t2.startswith("STEP: OPEN Ongunbjer's offer"))
         self.assertEqual(haulchain._look_around(con, G(), p, st, "Tourier"), "")
+
+    def test_security_agents_wait_until_combat_ready(self):
+        haulchain._combat_ready = lambda con, g, p: False
+        self.assertEqual(haulchain._look_around(_con(), G(), SimpleNamespace(current_location_id=1), {"dest": "Jita"}, "Tourier"), "")
 
 
 if __name__ == "__main__":

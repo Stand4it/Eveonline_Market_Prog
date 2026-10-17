@@ -120,11 +120,18 @@ def _look_around(con, g, p, st, here):
     if not ag:
         return ""
     names = []
+    ready = None
     for x in ag:
         try:
-            names.append(x.split(": ", 1)[1].split(" (")[0])
+            nm = x.split(": ", 1)[1].split(" (")[0]
         except IndexError:
-            pass
+            continue
+        if "(security)" in x:                                           # security missions are combat and show only once you are docked at the agent: no stop for them until the ship is combat-ready
+            if ready is None:
+                ready = _combat_ready(con, g, p)
+            if not ready:
+                continue
+        names.append(nm)
     lh = st.get("looked_here") or {}
     if lh.get("system") != here:
         lh = {"system": here, "agents": []}
@@ -199,3 +206,11 @@ def _agent_station_id(con, g, here, name):
         return (int(r[0]), r[1]) if r else (0, "")
     except Exception:                                                   # noqa: BLE001
         return 0, ""
+
+
+def _combat_ready(con, g, p):
+    try:
+        from .combatprep import prep_estimate
+        return prep_estimate(con, g, p)[0] <= 0
+    except Exception:                                                   # noqa: BLE001
+        return False
