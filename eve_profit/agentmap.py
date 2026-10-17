@@ -38,6 +38,8 @@ def collect(con, g, p, within=5, max_level=2, divisions=USEFUL):
         sid = r["system_id"]
         if sid not in reach or g.sec[sid] < SAFE:
             continue
+        if r["level"] >= 2 and max(standing.get(r["agent_id"], -10.0), standing.get(r["corporation_id"], -10.0)) < 1.0:
+            continue                                                    # level 2 needs standing 1.0 with the agent or its corporation
         if sid == cur:
             hop = "(this system)"
         else:
@@ -72,11 +74,16 @@ def report(con, g, p, esi=None, within=5, max_level=2):
     for hop in sorted(d, key=lambda h: min(a["jumps"] for a in d[h])):
         v = d[hop]
         L.append(f"DIRECTION {hop}  ({len(v)} agents)")
-        for a in v[:14]:
+        shown, per_div = [], {}
+        for a in v:                                                     # at most 4 per division, nearest first: Distribution must not hide Security and Mining
+            per_div[a["division"]] = per_div.get(a["division"], 0) + 1
+            if per_div[a["division"]] <= 4:
+                shown.append(a)
+        for a in shown:
             s = f"{a['standing']:+.1f}" if a["standing"] is not None else "  - "
             L.append(f"   {a['jumps']} jump(s)  {a['system']:<12} {a['sec']:.1f}  L{a['level']} {a['division']:<12} {a['name']:<24} standing {s}  {a['station'][:48]}")
-        if len(v) > 14:
-            L.append(f"   ... and {len(v) - 14} more")
+        if len(v) > len(shown):
+            L.append(f"   ... and {len(v) - len(shown)} more (4 per division shown)")
         L.append("")
     if not d:
         L.append("   none found")

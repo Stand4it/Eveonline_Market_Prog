@@ -28,7 +28,7 @@ def _con():
     con.execute("CREATE TABLE stations(station_id INTEGER, system_id INTEGER, name TEXT, corporation_id INTEGER)")
     con.execute("INSERT INTO agents VALUES(10,1,500,2,1,0,35,2),(11,1,501,3,2,0,30,2),(12,1,502,4,1,0,35,2),(13,1,503,2,3,0,35,2),(14,1,504,2,1,0,28,2)")
     con.execute("INSERT INTO stations VALUES(500,2,'B IV - Plant',1)")
-    con.execute("INSERT INTO standings VALUES(10,1.5)")
+    con.execute("INSERT INTO standings VALUES(10,1.5),(1,2.0)")
     return con
 
 
