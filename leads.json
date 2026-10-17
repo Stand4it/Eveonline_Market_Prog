@@ -203,6 +203,26 @@
    "life_h": 24,
    "count": 2,
    "what": "2 resolved combat sites: 'Tetrimon Bas...' (EPH-9, 4.0 AU) and 'Guristas Hide...' (BUU-5, 37.9 AU): need a combat-ready ship that passes the 99% rule"
+  },
+  {
+   "id": "halaima-ore-white-glaze",
+   "system": "Halaima",
+   "activity": "mining_belt",
+   "needs": "venture",
+   "seen": 1792241170,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved ORE site 'White Glaze' (UIT-2, 1.2 AU: the group column says Ore): a mining anomaly 1.2 AU from the scan origin; needs your Venture in this system (it is parked elsewhere)"
+  },
+  {
+   "id": "halaima-sigs-unresolved",
+   "system": "Halaima",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792241170,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 unresolved Cosmic Signatures (NWI-5 31 AU, SWD-1 32 AU): need probes"
   }
  ]
 }
