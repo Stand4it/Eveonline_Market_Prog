@@ -343,3 +343,4 @@
 - 2026-10-17: Irjunen directional scan: ~45 wrecks recorded as a salvage lead.
 - 2026-10-17: Aralusa Isugas (Irjunen) 'Corporate Documents' courier offer recorded (36k+42k, same-system, available).
 - 2026-10-17: Askalaisen Oni (Irjunen V) 'Rancorous Researcher' 1 of 5 recorded (bonus 32k + Device + 36 LP; unavailable until the Inari jump count is known).
+- 2026-10-17: Shas Mugitoh (Irjunen V) 'Party Goods' courier recorded (31k+32k, to Kaaputenen; unavailable until the jump count is known).

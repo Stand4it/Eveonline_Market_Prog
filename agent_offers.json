@@ -688,6 +688,25 @@
    "career": "Distribution",
    "needs": "nothing special (0.1 m3, no combat) but the jump count Irjunen -> Inari is not known here: enter it, then set available true. The 58 min bonus clock must cover the round trip (agent -> Inari IX pickup -> back)",
    "note": "Seen 2026-10-17, standing 0.0. Part 1 of a 5-part chain. The reward is an unnamed 'Device' item (value unknown, not counted) plus 36 LP, so only the 32,000 ISK bonus is counted: worth taking only if Inari is 1-2 jumps away. Take the Aralusa Isugas courier (same system, 78,000 ISK) first."
+  },
+  {
+   "agent": "Shas Mugitoh (Distribution, L1, Irjunen V - CBD Sell Division Retail Center)",
+   "mission": "'Party Goods': courier 3 x Crates of Spiced Wine (270 m3) from Irjunen V - CBD Sell Division Retail Center to Kaaputenen V - Moon 16 - Caldari Provisions Plantation (0.8). Pays 31,000 ISK + 35 LP; bonus 32,000 ISK within 56 min.",
+   "isk": 31000,
+   "bonus": 32000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Irjunen V - CBD Sell Division Retail Center (0.5)",
+   "agent_system": "Irjunen",
+   "to_system": "Kaaputenen",
+   "career": "Distribution",
+   "needs": "nothing special (270 m3 fits the Incursus, no combat), but the jump count Irjunen -> Kaaputenen is not known here: enter it, then set available true. The 56 min bonus clock covers the one-way trip",
+   "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (tick set). 63,000 ISK + 35 LP with the bonus, one way (the tool plans no return trip). Compare with the Aralusa Isugas courier (78,000 ISK, same system) and fly this one only if Kaaputenen is close or on the way."
   }
  ],
  "min_per_jump": 3.0,
