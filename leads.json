@@ -313,6 +313,16 @@
    "life_h": 24,
    "count": 5,
    "what": "5 resolved sites: 3 Guristas combat sites ('Guristas Burr...' 11.8 AU, 2x 'Guristas Hide...' 9.6 / 12.3 AU), 1 'Class 2 Hollo...' (13.95 AU, unknown), 1 'Raid: Black M...' (13.4 AU, unknown, 'Hol...' group); plus 3 unresolved signatures. Combat needs a combat-ready ship"
+  },
+  {
+   "id": "kusomonmon-combat-1",
+   "system": "Kusomonmon",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792258846,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 resolved combat site 'Drone Cluster...' (KAP-3, 80.8 AU, far from the gate) and 1 unresolved signature (78.8 AU): needs a combat-ready ship"
   }
  ]
 }

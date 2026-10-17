@@ -337,3 +337,4 @@
 - 2026-10-17: Jita probe scan: 4 Guristas combat sites recorded as a lead (needs combat-ready ship).
 - 2026-10-17: Perimeter probe scan recorded as a lead (event site 0.72 AU + 3 unresolved).
 - 2026-10-17: Urlen probe scan recorded as a lead (3 Guristas combat sites, 2 unknown sites).
+- 2026-10-17: Kusomonmon probe scan recorded as a lead (drone cluster combat site 80.8 AU).
