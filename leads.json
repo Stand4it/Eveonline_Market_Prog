@@ -243,6 +243,16 @@
    "life_h": 24,
    "count": 2,
    "what": "2 unresolved Cosmic Signatures (BWB-9 13 AU, ROA-6 9.8 AU): need probes"
+  },
+  {
+   "id": "ikuchi-event-sites",
+   "system": "Ikuchi",
+   "activity": "explore_sites",
+   "needs": "unknown",
+   "seen": 1792242816,
+   "life_h": 24,
+   "count": 3,
+   "what": "3 resolved sites, group starts 'Hol...' (14-21 AU): 'Suspicious Si...' (BIY-4), 'Metaliminal M...' (LRI-7), 'Raid: Black M...' (QAG-7): look like event / Homefront-type sites; names and enemies cut off"
   }
  ]
 }
