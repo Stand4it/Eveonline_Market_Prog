@@ -1229,7 +1229,13 @@ def next_action(con, g, p, full=False, ahead=False):
         first = "\n".join(l for l in first.split("\n") if not l.startswith("   LATER:"))       # future steps belong in --plan, not in this one
         if first.startswith("STEP: FLY to"):                                                  # every trip step is ONE hop: stops in other systems wait for their system
             from .haul import hop_only
+            _raw = first
             first = hop_only(first, p.current_system)
+            try:                                                                                 # a buy HERE comes before the flight (flying on first would miss it)
+                from .tripplus import buy_here_step
+                first = buy_here_step(con, g, p, _raw) or first
+            except Exception:                                                                    # noqa: BLE001
+                pass
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home

@@ -319,3 +319,4 @@
 - 2026-10-17: haul-in-progress rate fixed: certain stock gain + HALF of the optional trades on the way, over at least 2 min per jump (was 45 s/jump and the full optional trades: 161M ISK/hr for a 1.4M haul); older chains use their items' own gain.
 - 2026-10-17: time per jump 45 s -> 120 s everywhere (default, and a saved profile still on the old 45 s is migrated on load): a 14-jump trip was planned as 5 minutes, 16.5M ISK/hr; your timed flights run 1-3 min a jump (undock, align, warp, gate, dock, next).
 - 2026-10-17: optional trades on the way count at HALF in agent-offer ranking too (a 52k mission was shown at 4.5M ISK/hr).
+- 2026-10-17: a trip step whose route trades include a BUY in the system you stand in now starts with that buy as its own ACQUIRE step (destination set to the seller's station, one item per step, shown once per 2 h, stop records it); the flight comes after (flying first missed the buy).

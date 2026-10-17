@@ -201,3 +201,47 @@ def pickup_step(con, g, p, next_dest_name):
     return "\n".join([f"STEP: PICK UP STOCK in {p.current_system} (about {sum(d['m3'] for d in rows):,.0f} m3, worth about {val:,.0f} ISK)",
                       "   DO ONLY THIS: dock, open the item hangar and move these into your ship's cargo (consolidates your stock; it rides along):"] + lines
                      + [f"   LATER: the trip continues to {next_dest_name}; the stock is sold or delivered where it pays most"])
+
+
+_BUY_RE = None
+BUYSHOWN_KEY = "buyhere_shown"
+
+
+def buy_here_step(con, g, p, text):
+    """A trip step ('STEP: FLY to X') whose optional route trades include a BUY in the system you stand in: the buy comes FIRST, as its own step (flying on first would miss it).
+    One item per step, each shown once (2 h): `stop` on it records the purchase (acquire), the next `next` gives the next buy or the flight. -> step text or ''."""
+    import json
+    import re
+    import time
+    global _BUY_RE
+    if _BUY_RE is None:
+        _BUY_RE = re.compile(r"^\s+buy ([\d,]+) x (.+?) at (.+?) \(-([\d,]+)\)(?:, sell at (.+?) \(\+([\d,]+)\) = \+([\d,]+) ISK)?")
+    shown = _meta_json(con, BUYSHOWN_KEY)
+    now = time.time()
+    from .acquire import held, station_name
+    for ln in text.split("\n"):
+        m = _BUY_RE.match(ln)
+        if not m or m.group(3).strip().lower() != str(p.current_system).lower():
+            continue
+        qty, item, cost = int(m.group(1).replace(",", "")), m.group(2).strip(), int(m.group(4).replace(",", ""))
+        key = f"{item}@{p.current_system}"
+        if now - shown.get(key, 0) < 2 * 3600 or held(con, item) >= qty:
+            continue
+        row = con.execute("SELECT o.location_id FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? COLLATE NOCASE AND o.is_buy=0 AND o.system_id=? "
+                          "ORDER BY o.price LIMIT 1", (item, g.id_of(p.current_system))).fetchone()
+        loc = int(row[0]) if row else 0
+        sname = station_name(con, loc) if loc else ""
+        gain = f"; sells at {m.group(5)} for +{int(m.group(6).replace(',', '')):,} = +{int(m.group(7).replace(',', '')):,} ISK" if m.group(5) else ""
+        head = f"STEP: ACQUIRE {qty:,} x {item} - BUY at {sname or p.current_system} (about {cost:,} ISK, a route trade{gain})"
+        if loc:
+            try:
+                from .tradestep import STATION
+                STATION[head] = loc
+            except Exception:                                           # noqa: BLE001
+                pass
+        shown[key] = now
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (BUYSHOWN_KEY, json.dumps(shown)))
+        con.commit()
+        return "\n".join([head, f"   DO ONLY THIS: dock at {sname or p.current_system}, Market > {item} > Buy > the cheapest sell orders, {qty:,} unit(s). Check the live price first: if the margin is gone, skip it and run  python -m eve_profit next.",
+                          "   LATER: then the flight on with it (the sale is at the far end)"])
+    return ""
