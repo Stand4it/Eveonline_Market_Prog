@@ -362,6 +362,7 @@ def offers_rows(con, g=None, p=None):
         if hits:
             tags = tags + ["also advances AIR Daily Goals: " + "; ".join(hits)]
         ex_isk, ex_min, ex_lines = trade_extras(con, g, p, o)
+        ex_isk *= 0.5                                                   # optional trades on the way: prices move and holds fill, so half is counted
         if ex_isk > 0:
             net, minutes = net + ex_isk, minutes + ex_min
             tags = tags + ["+ TRADES ON THE WAY: " + " | ".join(ex_lines)]
