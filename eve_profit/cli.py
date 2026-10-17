@@ -107,6 +107,7 @@ def main(argv=None):
     ap.add_argument("--budget", type=float, default=10.0, help="scan --live: stop downloading new regions after this many minutes (default 10; 0 = no limit)")
     ap.add_argument("--quiet", action="store_true", help="docs: write the files, print nothing")
     ap.add_argument("--radius", type=int, default=10, help="buy: how many jumps around you to look for sellers")
+    ap.add_argument("--within", type=int, default=0, help="agents: list every mission agent within N safe jumps, grouped by direction (needs the game data: run sde once)")
     ap.add_argument("--fast", action="store_true", help="now: skip the market re-scan (sync + next only)")
     ap.add_argument("--sync", action="store_true", help="refresh your character data (assets, wallet, location) first")
     a = ap.parse_args(argv)
@@ -676,9 +677,14 @@ def _run(a):
         tid, nm, _ = resolve_type(con, a.item)
         print(format_buys(nm, a.qty or 1, best_buys(con, Graph(con), p, ESI(), regions_near(con, p), tid, a.qty or 1, a.radius), p.current_system))
     elif a.cmd == "agents":
-        from .agents_view import report
         from .graph import Graph
-        print(report(con, Graph(con), p))
+        if a.within:
+            from .agentmap import report as _amap
+            from .esi import ESI
+            print(_amap(con, Graph(con), p, ESI(timeout=15), a.within))
+        else:
+            from .agents_view import report
+            print(report(con, Graph(con), p))
     elif a.cmd == "status":
         from .status import report
         print(report(con, a.db, a.profile))

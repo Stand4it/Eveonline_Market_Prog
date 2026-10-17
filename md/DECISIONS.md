@@ -325,3 +325,4 @@
 - 2026-10-17: order at a station on a trip: BUY the route-trade items (own step each) -> LOAD them into the ship (one step: purchases land in the item hangar) -> FLY. Each shown once.
 - 2026-10-17: in a trip step what to do HERE (buy/sell here, or 'HERE in X: nothing to buy or sell') comes BEFORE the flight instruction; Hatakani/Kassigainen/Pakhshi scans recorded as leads.
 - 2026-10-17: trip step order is STEP line, then what to do HERE (buy/sell or 'nothing to buy or sell'), then what you carry, then the flight.
+- 2026-10-17: agents --within N (agentmap.py): every mission agent within N safe jumps from the game's static data (agents table now carries division + type; run 'sde' once to refill), grouped by the DIRECTION you leave in, with level, division, corporation, station, jumps, your standing, names from public ESI /universe/names/ (cached). Open offers / mission text still need a screenshot (game limit: only visible when docked at the agent).

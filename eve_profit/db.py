@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS agents(
   agent_id INTEGER PRIMARY KEY, corporation_id INTEGER, location_id INTEGER,
   system_id INTEGER NOT NULL, level INTEGER NOT NULL, quality INTEGER);
 CREATE INDEX IF NOT EXISTS ix_ag_sys ON agents(system_id);
+CREATE TABLE IF NOT EXISTS agent_names(agent_id INTEGER PRIMARY KEY, name TEXT);
 CREATE TABLE IF NOT EXISTS corp_faction(corporation_id INTEGER PRIMARY KEY, faction_id INTEGER);
 CREATE TABLE IF NOT EXISTS lp_offers(
   corporation_id INTEGER NOT NULL, offer_id INTEGER NOT NULL, type_id INTEGER NOT NULL,
@@ -136,7 +137,8 @@ def connect(path: str) -> sqlite3.Connection:
                           ("activities", "agent_level", "INTEGER NOT NULL DEFAULT 0"),
                           ("activities", "lp_per_hour", "REAL NOT NULL DEFAULT 0"),
                           ("activities", "min_standing", "REAL NOT NULL DEFAULT 0"),
-                          ("activity_log", "ship", "TEXT"), ("activity_log", "sp", "REAL")):
+                          ("activity_log", "ship", "TEXT"), ("activity_log", "sp", "REAL"),
+                          ("agents", "division_id", "INTEGER"), ("agents", "agent_type", "INTEGER")):
         try:
             con.execute(f"ALTER TABLE {tbl} ADD COLUMN {col} {ddl}")
         except sqlite3.OperationalError:

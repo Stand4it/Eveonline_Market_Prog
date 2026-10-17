@@ -102,9 +102,9 @@ def import_jsonl(con, zip_path):
     for r in _rows(zf, "npcCharacters"):
         ag = r.get("agent")
         if ag and r.get("locationID") in st and ag.get("agentTypeID", 2) == 2:
-            con.execute("INSERT OR IGNORE INTO agents VALUES(?,?,?,?,?,?)",
+            con.execute("INSERT OR REPLACE INTO agents(agent_id,corporation_id,location_id,system_id,level,quality,division_id,agent_type) VALUES(?,?,?,?,?,?,?,?)",
                         (r["_key"], r.get("corporationID"), r["locationID"], st[r["locationID"]],
-                         ag.get("level", 1), 0))
+                         ag.get("level", 1), 0, ag.get("divisionID"), ag.get("agentTypeID", 2)))
     n["agents"] = con.execute("SELECT COUNT(*) FROM agents").fetchone()[0]
     con.commit()
     return n

@@ -61,7 +61,7 @@ def load_mock(con, seed=7, systems=30):
     con.execute("INSERT INTO lp_balance VALUES(1000001,5000)")
     # mission agents: (id, corp, system, level)
     for aid, corp, sysid, lvl in [(3001, 1000001, 1, 2), (3002, 1000002, 2, 3), (3003, 1000001, 8, 4)]:
-        con.execute("INSERT INTO agents VALUES(?,?,?,?,?,5)", (aid, corp, 60000000 + sysid, sysid, lvl))
+        con.execute("INSERT INTO agents(agent_id,corporation_id,location_id,system_id,level,quality) VALUES(?,?,?,?,?,5)", (aid, corp, 60000000 + sysid, sysid, lvl))
     # a player structure in Sys02 whose buyers pay 2x for Tritanium (tests structure scanning)
     con.execute("INSERT INTO structures VALUES(1000000000001,'Mock Citadel',2,99,1,?,?)",
                 (time.time(), time.time()))

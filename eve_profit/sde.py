@@ -64,9 +64,14 @@ def import_sde(con, sde_path):
         con.execute(f"DELETE FROM {t}")
     _import_skill_reqs(con, src)
     try:  # mission agents (agentTypeID 2 = basic mission agent) and corp -> faction
-        con.executemany("INSERT OR IGNORE INTO agents VALUES(?,?,?,?,?,?)", src.execute(
-            "SELECT a.agentID,a.corporationID,a.locationID,s.solarSystemID,a.level,a.quality "
-            "FROM agtAgents a JOIN staStations s ON s.stationID=a.locationID WHERE a.agentTypeID=2"))
+        try:                                                            # newer exports carry the division (Security, Mining ...) and the agent type
+            con.executemany("INSERT OR REPLACE INTO agents(agent_id,corporation_id,location_id,system_id,level,quality,division_id,agent_type) VALUES(?,?,?,?,?,?,?,?)", src.execute(
+                "SELECT a.agentID,a.corporationID,a.locationID,s.solarSystemID,a.level,a.quality,a.divisionID,a.agentTypeID "
+                "FROM agtAgents a JOIN staStations s ON s.stationID=a.locationID WHERE a.agentTypeID=2"))
+        except sqlite3.OperationalError:
+            con.executemany("INSERT OR IGNORE INTO agents(agent_id,corporation_id,location_id,system_id,level,quality) VALUES(?,?,?,?,?,?)", src.execute(
+                "SELECT a.agentID,a.corporationID,a.locationID,s.solarSystemID,a.level,a.quality "
+                "FROM agtAgents a JOIN staStations s ON s.stationID=a.locationID WHERE a.agentTypeID=2"))
         con.executemany("INSERT OR IGNORE INTO corp_faction VALUES(?,?)", src.execute(
             "SELECT corporationID,factionID FROM crpNPCCorporations WHERE factionID IS NOT NULL"))
     except sqlite3.OperationalError:
