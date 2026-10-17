@@ -53,3 +53,15 @@ class TestDrop(unittest.TestCase):
         self.assertIn("buy 5 x Other at Elsewhere", out)                 # other systems keep their lines (for the plan)
         only = drop_done_buys(con, G(), p, TXT.rsplit("\n", 1)[0])
         self.assertIn("nothing more to buy", only)
+
+
+class TestLoad(unittest.TestCase):
+    def test_load_step_follows_the_buy_once(self):
+        from eve_profit.tripplus import load_step
+        con, p = _con(), SimpleNamespace(current_system="Tar")
+        self.assertEqual(load_step(con, p), "")
+        buy_here_step(con, G(), p, TXT)
+        t = load_step(con, p)
+        self.assertTrue(t.startswith("STEP: LOAD the gear you bought into your ship (Tar)"))
+        self.assertIn("8 x Medium Gremlin", t)
+        self.assertEqual(load_step(con, p), "")

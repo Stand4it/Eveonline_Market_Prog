@@ -1233,7 +1233,10 @@ def next_action(con, g, p, full=False, ahead=False):
             first = hop_only(first, p.current_system)
             try:                                                                                 # a buy HERE comes before the flight (flying on first would miss it)
                 from .tripplus import buy_here_step
+                from .tripplus import load_step
                 _b = buy_here_step(con, g, p, _raw)
+                if not _b:
+                    _b = load_step(con, p)                                                          # bought here earlier: load it into the ship before flying
                 if _b:
                     first = _b + "\n" + _timer(_name_of(_b), con)                                  # every step carries its own start command
                 else:
