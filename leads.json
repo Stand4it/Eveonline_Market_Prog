@@ -263,6 +263,26 @@
    "life_h": 24,
    "count": 1,
    "what": "1 resolved combat site 'Guristas Refu...' (BXL-1, 23.6 AU) and 4 unresolved signatures (20-24 AU): need a combat-ready ship / probes"
+  },
+  {
+   "id": "ikuchi-salvage-site",
+   "system": "Ikuchi",
+   "activity": "salvaging",
+   "needs": "unknown",
+   "seen": 1792254102,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved site 'Salvage Rese...' (KAK-2, 3.0 AU; group 'Hol...', the same family as the event sites seen here earlier): the name suggests a SALVAGE site; full name cut off, needs a look"
+  },
+  {
+   "id": "ikuchi-combat-2",
+   "system": "Ikuchi",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792254102,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved combat site 'Guristas Refu...' (DAX-7, 20 AU) and 1 unresolved signature (MNS-7, 4.5 AU)"
   }
  ]
 }
