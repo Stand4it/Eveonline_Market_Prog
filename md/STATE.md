@@ -10,3 +10,5 @@ Open agent offers (agent_offers.json):
 - Cassandra Ahfrim: chapter 1 of 8 'Holographic Reenactment': report to Holorela
 - Bostiers Oderyncke: 'Mysterious Sightings' (1 of 4): look for signs of 'alien ac
 - Aralusa Isugas: 'Corporate Documents': courier 4 x Crates of Corporate Docum
+- Marukaiken Mamareki: 'A New Venture - Education is Key' (1 of 5): courier 1 x Cor
+- Tanatsu Alomoinen: 'Interstellar Railroad' (1 of 4): bring 1 x Amarr Diplomat (
