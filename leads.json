@@ -123,6 +123,16 @@
    "life_h": 24,
    "count": 2,
    "what": "2 unresolved Cosmic Signatures (ESS-4 20.7 AU, ZQA-0 16.5 AU): need probes"
+  },
+  {
+   "id": "pakhshi-blood-sites",
+   "system": "Pakhshi",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792227137,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 resolved combat sites: 'Blood Refuge' (PZS-1, 0.7 AU: the closest combat site seen so far) and 'Blood Hideaway' (DHF-9, 37 AU): Blood Raider NPCs (they use energy neutralizers, which drain capacitor), need a combat-ready ship that passes the 99% rule"
   }
  ]
 }
