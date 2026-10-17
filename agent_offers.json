@@ -631,6 +631,25 @@
    "career": "Security",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: enemy ships and their number/size unknown until accepted (4 groups, 'normal ship restrictions')",
    "note": "Seen 2026-10-17. NOT available until the Incursus is combat-ready: the 5 h 6 min bonus clock starts at accept, and a declined mission costs standing if declined twice in 4 h, so just leave it unaccepted. 219,000 ISK + 123 LP for about 40 min is the best combat-test candidate seen: set available true once ammo + repairer are fitted and the fit passes."
+  },
+  {
+   "agent": "Haro Honnamaiken (L1, Urlen VII - Moon 6 - Hyasoda Corporation Refinery)",
+   "mission": "'Onslaught': make contact with a small operation that fell silent during a mining rights standoff, in Aokannitoh (0.9). Pays 71,000 ISK + 97 LP; bonus 76,000 ISK within 4 h 16 min.",
+   "isk": 71000,
+   "bonus": 76000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 30,
+   "jumps": 0,
+   "available": false,
+   "where": "Urlen VII - Moon 6 - Hyasyoda Corporation Refinery (0.9)",
+   "agent_system": "Urlen",
+   "to_system": "Aokannitoh",
+   "career": "Unknown (mining-corp agent; 'Onslaught' sounds like an encounter)",
+   "needs": "unknown: 'make contact' may mean an encounter with hostile NPCs ('consumed - literally'); do not accept until the Incursus passes the 99% win rule or the objective type is known",
+   "note": "Seen 2026-10-17. Standing 0.0. 147,000 ISK + 97 LP if the bonus is made. The jump count Urlen -> Aokannitoh is not entered yet; Aokannitoh is a 0.9 system. Leave unaccepted (declining twice in 4 h costs standing)."
   }
  ],
  "min_per_jump": 3.0,
