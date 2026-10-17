@@ -70,6 +70,19 @@
    "life_h": 24,
    "count": 1,
    "what": "1 unresolved Cosmic Signature (MUX-8, 8.1 AU): needs probes to find out what it is"
+  },
+  {
+   "id": "annve-mission",
+   "system": "Tourier",
+   "activity": "agent_l1_security",
+   "needs": "look",
+   "agent": "Annve Hoddoren",
+   "station": "Tourier VI - Moon 13 - Republic Security Services Assembly Plant",
+   "task_min": 25,
+   "seen": 1792203081,
+   "life_h": 12,
+   "count": 1,
+   "what": "Annve Hoddoren says 'drop by, so we can formalize the mission contract': a Security (probably combat) mission is waiting, readable only at her station"
   }
  ]
 }

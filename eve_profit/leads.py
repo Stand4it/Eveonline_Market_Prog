@@ -47,8 +47,13 @@ def candidates(con, g, p, best_known, hop_to, now=None):
         act = acts.get(ld.get("activity"))
         if not act or not act["unlocked"] or now > ld["seen"] + ld.get("life_h", 2) * 3600:
             continue
-        if ld.get("needs") not in (None, "", "salvager"):
+        if ld.get("needs") not in (None, "", "salvager", "look"):
             continue                                                    # not doable yet: listed by waiting() in the long view
+        if ld.get("needs") == "look":
+            c = _look_candidate(con, g, p, ld, best_known, hop_to, now)
+            if c:
+                out.append(c)
+            continue
         here, there = p.current_system, ld["system"]
         needs_ship = ld.get("ship_word") if (ld.get("needs") == "salvager" and not p.can_salvage) else None
         j1 = j2 = 0
@@ -102,3 +107,47 @@ def waiting(now=None):
         need = {"probes": "needs probe launcher + core scanner probes", "combat": "needs a combat-ready ship (99% rule)"}.get(ld["needs"], "type unknown")
         out.append(f"   SEEN at {ld['system']}: {ld['what']}  [{need}; unknown ISK/hr: modeled equal to your best until it can be done and timed]")
     return out
+
+
+def _look_candidate(con, g, p, ld, best_known, hop_to, now):
+    """An agent whose mission can only be read by docking at ITS station: one short step whose value is learning the mission (it then joins the plan at its own ISK/hr).
+    Until it is read the mission is an UNKNOWN modeled equal to the best ISK/hr, minus the dock-and-read time and the travel."""
+    here, there = p.current_system, ld["system"]
+    j = _jumps(g, p, here, there)
+    if j is None:
+        return None
+    docked_at = ""
+    try:
+        r = con.execute("SELECT name FROM stations WHERE station_id=?", (int(getattr(p, "current_location_id", 0) or 0),)).fetchone()
+        docked_at = (r[0] or "") if r else ""
+    except Exception:                                                   # noqa: BLE001
+        pass
+    at_station = bool(docked_at) and ld.get("station", "").lower() in docked_at.lower()
+    read_min = 5.0
+    travel = j * JUMP_MIN + (0.0 if (here != there or at_station) else 3.0)
+    task = float(ld.get("task_min", 25))
+    eff = best_known * task / (task + read_min + travel)
+    agent = ld.get("agent", "the agent")
+    if at_station:
+        text = (f"STEP: OPEN {agent}'s offer in {there} (about 1 minute)\n   DO ONLY THIS: station window > Agents tab > {agent} > Start Conversation. Read the mission, send me the window, do NOT accept.\n"
+                "   LATER: the mission joins the plan at its own ISK/hr")
+    elif here == there:
+        sid = 0
+        try:
+            r = con.execute("SELECT station_id FROM stations WHERE name LIKE ?", ("%" + ld.get("station", "") + "%",)).fetchone()
+            sid = int(r[0]) if r else 0
+        except Exception:                                               # noqa: BLE001
+            pass
+        head = f"STEP: DOCK at {ld.get('station', 'the agent station')} (about 2 minutes)"
+        if sid:
+            try:
+                from .tradestep import STATION
+                STATION[head] = sid
+            except Exception:                                           # noqa: BLE001
+                pass
+        text = f"{head}\n   DO ONLY THIS: dock at {ld.get('station', 'the station')} (the game destination is set to it).\n   LATER: open {agent}'s conversation: the mission can only be read there"
+    else:
+        text = hop_to(there, f"{agent}'s mission can only be read at {ld.get('station', 'her station')}: dock there and open the conversation", [])
+    if not text:
+        return None
+    return (eff, f"read {agent}'s mission", text, f"UNKNOWN mission ({ld['what']}): modeled equal to the best ISK/hr minus {read_min + travel:.0f} min of docking and reading, until read")

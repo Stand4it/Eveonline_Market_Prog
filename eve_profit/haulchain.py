@@ -126,11 +126,8 @@ def _look_around(con, g, p, st, here):
             nm = x.split(": ", 1)[1].split(" (")[0]
         except IndexError:
             continue
-        if "(security)" in x:                                           # security missions are combat and show only once you are docked at the agent: no stop for them until the ship is combat-ready
-            if ready is None:
-                ready = _combat_ready(con, g, p)
-            if not ready:
-                continue
+        if "(security)" in x:                                           # security missions are combat and are read only at the agent's station: they are a planned 'read the mission' lead (leads.py), not a stop on a haul
+            continue
         names.append(nm)
     lh = st.get("looked_here") or {}
     if lh.get("system") != here:

@@ -22,7 +22,7 @@ def _con():
 class TestLookAround(unittest.TestCase):
     def setUp(self):
         self._old = haul.agents_here
-        haul.agents_here = lambda here, g, p: ["HERE in Tourier: Annve (security): x", "HERE in Tourier: Ongunbjer (security): x"]
+        haul.agents_here = lambda here, g, p: ["HERE in Tourier: Annve (mining): x", "HERE in Tourier: Ongunbjer (distribution): x", "HERE in Tourier: Sec (security): x"]
         self._cr = haulchain._combat_ready
         haulchain._combat_ready = lambda con, g, p: True
 
@@ -43,8 +43,8 @@ class TestLookAround(unittest.TestCase):
         self.assertTrue(t2.startswith("STEP: OPEN Ongunbjer's offer"))
         self.assertEqual(haulchain._look_around(con, G(), p, st, "Tourier"), "")
 
-    def test_security_agents_wait_until_combat_ready(self):
-        haulchain._combat_ready = lambda con, g, p: False
+    def test_security_agents_are_leads_not_haul_stops(self):
+        haul.agents_here = lambda here, g, p: ["HERE in Tourier: Sec (security): x"]
         self.assertEqual(haulchain._look_around(_con(), G(), SimpleNamespace(current_location_id=1), {"dest": "Jita"}, "Tourier"), "")
 
 

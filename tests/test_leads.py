@@ -83,3 +83,17 @@ class TestWaiting(unittest.TestCase):
             self.assertEqual(leads.candidates(_con(), G(), SimpleNamespace(current_system="Alenia", can_salvage=True, avoid_yellow=True, wallet_isk=1e7), 1e6, lambda *a: "x", now=1100), [])
         finally:
             leads.load = old
+
+
+class TestLookLead(unittest.TestCase):
+    def test_unknown_mission_ranks_below_the_best_and_gets_a_dock_step(self):
+        con = _con()
+        con.execute("CREATE TABLE stations(station_id INTEGER, system_id INTEGER, name TEXT, corporation_id INTEGER)")
+        con.execute("INSERT INTO stations VALUES(9, 1, 'Tourier VI - Moon 13 - RSS Assembly Plant', 1)")
+        ld = {"system": "Alenia", "station": "Tourier VI - Moon 13", "agent": "Annve", "what": "w", "task_min": 25}
+        p = SimpleNamespace(current_system="Alenia", current_location_id=0, avoid_yellow=True)
+        c = leads._look_candidate(con, G(), p, ld, 1_000_000, lambda *a: "FLY", 0)
+        self.assertLess(c[0], 1_000_000)
+        self.assertTrue(c[2].startswith("STEP: DOCK at Tourier VI - Moon 13"))
+        p.current_location_id = 9
+        self.assertTrue(leads._look_candidate(con, G(), p, ld, 1e6, lambda *a: "FLY", 0)[2].startswith("STEP: OPEN Annve"))
