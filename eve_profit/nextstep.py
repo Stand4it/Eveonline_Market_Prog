@@ -1166,6 +1166,13 @@ def next_action(con, g, p, full=False, ahead=False):
             _nf(con, p.current_system, _m.group(1).strip())
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # a mission whose objective is ON THE WAY of the haul under way: accept it before leaving, do it when passing through
+        from .ontheway import step as _otw
+        _o = _otw(con, g, p)
+        if _o and _o[0]:
+            cands.insert(0, ((cands[0][0] * 1.001) if cands else 1.0, "agent mission (on the way)", _o[0], _o[1]))
+    except Exception:                                            # noqa: BLE001
+        pass
     plans_txt = ""
     if cands:                                                    # every plan on ONE list, best ISK/hr first, each with the step it would take next
         def _first(t):
