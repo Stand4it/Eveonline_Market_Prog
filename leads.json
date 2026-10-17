@@ -193,6 +193,16 @@
    "life_h": 24,
    "count": 2,
    "what": "2 unresolved Cosmic Signatures (DZI-4 30 AU, EUF-6 26 AU): need probes; Uedama is a gank hub, scanning here is not advised"
+  },
+  {
+   "id": "halaima-combat-sites",
+   "system": "Halaima",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792232881,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 resolved combat sites: 'Tetrimon Bas...' (EPH-9, 4.0 AU) and 'Guristas Hide...' (BUU-5, 37.9 AU): need a combat-ready ship that passes the 99% rule"
   }
  ]
 }
