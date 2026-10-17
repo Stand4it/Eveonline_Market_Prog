@@ -253,6 +253,16 @@
    "life_h": 24,
    "count": 3,
    "what": "3 resolved sites, group starts 'Hol...' (14-21 AU): 'Suspicious Si...' (BIY-4), 'Metaliminal M...' (LRI-7), 'Raid: Black M...' (QAG-7): look like event / Homefront-type sites; names and enemies cut off"
+  },
+  {
+   "id": "hirtamon-sites",
+   "system": "Hirtamon",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792243980,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 resolved combat site 'Guristas Refu...' (BXL-1, 23.6 AU) and 4 unresolved signatures (20-24 AU): need a combat-ready ship / probes"
   }
  ]
 }

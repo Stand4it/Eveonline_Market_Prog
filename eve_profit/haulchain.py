@@ -6,7 +6,7 @@ import json
 import time
 
 KEY = "haul_chain"
-MAX_AGE_S = 12 * 3600
+MAX_AGE_S = 72 * 3600          # a long trip with sleep and detours must not make the planner forget the cargo (12 h did)
 MIN_PER_JUMP = 2.0            # minutes per jump, from the timed flights
 STICKY = 1.25                 # a started haul keeps going unless something else pays this many times more
 
@@ -60,6 +60,11 @@ def candidate(con, g, p):
     if not st:
         return None
     here, dest = p.current_system, st["dest"]
+    st["t"] = time.time()                                               # still in use: keep it alive
+    try:
+        save(con, st)
+    except Exception:                                                   # noqa: BLE001
+        pass
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
     items = [f"      {q:>9,} x {n:<32} ~{net:>11,.0f} at {dest}" for n, q, net, local in st["items"][:6]]
