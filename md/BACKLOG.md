@@ -33,3 +33,4 @@
 - Miner II: compare buying in Jita (~518k) against building it from the Miner II blueprint (needs Mining IV, Industry); decide by cost over time when Mining IV is trained.
 - Cross-plan synergy: score a next step higher when it also advances other top plans (same destination system or route); today only 'ALSO ON THE WAY' lines exist.
 - Add a 'lead' command (system, what, count, activity) so a scan can be recorded without editing leads.json; per-wreck value from real salvage runs.
+- HyperNet Relay raffles (seen 2026-10-17: Naglfar 512 nodes at 10,745,704 ISK, est. value 4.22B, 284 left, collect in Uuna 0.4 lowsec 9 jumps): expected value per node = est value / nodes = 8.24M vs 10.75M price = -23%; 1 node = the whole wallet; prize is collected in lowsec. SKIP unless EV >= price AND the pickup is in safe space AND one node is under ~5% of the wallet; model it as a plan only then.
