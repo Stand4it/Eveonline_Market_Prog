@@ -1028,7 +1028,7 @@ def next_action(con, g, p, full=False, ahead=False):
         dest_ = None
         if cands and cands[0][1].startswith("haul stock to ") and h:
             dest_ = h["dest"]
-        if dest_:
+        if dest_ and not cands[0][2].startswith(("STEP: DOCK", "STEP: OPEN", "STEP: LOOK AROUND")):          # these are not trips: no route extras
             ex_ = _extras(con, g, p, dest_)
             keep_lines = [l for l in ex_["lines"] if not l.startswith(("going:", "coming back:", "trades there"))] if h.get("extra_lines") else ex_["lines"]
             if keep_lines:

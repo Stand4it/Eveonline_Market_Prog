@@ -71,16 +71,10 @@ def candidate(con, g, p):
         text = "\n".join([f"STEP: SELL YOUR HAULED STOCK in {dest} - about {st['net']:,.0f} ISK", "   DO ONLY THIS: dock and sell to the HIGHEST buy orders (Market > item > Sell):"] + items
                          + ["   After this `next` chooses the best step from here: there is no planned trip back."])
         return 1e12, text                                               # you are there with the goods: finishing the sale comes first
-    if st.get("looked") != here and here != st["origin"]:
-        st["looked"] = here                                             # checked once per stop
-        save(con, st)
-        from .haul import agents_here
-        ag = [x for x in agents_here(here, g, p) if x.startswith("HERE")]       # only agents in THIS system matter; no list of far ones
-        if ag:
-            text = "\n".join([f"STEP: LOOK AROUND {here} (about 1 minute)", "   DO ONLY THIS: dock and open the station window > Agents tab:"]
-                              + ["      " + x for x in ag]
-                              + ["   Orange 'Offered' beside a name = a mission is waiting: send me only that agent's window. No orange? Run  python -m eve_profit next  (it flies on)."])
-            return 1e11, text
+    if here != st["origin"]:
+        step = _look_around(con, g, p, st, here)
+        if step:
+            return 1e11, step
     try:
         r = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow)
     except Exception:                                                   # noqa: BLE001
@@ -107,3 +101,54 @@ def candidate(con, g, p):
     except Exception:                                                   # noqa: BLE001
         pass
     return rate * STICKY, "\n".join(lines)
+
+
+def _station_of(con, g, here):
+    """(station id, name) of an NPC station in `here` (the first one), or (0, '')."""
+    try:
+        r = con.execute("SELECT station_id,name FROM stations WHERE system_id=? ORDER BY station_id LIMIT 1", (g.id_of(here),)).fetchone()
+        return (int(r[0]), r[1] or "") if r else (0, "")
+    except Exception:                                                   # noqa: BLE001
+        return 0, ""
+
+
+def _look_around(con, g, p, st, here):
+    """Agents in the system you stopped in, ONE STEP EACH: first dock (the destination is set to the station), then open each agent's window, then fly on.
+    State st['looked_here'] = {system, agents: [done names]}."""
+    from .haul import agents_here
+    ag = [x for x in agents_here(here, g, p) if x.startswith("HERE")]
+    if not ag:
+        return ""
+    names = []
+    for x in ag:
+        try:
+            names.append(x.split(": ", 1)[1].split(" (")[0])
+        except IndexError:
+            pass
+    lh = st.get("looked_here") or {}
+    if lh.get("system") != here:
+        lh = {"system": here, "agents": []}
+    todo = [n for n in names if n not in lh["agents"]]
+    if not todo:
+        return ""
+    docked = (getattr(p, "current_location_id", 0) or 0) > 0
+    st["looked_here"] = lh
+    if not docked:
+        sid, sname = _station_of(con, g, here)
+        head = f"STEP: DOCK at {sname or 'a station'} in {here} (about 1 minute)"
+        if sid:
+            try:
+                from .tradestep import STATION
+                STATION[head] = sid
+            except Exception:                                           # noqa: BLE001
+                pass
+        save(con, st)
+        return "\n".join([head, f"   DO ONLY THIS: dock at {sname or 'the station'} (the game destination is set to it: autopilot / right-click the station > Dock).",
+                           f"   LATER: {len(todo)} agent(s) here, one step each: {', '.join(todo)}"])
+    agent = todo[0]
+    lh["agents"].append(agent)                                          # shown once: the next `next` gives the next agent, then flies on
+    save(con, st)
+    more = f"   LATER: then {', '.join(todo[1:])}" if len(todo) > 1 else "   LATER: then `next` flies on"
+    return "\n".join([f"STEP: OPEN {agent}'s offer in {here} (about 1 minute)",
+                      f"   DO ONLY THIS: station window > Agents tab > {agent} > Start Conversation. Orange 'Offered' = a mission is waiting: send me that window (do not accept yet unless I say so).",
+                      more])
