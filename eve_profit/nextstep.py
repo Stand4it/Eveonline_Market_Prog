@@ -1233,7 +1233,9 @@ def next_action(con, g, p, full=False, ahead=False):
             first = hop_only(first, p.current_system)
             try:                                                                                 # a buy HERE comes before the flight (flying on first would miss it)
                 from .tripplus import buy_here_step
-                first = buy_here_step(con, g, p, _raw) or first
+                _b = buy_here_step(con, g, p, _raw)
+                if _b:
+                    first = _b + "\n" + _timer(_name_of(_b), con)                                  # every step carries its own start command
             except Exception:                                                                    # noqa: BLE001
                 pass
         out = finish_block(first)
