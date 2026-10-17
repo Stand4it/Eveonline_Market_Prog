@@ -83,6 +83,26 @@
    "life_h": 12,
    "count": 1,
    "what": "Annve Hoddoren says 'drop by, so we can formalize the mission contract': a Security (probably combat) mission is waiting, readable only at her station"
+  },
+  {
+   "id": "merolles-combat-sites",
+   "system": "Merolles",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792206361,
+   "life_h": 24,
+   "count": 5,
+   "what": "5 resolved combat sites: 2 x 'Serpentis Hid...' (TAG-7 12.1 AU, WMG-9 43 AU), 'Serpentis Re...' (BIR-75 13.7 AU), 'Criterion of F...' (IHO-93 11.4 AU), 'Crimson Gaun...' (LHQ-15 13.9 AU): names cut off"
+  },
+  {
+   "id": "merolles-sig-unresolved",
+   "system": "Merolles",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792206361,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 unresolved Cosmic Signature (SGF-9, 21 AU): needs probes"
   }
  ]
 }
