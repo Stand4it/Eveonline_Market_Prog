@@ -133,6 +133,16 @@
    "life_h": 24,
    "count": 2,
    "what": "2 resolved combat sites: 'Blood Refuge' (PZS-1, 0.7 AU: the closest combat site seen so far) and 'Blood Hideaway' (DHF-9, 37 AU): Blood Raider NPCs (they use energy neutralizers, which drain capacitor), need a combat-ready ship that passes the 99% rule"
+  },
+  {
+   "id": "kassigainen-combat-sites",
+   "system": "Kassigainen",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792227337,
+   "life_h": 24,
+   "count": 6,
+   "what": "6 resolved combat sites, all close (1.4-2.9 AU): 3 x 'Guristas Burr...', 'Guristas Hide...', 'Guristas Refu...', 'Tetrimon Bas...': Guristas NPCs (missiles, ECM), need a combat-ready ship that passes the 99% rule"
   }
  ]
 }
