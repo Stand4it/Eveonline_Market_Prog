@@ -323,6 +323,17 @@
    "life_h": 24,
    "count": 1,
    "what": "1 resolved combat site 'Drone Cluster...' (KAP-3, 80.8 AU, far from the gate) and 1 unresolved signature (78.8 AU): needs a combat-ready ship"
+  },
+  {
+   "id": "irjunen-wrecks-2026-10-17",
+   "system": "Irjunen",
+   "activity": "salvaging",
+   "needs": "salvager",
+   "ship_word": "Imicus",
+   "seen": 1792275418,
+   "life_h": 2,
+   "count": 45,
+   "what": "about 45 wrecks on a directional scan (0.5 system): small Guristas (Pithi) and Amarr (Tetrimon) wrecks, plus many larger 'EoM' mission wrecks (Hydra, Ogre, Death Knight, Death Lord, Crusader, Saboteur: medium/large). Likely a finished combat-mission area; wreck positions unknown until you are in the system"
   }
  ]
 }
