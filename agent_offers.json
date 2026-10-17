@@ -612,6 +612,25 @@
    "to_system": "Vaere",
    "career": "Security",
    "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each. Route checked 2026-10-17: Alenia>Vaere 1 jump, Vaere>Tourier 2; NOT on the Alenia>Tourier route (that is 1 jump), detour +2 jumps."
+  },
+  {
+   "agent": "Ongunbjer Hetinold (Security, L1, Tourier III - Republic Security Services Assembly Plant)",
+   "mission": "'Pirate Intrusion': destroy 4 groups of CONCORD-wanted pirates in Tourier (bookmarks supplied). Pays 102,000 ISK + 123 LP; bonus 117,000 ISK within 5 h 6 min.",
+   "isk": 102000,
+   "bonus": 117000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 40,
+   "jumps": 0,
+   "available": false,
+   "where": "Tourier III - Republic Security Services Assembly Plant (0.9)",
+   "agent_system": "Tourier",
+   "to_system": "Tourier",
+   "career": "Security",
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: enemy ships and their number/size unknown until accepted (4 groups, 'normal ship restrictions')",
+   "note": "Seen 2026-10-17. NOT available until the Incursus is combat-ready: the 5 h 6 min bonus clock starts at accept, and a declined mission costs standing if declined twice in 4 h, so just leave it unaccepted. 219,000 ISK + 123 LP for about 40 min is the best combat-test candidate seen: set available true once ammo + repairer are fitted and the fit passes."
   }
  ],
  "min_per_jump": 3.0,
