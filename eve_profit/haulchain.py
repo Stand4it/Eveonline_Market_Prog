@@ -38,7 +38,7 @@ def clear(con):
 def make(h, origin):
     return {"t": time.time(), "origin": origin, "dest": h["dest"], "total": h["jumps"], "gain": h["gain"], "net": h["net"],
             "gain_stock": h.get("gain_stock", h["gain"]), "extra": h.get("extra_isk", 0.0),
-            "items": [[n, int(q), float(net), float(local)] for n, q, net, local in h["items"][:8]], "ore": bool(h.get("ore")), "arrived": False}
+            "items": [[n, int(q), float(net), float(local)] for n, q, net, local in h["items"][:8]], "ore": bool(h.get("ore")), "arrived": False, "t0": time.time()}
 
 
 def _held_at_origin(con, g, st):
@@ -220,3 +220,24 @@ def _combat_ready(con, g, p):
         return prep_estimate(con, g, p)[0] <= 0
     except Exception:                                                   # noqa: BLE001
         return False
+
+
+def fold_legs(con, st):
+    """The sale ended the haul: add the hours (and ISK) of its timed flight legs to the newest run, so the haul's ISK/hr includes the hauling time."""
+    try:
+        since = st.get("t0") or (time.time() - MAX_AGE_S)
+        last = con.execute("SELECT id, isk, hours FROM activity_log ORDER BY id DESC LIMIT 1").fetchone()
+        if not last:
+            return ""
+        legs = con.execute("SELECT id, isk, hours FROM activity_log WHERE id<? AND ts>=? AND (activity LIKE 'Hauling%' OR activity LIKE 'Fly %') ORDER BY id", (last[0], since)).fetchall()
+        if not legs:
+            return ""
+        h = sum(r[2] for r in legs)
+        i = sum(r[1] for r in legs)
+        con.execute("UPDATE activity_log SET isk=isk+?, hours=hours+? WHERE id=?", (i, h, last[0]))
+        con.executemany("DELETE FROM activity_log WHERE id=?", [(r[0],) for r in legs])
+        con.commit()
+        tot_h, tot_i = last[2] + h, last[1] + i
+        return f"Haul timed as one run: {len(legs)} flight legs + the sale = {tot_h * 60:.0f} min, {tot_i:,.0f} ISK = {tot_i / max(tot_h, 1e-9):,.0f} ISK/hr."
+    except Exception:                                                   # noqa: BLE001
+        return ""

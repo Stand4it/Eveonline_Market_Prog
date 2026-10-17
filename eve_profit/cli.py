@@ -339,11 +339,19 @@ def _run(a):
                 act = (_json.loads(row[0]).get("activity", "") if row else "").lower()
                 if "hauled stock" in act or act.startswith("sell your hauled"):
                     from .haulchain import clear as _hclear
+                    from .haulchain import load as _hl0, fold_legs as _fold0
+                    _f0 = _fold0(con, _hl0(con) or {})
+                    if _f0:
+                        print(_f0)
                     _hclear(con)                                           # the hauled stock was sold: the haul is over
                 if act.startswith("market sell stock"):
                     from .haulchain import load as _hload, clear as _hclear3
                     _hs = _hload(con)
                     if _hs and _hs.get("arrived"):
+                        from .haulchain import fold_legs as _fold3
+                        _f3 = _fold3(con, _hs)
+                        if _f3:
+                            print(_f3)
                         _hclear3(con)                                      # a plain sell step at the haul destination also ends the haul
                     from .invoverlay import confirm_sold
                     _cs = confirm_sold(con)

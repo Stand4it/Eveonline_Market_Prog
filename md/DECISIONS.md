@@ -333,3 +333,4 @@
 - 2026-10-17: division ids are LEARNED, not assumed: 'agents --within' asks the public game API for the ids of agents we know (Security/Mining/Distribution from mission_agents.json), reads their division, votes, stores meta division_map; agentleads uses it. (My assumed ids were off by one: the first list labelled the wrong division 'Distribution'.)
 - 2026-10-17: agent reading plans: one candidate per SYSTEM (dock where the best agent is); 'agents --within' also fills station and agent names for everything in reach (public /universe/names/) so DOCK steps never show an empty station name.
 - 2026-10-17: a 'Market sell stock' stop at the haul destination now also clears the haul chain (the sold stock was offered for sale again after stopsync).
+- 2026-10-17: ending a haul (sell at destination) folds the timed flight legs into the sale run, so its ISK/hr includes hauling time (haulchain.fold_legs).
