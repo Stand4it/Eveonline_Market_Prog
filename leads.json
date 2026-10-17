@@ -293,6 +293,16 @@
    "life_h": 24,
    "count": 4,
    "what": "4 resolved Guristas combat sites (Forsaken Hub / Forlorn Hideaway / Refuge / Hideaway; 1.4, 40.9, 49.4, 50.2 AU): need a combat-ready ship (Incursus has no ammo or repairer yet); probe launcher missing"
+  },
+  {
+   "id": "perimeter-event-1",
+   "system": "Perimeter",
+   "activity": "exploration",
+   "needs": "unknown",
+   "seen": 1792257477,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved site 'Metaliminal M...' (KVQ-2, 0.72 AU; group 'Hol...', the event-site family seen elsewhere; full name cut off) and 3 unresolved cosmic signatures (15-20 AU): need a look / probes"
   }
  ]
 }

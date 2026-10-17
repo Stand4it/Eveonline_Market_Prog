@@ -335,3 +335,4 @@
 - 2026-10-17: a 'Market sell stock' stop at the haul destination now also clears the haul chain (the sold stock was offered for sale again after stopsync).
 - 2026-10-17: ending a haul (sell at destination) folds the timed flight legs into the sale run, so its ISK/hr includes hauling time (haulchain.fold_legs).
 - 2026-10-17: Jita probe scan: 4 Guristas combat sites recorded as a lead (needs combat-ready ship).
+- 2026-10-17: Perimeter probe scan recorded as a lead (event site 0.72 AU + 3 unresolved).
