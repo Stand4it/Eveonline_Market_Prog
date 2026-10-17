@@ -286,9 +286,25 @@ def hop_only(text, here=None):
             nxt = out[i + 1] if i + 1 < len(out) else ""
             if not re.match(r"^\s{6}\S", nxt):
                 if ln.strip().startswith("ON THE WAY"):
-                    res.append("   ON THE WAY: nothing to buy or sell on this hop.")
+                    res.append(f"   HERE in {here or 'this system'}: nothing to buy or sell.")
                 continue
         res.append(ln)
+    # ORDER: what to do HERE (the buy/sell lines of this system, or 'nothing to buy or sell') comes BEFORE the flight instruction
+    di = next((i for i, ln in enumerate(res) if "DO ONLY THIS" in ln), None)
+    if di is not None:
+        here_block, rest, i = [], [], di + 1
+        while i < len(res):
+            ln = res[i]
+            if re.match(r"^\s+(ON THE WAY|HERE in)", ln):
+                here_block.append(f"   HERE in {here or 'this system'}: nothing to buy or sell." if ln.strip().startswith("ON THE WAY: nothing") else ln)
+                i += 1
+                while i < len(res) and re.match(r"^\s{6}\S", res[i]):
+                    here_block.append(res[i])
+                    i += 1
+                continue
+            rest.append(ln)
+            i += 1
+        res = res[:di] + here_block + [res[di]] + rest
     return "\n".join(res)
 
 

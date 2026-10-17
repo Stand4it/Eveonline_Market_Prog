@@ -31,5 +31,13 @@ class TestHopOnly(unittest.TestCase):
         self.assertIn("Bostiers", out)
 
 
+class TestOrder(unittest.TestCase):
+    def test_here_comes_before_the_flight(self):
+        txt = "STEP: FLY to Sivala - jump 1 of 3, hauling your stock to X\n   3 x Lib\n   DO ONLY THIS: fly to Sivala and stop there.\n   ON THE WAY: nothing to buy or sell on this hop."
+        out = hop_only(txt, "Pakhshi").split("\n")
+        self.assertLess(next(i for i, l in enumerate(out) if "nothing to buy or sell" in l), next(i for i, l in enumerate(out) if "DO ONLY THIS" in l))
+        self.assertIn("HERE in Pakhshi: nothing to buy or sell.", "\n".join(out))
+
+
 if __name__ == "__main__":
     unittest.main()

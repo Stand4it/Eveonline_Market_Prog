@@ -143,6 +143,16 @@
    "life_h": 24,
    "count": 6,
    "what": "6 resolved combat sites, all close (1.4-2.9 AU): 3 x 'Guristas Burr...', 'Guristas Hide...', 'Guristas Refu...', 'Tetrimon Bas...': Guristas NPCs (missiles, ECM), need a combat-ready ship that passes the 99% rule"
+  },
+  {
+   "id": "hatakani-combat-sites",
+   "system": "Hatakani",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792228205,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 resolved combat sites: 'Drone Assembl...' (JYT-9, 7.8 AU, Drone-type enemies, probably Rogue Drones) and 'Guristas Hide...' (XTZ-1, 30 AU): need a combat-ready ship that passes the 99% rule"
   }
  ]
 }

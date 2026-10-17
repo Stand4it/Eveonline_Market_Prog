@@ -323,3 +323,4 @@
 - 2026-10-17: the buy-here step carries its own start command (the replacement had dropped the timer line).
 - 2026-10-17: after a route-trade buy had its own step (or you hold the item), the flight step no longer lists that buy again.
 - 2026-10-17: order at a station on a trip: BUY the route-trade items (own step each) -> LOAD them into the ship (one step: purchases land in the item hangar) -> FLY. Each shown once.
+- 2026-10-17: in a trip step what to do HERE (buy/sell here, or 'HERE in X: nothing to buy or sell') comes BEFORE the flight instruction; Hatakani/Kassigainen/Pakhshi scans recorded as leads.
