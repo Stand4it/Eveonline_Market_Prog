@@ -341,6 +341,10 @@ def _run(a):
                     from .haulchain import clear as _hclear
                     _hclear(con)                                           # the hauled stock was sold: the haul is over
                 if act.startswith("market sell stock"):
+                    from .haulchain import load as _hload, clear as _hclear3
+                    _hs = _hload(con)
+                    if _hs and _hs.get("arrived"):
+                        _hclear3(con)                                      # a plain sell step at the haul destination also ends the haul
                     from .invoverlay import confirm_sold
                     _cs = confirm_sold(con)
                     if _cs:
