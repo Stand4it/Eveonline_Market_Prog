@@ -650,6 +650,25 @@
    "career": "Unknown (mining-corp agent; 'Onslaught' sounds like an encounter)",
    "needs": "unknown: 'make contact' may mean an encounter with hostile NPCs ('consumed - literally'); do not accept until the Incursus passes the 99% win rule or the objective type is known",
    "note": "Seen 2026-10-17. Standing 0.0. 147,000 ISK + 97 LP if the bonus is made. The jump count Urlen -> Aokannitoh is not entered yet; Aokannitoh is a 0.9 system. Leave unaccepted (declining twice in 4 h costs standing)."
+  },
+  {
+   "agent": "Aralusa Isugas (Distribution, L1, Irjunen II - Caldari Steel Warehouse)",
+   "mission": "'Corporate Documents': courier 4 x Crates of Corporate Documents (160 m3) from Irjunen II - Caldari Steel Warehouse to Irjunen V - CBD Sell Division Retail Center (same system, 0.5). Pays 36,000 ISK + 48 LP; bonus 42,000 ISK within 1 h 18 min; 24 h limit.",
+   "isk": 36000,
+   "bonus": 42000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 10,
+   "jumps": 0,
+   "available": true,
+   "where": "Irjunen II - Caldari Steel Warehouse (0.5)",
+   "agent_system": "Irjunen",
+   "to_system": "Irjunen",
+   "career": "Distribution",
+   "needs": "nothing special: 160 m3 of cargo fits the Incursus; no combat; both stations are in Irjunen (0.5, safe)",
+   "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (the pickup tick is already set), so: accept, undock, warp to Irjunen V, dock, deliver. 78,000 ISK + 48 LP for about 10 min if the bonus is made. Both ends are inside Irjunen, so the 1 h 18 min bonus clock is easy."
   }
  ],
  "min_per_jump": 3.0,

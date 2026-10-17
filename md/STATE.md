@@ -9,3 +9,4 @@ Open agent offers (agent_offers.json):
 - Arnelin Ygegnere: step 10 of 10 'Making Mountains of Molehills' (FINAL): acqui
 - Cassandra Ahfrim: chapter 1 of 8 'Holographic Reenactment': report to Holorela
 - Bostiers Oderyncke: 'Mysterious Sightings' (1 of 4): look for signs of 'alien ac
+- Aralusa Isugas: 'Corporate Documents': courier 4 x Crates of Corporate Docum
