@@ -707,6 +707,25 @@
    "career": "Distribution",
    "needs": "nothing special (270 m3 fits the Incursus, no combat), but the jump count Irjunen -> Kaaputenen is not known here: enter it, then set available true. The 56 min bonus clock covers the one-way trip",
    "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (tick set). 63,000 ISK + 35 LP with the bonus, one way (the tool plans no return trip). Compare with the Aralusa Isugas courier (78,000 ISK, same system) and fly this one only if Kaaputenen is close or on the way."
+  },
+  {
+   "agent": "Marukaiken Mamareki (L1, agent station not visible in the screenshot)",
+   "mission": "'A New Venture - Education is Key' (1 of 5): courier 1 x Corporations for the Rest of Us (0.1 m3, a skill book) from Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6) to Uedama III - Moon 1 - Caldari Steel Warehouse (0.5). Pays 38,000 ISK + 43 LP; bonus 36,000 ISK within 1 h 8 min.",
+   "isk": 38000,
+   "bonus": 36000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "unknown (the agent's station was scrolled out of the screenshot)",
+   "agent_system": "",
+   "to_system": "Uedama",
+   "career": "Distribution",
+   "needs": "the agent's station and the jump counts agent -> Haatomo -> Uedama: enter them, then set available true. Nothing special otherwise (0.1 m3, no combat); the 1 h 8 min clock covers pickup and drop-off",
+   "note": "Seen 2026-10-17, standing 0.0. Part 1 of a 5-part chain. The skill book may be a reward or a keepable item (the screenshot cut off the Skill Books section): check. 74,000 ISK + 43 LP with the bonus. Uedama is on the way to Jita."
   }
  ],
  "min_per_jump": 3.0,

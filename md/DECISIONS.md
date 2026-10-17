@@ -345,3 +345,4 @@
 - 2026-10-17: Askalaisen Oni (Irjunen V) 'Rancorous Researcher' 1 of 5 recorded (bonus 32k + Device + 36 LP; unavailable until the Inari jump count is known).
 - 2026-10-17: Shas Mugitoh (Irjunen V) 'Party Goods' courier recorded (31k+32k, to Kaaputenen; unavailable until the jump count is known).
 - 2026-10-17: Irjunen rescan (10:38 pm) updated the wreck lead: ~40 Guristas wrecks, 2 cargo containers, 4 live Hornet I drones.
+- 2026-10-17: Marukaiken Mamareki 'A New Venture' 1 of 5 courier recorded (38k+36k, Haatomo -> Uedama; unavailable until the agent station and jump counts are known).
