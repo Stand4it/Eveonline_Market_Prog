@@ -72,3 +72,14 @@ class TestLeads(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestWaiting(unittest.TestCase):
+    def test_blocked_leads_are_listed_not_stepped(self):
+        old = leads.load
+        leads.load = lambda: [{"system": "Alenia", "activity": "ratting", "needs": "combat", "seen": 1000, "life_h": 24, "what": "hideout"}]
+        try:
+            self.assertIn("combat-ready", leads.waiting(now=1100)[0])
+            self.assertEqual(leads.candidates(_con(), G(), SimpleNamespace(current_system="Alenia", can_salvage=True, avoid_yellow=True, wallet_isk=1e7), 1e6, lambda *a: "x", now=1100), [])
+        finally:
+            leads.load = old

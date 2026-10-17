@@ -10,6 +10,46 @@
    "life_h": 2,
    "count": 40,
    "what": "about 40 small wrecks (Rogue, Angel, Serpentis) on a directional scan, plus 2 live Serpentis Corelum chiefs (medium; do not fight)"
+  },
+  {
+   "id": "alenia-sigs-unresolved",
+   "system": "Alenia",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792200523,
+   "life_h": 24,
+   "count": 4,
+   "what": "4 unresolved Cosmic Signatures (EGN-7, KRQ-6, SLB-1, UBX-3; 5.8-16.9 AU): could be data, relic, gas or combat sites; needs a probe launcher + core scanner probes to find out"
+  },
+  {
+   "id": "alenia-serpentis-hideout",
+   "system": "Alenia",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792200523,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved combat site 'Serpentis Hideout' (SAL-4, 2.9 AU): Serpentis NPCs, needs a combat-ready ship that passes the 99% rule"
+  },
+  {
+   "id": "alenia-criterion",
+   "system": "Alenia",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792200523,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved site 'Criterion of F...' (MAH-1, 3.9 AU, combat): name cut off, enemy unknown"
+  },
+  {
+   "id": "alenia-emergency-aid",
+   "system": "Alenia",
+   "activity": "explore_sites",
+   "needs": "unknown",
+   "seen": 1792200523,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved site 'Emergency Aid...' (ZML-3, 8.2 AU): type cut off; unknown, needs a look at the full name"
   }
  ]
 }

@@ -47,6 +47,8 @@ def candidates(con, g, p, best_known, hop_to, now=None):
         act = acts.get(ld.get("activity"))
         if not act or not act["unlocked"] or now > ld["seen"] + ld.get("life_h", 2) * 3600:
             continue
+        if ld.get("needs") not in (None, "", "salvager"):
+            continue                                                    # not doable yet: listed by waiting() in the long view
         here, there = p.current_system, ld["system"]
         needs_ship = ld.get("ship_word") if (ld.get("needs") == "salvager" and not p.can_salvage) else None
         j1 = j2 = 0
@@ -87,4 +89,16 @@ def candidates(con, g, p, best_known, hop_to, now=None):
         mins_left = (ld["seen"] + ld.get("life_h", 2) * 3600 - now) / 60.0
         out.append((eff, f"salvage lead ({there})", text,
                     f"seen by directional scan, gone in about {mins_left:.0f} min; rate: {how}; {travel:.0f} min travel counted"))
+    return out
+
+
+def waiting(now=None):
+    """Seen leads that cannot be done yet (no probes, no combat-ready ship, unknown type): lines for the long view, each an UNKNOWN to model once it can be done."""
+    now = now or time.time()
+    out = []
+    for ld in load():
+        if now > ld["seen"] + ld.get("life_h", 2) * 3600 or ld.get("needs") in (None, "", "salvager"):
+            continue
+        need = {"probes": "needs probe launcher + core scanner probes", "combat": "needs a combat-ready ship (99% rule)"}.get(ld["needs"], "type unknown")
+        out.append(f"   SEEN at {ld['system']}: {ld['what']}  [{need}; unknown ISK/hr: modeled equal to your best until it can be done and timed]")
     return out

@@ -1132,6 +1132,13 @@ def next_action(con, g, p, full=False, ahead=False):
             steps.append(enabler_step(an_["enabler"], an_["base"]))
     except Exception:                                            # noqa: BLE001
         long_view = ""
+    try:                                                         # things seen on the map that cannot be done yet
+        from .leads import waiting as _lw
+        _w = _lw()
+        if _w:
+            long_view = (long_view + "\n\n" if long_view else "") + "SEEN ON THE MAP, NOT DOABLE YET:\n" + "\n".join(_w)
+    except Exception:                                            # noqa: BLE001
+        pass
     if KEEP_NOTES:
         kn = "STOCK HERE I AM NOT SELLING (on purpose):\n" + "\n".join(KEEP_NOTES)
         long_view = (long_view + "\n\n" + kn) if long_view else kn
