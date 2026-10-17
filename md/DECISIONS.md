@@ -342,3 +342,4 @@
 - 2026-10-17: Urlen rescan updated the Urlen lead (2 Guristas, 2 Raid: Black M..., 1 Suspicious Sig...).
 - 2026-10-17: Irjunen directional scan: ~45 wrecks recorded as a salvage lead.
 - 2026-10-17: Aralusa Isugas (Irjunen) 'Corporate Documents' courier offer recorded (36k+42k, same-system, available).
+- 2026-10-17: Askalaisen Oni (Irjunen V) 'Rancorous Researcher' 1 of 5 recorded (bonus 32k + Device + 36 LP; unavailable until the Inari jump count is known).

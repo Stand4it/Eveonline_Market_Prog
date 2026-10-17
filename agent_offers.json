@@ -669,6 +669,25 @@
    "career": "Distribution",
    "needs": "nothing special: 160 m3 of cargo fits the Incursus; no combat; both stations are in Irjunen (0.5, safe)",
    "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (the pickup tick is already set), so: accept, undock, warp to Irjunen V, dock, deliver. 78,000 ISK + 48 LP for about 10 min if the bonus is made. Both ends are inside Irjunen, so the 1 h 18 min bonus clock is easy."
+  },
+  {
+   "agent": "Askalaisen Oni (Distribution, L1, Irjunen V - CBD Sell Division Retail Center)",
+   "mission": "'Rancorous Researcher' (1 of 5): courier 1 x Encoded Data Chip (0.1 m3) from Inari IX - Moon 13 - Corporate Police Force Testing Facilities to Irjunen V - CBD Sell Division Retail Center. Pays 1 x Device + 36 LP; bonus 32,000 ISK within 58 min.",
+   "isk": 0,
+   "bonus": 32000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Irjunen V - CBD Sell Division Retail Center (0.5)",
+   "agent_system": "Irjunen",
+   "to_system": "Inari",
+   "career": "Distribution",
+   "needs": "nothing special (0.1 m3, no combat) but the jump count Irjunen -> Inari is not known here: enter it, then set available true. The 58 min bonus clock must cover the round trip (agent -> Inari IX pickup -> back)",
+   "note": "Seen 2026-10-17, standing 0.0. Part 1 of a 5-part chain. The reward is an unnamed 'Device' item (value unknown, not counted) plus 36 LP, so only the 32,000 ISK bonus is counted: worth taking only if Inari is 1-2 jumps away. Take the Aralusa Isugas courier (same system, 78,000 ISK) first."
   }
  ],
  "min_per_jump": 3.0,
