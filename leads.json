@@ -153,6 +153,26 @@
    "life_h": 24,
    "count": 2,
    "what": "2 resolved combat sites: 'Drone Assembl...' (JYT-9, 7.8 AU, Drone-type enemies, probably Rogue Drones) and 'Guristas Hide...' (XTZ-1, 30 AU): need a combat-ready ship that passes the 99% rule"
+  },
+  {
+   "id": "sivala-combat-sites",
+   "system": "Sivala",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792228252,
+   "life_h": 24,
+   "count": 7,
+   "what": "5 resolved combat sites (11.7-19.4 AU): 4 x 'Guristas Refu...' (CUO-1, SGA-0, STO-9 and one more), 'Class 1 Holo...' (DYA-9), 'Criterion of F...' (DYS-8): Guristas and unknown enemies; need a combat-ready ship"
+  },
+  {
+   "id": "sivala-sigs-unresolved",
+   "system": "Sivala",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792228252,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 unresolved Cosmic Signatures (IVD-0 14 AU, RXO-6 11.2 AU): need probes"
   }
  ]
 }
