@@ -50,6 +50,26 @@
    "life_h": 24,
    "count": 1,
    "what": "resolved site 'Emergency Aid...' (ZML-3, 8.2 AU): type cut off; unknown, needs a look at the full name"
+  },
+  {
+   "id": "tourier-class1-holo",
+   "system": "Tourier",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792201466,
+   "life_h": 24,
+   "count": 1,
+   "what": "resolved site 'Class 1 Holo...' (EWX-5, 2.2 AU, group starts 'Co', probably combat): name cut off"
+  },
+  {
+   "id": "tourier-sig-unresolved",
+   "system": "Tourier",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792201466,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 unresolved Cosmic Signature (MUX-8, 8.1 AU): needs probes to find out what it is"
   }
  ]
 }
