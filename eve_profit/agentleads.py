@@ -76,20 +76,22 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=3):
         j = reach[sid].jumps
         work = float(act.get("minutes") or 25)
         eff = _rate(act, best_known) * work / (work + READ_MIN + j * JUMP_MIN)
-        cur_best = best.get(r["location_id"])
-        item = {"id": r["agent_id"], "name": nm or f"a level {r['level']} {DIV_NAME[r['division_id']]} agent", "level": r["level"], "div": DIV_NAME[r["division_id"]],
+        cur_best = best.get(sid)                                        # one candidate per SYSTEM (the best agent's station is where you dock)
+        item = {"loc": r["location_id"], "id": r["agent_id"], "name": nm or f"a level {r['level']} {DIV_NAME[r['division_id']]} agent", "level": r["level"], "div": DIV_NAME[r["division_id"]],
                 "system": g.name[sid], "jumps": j, "eff": eff, "act": act["name"]}
         if cur_best is None:
-            best[r["location_id"]] = [eff, [item]]
+            best[sid] = [eff, [item]]
         else:
             cur_best[1].append(item)
             cur_best[0] = max(cur_best[0], eff)
     out = []
-    for loc, (eff, items) in sorted(best.items(), key=lambda kv: -kv[1][0])[:limit]:
+    for _sid, (eff, items) in sorted(best.items(), key=lambda kv: -kv[1][0])[:limit]:
         items.sort(key=lambda x: -x["eff"])
         top = items[0]
+        loc = top["loc"]
+        items = [i for i in items if i["loc"] == loc]                    # the agents of that station: one dock, one read
         st = con.execute("SELECT name FROM stations WHERE station_id=?", (loc,)).fetchone()
-        sname = st[0] if st else top["system"]
+        sname = (st[0] if st and st[0] else "") or f"a station in {top['system']}"
         who = ", ".join(f"{i['name']} (L{i['level']} {i['div']})" for i in items[:3])
         if docked == loc:
             text = (f"STEP: READ the agents at {sname} (about {READ_MIN:.0f} minutes)\\n   DO ONLY THIS: station window > Agents tab: {who}. Orange 'Offered' = a mission is waiting: send me those windows (do not accept yet).\\n"

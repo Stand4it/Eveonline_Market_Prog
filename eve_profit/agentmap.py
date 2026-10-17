@@ -25,6 +25,18 @@ def resolve_names(con, esi, ids):
     return have
 
 
+def resolve_station_names(con, esi, station_ids):
+    """Station names the static data did not carry: public /universe/names/, written into stations.name."""
+    need = [i for i in set(station_ids) if not (con.execute("SELECT name FROM stations WHERE station_id=?", (i,)).fetchone() or [""])[0]]
+    for k in range(0, len(need), 500):
+        try:
+            for x in esi.post_json("/universe/names/", need[k:k + 500]):
+                con.execute("UPDATE stations SET name=? WHERE station_id=?", (x["name"], x["id"]))
+        except Exception:                                               # noqa: BLE001
+            break
+    con.commit()
+
+
 def collect(con, g, p, within=5, max_level=2, divisions=None):
     """-> {first hop system: [agent dict]} for safe systems within `within` jumps."""
     cur = g.id_of(p.current_system)
@@ -68,10 +80,17 @@ def report(con, g, p, esi=None, within=5, max_level=2):
         return ("The agent table has no divisions yet: run  python -m eve_profit universe --force  once to re-import the game data (it prints agent_fields and agents_with_division), then  agents --within 5  again.")
     if esi is not None and not con.execute("SELECT 1 FROM meta WHERE key=?", (MAP_KEY,)).fetchone():
         calibrate(con, esi)                                             # learn which division ids are Security / Mining / Distribution from agents we know
+    if esi is not None:                                                 # names for every agent and station in reach (the planner docks at them), before the list is built
+        try:
+            reach_ = g.reach(g.id_of(p.current_system), within, p.avoid_yellow)
+            insys = ",".join(str(int(x)) for x in reach_)
+            resolve_station_names(con, esi, [r[0] for r in con.execute(f"SELECT DISTINCT location_id FROM agents WHERE level<=2 AND agent_type=2 AND system_id IN ({insys})")])
+            resolve_names(con, esi, [r[0] for r in con.execute(f"SELECT agent_id FROM agents WHERE level<=2 AND agent_type=2 AND system_id IN ({insys})")][:2000])
+        except Exception:                                               # noqa: BLE001
+            pass
     d = collect(con, g, p, within, max_level)
     if esi is not None:
-        ids = [a["id"] for v in d.values() for a in v]
-        names = resolve_names(con, esi, ids)
+        names = resolve_names(con, esi, [a["id"] for v in d.values() for a in v])
         for v in d.values():
             for a in v:
                 a["name"] = names.get(a["id"], a["name"])
