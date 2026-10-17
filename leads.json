@@ -309,10 +309,10 @@
    "system": "Urlen",
    "activity": "ratting",
    "needs": "combat",
-   "seen": 1792258614,
+   "seen": 1792260934,
    "life_h": 24,
    "count": 5,
-   "what": "5 resolved sites: 3 Guristas combat sites ('Guristas Burr...' 11.8 AU, 2x 'Guristas Hide...' 9.6 / 12.3 AU), 1 'Class 2 Hollo...' (13.95 AU, unknown), 1 'Raid: Black M...' (13.4 AU, unknown, 'Hol...' group); plus 3 unresolved signatures. Combat needs a combat-ready ship"
+   "what": "rescan: 2 Guristas combat sites ('Guristas Burr...' 7.1 / 7.2 AU), 2 'Raid: Black M...' (4.9 / 12.5 AU, unknown, 'Hol...' group), 1 'Suspicious Sig...' (6.7 AU, 'Hol...' group, unknown), plus 4 unresolved signatures (3-7 AU). Combat sites need a combat-ready ship; the unknown ones are modeled equal to the best ISK/hr until looked at"
   },
   {
    "id": "kusomonmon-combat-1",

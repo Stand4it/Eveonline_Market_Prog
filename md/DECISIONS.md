@@ -339,3 +339,4 @@
 - 2026-10-17: Urlen probe scan recorded as a lead (3 Guristas combat sites, 2 unknown sites).
 - 2026-10-17: Kusomonmon probe scan recorded as a lead (drone cluster combat site 80.8 AU).
 - 2026-10-17: Haro Honnamaiken (Urlen) 'Onslaught' offer recorded (71k+76k, unavailable until the objective type is known).
+- 2026-10-17: Urlen rescan updated the Urlen lead (2 Guristas, 2 Raid: Black M..., 1 Suspicious Sig...).
