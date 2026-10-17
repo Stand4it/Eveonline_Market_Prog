@@ -7,6 +7,7 @@ import time
 
 KEY = "haul_chain"
 MAX_AGE_S = 12 * 3600
+MIN_PER_JUMP = 2.0            # minutes per jump, from the timed flights
 STICKY = 1.25                 # a started haul keeps going unless something else pays this many times more
 
 
@@ -36,6 +37,7 @@ def clear(con):
 
 def make(h, origin):
     return {"t": time.time(), "origin": origin, "dest": h["dest"], "total": h["jumps"], "gain": h["gain"], "net": h["net"],
+            "gain_stock": h.get("gain_stock", h["gain"]), "extra": h.get("extra_isk", 0.0),
             "items": [[n, int(q), float(net), float(local)] for n, q, net, local in h["items"][:8]], "ore": bool(h.get("ore")), "arrived": False}
 
 
@@ -83,8 +85,10 @@ def candidate(con, g, p):
         return None
     left = r.jumps
     k = max(1, st["total"] - left + 1)
-    minutes = left * p.jump_seconds / 60.0 + 2.0
-    rate = st["gain"] * 60.0 / max(minutes, 1.0)
+    minutes = left * max(p.jump_seconds / 60.0, MIN_PER_JUMP) + 2.0                # your measured flights run 1-3 min a jump (align, warp, gate, dock), not 45 s
+    stock_gain = st["gain_stock"] if "gain_stock" in st else sum(net - local for _, _, net, local in st["items"])      # an older chain: the stock's own gain from its items
+    gain = stock_gain + 0.5 * st.get("extra", 0.0)           # the stock you hold is certain; the optional trades on the way are counted at half
+    rate = gain * 60.0 / max(minutes, 1.0)
     lines = [f"STEP: FLY to {g.name[r.path[1]]} - jump {k} of {st['total']}, hauling your stock to {dest}"] + items
     lines.append(f"   DO ONLY THIS: fly to {g.name[r.path[1]]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {left} jumps left to {dest}, no planned trip back).")
     try:
