@@ -50,3 +50,22 @@ class TestAgentMap(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCalibrate(unittest.TestCase):
+    def test_division_ids_are_learned_from_known_agents(self):
+        con = sqlite3.connect(":memory:")
+        con.row_factory = sqlite3.Row
+        con.execute("CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)")
+        con.execute("CREATE TABLE agents(agent_id INTEGER PRIMARY KEY, division_id INTEGER)")
+        con.execute("INSERT INTO agents VALUES(1,36),(2,36),(3,31),(4,24)")
+        orig = agentmap.known_names
+        agentmap.known_names = lambda: [("A", "Security"), ("B", "Security"), ("C", "Mining"), ("D", "Distribution")]
+        try:
+            class E:
+                def post_json(self, path, body):
+                    return {"characters": [{"id": 1, "name": "A"}, {"id": 2, "name": "B"}, {"id": 3, "name": "C"}, {"id": 4, "name": "D"}]}
+            self.assertEqual(agentmap.calibrate(con, E()), {36: "Security", 31: "Mining", 24: "Distribution"})
+            self.assertEqual(agentmap.get_map(con), {36: "Security", 31: "Mining", 24: "Distribution"})
+        finally:
+            agentmap.known_names = orig

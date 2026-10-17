@@ -6,8 +6,7 @@ screenshot) that is ranked by its real ISK/hr. One candidate per STATION, best a
 import json
 import time
 
-DIV_ACTIVITY = {35: "agent_l1_security", 30: "agent_mining_l1", 23: "courier"}
-DIV_NAME = {35: "Security", 30: "Mining", 23: "Distribution"}
+TYPE_ACTIVITY = {"Security": "agent_l1_security", "Mining": "agent_mining_l1", "Distribution": "courier"}
 SHOWN_KEY = "agentleads_shown"
 READ_MIN = 5.0
 JUMP_MIN = 3.0
@@ -51,6 +50,9 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=3):
         reach = g.reach(cur, MAX_JUMPS, p.avoid_yellow)
     except Exception:                                                   # noqa: BLE001
         return []
+    from .agentmap import get_map
+    DIV_NAME = get_map(con)                                             # division id -> Security / Mining / Distribution (calibrated from known agents)
+    DIV_ACTIVITY = {d: TYPE_ACTIVITY[t] for d, t in DIV_NAME.items() if t in TYPE_ACTIVITY}
     acts = {a["id"]: a for a in load()}
     standing = {r[0]: r[1] for r in con.execute("SELECT from_id,standing FROM standings")}
     names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")} if "agent_names" in {r[0] for r in con.execute("SELECT name FROM sqlite_master")} else {}

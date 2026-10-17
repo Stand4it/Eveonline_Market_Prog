@@ -4,7 +4,9 @@ text (the game gives those only when you dock at the agent's station: that stays
 DIVISIONS = {18: "Administration", 19: "Advisory", 20: "Archives", 21: "Astrosurveying", 22: "Command", 23: "Distribution", 24: "Financial", 25: "Intelligence",
              26: "Internal Security", 27: "Legal", 28: "Manufacturing", 29: "Marketing", 30: "Mining", 31: "Personnel", 32: "Production", 33: "Public Relations",
              34: "R&D", 35: "Security", 36: "Storage", 37: "Surveillance"}
-USEFUL = (23, 30, 35)                 # Distribution, Mining, Security: the mission types the planner knows how to run
+DEFAULT_MAP = {35: "Security", 30: "Mining", 23: "Distribution"}      # a guess: calibrate() replaces it with what the game data really says
+USEFUL = tuple(DEFAULT_MAP)
+MAP_KEY = "division_map"
 SAFE = 0.5
 
 
@@ -23,7 +25,7 @@ def resolve_names(con, esi, ids):
     return have
 
 
-def collect(con, g, p, within=5, max_level=2, divisions=USEFUL):
+def collect(con, g, p, within=5, max_level=2, divisions=None):
     """-> {first hop system: [agent dict]} for safe systems within `within` jumps."""
     cur = g.id_of(p.current_system)
     reach = g.reach(cur, within, p.avoid_yellow)
@@ -32,7 +34,8 @@ def collect(con, g, p, within=5, max_level=2, divisions=USEFUL):
     cols = {r[1] for r in con.execute("PRAGMA table_info(agents)")}
     if "division_id" not in cols:
         return {}
-    q = ",".join(str(int(d)) for d in divisions)
+    dmap = get_map(con)
+    q = ",".join(str(int(d)) for d in (divisions or dmap))
     out, hop_cache = {}, {}
     for r in con.execute(f"SELECT agent_id,corporation_id,location_id,system_id,level,division_id FROM agents WHERE level<=? AND division_id IN ({q}) AND agent_type=2", (max_level,)):
         sid = r["system_id"]
@@ -52,7 +55,7 @@ def collect(con, g, p, within=5, max_level=2, divisions=USEFUL):
             hop = hop_cache[sid]
         st = con.execute("SELECT name FROM stations WHERE station_id=?", (r["location_id"],)).fetchone()
         out.setdefault(hop, []).append({"id": r["agent_id"], "name": names.get(r["agent_id"], f"agent {r['agent_id']}"), "level": r["level"],
-                                        "division": DIVISIONS.get(r["division_id"], str(r["division_id"])), "system": g.name[sid], "jumps": reach[sid].jumps,
+                                        "division": dmap.get(r["division_id"], DIVISIONS.get(r["division_id"], str(r["division_id"]))), "system": g.name[sid], "jumps": reach[sid].jumps,
                                         "sec": g.sec[sid], "station": (st[0] if st else ""), "standing": standing.get(r["agent_id"])})
     for v in out.values():
         v.sort(key=lambda a: (a["jumps"], a["division"], a["level"]))
@@ -63,6 +66,8 @@ def report(con, g, p, esi=None, within=5, max_level=2):
     cols = {r[1] for r in con.execute("PRAGMA table_info(agents)")}
     if "division_id" not in cols or not con.execute("SELECT COUNT(*) FROM agents WHERE division_id IS NOT NULL").fetchone()[0]:
         return ("The agent table has no divisions yet: run  python -m eve_profit universe --force  once to re-import the game data (it prints agent_fields and agents_with_division), then  agents --within 5  again.")
+    if esi is not None and not con.execute("SELECT 1 FROM meta WHERE key=?", (MAP_KEY,)).fetchone():
+        calibrate(con, esi)                                             # learn which division ids are Security / Mining / Distribution from agents we know
     d = collect(con, g, p, within, max_level)
     if esi is not None:
         ids = [a["id"] for v in d.values() for a in v]
@@ -89,3 +94,60 @@ def report(con, g, p, esi=None, within=5, max_level=2):
         L.append("   none found")
     L.append("Open offers and the mission text are only visible when you dock at the agent's station (game limit): that is the one thing that stays a screenshot.")
     return "\n".join(L)
+
+
+def known_names():
+    """[(agent name, type)] of the agents we have seen in the game (mission_agents.json / agents_nearby.json / agent_offers.json): the ground truth for the division ids."""
+    import json
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = []
+
+    def load(name):
+        try:
+            return json.load(open(os.path.join(root, name), encoding="utf-8"))
+        except (OSError, ValueError):
+            return {}
+    for a in load("mission_agents.json").get("agents", []):
+        if a.get("name") and a.get("type") in ("Security", "Mining", "Distribution"):
+            out.append((a["name"], a["type"]))
+    d = load("agents_nearby.json")
+    for key, typ in (("security", "Security"), ("mining", "Mining"), ("distribution_nearest", "Distribution")):
+        out += [(a["agent"], typ) for a in d.get(key, []) if a.get("agent")]
+    return list(dict.fromkeys(out))
+
+
+def calibrate(con, esi):
+    """Which division_id is Security / Mining / Distribution? Ask the game API for the ids of agents we KNOW (public /universe/ids/), read their division from the data,
+    vote. Stored in meta 'division_map'. -> {division_id: type} (empty when the API could not be reached)."""
+    import json
+    names = known_names()
+    if not names:
+        return {}
+    try:
+        res = esi.post_json("/universe/ids/", [n for n, _ in names][:500])
+    except Exception:                                                   # noqa: BLE001
+        return {}
+    ids = {c["name"]: c["id"] for c in res.get("characters", []) + res.get("agents", [])}
+    votes = {}
+    for n, typ in names:
+        if n in ids:
+            r = con.execute("SELECT division_id FROM agents WHERE agent_id=?", (ids[n],)).fetchone()
+            if r and r[0] is not None:
+                votes.setdefault(r[0], {}).setdefault(typ, 0)
+                votes[r[0]][typ] += 1
+    mapping = {int(div): max(v, key=v.get) for div, v in votes.items()}
+    if mapping:
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (MAP_KEY, json.dumps(mapping)))
+        con.commit()
+    return mapping
+
+
+def get_map(con):
+    import json
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (MAP_KEY,)).fetchone()
+        m = {int(k): v for k, v in json.loads(r[0]).items()} if r else {}
+    except Exception:                                                   # noqa: BLE001
+        m = {}
+    return m or dict(DEFAULT_MAP)
