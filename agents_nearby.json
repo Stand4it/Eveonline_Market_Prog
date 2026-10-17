@@ -50,7 +50,7 @@
    "jumps": 5,
    "corp": "Republic Security Services",
    "level": 1,
-   "station": "unknown: NOT in Tourier III - Republic Security Services Assembly Plant (seen 2026-10-17); another Tourier station"
+   "station": "Tourier VI - Moon 13 - Republic Security Services Assembly Plant"
   },
   {
    "agent": "Ongunbjer Hetinold",
@@ -191,6 +191,7 @@
  ],
  "notes": [
   "Trenck Larcacraine (Distribution L1, Agrallarier VIII Moon 3 - Astral Mining Inc. Refinery, 0.9, effective standing 0.0): conversation says 'Please drop by, so we can formalize the mission contract' = the mission is accepted in person at his station (7 jumps).",
-  "Cassandra Ahfrim (AIR, Manifest V - AIR Laboratories Trade Center): Epic arc Visions of Greatness chapter 1 'Holographic Reenactment' offered 2026-10-12: 42,000 + 54,000 bonus ISK; report to Heika Torigo, Kita-Aino V (2 jumps)."
+  "Cassandra Ahfrim (AIR, Manifest V - AIR Laboratories Trade Center): Epic arc Visions of Greatness chapter 1 'Holographic Reenactment' offered 2026-10-12: 42,000 + 54,000 bonus ISK; report to Heika Torigo, Kita-Aino V (2 jumps).",
+  "Annve Hoddoren (Security L1, Tourier VI - Moon 13 - Republic Security Services Assembly Plant, 0.9, standing 0.0): remote conversation says 'Please drop by, so we can formalize the mission contract' = a mission is waiting, accepted in person at that station (seen 2026-10-17). Ongunbjer Hetinold is at Tourier III RSS Assembly Plant (Pirate Intrusion, combat)."
  ]
 }
