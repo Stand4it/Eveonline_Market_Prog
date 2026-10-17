@@ -173,6 +173,26 @@
    "life_h": 24,
    "count": 2,
    "what": "2 unresolved Cosmic Signatures (IVD-0 14 AU, RXO-6 11.2 AU): need probes"
+  },
+  {
+   "id": "uedama-sites",
+   "system": "Uedama",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792228646,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 resolved site 'Criterion of F...' (PMN-4, 27.8 AU, combat): Uedama is a 0.5 gank choke point: not a place to hang around"
+  },
+  {
+   "id": "uedama-sigs-unresolved",
+   "system": "Uedama",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792228646,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 unresolved Cosmic Signatures (DZI-4 30 AU, EUF-6 26 AU): need probes; Uedama is a gank hub, scanning here is not advised"
   }
  ]
 }
