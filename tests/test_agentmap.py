@@ -45,7 +45,7 @@ class TestAgentMap(unittest.TestCase):
         con = sqlite3.connect(":memory:")
         con.row_factory = sqlite3.Row
         con.execute("CREATE TABLE agents(agent_id INTEGER, system_id INTEGER, level INTEGER)")
-        self.assertIn("run  python -m eve_profit sde", agentmap.report(con, G(), SimpleNamespace(current_system="A", avoid_yellow=True)))
+        self.assertIn("run  python -m eve_profit universe --force", agentmap.report(con, G(), SimpleNamespace(current_system="A", avoid_yellow=True)))
 
 
 if __name__ == "__main__":

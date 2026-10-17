@@ -60,7 +60,7 @@ def collect(con, g, p, within=5, max_level=2, divisions=USEFUL):
 def report(con, g, p, esi=None, within=5, max_level=2):
     cols = {r[1] for r in con.execute("PRAGMA table_info(agents)")}
     if "division_id" not in cols or not con.execute("SELECT COUNT(*) FROM agents WHERE division_id IS NOT NULL").fetchone()[0]:
-        return ("The agent table has no divisions yet: run  python -m eve_profit sde  (or `update`) once to re-import the game data, then  agents --within 5  again.")
+        return ("The agent table has no divisions yet: run  python -m eve_profit universe --force  once to re-import the game data (it prints agent_fields and agents_with_division), then  agents --within 5  again.")
     d = collect(con, g, p, within, max_level)
     if esi is not None:
         ids = [a["id"] for v in d.values() for a in v]
