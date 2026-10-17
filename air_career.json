@@ -19,7 +19,7 @@
    "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist."
   },
   "Explorer": {
-   "cp": 80,
+   "cp": 110,
    "of": 750,
    "bubbles": {
     "Career Agent Missions": "2/5",
@@ -131,7 +131,7 @@
   }
  },
  "overall": {
-  "cp": 625,
+  "cp": 655,
   "of": 3000,
   "milestones": [
    [
@@ -152,5 +152,6 @@
    ]
   ]
  },
- "_seen_2026-10-13": "Start screen: Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 65 = 505/3000 CP (was 475: +30 = 3 social goals x 10). Reward 'Send an EVE Mail' 25,000 ISK claimed. Aura tip: Freelance Jobs."
+ "_seen_2026-10-13": "Start screen: Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 65 = 505/3000 CP (was 475: +30 = 3 social goals x 10). Reward 'Send an EVE Mail' 25,000 ISK claimed. Aura tip: Freelance Jobs.",
+ "_seen_2026-10-17": "Start screen: Enforcer 175, Explorer 110 (was 80: +30 CP, the 'Visit a Hi-sec system in 5 different regions' goal, 75,000 ISK reward shown as Claimed), Industrialist 305, Soldier of Fortune 65 = 655/3000 CP. Travelling through new regions pays: Tourier/Merolles/Tar trips counted."
 }
