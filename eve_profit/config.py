@@ -55,7 +55,7 @@ class Profile:
     ship_value_isk: float = 20_000_000.0
     wallet_isk: float = 50_000_000.0
     max_jumps: int = 2                # search radius from current system
-    secs_per_jump: float = 45.0       # align + warp + gate + session change
+    secs_per_jump: float = 120.0      # align + warp + gate + dock + `next`: your timed flights run 1-3 minutes a jump
     autopilot: bool = False           # autopilot is slower and riskier
     dock_overhead_s: float = 60.0
     trade_overhead_s: float = 90.0
@@ -119,6 +119,8 @@ class Profile:
             known = {k: v for k, v in data.items() if k in cls.__dataclass_fields__}
             if known.get("sales_tax_base") in (0.045, 0.05):        # old default, wrong since the in-game check
                 known["sales_tax_base"] = 0.075
+            if known.get("secs_per_jump") == 45.0:                  # old default: your timed flights run 1-3 minutes a jump
+                known["secs_per_jump"] = 120.0
             return cls(**known)
         return cls()
 

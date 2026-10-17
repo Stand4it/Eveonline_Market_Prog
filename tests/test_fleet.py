@@ -347,7 +347,7 @@ class NextStepTests(unittest.TestCase):
         self.assertIn("STEP: LIST 1 item", txt)
         self.assertIn("100,000.00", txt)
         con.execute("DELETE FROM inventory")
-        p = Profile(max_jumps=3, cargo_m3=5000, wallet_isk=1e9, min_profit_isk=1, current_location_id=60000001)
+        p = Profile(max_jumps=3, cargo_m3=5000, wallet_isk=1e9, min_profit_isk=1, current_location_id=60000001, secs_per_jump=45.0)
         con.execute("DELETE FROM orders WHERE order_id>=9800")
         txt = next_action(con, g, p, ahead=True)                             # --plan shows the whole chain
         self.assertIn("STEP: FLY to", txt)                                   # a trade starts with the flight to where you buy
