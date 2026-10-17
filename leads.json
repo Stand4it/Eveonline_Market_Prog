@@ -223,6 +223,26 @@
    "life_h": 24,
    "count": 2,
    "what": "2 unresolved Cosmic Signatures (NWI-5 31 AU, SWD-1 32 AU): need probes"
+  },
+  {
+   "id": "tunttaras-combat-site",
+   "system": "Tunttaras",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792242724,
+   "life_h": 24,
+   "count": 1,
+   "what": "1 resolved combat site 'Tetrimon Bas...' (NSM-3, 16.7 AU): needs a combat-ready ship"
+  },
+  {
+   "id": "tunttaras-sigs-unresolved",
+   "system": "Tunttaras",
+   "activity": "explore_sites",
+   "needs": "probes",
+   "seen": 1792242724,
+   "life_h": 24,
+   "count": 2,
+   "what": "2 unresolved Cosmic Signatures (BWB-9 13 AU, ROA-6 9.8 AU): need probes"
   }
  ]
 }
