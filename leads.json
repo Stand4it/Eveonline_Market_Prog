@@ -283,6 +283,16 @@
    "life_h": 24,
    "count": 1,
    "what": "resolved combat site 'Guristas Refu...' (DAX-7, 20 AU) and 1 unresolved signature (MNS-7, 4.5 AU)"
+  },
+  {
+   "id": "jita-combat-1",
+   "system": "Jita",
+   "activity": "ratting",
+   "needs": "combat",
+   "seen": 1792257436,
+   "life_h": 24,
+   "count": 4,
+   "what": "4 resolved Guristas combat sites (Forsaken Hub / Forlorn Hideaway / Refuge / Hideaway; 1.4, 40.9, 49.4, 50.2 AU): need a combat-ready ship (Incursus has no ammo or repairer yet); probe launcher missing"
   }
  ]
 }
