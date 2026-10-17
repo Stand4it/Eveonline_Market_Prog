@@ -330,10 +330,10 @@
    "activity": "salvaging",
    "needs": "salvager",
    "ship_word": "Imicus",
-   "seen": 1792275418,
+   "seen": 1792276727,
    "life_h": 2,
-   "count": 45,
-   "what": "about 45 wrecks on a directional scan (0.5 system): small Guristas (Pithi) and Amarr (Tetrimon) wrecks, plus many larger 'EoM' mission wrecks (Hydra, Ogre, Death Knight, Death Lord, Crusader, Saboteur: medium/large). Likely a finished combat-mission area; wreck positions unknown until you are in the system"
+   "count": 40,
+   "what": "rescan 10:38 pm: about 40 Guristas wrecks (small Pithi Plunderer/Wrecker/Invader/Infiltrator, medium Pithum Mortifier/Inferno, one Overseer cruiser wreck of a Guristas Scout Officer), plus 2 cargo containers (could hold loot) and 4 live Hornet I drones (hostile; someone is fighting here). The earlier EoM mission wrecks are gone from this scan. Salvaging needs the Imicus and a look at the drones first"
   }
  ]
 }
