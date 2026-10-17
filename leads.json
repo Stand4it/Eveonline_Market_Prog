@@ -334,6 +334,17 @@
    "life_h": 2,
    "count": 40,
    "what": "rescan 10:38 pm: about 40 Guristas wrecks (small Pithi Plunderer/Wrecker/Invader/Infiltrator, medium Pithum Mortifier/Inferno, one Overseer cruiser wreck of a Guristas Scout Officer), plus 2 cargo containers (could hold loot) and 4 live Hornet I drones (hostile; someone is fighting here). The earlier EoM mission wrecks are gone from this scan. Salvaging needs the Imicus and a look at the drones first"
+  },
+  {
+   "id": "haatomo-wrecks-2026-10-17",
+   "system": "Haatomo",
+   "activity": "salvaging",
+   "needs": "salvager",
+   "ship_word": "Imicus",
+   "seen": 1792280282,
+   "life_h": 2,
+   "count": 22,
+   "what": "about 22 small wrecks on a directional scan (0.6 system): Rogue drone (Apis, Alvi, Alvior) wrecks, 12 Khanid 'Athran Agent/Operative' wrecks, 1 mission wreck, and one Caldari Navy Vespa (live, friendly navy). Wreck positions unknown until you are in the system"
   }
  ]
 }
