@@ -745,6 +745,25 @@
    "career": "Security",
    "needs": "a Security-division agent, but this objective is a pickup and bring-back, not a kill order. The Mediation Center is a mission site (normal ship restrictions): look at it on arrival and do not stay if hostile NPCs are there",
    "note": "Seen 2026-10-17 23:02 while docked at Uedama III. Part 1 of 4. 98,000 ISK + 58 LP with the bonus, the best pay of the offers here. Same Haatomo trip as Marukaiken Mamareki's mission: take BOTH. Accept both here, fly to Haatomo, pick up the diplomat and the book, fly back."
+  },
+  {
+   "agent": "Takashi Shioken (Distribution, L1, Haatomo VI - Moon 1 - Caldari Provisions Warehouse)",
+   "mission": "'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) from Haatomo VI - Moon 1 - Caldari Provisions Warehouse to Antiri III - Poksu Mineral Group Mineral Reserve (0.7). Pays 27,000 ISK + 31 LP; bonus 29,000 ISK within 54 min.",
+   "isk": 27000,
+   "bonus": 29000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Haatomo VI - Moon 1 - Caldari Provisions Warehouse (0.6)",
+   "agent_system": "Haatomo",
+   "to_system": "Antiri",
+   "career": "Distribution",
+   "needs": "nothing special (200 m3 fits the Incursus, no combat), but the jump count Haatomo -> Antiri is not known here: enter it, then set available true. Antiri is probably a detour from Uedama, where the two Uedama missions must be delivered",
+   "note": "Seen 2026-10-17 23:12, standing 0.0. 56,000 ISK + 31 LP one way with the bonus. The Uedama missions (Marukaiken Mamareki, Tanatsu Alomoinen) have clocks that run out about 12:10 am and 12:34 am, so only take this if Antiri is close and the deliveries still fit."
   }
  ],
  "min_per_jump": 3.0,

@@ -347,3 +347,4 @@
 - 2026-10-17: Irjunen rescan (10:38 pm) updated the wreck lead: ~40 Guristas wrecks, 2 cargo containers, 4 live Hornet I drones.
 - 2026-10-17: Marukaiken Mamareki 'A New Venture' 1 of 5 courier recorded (38k+36k, Haatomo -> Uedama; unavailable until the agent station and jump counts are known).
 - 2026-10-17: docked at Uedama III: Marukaiken Mamareki (now available, Haatomo round trip) and Tanatsu Alomoinen 'Interstellar Railroad' 1 of 4 (42k+56k, pickup in Haatomo, back here) recorded as one shared trip: 172k ISK + 101 LP.
+- 2026-10-17: docked at Haatomo VI Moon 1: Takashi Shioken 'Miracle Drug' courier recorded (27k+29k, to Antiri; unavailable until the jump count is known).
