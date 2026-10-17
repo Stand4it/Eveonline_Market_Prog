@@ -304,7 +304,7 @@ def hop_only(text, here=None):
                 continue
             rest.append(ln)
             i += 1
-        res = res[:di] + here_block + [res[di]] + rest
+        res = res[:1] + here_block + res[1:di] + [res[di]] + rest                # right under the STEP line: what to do here, then what you carry, then the flight
     return "\n".join(res)
 
 
