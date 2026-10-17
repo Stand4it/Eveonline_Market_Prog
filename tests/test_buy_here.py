@@ -41,3 +41,15 @@ class TestBuyHere(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDrop(unittest.TestCase):
+    def test_done_buys_vanish_from_the_flight_step(self):
+        from eve_profit.tripplus import drop_done_buys
+        con, p = _con(), SimpleNamespace(current_system="Tar")
+        buy_here_step(con, G(), p, TXT)                                  # shown
+        out = drop_done_buys(con, G(), p, TXT)
+        self.assertNotIn("Medium Gremlin", out)
+        self.assertIn("buy 5 x Other at Elsewhere", out)                 # other systems keep their lines (for the plan)
+        only = drop_done_buys(con, G(), p, TXT.rsplit("\n", 1)[0])
+        self.assertIn("nothing more to buy", only)

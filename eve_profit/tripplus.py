@@ -245,3 +245,27 @@ def buy_here_step(con, g, p, text):
         return "\n".join([head, f"   DO ONLY THIS: dock at {sname or p.current_system}, Market > {item} > Buy > the cheapest sell orders, {qty:,} unit(s). Check the live price first: if the margin is gone, skip it and run  python -m eve_profit next.",
                           "   LATER: then the flight on with it (the sale is at the far end)"])
     return ""
+
+
+def drop_done_buys(con, g, p, text):
+    """Remove the optional route-trade BUY lines for this system that already had their own step (shown in the last 2 h) or that you hold: the flight step must not list them again."""
+    import re
+    import time
+    from .acquire import held
+    shown = _meta_json(con, BUYSHOWN_KEY)
+    pat = re.compile(r"^\s+buy ([\d,]+) x (.+?) at (.+?) \(-")
+    out = []
+    for ln in text.split("\n"):
+        m = pat.match(ln)
+        if m and m.group(3).strip().lower() == str(p.current_system).lower():
+            item = m.group(2).strip()
+            if time.time() - shown.get(f"{item}@{p.current_system}", 0) < 2 * 3600 or held(con, item) >= int(m.group(1).replace(",", "")):
+                continue
+        out.append(ln)
+    res = []
+    for i, ln in enumerate(out):                                        # a header whose lines are all gone
+        if re.match(r"^\s+ON THE WAY \(optional", ln) and not (i + 1 < len(out) and re.match(r"^\s{4,}\S", out[i + 1])):
+            res.append("   ON THE WAY: nothing more to buy or sell on this hop.")
+            continue
+        res.append(ln)
+    return "\n".join(res)

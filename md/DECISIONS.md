@@ -321,3 +321,4 @@
 - 2026-10-17: optional trades on the way count at HALF in agent-offer ranking too (a 52k mission was shown at 4.5M ISK/hr).
 - 2026-10-17: a trip step whose route trades include a BUY in the system you stand in now starts with that buy as its own ACQUIRE step (destination set to the seller's station, one item per step, shown once per 2 h, stop records it); the flight comes after (flying first missed the buy).
 - 2026-10-17: the buy-here step carries its own start command (the replacement had dropped the timer line).
+- 2026-10-17: after a route-trade buy had its own step (or you hold the item), the flight step no longer lists that buy again.

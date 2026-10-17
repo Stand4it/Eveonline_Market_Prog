@@ -1236,6 +1236,9 @@ def next_action(con, g, p, full=False, ahead=False):
                 _b = buy_here_step(con, g, p, _raw)
                 if _b:
                     first = _b + "\n" + _timer(_name_of(_b), con)                                  # every step carries its own start command
+                else:
+                    from .tripplus import drop_done_buys
+                    first = drop_done_buys(con, g, p, first)                                        # buys that had their own step are not listed again on the flight
             except Exception:                                                                    # noqa: BLE001
                 pass
         out = finish_block(first)
