@@ -25,9 +25,12 @@ def skill_levels(con):
         return {}
 
 
+EVERMARKS_ID = 1000419        # EverMarks (the AIR/Omega currency) comes back from the loyalty endpoint as if it were a corporation: it is not spendable LP
+
+
 def lp_total(con):
     try:
-        return int(con.execute("SELECT COALESCE(SUM(points),0) FROM lp_balance").fetchone()[0] or 0)
+        return int(con.execute("SELECT COALESCE(SUM(points),0) FROM lp_balance WHERE corporation_id<>?", (EVERMARKS_ID,)).fetchone()[0] or 0)
     except Exception:                                                   # noqa: BLE001
         return 0
 

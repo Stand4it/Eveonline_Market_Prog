@@ -96,7 +96,7 @@ def corp_isk_per_lp(con, p, reach, sells, buys, corps):
 
 def find_lp_redemptions(con, g, p):
     """Turn LP you already hold into ISK: best offer per corporation within reach."""
-    bal = {r[0]: r[1] for r in con.execute("SELECT corporation_id,points FROM lp_balance WHERE points>0")}
+    bal = {r[0]: r[1] for r in con.execute("SELECT corporation_id,points FROM lp_balance WHERE points>0 AND corporation_id<>1000419")}
     if not bal:
         return []
     cur = g.id_of(p.current_system)
