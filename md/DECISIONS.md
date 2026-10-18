@@ -361,3 +361,4 @@
 - 2026-10-18: Ieyodan Ahomon (Sankkasen VII Moon 8) 'The Drone Infestation' recorded (combat, 58k+55k, unavailable until the Incursus is combat-ready).
 - 2026-10-18: Adomago Karjus (Sankkasen VII Moon 6) 'Moving the Consul' 1 of 4 recorded (40k+33k, same system, available).
 - 2026-10-18: Viken Antilen (Sankkasen VII Moon 10) 'Gone Berserk' recorded (combat, 71k+77k + 108 LP, unavailable until the Incursus is combat-ready).
+- 2026-10-18: Ohmanin Natuneni (Sankkasen VII Moon 4) 'Burnt Traces' mining mission recorded (43k+50k, needs the Venture; unavailable).

@@ -992,6 +992,25 @@
    "career": "Security",
    "needs": "a combat-ready ship that passes the 99% win rule: an unknown number of terrorist ships that warp in over time. Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-18 ~2:40 am, standing 0.0. 148,000 ISK + 108 LP with the bonus: the best pay of any offer seen, and the same system and station type as Ieyodan Ahomon's drone mission (Sankkasen VII Moon 8). Two Sankkasen combat missions (261,000 ISK + 176 LP together) make the combat-kit cost (~15k ISK of ammo plus a repairer) look cheap."
+  },
+  {
+   "agent": "Ohmanin Natuneni (Mining, L1, Sankkasen VII - Moon 4 - Caldari Provisions Plantation)",
+   "mission": "'Burnt Traces': mine 3,600 units of Augumene (1,080 m3) from a rare asteroid at a site in Sankkasen (0.7) and bring it back to this station. Pays 43,000 ISK + 53 LP; bonus 50,000 ISK within 1 h 6 min.",
+   "isk": 43000,
+   "bonus": 50000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 45,
+   "jumps": 0,
+   "available": false,
+   "where": "Sankkasen VII - Moon 4 - Caldari Provisions Plantation (0.7)",
+   "agent_system": "Sankkasen",
+   "to_system": "Sankkasen",
+   "career": "Mining",
+   "needs": "a mining ship with lasers and an ore hold of at least 1,080 m3 (the Venture, not the Incursus). How long 3,600 units take with your mining skills is unknown: it decides whether the 1 h 6 min bonus is reachable. Standing 0.0; other pilots may come for the ore ('looters might follow its signal'), so watch local",
+   "note": "Seen 2026-10-18 ~2:50 am. 93,000 ISK + 53 LP with the bonus if 3,600 units mine in under an hour: needs a mining yield of about 1,080 m3 per hour or better. Also feeds the AIR Industrialist career. The second screenshot shows the game's own agent finder (Agents & Missions > Mission Agents > Mining Agents, 30 results): it can list every mining agent near you."
   }
  ],
  "min_per_jump": 3.0,
