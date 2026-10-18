@@ -1353,6 +1353,25 @@
    "career": "Distribution",
    "needs": "nothing special (160 m3, no combat); the jump count Isenairos -> Laah is not known here: enter it, then set available true. Laah is 0.9 and Isenairos 0.8: both safe",
    "note": "Seen 2026-10-18 ~5:55 pm, standing 0.0. 59,000 ISK + 36 LP one way with the bonus: the best Isenairos courier by pay. It goes to Laah, a different system from the Saila pair, so it only fits if Laah is near the Saila route. Chin Irjalamon's station is Isenairos VI (Caldari Constructions Warehouse), a different station from Immonairos Iros's (Isenairos VI Moon 7, Echelon)."
+  },
+  {
+   "agent": "Ikala Iijotsadan (Distribution, L1, Oichiya VII - Moon 6 - Ytiri Storage)",
+   "mission": "'Move The Goods': courier 10 x Small Sealed Cargo Containers (100 m3) from this station to Motsu III - Minedrill Mineral Reserve (0.9). Pays 19,000 ISK + 21 LP; bonus 20,000 ISK within 46 minutes.",
+   "isk": 19000,
+   "bonus": 20000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Oichiya VII - Moon 6 - Ytiri Storage (0.8)",
+   "agent_system": "Oichiya",
+   "to_system": "Motsu",
+   "career": "Distribution",
+   "needs": "nothing special (100 m3, no combat); the jump count Oichiya -> Motsu is not known here: enter it, then set available true. Motsu is 0.9 and Oichiya 0.8: both safe. The 46 min clock is tight and covers one way only",
+   "note": "Seen 2026-10-18 ~6:05 pm, standing 0.0. 39,000 ISK + 21 LP one way with the bonus: the lowest pay of the couriers except 'Seeding a Future'. Only worth it if Motsu is on a route you fly anyway."
   }
  ],
  "min_per_jump": 3.0,
