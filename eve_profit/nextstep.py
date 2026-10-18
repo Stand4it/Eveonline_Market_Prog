@@ -1092,6 +1092,15 @@ def next_action(con, g, p, full=False, ahead=False):
                     return (f"STEP: BOARD your {nm_} (for: {act['name']})\n   DO ONLY THIS: in the station window open the Hangars tab > Ship Hangar > right-click your {nm_} > Board Ship.\n"
                             f"   LATER: {act['name']} (about {act.get('minutes', 30)} min, never timed)")
                 return _hop(g.name[ss_], f"your {nm_} is there: board it, then {act['name']}", [])
+            if act["id"] == "manufacturing_t1":                   # a build needs the blueprint in THIS station: fly to where it lies first
+                from .dailygoals import usable_blueprint
+                ok_, why_ = usable_blueprint(con, p)
+                if not ok_:
+                    import re as _re
+                    m_ = _re.search(r"your blueprint is in (\S+),", why_ or "")
+                    if not m_:
+                        return None                              # no blueprint, or not enough skills for it
+                    return _hop(m_.group(1), "your blueprint is there: start a build with it", [])
             if act["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):       # a combat test is only valid with a combat-ready ship: the step is the first missing piece
                 step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
