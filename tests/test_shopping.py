@@ -70,3 +70,23 @@ class ToolsTests(unittest.TestCase):
         items = {w["item"] for w in shopping.wishes(con, p)}
         self.assertTrue({"Core Probe Launcher I", "Salvager I", "Miner I"} <= items, items)
         self.assertEqual(tools.carrier(con, p)[0], "Frigate X")
+
+
+class ShipsTests(unittest.TestCase):
+    def test_upgrade_picks_the_hull_with_more_tools_per_isk(self):
+        import json
+        from eve_profit import ships
+        con = ShoppingTests()._world()
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id,category_id) VALUES(880002,'Big Frigate',2500,25,6)")
+        con.execute("INSERT INTO orders VALUES(990002,880002,60000001,1,10000001,0,300000.0,5,1,'',1)")
+        cat = {"880002": {"name": "Big Frigate", "group": "Frigate", "slots": {"high": 4, "mid": 3, "low": 3, "turret": 3, "launcher": 2}},
+               "880001": {"name": "Incursus", "group": "Frigate", "slots": {"high": 1, "mid": 3, "low": 3, "turret": 1, "launcher": 0}}}
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (ships.KEY, json.dumps(cat)))
+        g = Graph(con)
+        p = Profile(current_system="Home", wallet_isk=1e7, current_location_id=60000001)
+        p.ship_name = "Capsule - X"
+        up = ships.upgrade(con, g, p)
+        self.assertEqual(up["item"], "Big Frigate")
+        self.assertIn("carries", up["why"])
+        self.assertIn("Big Frigate", [w["item"] for w in shopping.wishes(con, p, g)])
+        self.assertIn("Big Frigate", ships.report(con, g, p))

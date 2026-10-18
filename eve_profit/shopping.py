@@ -18,7 +18,7 @@ def _extras():
         return []
 
 
-def wishes(con, p):
+def wishes(con, p, g=None):
     """-> [{item, qty, why}] still missing, in the order they are needed."""
     from . import acquire, combatprep
     out = []
@@ -57,6 +57,14 @@ def wishes(con, p):
                         out.append({"item": item, "qty": qty - have, "why": why})
     except Exception:                                                   # noqa: BLE001
         pass
+    if g is not None:
+        try:                                                            # a hull that carries more tools at once than your best one, at the lowest price per extra tool
+            from . import ships as _ships
+            up = _ships.upgrade(con, g, p)
+            if up:
+                out.append(up)
+        except Exception:                                               # noqa: BLE001
+            pass
     for w in _extras():
         try:
             need = int(w.get("qty", 1)) - acquire.held(con, w["item"])
@@ -80,7 +88,7 @@ def candidates(con, g, p, best_known, hop_to):
     from . import acquire
     out = []
     wallet = float(getattr(p, "wallet_isk", 0.0) or 0.0)
-    for w in wishes(con, p):
+    for w in wishes(con, p, g):
         way = _way(con, g, p, w)
         if not way or way["mode"] != "buy" or not way.get("buy") or way["buy"]["system"] != p.current_system:
             continue
@@ -100,7 +108,7 @@ def candidates(con, g, p, best_known, hop_to):
 
 def lines(con, g, p):
     """-> text for the long view: every wish with its cheapest source."""
-    ws = wishes(con, p)
+    ws = wishes(con, p, g)
     if not ws:
         return ""
     L = ["SHOPPING (bought where cheapest, when your route passes: every later step then uses what you own):"]

@@ -52,7 +52,7 @@ def print(*args, sep=" ", **kw):                                          # noqa
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "stopsync", "syncstop"])
+    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "stopsync", "syncstop"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -76,7 +76,8 @@ def main(argv=None):
     ap.add_argument("--world", type=int, default=0, help="sellplan: also check the N biggest stacks in every region")
     ap.add_argument("--cash", type=float, default=0, help="day: extra ISK you expect to have (e.g. from selling stock)")
     ap.add_argument("--no-stock", action="store_true", help="day: leave out selling/listing the stock in your hangar")
-    ap.add_argument("--item", default="", help="bestprice: item name or type id")
+    ap.add_argument("--item", default="", help="bestprice: item name or type id; ships: filter by ship name or class")
+    ap.add_argument("--refresh", action="store_true", help="ships: read slots and class of new ships from the game (once per ship)")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
     ap.add_argument("--top", type=int, default=12)
     ap.add_argument("--ship", default="", help="combatfit: hull name (default: the ship you are in)")
@@ -651,6 +652,18 @@ def _run(a):
         from .graph import Graph
         from .trainplan import book_list, format_books
         print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
+    elif a.cmd == "ships":
+        from . import ships as _ships
+        if a.refresh:
+            from . import sso
+            from .esi import ESI
+            esi_ = ESI()
+            try:
+                esi_.token, _ = sso.get_token(a.client_id)
+            except Exception:                                           # noqa: BLE001
+                pass
+            print(f"Read slots and class of {_ships.refresh(con, esi_)} more ships from the game (kept: this is done once per ship).")
+        print(_ships.report(con, Graph(con), p, a.item))
     elif a.cmd == "models":
         from .catalog import models_report
         print(models_report(con, p.wallet_isk))
