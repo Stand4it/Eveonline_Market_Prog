@@ -367,3 +367,4 @@
 - 2026-10-18: Tomugo Nattotolen 'Break Their Will' recorded (combat, destroy a repair station in Huttaken, 65k+69k + 83 LP, unavailable until the Incursus is combat-ready).
 - 2026-10-18: Nuun Surula (Halaima VII Moon 6) 'Save The Children' recorded (24k+23k to Kamio; unavailable until the jump count is known).
 - 2026-10-18: Tsunaras Rautataitoh (Halaima VIII Moon 17) 'Food for Fun' 1 of 3 recorded (24k+23k, fetch from Huttaken; unavailable until the jump count is known).
+- 2026-10-18: Hyononeki Taskiraki (Rairomon VIII Moon 7) 'Bio-Engineering Pays' recorded (32k+28k to Huttaken VI; chains with Tsunaras Rautataitoh's Food for Fun; unavailable until the jump count is known).

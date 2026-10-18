@@ -1125,6 +1125,25 @@
    "career": "Distribution",
    "needs": "nothing special (40 m3, no combat); the jump count Halaima -> Huttaken is not known here: enter it, then set available true. The 1 h 2 min clock covers the round trip",
    "note": "Seen 2026-10-18 ~3:45 am, standing 0.0. Part 1 of 3. 47,000 ISK + 33 LP with the bonus. Huttaken is also where Tomugo Nattotolen's combat mission (repair station) is, and Halaima is where Nuun Surula's Kamio courier starts."
+  },
+  {
+   "agent": "Hyononeki Taskiraki (Distribution, L1, Rairomon VIII - Moon 7 - Caldari Steel Warehouse)",
+   "mission": "'Bio-Engineering Pays': courier 3 x Groups of Genetically Enhanced Livestock (300 m3) from this station to Huttaken VI - Genolution Biotech Production (0.6). Pays 32,000 ISK + 40 LP; bonus 28,000 ISK within 1 h 10 min.",
+   "isk": 32000,
+   "bonus": 28000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Rairomon VIII - Moon 7 - Caldari Steel Warehouse (0.6)",
+   "agent_system": "Rairomon",
+   "to_system": "Huttaken",
+   "career": "Distribution",
+   "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Rairomon -> Huttaken is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 ~3:55 am, standing 0.0. 60,000 ISK + 40 LP one way with the bonus. Huttaken VI Genolution Biotech Production is also the PICKUP of Tsunaras Rautataitoh's Frozen Food (Halaima) and the area of Tomugo Nattotolen's combat mission: Rairomon -> Huttaken (deliver, pick up the food) -> Halaima (deliver the food) chains two couriers (about 107,000 ISK + 73 LP)."
   }
  ],
  "min_per_jump": 3.0,
