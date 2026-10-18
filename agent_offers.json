@@ -1391,6 +1391,25 @@
    "career": "Distribution",
    "needs": "nothing special: pickup (Motsu VII Moon 5) and drop-off (Motsu VIII Moon 1) are both in Motsu (0.9), 0.1 m3, no combat",
    "note": "Seen 2026-10-18 ~6:15 pm, standing 0.0. Part 1 of 4. 61,000 ISK + 36 LP for about 12 minutes inside one 0.9 system (roughly 300k ISK/hr). Motsu III is also where Ikala Iijotsadan's courier (Oichiya) delivers (39k), and Motsu is a 0.9 system so it is safe. Same mission as Adomago Karjus's (Sankkasen), different agent."
+  },
+  {
+   "agent": "Yahutola Unen (Distribution, L1, Motsu VII - Moon 5 - Caldari Constructions Foundry)",
+   "mission": "'Breakdown': courier 4 x Crates of Repair Parts (280 m3) from this station to Oichiya I - Wiyrkomi Corporation Factory (0.8). Pays 21,000 ISK + 23 LP; bonus 16,000 ISK within 54 minutes.",
+   "isk": 21000,
+   "bonus": 16000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Motsu VII - Moon 5 - Caldari Constructions Foundry (0.9)",
+   "agent_system": "Motsu",
+   "to_system": "Oichiya",
+   "career": "Distribution",
+   "needs": "nothing special (no combat), but 280 m3 must fit the Incursus/Capsule-substitute hold: check the hold of the ship you fly. The jump count Motsu -> Oichiya is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 ~6:25 pm, standing 0.0. 37,000 ISK + 23 LP one way with the bonus. MOTSU <-> OICHIYA PAIR: Ikala Iijotsadan's containers go Oichiya VII -> Motsu III (39k) and this goes Motsu VII -> Oichiya I (37k): one Motsu -> Oichiya -> Motsu run carries both, about 76,000 ISK + 44 LP, and Nani Hananeri's emissary (Motsu, 61k) adds a third job at Motsu."
   }
  ],
  "min_per_jump": 3.0,
