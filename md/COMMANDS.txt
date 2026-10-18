@@ -127,7 +127,7 @@ UPDATE  -  has a game patch changed the data?
    example: python -m eve_profit update
 
 BESTPRICE  -  best buyers for one item anywhere
-   --item         bestprice: item name or type id
+   --item         bestprice: item name or type id; ships: filter by ship name or class
    --qty          bestprice: quantity (default: what you hold here, else 1)
    example: python -m eve_profit bestprice --item "Zydrine" --qty 25000
 
@@ -215,7 +215,7 @@ AGENTS  -  agents we know: open offers, your runs with them, agents near you by 
    example: python -m eve_profit agents
 
 BUY  -  where to BUY an item cheapest near you (for agent jobs: acquire these goods)
-   --item         bestprice: item name or type id
+   --item         bestprice: item name or type id; ships: filter by ship name or class
    --qty          bestprice: quantity (default: what you hold here, else 1)
    --radius       buy: how many jumps around you to look for sellers
    example: python -m eve_profit buy --item "Cap Booster 25" --qty 20
@@ -255,6 +255,9 @@ JOBS  -  Freelance Jobs near you (ISK per unit, method, jumps) from the download
 
 FITSTOCK  -  modules, charges, drones and ships you own with slot and fighting numbers (to improve a fit)
    example: python -m eve_profit fitstock
+
+SHIPS  -  the ship tree as a table: class, slots, skills to fly, price, how many tools it carries at once (--refresh reads new ships, --item filters)
+   example: python -m eve_profit ships --item Frigate
 
 STOPSYNC  -  stop the timer, then sync with the game (both, in the right order)
    example: python -m eve_profit stopsync
