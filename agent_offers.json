@@ -1106,6 +1106,25 @@
    "career": "Distribution",
    "needs": "nothing special (180 m3, no combat); the jump count Halaima -> Kamio is not known here: enter it, then set available true. You flew Halaima -> Kamio on the way to Jita, so the route is known to be safe",
    "note": "Seen 2026-10-18 ~3:35 am, standing 0.0. 47,000 ISK + 30 LP one way with the bonus."
+  },
+  {
+   "agent": "Tsunaras Rautataitoh (Distribution, L1, Halaima VIII - Moon 17 - Mercantile Club Bureau)",
+   "mission": "'For the Troops - Food for Fun' (1 of 3): fetch 1 x Crates of Frozen Food (40 m3) from Huttaken VI - Genolution Biotech Production (0.6) and bring it to this station. Pays 24,000 ISK + 33 LP; bonus 23,000 ISK within 1 h 2 min.",
+   "isk": 24000,
+   "bonus": 23000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Halaima VIII - Moon 17 - Mercantile Club Bureau (0.7)",
+   "agent_system": "Halaima",
+   "to_system": "Huttaken",
+   "career": "Distribution",
+   "needs": "nothing special (40 m3, no combat); the jump count Halaima -> Huttaken is not known here: enter it, then set available true. The 1 h 2 min clock covers the round trip",
+   "note": "Seen 2026-10-18 ~3:45 am, standing 0.0. Part 1 of 3. 47,000 ISK + 33 LP with the bonus. Huttaken is also where Tomugo Nattotolen's combat mission (repair station) is, and Halaima is where Nuun Surula's Kamio courier starts."
   }
  ],
  "min_per_jump": 3.0,
