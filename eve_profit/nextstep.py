@@ -1127,6 +1127,8 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.extend(_leads(con, g, p, best_known, _hop))
             from .agentleads import candidates as _agl
             cands.extend(_agl(con, g, p, best_known, _hop))                  # every agent in the game data near you, unknown mission modeled like any untimed activity
+            from .shopping import candidates as _shop
+            cands.extend(_shop(con, g, p, best_known, _hop))                 # a wished ship / module / ammo when THIS is the cheapest place to buy it (buy vs build)
         except Exception:                                        # noqa: BLE001
             pass
         cands.sort(key=lambda c: -c[0])
@@ -1187,6 +1189,9 @@ def next_action(con, g, p, full=False, ahead=False):
         from .combatgoal import format_goal
         cg = format_goal(con)
         long_view = (long_view + "\n\n" + cg) if (long_view and cg) else (long_view or cg)
+        from .shopping import lines as _shop_lines
+        sl = _shop_lines(con, g, p)
+        long_view = (long_view + "\n\n" + sl) if (long_view and sl) else (long_view or sl)
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # NO PING-PONG: a first step that flies straight back to the system you just left must be clearly better than the best step that does not

@@ -77,5 +77,7 @@
   "ammo_qty": 200,
   "tank_buy": "Small Armor Repairer I",
   "_note": "What a ship needs before a combat test is valid (combatprep.py). Edit the numbers as the plan learns."
- }
+ },
+ "wishlist": [],
+ "_wishlist_help": "Extras the plan should buy at the cheapest place on your route (ship upgrades, modules): [{\"item\": \"Expanded Cargohold I\", \"qty\": 1, \"why\": \"more m3 for hauls\"}]. The combat kit (hull, guns, ammo, tank) is wished automatically from combat_kit. See shopping.py."
 }
