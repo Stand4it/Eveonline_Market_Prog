@@ -369,3 +369,4 @@
 - 2026-10-18: Tsunaras Rautataitoh (Halaima VIII Moon 17) 'Food for Fun' 1 of 3 recorded (24k+23k, fetch from Huttaken; unavailable until the jump count is known).
 - 2026-10-18: Hyononeki Taskiraki (Rairomon VIII Moon 7) 'Bio-Engineering Pays' recorded (32k+28k to Huttaken VI; chains with Tsunaras Rautataitoh's Food for Fun; unavailable until the jump count is known).
 - 2026-10-18: Saiponas Matsikka (Rairomon VIII Moon 7) 'Lost That Bet' recorded (30k+35k, fetch from Huttaken VI; chains with Hyononeki Taskiraki; unavailable until the jump count is known).
+- 2026-10-18: the 'Loyalty point store flips' test step is locked until you hold 1,000 LP (catalog lp_min): next offered it with 0 LP.

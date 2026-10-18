@@ -228,6 +228,7 @@
    "minutes": 20,
    "risk": "none",
    "requires": {},
+   "lp_min": 1000,
    "how": "Spend LP on an item that sells above its ISK+LP cost (see `scan`)."
   },
   {

@@ -25,12 +25,21 @@ def skill_levels(con):
         return {}
 
 
-def missing_for(act, levels, wallet):
+def lp_total(con):
+    try:
+        return int(con.execute("SELECT COALESCE(SUM(points),0) FROM lp_balance").fetchone()[0] or 0)
+    except Exception:                                                   # noqa: BLE001
+        return 0
+
+
+def missing_for(act, levels, wallet, lp=None):
     if act.get("blocked"):
         return [act["blocked"]]
     miss = [f"{k} {v}" for k, v in act.get("requires", {}).items() if levels.get(k.lower(), 0) < v]
     if act.get("isk_min") and wallet < act["isk_min"]:
         miss.append(f"{act['isk_min']:,.0f} ISK")
+    if act.get("lp_min") and (lp or 0) < act["lp_min"]:
+        miss.append(f"{act['lp_min']:,} loyalty points (you hold {lp or 0:,}: finish agent missions first)")
     return miss
 
 
@@ -47,10 +56,11 @@ def runs_for(con, act):
 
 def status(con, wallet=0.0):
     levels = skill_levels(con)
+    lp = lp_total(con)
     out = []
     for a in load():
         n, rate = runs_for(con, a)
-        miss = missing_for(a, levels, wallet)
+        miss = missing_for(a, levels, wallet, lp)
         out.append({**a, "runs": n, "rate": rate, "missing": miss, "unlocked": not miss,
                     "state": "MODELED" if n >= MODELED_RUNS else ("PARTIAL" if n else "UNMODELED")})
     return out
