@@ -19,7 +19,7 @@
    "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist."
   },
   "Explorer": {
-   "cp": 110,
+   "cp": 150,
    "of": 750,
    "bubbles": {
     "Career Agent Missions": "2/5",
@@ -33,7 +33,7 @@
     "Navigation": "1/3",
     "Advanced Navigation": "0/3"
    },
-   "note": "Seen 2026-10-13. 60 CP = 5 goals done (2 missions + Hacking 1 + Combat Sites 1 + Navigation 1): 12 CP each on average. Only 5 career agent missions here. Graduation: 100,000 SP (Omega) + 100,000 SP + Heron/Magnate/Imicus/Probe/Astero Aspirant Explorer SKINs."
+   "note": "Seen 2026-10-13. 60 CP = 5 goals done (2 missions + Hacking 1 + Combat Sites 1 + Navigation 1): 12 CP each on average. Only 5 career agent missions here. Graduation: 100,000 SP (Omega) + 100,000 SP + Heron/Magnate/Imicus/Probe/Astero Aspirant Explorer SKINs. Update 2026-10-18 1:25 am: 150 CP (was 110): +40 CP from the Navigation goals reached while flying around (stargate jumps)."
   },
   "Industrialist": {
    "cp": 305,
@@ -155,5 +155,6 @@
  "_seen_2026-10-13": "Start screen: Enforcer 125, Explorer 60, Industrialist 255, Soldier of Fortune 65 = 505/3000 CP (was 475: +30 = 3 social goals x 10). Reward 'Send an EVE Mail' 25,000 ISK claimed. Aura tip: Freelance Jobs.",
  "_seen_2026-10-17": "Start screen: Enforcer 175, Explorer 110 (was 80: +30 CP, the 'Visit a Hi-sec system in 5 different regions' goal, 75,000 ISK reward shown as Claimed), Industrialist 305, Soldier of Fortune 65 = 655/3000 CP. Travelling through new regions pays: Tourier/Merolles/Tar trips counted.",
  "_seen_2026-10-17_achievements": "Achievements window (not the AIR program): score 70. Recently progressed: State Surveyor (visit all systems in specified regions around Caldari space), Starbound (jump through 75 different stargates, about 60% of the first milestone), Deep Pockets (spend 1,000,000,000 ISK in the Regional Marketplace; the trades count). Completed: Stellar Exploration (enter 30 different solar systems), Milestone 1 reward 'Title: Wayfinder' waiting to be CLAIMED (Rewards tab > Claim). Travelling and trading advance all three.",
- "_seen_2026-10-17_rewards": "Opportunities > Rewards tab (2): TWO 'Complete 3 Jumps' goals at 100%, each 500,000 ISK + 500 (second reward icon: career points or similar), both waiting to be CLAIMED (Claim All). That is 1,000,000 ISK. Also: Crimson Harvest goals shown 0/150 Tetrimon ships, 0/8 battleships, 0/100 nodes hacked, 0/10 Nullorime, 0/5 Criterion of Fitness, 0/250 Pochven, 0/150 items traded; AIR 'Complete Mission 1' 1/1."
+ "_seen_2026-10-17_rewards": "Opportunities > Rewards tab (2): TWO 'Complete 3 Jumps' goals at 100%, each 500,000 ISK + 500 (second reward icon: career points or similar), both waiting to be CLAIMED (Claim All). That is 1,000,000 ISK. Also: Crimson Harvest goals shown 0/150 Tetrimon ships, 0/8 battleships, 0/100 nodes hacked, 0/10 Nullorime, 0/5 Criterion of Fitness, 0/250 Pochven, 0/150 items traded; AIR 'Complete Mission 1' 1/1.",
+ "unclaimed_2026-10-18": "Reward Bundle (2 items) for 'Make 100 Stargate Jumps': claim it in the AIR window (Your Rewards > Claim)."
 }

@@ -354,3 +354,4 @@
 - 2026-10-18: Shishai Samanuni (Suroken VII Moon 2) 'Rancorous Researcher' recorded; route idea Haatomo -> Antiri -> Suroken chains Takashi Shioken, Onnomon Aarlunen and this one.
 - 2026-10-18: Kusomonmon VI Moon 21: Halvas Isato 'For the Birds' (combat, 69k+65k, unavailable) and Inomata Sokukoma 'Arms Dealer' (22k+24k to Isikesu; chains with Raddelur Marilhard's Cigarettes) recorded.
 - 2026-10-18: Kusomonmon II Moon 8: Hiyuda Nelvanen 'Miracle Drug' and Nallaken Ylama 'Salve for Sis' couriers recorded (both to Isikesu IV; Isikesu is the common drop-off of four couriers).
+- 2026-10-18: AIR career Explorer 150/750 (+40 from jumps); a Reward Bundle for 100 stargate jumps is waiting to be claimed.
