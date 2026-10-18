@@ -374,3 +374,4 @@
 - 2026-10-18: Erlemer Hegelin (Venilen VIII Moon 5) 'Seeding a Future' 1 of 3 recorded (13k+14k to Hogimo IV, 77.39 ISK collateral; shares Hogimo with Tira Paakkodan; unavailable until the jump count is known).
 - 2026-10-18: Ichinumi Toilinala (Venilen IX Moon 10) 'Bio-Engineering Pays' recorded (33k+37k to Oisio V; unavailable until the jump count is known).
 - 2026-10-18: Hakodan Tia (Venilen XII Moon 1) 'Lost That Bet' recorded (28k+28k, fetch from Hogimo VI); Hogimo now has three Venilen jobs (~138k ISK + 88 LP on one run).
+- 2026-10-18: Sikakainen Arishi (Venilen XII Moon 1) 'A Humble Gift' recorded (22k+23k, 320 m3, inside Venilen; unavailable until the hold size is confirmed).

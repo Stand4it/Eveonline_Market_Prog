@@ -1239,6 +1239,25 @@
    "career": "Distribution",
    "needs": "nothing special (1 m3, no combat); the jump count Venilen -> Hogimo is not known here: enter it, then set available true. The 1 h 4 min clock covers the round trip",
    "note": "Seen 2026-10-18 ~1:50 pm, standing 0.0. Part 1 of 5, the same chain as Bivira Noriti (Sankkasen) and Saiponas Matsikka (Rairomon). 56,000 ISK + 37 LP with the bonus. HOGIMO has now THREE Venilen jobs (Tira Paakkodan 'The Heiress' pickup at Hogimo V, Erlemer Hegelin seeds to Hogimo IV, and this Dolls pickup at Hogimo VI): one Venilen -> Hogimo -> Venilen run could carry all three (about 138,000 ISK + 88 LP)."
+  },
+  {
+   "agent": "Sikakainen Arishi (Distribution, L1, Venilen XII - Moon 1 - House of Records Archives)",
+   "mission": "'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (320 m3) from this station (Venilen XII Moon 1) to Venilen IX - Moon 2 - Expert Distribution Warehouse (0.6). Pays 22,000 ISK + 32 LP; bonus 23,000 ISK within 56 min.",
+   "isk": 22000,
+   "bonus": 23000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 10,
+   "jumps": 0,
+   "available": false,
+   "where": "Venilen XII - Moon 1 - House of Records Archives (0.6)",
+   "agent_system": "Venilen",
+   "to_system": "Venilen",
+   "career": "Distribution",
+   "needs": "nothing special (no combat), but 320 m3 must fit the Incursus hold: check the hold capacity first. Pickup and drop-off are both in Venilen, so no jumps: 'available' stays false only until the hold size is confirmed",
+   "note": "Seen 2026-10-18 ~2:00 pm, standing 0.0. 45,000 ISK + 32 LP for about 10 minutes inside one system if the bonus is made (roughly 270k ISK/hr). Venilen IX Moon 2 is where Tira Paakkodan's agent is (Expert Distribution Warehouse is the Venilen IX station): deliver here and pick up Tira's mission and Ichinumi Toilinala's livestock on the same visit."
   }
  ],
  "min_per_jump": 3.0,
