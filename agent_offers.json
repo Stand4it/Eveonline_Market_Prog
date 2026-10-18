@@ -973,6 +973,25 @@
    "career": "Distribution",
    "needs": "nothing special: pickup and drop-off are both in Sankkasen (0.7, safe), 0.1 m3, no combat",
    "note": "Seen 2026-10-18 2:30 am, standing 0.0. Part 1 of 4. 73,000 ISK + 45 LP for about 12 minutes if the bonus is made, all inside one system: the best-paying non-combat offer seen so far per minute. Sankkasen also has Ieyodan Ahomon's drone mission (combat) and receives Alalomo Mainsaken's Army Recruits courier from Santola."
+  },
+  {
+   "agent": "Viken Antilen (Security, L1, Sankkasen VII - Moon 10 - Spacelane Patrol Assembly Plant)",
+   "mission": "'Gone Berserk': kill the terrorist fanatics at a site in Sankkasen (0.7) and report back. They may not all be at the rendezvous point when you arrive: you can pick them off as they warp in. Pays 71,000 ISK + 108 LP; bonus 77,000 ISK within 3 h 22 min. Normal ship restrictions.",
+   "isk": 71000,
+   "bonus": 77000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 40,
+   "jumps": 0,
+   "available": false,
+   "where": "Sankkasen VII - Moon 10 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent_system": "Sankkasen",
+   "to_system": "Sankkasen",
+   "career": "Security",
+   "needs": "a combat-ready ship that passes the 99% win rule: an unknown number of terrorist ships that warp in over time. Do not accept until the Incursus has ammo and a repairer",
+   "note": "Seen 2026-10-18 ~2:40 am, standing 0.0. 148,000 ISK + 108 LP with the bonus: the best pay of any offer seen, and the same system and station type as Ieyodan Ahomon's drone mission (Sankkasen VII Moon 8). Two Sankkasen combat missions (261,000 ISK + 176 LP together) make the combat-kit cost (~15k ISK of ammo plus a repairer) look cheap."
   }
  ],
  "min_per_jump": 3.0,
