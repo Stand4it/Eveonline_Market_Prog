@@ -1068,6 +1068,25 @@
    "career": "Distribution",
    "needs": "nothing special (1 m3, no combat); the jump count Sankkasen -> Waira is not known here: enter it, then set available true. Waira VIII is 0.5 (the edge of safe space; the route must stay at 0.5 or above)",
    "note": "Seen 2026-10-18 ~3:15 am, standing 0.0. Part 1 of 5. 57,000 ISK + 34 LP with the bonus."
+  },
+  {
+   "agent": "Tomugo Nattotolen (Security, L1, a Mercantile Club Bureau: probably Sankkasen IX - Moon 12, name cut off in the screenshot)",
+   "mission": "'Break Their Will': find and destroy a small repair station owned by a mercenary gang at a site in Huttaken (0.6). It may or may not be guarded by pirates. The structure only shows in the overview if 'Large Collidable Structure' is selected. Pays 65,000 ISK + 83 LP; bonus 69,000 ISK within 2 h 34 min.",
+   "isk": 65000,
+   "bonus": 69000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 40,
+   "jumps": 0,
+   "available": false,
+   "where": "a Mercantile Club Bureau station (probably Sankkasen IX - Moon 12)",
+   "agent_system": "Sankkasen",
+   "to_system": "Huttaken",
+   "career": "Security",
+   "needs": "a combat-ready ship that passes the 99% win rule: a structure (hitpoints unknown) and possibly pirate guards. Do not accept until the Incursus has ammo and a repairer; the overview needs 'Large Collidable Structure' ticked to see the target",
+   "note": "Seen 2026-10-18 ~3:25 am, standing 0.0. 134,000 ISK + 83 LP with the bonus. Huttaken (0.6) is the objective system: the jump count from the agent is not known here. The agent's station name was scrolled out of the screenshot."
   }
  ],
  "min_per_jump": 3.0,
