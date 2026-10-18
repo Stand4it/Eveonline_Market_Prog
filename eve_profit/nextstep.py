@@ -1061,46 +1061,37 @@ def next_action(con, g, p, full=False, ahead=False):
             _owned = []
 
         def _need_ship(a_):
-            """The ship an activity needs when you fly something else: (name, jumps, system id) of the nearest one you OWN, else None."""
+            """The ship an activity needs when you fly something else: (name, 0, system id) of one you OWN in THIS system (board it: no detour), else None."""
             nh = a_.get("needs_hull")
             if not nh or any(w.lower() in (p.ship_name or "").lower() for w in nh):
                 return None
             try:
-                reach_ = g.reach(g.id_of(p.current_system), 40, p.avoid_yellow)
+                here_ = g.id_of(p.current_system)
             except Exception:                                    # noqa: BLE001
                 return None
-            best_ = None
             for n_, s_ in _owned:
-                if any(w.lower() in n_.lower() for w in nh) and s_ in reach_ and (best_ is None or reach_[s_].jumps < best_[1]):
-                    best_ = (n_, reach_[s_].jumps, s_)
-            return best_
+                if s_ == here_ and any(w.lower() in n_.lower() for w in nh):
+                    return (n_, 0, s_)
+            return None
 
         def _prep(a_):
             if a_["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):
                 return combatprep.prep_estimate(con, g, p)
-            b_ = _need_ship(a_)
-            return (3.0 + 2.0 * b_[1], 0.0) if b_ else (0.0, 0.0)           # fetch + board the ship you own: 2 min a jump + 3 min to swap
+            return (3.0, 0.0) if _need_ship(a_) else (0.0, 0.0)          # board the ship you own in this station: 3 minutes
 
         def _test_step(act, reason):
             step_txt = experiment_step(act, reason)
             _ship = _need_ship(act)
             if act.get("needs_hull") and not _ship and not any(w.lower() in (p.ship_name or "").lower() for w in act["needs_hull"]):
-                return None                                      # needs a ship you do not own near you
-            if _ship:                                            # first the ship you already own: go there and board it, then the activity
-                nm_, jj_, ss_ = _ship
-                if g.name[ss_] == p.current_system:
-                    return (f"STEP: BOARD your {nm_} (for: {act['name']})\n   DO ONLY THIS: in the station window open the Hangars tab > Ship Hangar > right-click your {nm_} > Board Ship.\n"
-                            f"   LATER: {act['name']} (about {act.get('minutes', 30)} min, never timed)")
-                return _hop(g.name[ss_], f"your {nm_} is there: board it, then {act['name']}", [])
-            if act["id"] == "manufacturing_t1":                   # a build needs the blueprint in THIS station: fly to where it lies first
+                return None                                      # a modeling step must be doable NOW: wrong ship and none here -> it waits in the long view
+            if _ship:                                            # your own ship lies in this very station: board it, then the activity
+                nm_ = _ship[0]
+                return (f"STEP: BOARD your {nm_} (for: {act['name']})\n   DO ONLY THIS: in the station window open the Hangars tab > Ship Hangar > right-click your {nm_} > Board Ship.\n"
+                        f"   LATER: {act['name']} (about {act.get('minutes', 30)} min, never timed)")
+            if act["id"] == "manufacturing_t1":                   # a build needs the blueprint in THIS station
                 from .dailygoals import usable_blueprint
-                ok_, why_ = usable_blueprint(con, p)
-                if not ok_:
-                    import re as _re
-                    m_ = _re.search(r"your blueprint is in (\S+),", why_ or "")
-                    if not m_:
-                        return None                              # no blueprint, or not enough skills for it
-                    return _hop(m_.group(1), "your blueprint is there: start a build with it", [])
+                if not usable_blueprint(con, p)[0]:
+                    return None
             if act["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):       # a combat test is only valid with a combat-ready ship: the step is the first missing piece
                 step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade

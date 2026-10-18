@@ -242,6 +242,41 @@ def unlock_options(con, g, p, base, horizon=HORIZON_H):
     return out
 
 
+def deferred_modeling(con, g, p):
+    """Modeling (test) steps that cannot be done where you stand with the ship and skills you have: [(activity name, 'when you are in X: reason')].
+    They are not offered as the next step (no detours for a test); they are done when your route passes that place."""
+    out = []
+    try:
+        from . import combatprep
+        from .catalog import SKIP_IDS, status
+        from .dailygoals import usable_blueprint
+        owned = combatprep.state(con, p)["ships"]
+        here = p.current_system
+        hull = p.ship_name or ""
+        for a in status(con, float(p.wallet_isk or 0), hull, [n for n, _s in owned]):
+            if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a.get("blocked") or a["id"] == "agent_career":
+                continue
+            nh = a.get("needs_hull")
+            if nh and not any(w.lower() in hull.lower() for w in nh):
+                spots = sorted({g.name[s_] for n_, s_ in owned if any(w.lower() in n_.lower() for w in nh) and s_ in g.name})
+                if spots and here not in spots:
+                    out.append((a["name"], f"when you are in {spots[0]}: your {next(n_ for n_, s_ in owned if g.name.get(s_) == spots[0] and any(w.lower() in n_.lower() for w in nh))} is there"))
+                continue
+            if a.get("needs_bp"):
+                ok_, why_ = usable_blueprint(con, p)
+                if not ok_:
+                    import re
+                    m_ = re.search(r"your blueprint is in (\S+),", why_ or "")
+                    if m_:
+                        out.append((a["name"], f"when you are in {m_.group(1)}: your blueprint is there"))
+                continue
+            if a.get("where") and str(a["where"]).lower() != str(here).lower():
+                out.append((a["name"], f"when you are in {a['where']}"))
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return out
+
+
 def analyse(con, g, p, cands, horizon=HORIZON_H):
     """-> {"base": rate, "now": [...], "unlocks": [...], "enabler": step or None, "unmodeled": [...]}"""
     base = base_rate(cands)
@@ -251,7 +286,7 @@ def analyse(con, g, p, cands, horizon=HORIZON_H):
     unl = [u for u in unlock_options(con, g, p, base, horizon) if u["gain"] >= MIN_GAIN]
     enabler = next((u for u in unl if u["enabler"]), None)
     unmodeled = [a["name"] for a in status(con, float(p.wallet_isk or 0)) if a["unlocked"] and a["state"] != "MODELED" and a["id"] != "agent_career"]
-    return {"base": base, "seq": seq, "unlocks": unl[:3], "enabler": enabler, "unmodeled": unmodeled, "horizon": horizon}
+    return {"base": base, "seq": seq, "unlocks": unl[:3], "enabler": enabler, "unmodeled": unmodeled, "horizon": horizon, "deferred": deferred_modeling(con, g, p)}
 
 
 def enabler_step(u, base):
@@ -276,4 +311,6 @@ def format_long_view(an):
     if an["unmodeled"]:
         L.append(f"   LEARN  unmodeled and unlocked: {', '.join(an['unmodeled'][:4])}" + (f" +{len(an['unmodeled']) - 4} more" if len(an["unmodeled"]) > 4 else "")
                  + "  (they compete in the same ranking: each one rises or falls with its expected ISK/hr)")
+    for name, why in an.get("deferred", [])[:6]:
+        L.append(f"   LATER  test {name}: {why}  (a modeling test is done when your route passes there, not as a detour)")
     return "\n".join(L)
