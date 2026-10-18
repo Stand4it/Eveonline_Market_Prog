@@ -79,5 +79,18 @@
   "_note": "What a ship needs before a combat test is valid (combatprep.py). Edit the numbers as the plan learns."
  },
  "wishlist": [],
- "_wishlist_help": "Extras the plan should buy at the cheapest place on your route (ship upgrades, modules): [{\"item\": \"Expanded Cargohold I\", \"qty\": 1, \"why\": \"more m3 for hauls\"}]. The combat kit (hull, guns, ammo, tank) is wished automatically from combat_kit. See shopping.py."
+ "_wishlist_help": "Extras the plan should buy at the cheapest place on your route (ship upgrades, modules): [{\"item\": \"Expanded Cargohold I\", \"qty\": 1, \"why\": \"more m3 for hauls\"}]. The combat kit (hull, guns, ammo, tank) is wished automatically from combat_kit. See shopping.py.",
+ "faction_weapons": {
+  "_note": "From the in-game Ship Tree blurbs (2026-10-18): the weapons and defence each faction's hulls are built around. Use to match guns/ammo to a hull when shopping a fit.",
+  "Amarr Empire": "energy turrets + drones; armor over speed",
+  "Caldari State": "missiles + hybrid turrets; shields over speed",
+  "Gallente Federation": "hybrid turrets + drones; armor and speed balanced",
+  "Blood Raider Covenant": "electronic warfare + energy turrets; armor",
+  "Guristas Pirates": "missiles + drones; shields",
+  "Sansha's Nation": "energy turrets; strong shields",
+  "Angel Cartel": "projectile turrets; speed",
+  "Serpentis": "hybrid turrets; armor + acceleration",
+  "Servant Sisters of EVE": "drones + energy turrets; high agility, low speed",
+  "Mordu's Legion Command": "missiles; speed and shields"
+ }
 }
