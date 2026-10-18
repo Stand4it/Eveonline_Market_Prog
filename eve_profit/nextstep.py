@@ -1055,11 +1055,43 @@ def next_action(con, g, p, full=False, ahead=False):
         except Exception:                                        # noqa: BLE001
             pass
 
+        try:
+            _owned = list(combatprep.state(con, p)["ships"])      # [(ship name, system id)] parked in your hangars
+        except Exception:                                        # noqa: BLE001
+            _owned = []
+
+        def _need_ship(a_):
+            """The ship an activity needs when you fly something else: (name, jumps, system id) of the nearest one you OWN, else None."""
+            nh = a_.get("needs_hull")
+            if not nh or any(w.lower() in (p.ship_name or "").lower() for w in nh):
+                return None
+            try:
+                reach_ = g.reach(g.id_of(p.current_system), 40, p.avoid_yellow)
+            except Exception:                                    # noqa: BLE001
+                return None
+            best_ = None
+            for n_, s_ in _owned:
+                if any(w.lower() in n_.lower() for w in nh) and s_ in reach_ and (best_ is None or reach_[s_].jumps < best_[1]):
+                    best_ = (n_, reach_[s_].jumps, s_)
+            return best_
+
         def _prep(a_):
-            return combatprep.prep_estimate(con, g, p) if a_["id"] in ("agent_l1_security", "agent_l2_security", "ratting") else (0.0, 0.0)
+            if a_["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):
+                return combatprep.prep_estimate(con, g, p)
+            b_ = _need_ship(a_)
+            return (3.0 + 2.0 * b_[1], 0.0) if b_ else (0.0, 0.0)           # fetch + board the ship you own: 2 min a jump + 3 min to swap
 
         def _test_step(act, reason):
             step_txt = experiment_step(act, reason)
+            _ship = _need_ship(act)
+            if act.get("needs_hull") and not _ship and not any(w.lower() in (p.ship_name or "").lower() for w in act["needs_hull"]):
+                return None                                      # needs a ship you do not own near you
+            if _ship:                                            # first the ship you already own: go there and board it, then the activity
+                nm_, jj_, ss_ = _ship
+                if g.name[ss_] == p.current_system:
+                    return (f"STEP: BOARD your {nm_} (for: {act['name']})\n   DO ONLY THIS: in the station window open the Hangars tab > Ship Hangar > right-click your {nm_} > Board Ship.\n"
+                            f"   LATER: {act['name']} (about {act.get('minutes', 30)} min, never timed)")
+                return _hop(g.name[ss_], f"your {nm_} is there: board it, then {act['name']}", [])
             if act["id"] in ("agent_l1_security", "agent_l2_security", "ratting"):       # a combat test is only valid with a combat-ready ship: the step is the first missing piece
                 step_txt = combatprep.next_step(con, g, p, _hop) or combatprep.agent_step(g, p, _hop) or step_txt
             if act["id"] == "station_trading":                    # never point at `next` itself: show the actual best trade
@@ -1072,12 +1104,12 @@ def next_action(con, g, p, full=False, ahead=False):
                     step_txt = _ts(con, g, p, opps_[0])
                     if step_txt:
                         step_txt += "\n   Unmodeled: 3 timed runs turn the guess into your own number."
-            if step_txt and step_txt.lstrip().startswith("STEP: FLY to") and act["id"] not in ("agent_l1_security", "agent_l2_security", "ratting"):
+            if step_txt and step_txt.lstrip().startswith("STEP: FLY to") and act["id"] not in ("agent_l1_security", "agent_l2_security", "ratting") and not act.get("needs_hull"):
                 step_txt = None                                   # a test that only sends you travelling for a guessed gain is not offered
             return step_txt
 
         if not haul_on:
-            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep, hull=(p.ship_name or ""))[:3]:
+            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep, hull=(p.ship_name or ""), owned=[n_ for n_, _s in _owned])[:3]:
                 act = item["act"]
                 try:
                     txt = _test_step(act, "never timed")
