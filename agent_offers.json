@@ -916,6 +916,25 @@
    "career": "Distribution",
    "needs": "nothing special (180 m3, no combat); the jump count Santola -> Tintoh is not known here: enter it, then set available true",
    "note": "Seen 2026-10-18 ~1:40 am, standing 0.0. 50,000 ISK + 30 LP one way with the bonus."
+  },
+  {
+   "agent": "Alalomo Mainsaken (Distribution, L1, Santola VIII - Moon 11 - Caldari Funds Unlimited Depository)",
+   "mission": "'Army Recruits': courier 5 x Groups of Army Recruits (300 m3) from this station to Sankkasen VII - Moon 6 - Science and Trade Institute School (0.7). Pays 21,000 ISK + 24 LP; bonus 24,000 ISK within 54 min.",
+   "isk": 21000,
+   "bonus": 24000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Santola VIII - Moon 11 - Caldari Funds Unlimited Depository (0.8)",
+   "agent_system": "Santola",
+   "to_system": "Sankkasen",
+   "career": "Distribution",
+   "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Santola -> Sankkasen is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 2:03 am, standing 0.0. 45,000 ISK + 24 LP one way with the bonus. Santola also has Kahmaken Wamonen's courier (to Tintoh), so a Santola pickup of both costs one dock."
   }
  ],
  "min_per_jump": 3.0,
