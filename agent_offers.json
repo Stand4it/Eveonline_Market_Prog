@@ -1011,6 +1011,25 @@
    "career": "Mining",
    "needs": "a mining ship with lasers and an ore hold of at least 1,080 m3 (the Venture, not the Incursus). How long 3,600 units take with your mining skills is unknown: it decides whether the 1 h 6 min bonus is reachable. Standing 0.0; other pilots may come for the ore ('looters might follow its signal'), so watch local",
    "note": "Seen 2026-10-18 ~2:50 am. 93,000 ISK + 53 LP with the bonus if 3,600 units mine in under an hour: needs a mining yield of about 1,080 m3 per hour or better. Also feeds the AIR Industrialist career. The second screenshot shows the game's own agent finder (Agents & Missions > Mission Agents > Mining Agents, 30 results): it can list every mining agent near you."
+  },
+  {
+   "agent": "Korjiki Porkala (Distribution, L1, Sankkasen IX - Moon 12 - Mercantile Club Bureau)",
+   "mission": "'Bio-Engineering Pays': courier 3 x Groups of Genetically Enhanced Livestock (300 m3) from this station to Santola VIII - Moon 11 - Caldari Funds Unlimited Depository (0.8). Pays 31,000 ISK + 38 LP; bonus 25,000 ISK within 1 h 10 min.",
+   "isk": 31000,
+   "bonus": 25000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Sankkasen IX - Moon 12 - Mercantile Club Bureau (0.7)",
+   "agent_system": "Sankkasen",
+   "to_system": "Santola",
+   "career": "Distribution",
+   "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Sankkasen -> Santola is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 ~3:00 am, standing 0.0. 56,000 ISK + 38 LP one way with the bonus. LOOP IDEA over three stations: Sankkasen IX Moon 12 (this pickup, and Adomago Karjus's Minmatar Emissary pickup is the SAME station) -> Santola VIII Moon 11 (deliver the livestock here; pick up Alalomo Mainsaken's 300 m3 Army Recruits) -> Sankkasen VII Moon 6 (deliver the Army Recruits at the Science and Trade Institute School and the Emissary at Expert Housing). Three couriers, about 174,000 ISK + 107 LP with all bonuses, with at most 300 m3 on board at a time. The tool still needs the Santola <-> Sankkasen jump counts to rank it."
   }
  ],
  "min_per_jump": 3.0,

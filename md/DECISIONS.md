@@ -362,3 +362,4 @@
 - 2026-10-18: Adomago Karjus (Sankkasen VII Moon 6) 'Moving the Consul' 1 of 4 recorded (40k+33k, same system, available).
 - 2026-10-18: Viken Antilen (Sankkasen VII Moon 10) 'Gone Berserk' recorded (combat, 71k+77k + 108 LP, unavailable until the Incursus is combat-ready).
 - 2026-10-18: Ohmanin Natuneni (Sankkasen VII Moon 4) 'Burnt Traces' mining mission recorded (43k+50k, needs the Venture; unavailable).
+- 2026-10-18: Korjiki Porkala (Sankkasen IX Moon 12) 'Bio-Engineering Pays' recorded (31k+25k to Santola; unavailable until the jump count is known); loop idea Sankkasen IX -> Santola VIII -> Sankkasen VII chains it with Adomago Karjus and Alalomo Mainsaken (~174k ISK + 107 LP).
