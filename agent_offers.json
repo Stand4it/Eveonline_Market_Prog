@@ -954,6 +954,25 @@
    "career": "Security",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: a Drone Silo plus an unknown number of rogue drones that gang up on you. Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-18 2:20 am, standing 0.0. 113,000 ISK + 68 LP with the bonus for a mission inside the one system where you are already docked. Rogue drones also leave drone-alloy and salvage wrecks: possible extra income after the kill."
+  },
+  {
+   "agent": "Adomago Karjus (Distribution, L1, Sankkasen VII - Moon 6 - Expert Housing Production Plant)",
+   "mission": "'Regional Stability - Moving the Consul' (1 of 4): fetch 1 x Minmatar Emissary (0.1 m3) from Sankkasen IX - Moon 12 - Mercantile Club Bureau (0.7) and bring him back to this station (Sankkasen VII - Moon 6). Pays 40,000 ISK + 45 LP; bonus 33,000 ISK within 1 h 24 min.",
+   "isk": 40000,
+   "bonus": 33000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 12,
+   "jumps": 0,
+   "available": true,
+   "where": "Sankkasen VII - Moon 6 - Expert Housing Production Plant (0.7)",
+   "agent_system": "Sankkasen",
+   "to_system": "Sankkasen",
+   "career": "Distribution",
+   "needs": "nothing special: pickup and drop-off are both in Sankkasen (0.7, safe), 0.1 m3, no combat",
+   "note": "Seen 2026-10-18 2:30 am, standing 0.0. Part 1 of 4. 73,000 ISK + 45 LP for about 12 minutes if the bonus is made, all inside one system: the best-paying non-combat offer seen so far per minute. Sankkasen also has Ieyodan Ahomon's drone mission (combat) and receives Alalomo Mainsaken's Army Recruits courier from Santola."
   }
  ],
  "min_per_jump": 3.0,

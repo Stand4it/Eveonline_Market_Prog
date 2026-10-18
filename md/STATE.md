@@ -12,3 +12,4 @@ Open agent offers (agent_offers.json):
 - Aralusa Isugas: 'Corporate Documents': courier 4 x Crates of Corporate Docum
 - Marukaiken Mamareki: 'A New Venture - Education is Key' (1 of 5): courier 1 x Cor
 - Tanatsu Alomoinen: 'Interstellar Railroad' (1 of 4): bring 1 x Amarr Diplomat (
+- Adomago Karjus: 'Regional Stability - Moving the Consul' (1 of 4): fetch 1 x
