@@ -1201,6 +1201,25 @@
    "career": "Distribution",
    "needs": "nothing special (0.5 m3, no combat, collateral is only 77.39 ISK); the jump count Venilen -> Hogimo is not known here: enter it, then set available true. The 28 min bonus clock is tight and covers one way only",
    "note": "Seen 2026-10-18 ~1:30 pm, standing 0.0. Part 1 of 3. 27,000 ISK + 17 LP with the bonus: the lowest pay seen. Hogimo is also where Tira Paakkodan's 'The Heiress' pickup is (Hogimo V Moon 16, 55k): deliver the seeds at Hogimo IV and fetch the Miniature Slaver at Hogimo V on one trip."
+  },
+  {
+   "agent": "Ichinumi Toilinala (Distribution, L1, Venilen IX - Moon 10 - Expert Distribution Warehouse)",
+   "mission": "'Bio-Engineering Pays': courier 3 x Groups of Genetically Enhanced Livestock (300 m3) from this station to Oisio V - Moon 1 - Caldari Navy Assembly Plant (0.5). Pays 33,000 ISK + 41 LP; bonus 37,000 ISK within 1 h 10 min.",
+   "isk": 33000,
+   "bonus": 37000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Venilen IX - Moon 10 - Expert Distribution Warehouse (0.6)",
+   "agent_system": "Venilen",
+   "to_system": "Oisio",
+   "career": "Distribution",
+   "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Venilen -> Oisio is not known here: enter it, then set available true. Oisio V is 0.5 (the edge of safe space; the route must stay at 0.5 or above)",
+   "note": "Seen 2026-10-18 ~1:40 pm, standing 0.0. 70,000 ISK + 41 LP one way with the bonus: the best courier pay in Venilen. Venilen IX also has Tira Paakkodan's 'The Heiress' (to Hogimo): pick up the livestock here, deliver at Oisio, and go on to Hogimo for the Miniature Slaver if the routes meet."
   }
  ],
  "min_per_jump": 3.0,

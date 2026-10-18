@@ -372,3 +372,4 @@
 - 2026-10-18: the 'Loyalty point store flips' test step is locked until you hold 1,000 LP (catalog lp_min): next offered it with 0 LP.
 - 2026-10-18: Tira Paakkodan (Venilen IX Moon 2) 'The Heiress' recorded (23k+32k, fetch from Hogimo V; unavailable until the jump count is known).
 - 2026-10-18: Erlemer Hegelin (Venilen VIII Moon 5) 'Seeding a Future' 1 of 3 recorded (13k+14k to Hogimo IV, 77.39 ISK collateral; shares Hogimo with Tira Paakkodan; unavailable until the jump count is known).
+- 2026-10-18: Ichinumi Toilinala (Venilen IX Moon 10) 'Bio-Engineering Pays' recorded (33k+37k to Oisio V; unavailable until the jump count is known).
