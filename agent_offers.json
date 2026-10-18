@@ -1182,6 +1182,25 @@
    "career": "Distribution",
    "needs": "nothing special (0.0 m3, no combat); the jump count Venilen -> Hogimo is not known here: enter it, then set available true. The 1 h clock covers the round trip",
    "note": "Seen 2026-10-18 ~1:20 pm, standing 0.0. Part 1 of 5, the same chain as Ruukiken Ittoh's (Sankkasen). 55,000 ISK + 34 LP with the bonus."
+  },
+  {
+   "agent": "Erlemer Hegelin (Distribution, L1, Venilen VIII - Moon 5 - Freedom Extension Warehouse)",
+   "mission": "'Save the Trees - Seeding a Future' (1 of 3): carry 1 x Frozen Plant Seeds (0.5 m3, already at this station) to Hogimo IV - Deep Core Mining Inc. Mining Outpost (0.6). Pays 13,000 ISK + 17 LP; bonus 14,000 ISK within 28 minutes. COLLATERAL: you must pay 77.39 ISK up front (returned on completion).",
+   "isk": 13000,
+   "bonus": 14000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 15,
+   "jumps": 0,
+   "available": false,
+   "where": "Venilen VIII - Moon 5 - Freedom Extension Warehouse (0.6)",
+   "agent_system": "Venilen",
+   "to_system": "Hogimo",
+   "career": "Distribution",
+   "needs": "nothing special (0.5 m3, no combat, collateral is only 77.39 ISK); the jump count Venilen -> Hogimo is not known here: enter it, then set available true. The 28 min bonus clock is tight and covers one way only",
+   "note": "Seen 2026-10-18 ~1:30 pm, standing 0.0. Part 1 of 3. 27,000 ISK + 17 LP with the bonus: the lowest pay seen. Hogimo is also where Tira Paakkodan's 'The Heiress' pickup is (Hogimo V Moon 16, 55k): deliver the seeds at Hogimo IV and fetch the Miniature Slaver at Hogimo V on one trip."
   }
  ],
  "min_per_jump": 3.0,

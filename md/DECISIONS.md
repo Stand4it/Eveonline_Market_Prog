@@ -371,3 +371,4 @@
 - 2026-10-18: Saiponas Matsikka (Rairomon VIII Moon 7) 'Lost That Bet' recorded (30k+35k, fetch from Huttaken VI; chains with Hyononeki Taskiraki; unavailable until the jump count is known).
 - 2026-10-18: the 'Loyalty point store flips' test step is locked until you hold 1,000 LP (catalog lp_min): next offered it with 0 LP.
 - 2026-10-18: Tira Paakkodan (Venilen IX Moon 2) 'The Heiress' recorded (23k+32k, fetch from Hogimo V; unavailable until the jump count is known).
+- 2026-10-18: Erlemer Hegelin (Venilen VIII Moon 5) 'Seeding a Future' 1 of 3 recorded (13k+14k to Hogimo IV, 77.39 ISK collateral; shares Hogimo with Tira Paakkodan; unavailable until the jump count is known).
