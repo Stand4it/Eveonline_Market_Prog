@@ -897,6 +897,25 @@
    "task_min": 20,
    "needs": "nothing special (120 m3, no combat); the jump count Kusomonmon -> Isikesu is not known here: enter it, then set available true",
    "note": "Seen 2026-10-18 12:40 am, standing 0.0. 30,000 ISK + 22 LP one way with the bonus, the lowest pay of the couriers seen. Worth it only as a free add-on to an Isikesu trip (Moon 7 and Moon 13 are both in Isikesu IV)."
+  },
+  {
+   "agent": "Kahmaken Wamonen (Distribution, L1, Santola IV - Moon 1 - Expert Housing Production Plant)",
+   "mission": "'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) from this station to Tintoh VIII - Caldari Navy Testing Facilities (0.8). Pays 30,000 ISK + 30 LP; bonus 20,000 ISK within 1 h 8 min.",
+   "isk": 30000,
+   "bonus": 20000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Santola IV - Moon 1 - Expert Housing Production Plant (0.8)",
+   "agent_system": "Santola",
+   "to_system": "Tintoh",
+   "career": "Distribution",
+   "needs": "nothing special (180 m3, no combat); the jump count Santola -> Tintoh is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 ~1:40 am, standing 0.0. 50,000 ISK + 30 LP one way with the bonus."
   }
  ],
  "min_per_jump": 3.0,

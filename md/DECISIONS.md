@@ -356,3 +356,4 @@
 - 2026-10-18: Kusomonmon II Moon 8: Hiyuda Nelvanen 'Miracle Drug' and Nallaken Ylama 'Salve for Sis' couriers recorded (both to Isikesu IV; Isikesu is the common drop-off of four couriers).
 - 2026-10-18: AIR career Explorer 150/750 (+40 from jumps); a Reward Bundle for 100 stargate jumps is waiting to be claimed.
 - 2026-10-18: AIR Agility Booster II (-10% inertia, 1 h) from the jumps reward recorded in air_career.json.
+- 2026-10-18: Kahmaken Wamonen (Santola IV Moon 1) 'Arms Dealer' recorded (30k+20k to Tintoh; unavailable until the jump count is known).
