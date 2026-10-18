@@ -352,3 +352,4 @@
 - 2026-10-17: Onnomon Aarlunen (Haatomo VI Moon 6) 'Party Goods' recorded (23k+22k, to Suroken; unavailable until the jump count is known).
 - 2026-10-17: Raddelur Marilhard (Haatomo VI Moon 5) 'Cigarettes' recorded (29k+28k, to Isikesu; unavailable until the jump count is known).
 - 2026-10-18: Shishai Samanuni (Suroken VII Moon 2) 'Rancorous Researcher' recorded; route idea Haatomo -> Antiri -> Suroken chains Takashi Shioken, Onnomon Aarlunen and this one.
+- 2026-10-18: Kusomonmon VI Moon 21: Halvas Isato 'For the Birds' (combat, 69k+65k, unavailable) and Inomata Sokukoma 'Arms Dealer' (22k+24k to Isikesu; chains with Raddelur Marilhard's Cigarettes) recorded.
