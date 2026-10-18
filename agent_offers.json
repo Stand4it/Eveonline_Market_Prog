@@ -1144,6 +1144,25 @@
    "career": "Distribution",
    "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Rairomon -> Huttaken is not known here: enter it, then set available true",
    "note": "Seen 2026-10-18 ~3:55 am, standing 0.0. 60,000 ISK + 40 LP one way with the bonus. Huttaken VI Genolution Biotech Production is also the PICKUP of Tsunaras Rautataitoh's Frozen Food (Halaima) and the area of Tomugo Nattotolen's combat mission: Rairomon -> Huttaken (deliver, pick up the food) -> Halaima (deliver the food) chains two couriers (about 107,000 ISK + 73 LP)."
+  },
+  {
+   "agent": "Saiponas Matsikka (Distribution, L1, Rairomon VIII - Moon 7 - Perkone Warehouse)",
+   "mission": "'Lost That Bet' (1 of 5): fetch 1 x Dolls (1.0 m3) from Huttaken VI - Moon 2 - Poksu Mineral Group Mineral Reserve (0.6) and bring it to this station. Pays 30,000 ISK + 36 LP; bonus 35,000 ISK within 1 h 4 min.",
+   "isk": 30000,
+   "bonus": 35000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Rairomon VIII - Moon 7 - Perkone Warehouse (0.6)",
+   "agent_system": "Rairomon",
+   "to_system": "Huttaken",
+   "career": "Distribution",
+   "needs": "nothing special (1 m3, no combat); the jump count Rairomon -> Huttaken is not known here: enter it, then set available true. The 1 h 4 min clock covers the round trip",
+   "note": "Seen 2026-10-18 ~4:05 am, standing 0.0. Part 1 of 5. 65,000 ISK + 36 LP with the bonus. Same Huttaken trip as Hyononeki Taskiraki's livestock (Rairomon VIII Moon 7, 32k+28k): one Rairomon -> Huttaken -> Rairomon run delivers the livestock and brings back the Dolls, and Huttaken VI also has the Frozen Food pickup for Halaima."
   }
  ],
  "min_per_jump": 3.0,
