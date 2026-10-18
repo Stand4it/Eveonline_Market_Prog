@@ -382,3 +382,4 @@
 - 2026-10-18: ship-specific activities are no longer just locked in a Capsule: if you OWN a matching ship in a hangar within reach, the activity is offered with its prep charged (3 min + 2 min per jump) and the step is 'go to the ship and board it' (then the activity). Locked only when you own no matching ship near you.
 - 2026-10-18: Yoschoya Veskamon (Waira V Moon 1) 'A New Venture' 1 of 5 recorded (33k+38k, skill-book pickup at Uotila V; unavailable until the jump count is known).
 - 2026-10-18: Isenairos VI Moon 7: Immonairos Iros 'Corporate Documents' (to Saila VIII) and Nimpalius Iharami 'Food for Fun' (from Saila VIII) recorded as a pair (~92k ISK + 64 LP per round trip; unavailable until the jump count is known).
+- 2026-10-18: Uchineto Akarichi (Isenairos VII Moon 4) 'A New Venture' 1 of 5 recorded (24k+23k, book at Saila VII): Saila is the hub of three Isenairos jobs (~139k ISK + 96 LP per round trip).

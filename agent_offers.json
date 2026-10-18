@@ -1315,6 +1315,25 @@
    "to_system": "Saila",
    "needs": "nothing special (40 m3, no combat); the jump count Isenairos -> Saila is not known here: enter it, then set available true. The 1 h 2 min clock covers the round trip",
    "note": "Seen 2026-10-18 ~5:35 pm, standing 0.0. Part 1 of 3. 43,000 ISK + 28 LP with the bonus. PAIRS with Immonairos Iros's documents (same two stations, opposite directions): Isenairos -> Saila -> Isenairos carries both, about 92,000 ISK + 64 LP in one round trip."
+  },
+  {
+   "agent": "Uchineto Akarichi (Distribution, L1, Isenairos VII - Moon 4 - Ytiri Storage)",
+   "mission": "'A New Venture - Education is Key' (1 of 5): fetch 1 x Corporations for the Rest of Us (skill book, 0.1 m3) from Saila VII - Moon 5 - Wiyrkomi Corporation Factory (0.9) and bring it to this station (Isenairos VII, 0.8). Pays 24,000 ISK + 32 LP; bonus 23,000 ISK within 1 h 8 min.",
+   "isk": 24000,
+   "bonus": 23000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Isenairos VII - Moon 4 - Ytiri Storage (0.8)",
+   "agent_system": "Isenairos",
+   "to_system": "Saila",
+   "career": "Distribution",
+   "needs": "nothing special (0.1 m3, no combat); the jump count Isenairos -> Saila is not known here: enter it, then set available true",
+   "note": "Seen 2026-10-18 ~5:45 pm, standing 0.0. Part 1 of 5. 47,000 ISK + 32 LP with the bonus. SAILA is now the hub of three Isenairos jobs: this book (Saila VII), Immonairos Iros's documents (drop at Saila VIII) and Nimpalius Iharami's food (pickup at Saila VIII): one Isenairos -> Saila -> Isenairos round trip can serve all three, about 139,000 ISK + 96 LP. Isenairos VI and VII may be the same system (VI = Echelon, VII = Ytiri): one dock each."
   }
  ],
  "min_per_jump": 3.0,
