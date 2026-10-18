@@ -935,6 +935,25 @@
    "career": "Distribution",
    "needs": "nothing special (300 m3, no combat; check the Incursus hold takes 300 m3); the jump count Santola -> Sankkasen is not known here: enter it, then set available true",
    "note": "Seen 2026-10-18 2:03 am, standing 0.0. 45,000 ISK + 24 LP one way with the bonus. Santola also has Kahmaken Wamonen's courier (to Tintoh), so a Santola pickup of both costs one dock."
+  },
+  {
+   "agent": "Ieyodan Ahomon (Security, L1, Sankkasen VII - Moon 8 - Spacelane Patrol Assembly Plant)",
+   "mission": "'The Drone Infestation': destroy the Drone Silo in a deadspace asteroid belt site in Sankkasen (0.7), then report back. The roaming rogue drones will come to help the silo once it is attacked (the agent advises splitting them up and clearing the guards first). Pays 58,000 ISK + 68 LP; bonus 55,000 ISK within 2 h 8 min. Normal ship restrictions.",
+   "isk": 58000,
+   "bonus": 55000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 40,
+   "jumps": 0,
+   "available": false,
+   "where": "Sankkasen VII - Moon 8 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent_system": "Sankkasen",
+   "to_system": "Sankkasen",
+   "career": "Security",
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: a Drone Silo plus an unknown number of rogue drones that gang up on you. Do not accept until the Incursus has ammo and a repairer",
+   "note": "Seen 2026-10-18 2:20 am, standing 0.0. 113,000 ISK + 68 LP with the bonus for a mission inside the one system where you are already docked. Rogue drones also leave drone-alloy and salvage wrecks: possible extra income after the kill."
   }
  ],
  "min_per_jump": 3.0,

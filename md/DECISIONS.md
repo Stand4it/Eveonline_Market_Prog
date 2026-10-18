@@ -358,3 +358,4 @@
 - 2026-10-18: AIR Agility Booster II (-10% inertia, 1 h) from the jumps reward recorded in air_career.json.
 - 2026-10-18: Kahmaken Wamonen (Santola IV Moon 1) 'Arms Dealer' recorded (30k+20k to Tintoh; unavailable until the jump count is known).
 - 2026-10-18: Alalomo Mainsaken (Santola VIII Moon 11) 'Army Recruits' recorded (21k+24k to Sankkasen; unavailable until the jump count is known).
+- 2026-10-18: Ieyodan Ahomon (Sankkasen VII Moon 8) 'The Drone Infestation' recorded (combat, 58k+55k, unavailable until the Incursus is combat-ready).
