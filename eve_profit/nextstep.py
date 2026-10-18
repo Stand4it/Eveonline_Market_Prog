@@ -970,6 +970,8 @@ def next_action(con, g, p, full=False, ahead=False):
                       f"{rate:,.0f} cash + progression/model value"))
     try:
         for r_, label_, text_ in experiment_candidates(con, counts, vals):
+            if label_ == "test Mining" and not any(w in (p.ship_name or "").lower() for w in ("venture", "retriever", "procurer", "covetor", "mining")):
+                continue                                         # a modeling test must be doable NOW: it needs a mining ship under you (it waits in the long view)
             cands.append((r_, label_, text_, "never timed: builds the model"))
     except Exception:                                            # noqa: BLE001
         pass

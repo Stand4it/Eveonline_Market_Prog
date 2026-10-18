@@ -254,7 +254,7 @@ def deferred_modeling(con, g, p):
         here = p.current_system
         hull = p.ship_name or ""
         for a in status(con, float(p.wallet_isk or 0), hull, [n for n, _s in owned]):
-            if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a.get("blocked") or a["id"] == "agent_career":
+            if not a["unlocked"] or a["state"] == "MODELED" or (a["id"] in SKIP_IDS and a["id"] != "mining_belt") or a.get("blocked") or a["id"] == "agent_career":
                 continue
             nh = a.get("needs_hull")
             if nh and not any(w.lower() in hull.lower() for w in nh):
