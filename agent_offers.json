@@ -1334,6 +1334,25 @@
    "career": "Distribution",
    "needs": "nothing special (0.1 m3, no combat); the jump count Isenairos -> Saila is not known here: enter it, then set available true",
    "note": "Seen 2026-10-18 ~5:45 pm, standing 0.0. Part 1 of 5. 47,000 ISK + 32 LP with the bonus. SAILA is now the hub of three Isenairos jobs: this book (Saila VII), Immonairos Iros's documents (drop at Saila VIII) and Nimpalius Iharami's food (pickup at Saila VIII): one Isenairos -> Saila -> Isenairos round trip can serve all three, about 139,000 ISK + 96 LP. Isenairos VI and VII may be the same system (VI = Echelon, VII = Ytiri): one dock each."
+  },
+  {
+   "agent": "Chin Irjalamon (Distribution, L1, Isenairos VI - Caldari Constructions Warehouse)",
+   "mission": "'Corporate Documents': courier 4 x Crates of Corporate Documents (160 m3) from this station to Laah VIII - Moon 1 - Science and Trade Institute School (0.9). Pays 25,000 ISK + 36 LP; bonus 34,000 ISK within 1 h 18 min; 24 h limit.",
+   "isk": 25000,
+   "bonus": 34000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Isenairos VI - Caldari Constructions Warehouse (0.8)",
+   "agent_system": "Isenairos",
+   "to_system": "Laah",
+   "career": "Distribution",
+   "needs": "nothing special (160 m3, no combat); the jump count Isenairos -> Laah is not known here: enter it, then set available true. Laah is 0.9 and Isenairos 0.8: both safe",
+   "note": "Seen 2026-10-18 ~5:55 pm, standing 0.0. 59,000 ISK + 36 LP one way with the bonus: the best Isenairos courier by pay. It goes to Laah, a different system from the Saila pair, so it only fits if Laah is near the Saila route. Chin Irjalamon's station is Isenairos VI (Caldari Constructions Warehouse), a different station from Immonairos Iros's (Isenairos VI Moon 7, Echelon)."
   }
  ],
  "min_per_jump": 3.0,

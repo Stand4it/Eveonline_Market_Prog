@@ -383,3 +383,4 @@
 - 2026-10-18: Yoschoya Veskamon (Waira V Moon 1) 'A New Venture' 1 of 5 recorded (33k+38k, skill-book pickup at Uotila V; unavailable until the jump count is known).
 - 2026-10-18: Isenairos VI Moon 7: Immonairos Iros 'Corporate Documents' (to Saila VIII) and Nimpalius Iharami 'Food for Fun' (from Saila VIII) recorded as a pair (~92k ISK + 64 LP per round trip; unavailable until the jump count is known).
 - 2026-10-18: Uchineto Akarichi (Isenairos VII Moon 4) 'A New Venture' 1 of 5 recorded (24k+23k, book at Saila VII): Saila is the hub of three Isenairos jobs (~139k ISK + 96 LP per round trip).
+- 2026-10-18: Chin Irjalamon (Isenairos VI Caldari Constructions Warehouse) 'Corporate Documents' recorded (25k+34k to Laah VIII; unavailable until the jump count is known).
