@@ -35,12 +35,14 @@ def lp_total(con):
         return 0
 
 
-def missing_for(act, levels, wallet, lp=None):
+def missing_for(act, levels, wallet, lp=None, hull=None):
     if act.get("blocked"):
         return [act["blocked"]]
     miss = [f"{k} {v}" for k, v in act.get("requires", {}).items() if levels.get(k.lower(), 0) < v]
     if act.get("isk_min") and wallet < act["isk_min"]:
         miss.append(f"{act['isk_min']:,.0f} ISK")
+    if hull is not None and act.get("needs_hull") and not any(w.lower() in hull.lower() for w in act["needs_hull"]):
+        miss.append(f"a ship of the right kind ({'/'.join(act['needs_hull'][:3])}); you fly: {hull or 'nothing'}")
     if act.get("lp_min") and (lp or 0) < act["lp_min"]:
         miss.append(f"{act['lp_min']:,} loyalty points (you hold {lp or 0:,}: finish agent missions first)")
     return miss
@@ -57,13 +59,13 @@ def runs_for(con, act):
     return len(hit), (sum(r["isk"] for r in hit) / h if h else None)
 
 
-def status(con, wallet=0.0):
+def status(con, wallet=0.0, hull=None):
     levels = skill_levels(con)
     lp = lp_total(con)
     out = []
     for a in load():
         n, rate = runs_for(con, a)
-        miss = missing_for(a, levels, wallet, lp)
+        miss = missing_for(a, levels, wallet, lp, hull)
         out.append({**a, "runs": n, "rate": rate, "missing": miss, "unlocked": not miss,
                     "state": "MODELED" if n >= MODELED_RUNS else ("PARTIAL" if n else "UNMODELED")})
     return out
@@ -95,10 +97,10 @@ def models_report(con, wallet=0.0):
     return "\n".join(L)
 
 
-def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen, here=None, covered=()):
+def pick_experiment(con, wallet, best_known_rate, counter, last_exp, seen, here=None, covered=(), hull=None):
     """Which unmodeled, unlocked activity should be offered now? -> (activity or None, reason, new_seen_ids)
     NEW unlock => immediately; otherwise every EVERY-th step the highest value-of-information one."""
-    st = status(con, wallet)
+    st = status(con, wallet, hull)
     unlocked = [a for a in st if a["unlocked"]]
     new_ids = [a["id"] for a in unlocked if a["id"] not in seen]
     unmodeled = [a for a in unlocked if a["state"] != "MODELED" and a["id"] != "agent_career"
@@ -138,13 +140,13 @@ INFO_WEIGHT = 0.25          # share of the value-of-information (ISK/hr) that is
 SKIP_IDS = ("agent_career", "pd", "mining_belt")          # offered by progress.experiment_candidates / the agent step already
 
 
-def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=None):
+def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=None, hull=None):
     """Every unlocked, unmodeled activity as ONE comparable number so it competes with agents, trades and hauls on the same list (no forced turns):
     expected ISK/hr = midpoint of its prior x (1 - risk haircut) + INFO_WEIGHT x value of information (it shrinks as you time it and as your best known rate grows).
     extra_cost(act) -> (prep minutes, prep ISK) for things that need set-up first (a combat ship); the set-up is spread over 5 runs.
     -> [{act, eff, mid, voi, prep_min}] best first."""
     out = []
-    for a in status(con, wallet):
+    for a in status(con, wallet, hull):
         if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a["id"] in covered or a.get("blocked"):
             continue
         if (a.get("how") or "").lower().startswith("later"):

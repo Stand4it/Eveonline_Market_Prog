@@ -49,7 +49,13 @@
    "minutes": 45,
    "risk": "low",
    "requires": {},
-   "how": "Mine in your Venture ~45 min (best site: see WHERE), dock, unload the ore into the hangar, then stop. Rotonos has 2 Federation Managed belts with Veldspar, Scordite and Pyroxeres 0-Grade."
+   "how": "Mine in your Venture ~45 min (best site: see WHERE), dock, unload the ore into the hangar, then stop. Rotonos has 2 Federation Managed belts with Veldspar, Scordite and Pyroxeres 0-Grade.",
+   "needs_hull": [
+    "Venture",
+    "Retriever",
+    "Procurer",
+    "Covetor"
+   ]
   },
   {
    "id": "haul_stock",
@@ -158,7 +164,14 @@
    "requires": {
     "Astrometrics": 1
    },
-   "how": "Scan down a data/relic site with probes (see Rounaminck's mission)."
+   "how": "Scan down a data/relic site with probes (see Rounaminck's mission).",
+   "needs_hull": [
+    "Imicus",
+    "Heron",
+    "Magnate",
+    "Probe",
+    "Astero"
+   ]
   },
   {
    "id": "salvaging",
@@ -176,7 +189,12 @@
    "requires": {
     "Salvaging": 1
    },
-   "how": "Salvage wrecks after combat missions with a salvager fitted."
+   "how": "Salvage wrecks after combat missions with a salvager fitted.",
+   "needs_hull": [
+    "Imicus",
+    "Catalyst",
+    "Cormorant"
+   ]
   },
   {
    "id": "manufacturing_t1",
@@ -416,7 +434,13 @@
    "requires": {},
    "how": "Emps Metyt, Axiosere (1 jump, Astral Mining): ore delivery. Others 6 jumps (Arant, Hotak, Tindfjalla).",
    "where": "Axiosere",
-   "offer_agent": "Emps Metyt"
+   "offer_agent": "Emps Metyt",
+   "needs_hull": [
+    "Venture",
+    "Retriever",
+    "Procurer",
+    "Covetor"
+   ]
   },
   {
    "id": "agent_rd",

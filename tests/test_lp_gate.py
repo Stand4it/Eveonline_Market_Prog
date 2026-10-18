@@ -20,3 +20,11 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HullGate(unittest.TestCase):
+    def test_hull_gate(self):
+        a = {"needs_hull": ["Imicus", "Heron"]}
+        self.assertTrue(catalog.missing_for(a, {}, 0.0, 0, "Capsule - Stand4it Dahl"))
+        self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, "Imicus - Stand4it Dahl"))
+        self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, None))          # no ship info: no gate

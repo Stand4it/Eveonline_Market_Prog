@@ -1077,7 +1077,7 @@ def next_action(con, g, p, full=False, ahead=False):
             return step_txt
 
         if not haul_on:
-            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep)[:3]:
+            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep, hull=(p.ship_name or ""))[:3]:
                 act = item["act"]
                 try:
                     txt = _test_step(act, "never timed")
