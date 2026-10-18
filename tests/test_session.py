@@ -597,6 +597,9 @@ class CatalogTests(unittest.TestCase):
         con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(778,'Industry',0.01,1)")
         con.execute("INSERT INTO character_skills(skill_id,level,sp) VALUES(778,1,100)")
         act, why, _ = pick_experiment(con, 6_900_000, 700_000.0, counter=2, last_exp=1, seen=set(seen))
+        self.assertNotEqual((act or {}).get("id"), "manufacturing_t1")        # the skill alone is not enough: no blueprint, no manufacturing test
+        con.execute("INSERT INTO my_blueprints(blueprint_id,me,te,runs) VALUES(1,0,0,-1)")
+        act, why, _ = pick_experiment(con, 6_900_000, 700_000.0, counter=2, last_exp=1, seen=set(seen))
         self.assertEqual(act["id"], "manufacturing_t1")
         self.assertIn("NEW", why)
 

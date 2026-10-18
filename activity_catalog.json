@@ -213,7 +213,8 @@
    "requires": {
     "Industry": 1
    },
-   "how": "Build a profitable T1 item (see `keep` and `bpbuy`); jobs run in the background."
+   "how": "Build a profitable T1 item (see `keep` and `bpbuy`); jobs run in the background.",
+   "needs_bp": true
   },
   {
    "id": "courier",

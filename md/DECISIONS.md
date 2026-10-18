@@ -387,3 +387,4 @@
 - 2026-10-18: Ikala Iijotsadan (Oichiya VII Moon 6) 'Move The Goods' recorded (19k+20k to Motsu III; unavailable until the jump count is known).
 - 2026-10-18: Nani Hananeri (Motsu VIII Moon 1) 'Moving the Consul' 1 of 4 recorded (33k+28k, same 0.9 system, available).
 - 2026-10-18: Yahutola Unen (Motsu VII Moon 5) 'Breakdown' recorded (21k+16k, 280 m3 to Oichiya I); pairs with Ikala Iijotsadan (Oichiya -> Motsu) and Nani Hananeri (Motsu) for a Motsu/Oichiya route.
+- 2026-10-18: the 'Manufacturing T1 items' test step is locked until the character owns a blueprint (catalog needs_bp, my_blueprints): it was offered with no blueprint. Same class as the LP-store and ship gates: every untimed activity needs its real prerequisites in the catalog (TODO: audit the remaining activities: Planetary industry needs a colony, T2 invention needs a T1 blueprint + datacores, Project Discovery etc.).

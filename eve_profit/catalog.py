@@ -28,6 +28,13 @@ def skill_levels(con):
 EVERMARKS_ID = 1000419        # EverMarks (the AIR/Omega currency) comes back from the loyalty endpoint as if it were a corporation: it is not spendable LP
 
 
+def bp_total(con):
+    try:
+        return int(con.execute("SELECT COUNT(*) FROM my_blueprints").fetchone()[0] or 0)
+    except Exception:                                                   # noqa: BLE001
+        return 0
+
+
 def lp_total(con):
     try:
         return int(con.execute("SELECT COALESCE(SUM(points),0) FROM lp_balance WHERE corporation_id<>?", (EVERMARKS_ID,)).fetchone()[0] or 0)
@@ -35,7 +42,7 @@ def lp_total(con):
         return 0
 
 
-def missing_for(act, levels, wallet, lp=None, hull=None, owned=()):
+def missing_for(act, levels, wallet, lp=None, hull=None, owned=(), bps=None):
     if act.get("blocked"):
         return [act["blocked"]]
     miss = [f"{k} {v}" for k, v in act.get("requires", {}).items() if levels.get(k.lower(), 0) < v]
@@ -43,6 +50,8 @@ def missing_for(act, levels, wallet, lp=None, hull=None, owned=()):
         miss.append(f"{act['isk_min']:,.0f} ISK")
     if hull is not None and act.get("needs_hull") and not any(w.lower() in (hull + " " + " ".join(owned)).lower() for w in act["needs_hull"]):
         miss.append(f"a ship of the right kind ({'/'.join(act['needs_hull'][:3])}); you fly: {hull or 'nothing'}")
+    if act.get("needs_bp") and bps is not None and bps < 1:
+        miss.append("a blueprint you own (none yet: `bpbuy` shows what is worth buying)")
     if act.get("lp_min") and (lp or 0) < act["lp_min"]:
         miss.append(f"{act['lp_min']:,} loyalty points (you hold {lp or 0:,}: finish agent missions first)")
     return miss
@@ -60,12 +69,13 @@ def runs_for(con, act):
 
 
 def status(con, wallet=0.0, hull=None, owned=()):
+    bps = bp_total(con)
     levels = skill_levels(con)
     lp = lp_total(con)
     out = []
     for a in load():
         n, rate = runs_for(con, a)
-        miss = missing_for(a, levels, wallet, lp, hull, owned)
+        miss = missing_for(a, levels, wallet, lp, hull, owned, bps)
         out.append({**a, "runs": n, "rate": rate, "missing": miss, "unlocked": not miss,
                     "state": "MODELED" if n >= MODELED_RUNS else ("PARTIAL" if n else "UNMODELED")})
     return out

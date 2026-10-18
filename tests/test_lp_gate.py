@@ -35,3 +35,11 @@ class OwnedShip(unittest.TestCase):
         a = {"needs_hull": ["Imicus"]}
         self.assertTrue(catalog.missing_for(a, {}, 0.0, 0, "Capsule - X", ()))
         self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, "Capsule - X", ("Imicus", "Venture")))      # you own one: planned, not locked
+
+
+class BlueprintGate(unittest.TestCase):
+    def test_bp_gate(self):
+        a = {"needs_bp": True}
+        self.assertTrue(catalog.missing_for(a, {}, 0.0, 0, None, (), 0))
+        self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, None, (), 2))
+        self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, None, (), None))      # unknown: no gate
