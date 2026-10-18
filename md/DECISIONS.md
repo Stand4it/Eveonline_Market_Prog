@@ -376,3 +376,4 @@
 - 2026-10-18: Hakodan Tia (Venilen XII Moon 1) 'Lost That Bet' recorded (28k+28k, fetch from Hogimo VI); Hogimo now has three Venilen jobs (~138k ISK + 88 LP on one run).
 - 2026-10-18: Sikakainen Arishi (Venilen XII Moon 1) 'A Humble Gift' recorded (22k+23k, 320 m3, inside Venilen; unavailable until the hold size is confirmed).
 - 2026-10-18: EverMarks (corporation id 1000419 in the ESI loyalty data, 17,500 held) no longer counts as loyalty points: it unlocked the LP-store step and would have been priced as an LP redemption.
+- 2026-10-18: the Incursus was LOST while mining (user report): it was blown up. Character now flies a Capsule; ships left: Velator, Imicus (30100058), Venture (30002659). Lesson for the planner: mining in a frigate is not a modeled activity; mining belongs to the Venture, and the system where it died should be marked risky (ask the user which).
