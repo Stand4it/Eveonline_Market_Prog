@@ -663,7 +663,8 @@ def _run(a):
             except Exception:                                           # noqa: BLE001
                 pass
             print(f"Read slots and class of {_ships.refresh(con, esi_)} more ships from the game (kept: this is done once per ship).")
-        print(_ships.report(con, Graph(con), p, a.item))
+        from .graph import Graph as _GraphShips
+        print(_ships.report(con, _GraphShips(con), p, a.item))
     elif a.cmd == "models":
         from .catalog import models_report
         print(models_report(con, p.wallet_isk))
