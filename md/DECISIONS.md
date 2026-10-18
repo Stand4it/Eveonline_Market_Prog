@@ -365,3 +365,4 @@
 - 2026-10-18: Korjiki Porkala (Sankkasen IX Moon 12) 'Bio-Engineering Pays' recorded (31k+25k to Santola; unavailable until the jump count is known); loop idea Sankkasen IX -> Santola VIII -> Sankkasen VII chains it with Adomago Karjus and Alalomo Mainsaken (~174k ISK + 107 LP).
 - 2026-10-18: Ruukiken Ittoh 'The Heiress' (to Tintoh) and Bivira Noriti 'Lost That Bet' (to Waira) recorded at Sankkasen (57k each; unavailable until the jump counts are known).
 - 2026-10-18: Tomugo Nattotolen 'Break Their Will' recorded (combat, destroy a repair station in Huttaken, 65k+69k + 83 LP, unavailable until the Incursus is combat-ready).
+- 2026-10-18: Nuun Surula (Halaima VII Moon 6) 'Save The Children' recorded (24k+23k to Kamio; unavailable until the jump count is known).

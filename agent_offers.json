@@ -1087,6 +1087,25 @@
    "career": "Security",
    "needs": "a combat-ready ship that passes the 99% win rule: a structure (hitpoints unknown) and possibly pirate guards. Do not accept until the Incursus has ammo and a repairer; the overview needs 'Large Collidable Structure' ticked to see the target",
    "note": "Seen 2026-10-18 ~3:25 am, standing 0.0. 134,000 ISK + 83 LP with the bonus. Huttaken (0.6) is the objective system: the jump count from the agent is not known here. The agent's station name was scrolled out of the screenshot."
+  },
+  {
+   "agent": "Nuun Surula (Distribution, L1, Halaima VII - Moon 6 - Caldari Provisions Warehouse)",
+   "mission": "'Save The Children': courier 3 x Crates of Clothing (180 m3) from this station to Kamio VI - Moon 7 - Sukuuvestaa Corporation Production Plant (0.7). Pays 24,000 ISK + 30 LP; bonus 23,000 ISK within 54 min.",
+   "isk": 24000,
+   "bonus": 23000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 20,
+   "jumps": 0,
+   "available": false,
+   "where": "Halaima VII - Moon 6 - Caldari Provisions Warehouse (0.7)",
+   "agent_system": "Halaima",
+   "to_system": "Kamio",
+   "career": "Distribution",
+   "needs": "nothing special (180 m3, no combat); the jump count Halaima -> Kamio is not known here: enter it, then set available true. You flew Halaima -> Kamio on the way to Jita, so the route is known to be safe",
+   "note": "Seen 2026-10-18 ~3:35 am, standing 0.0. 47,000 ISK + 30 LP one way with the bonus."
   }
  ],
  "min_per_jump": 3.0,
