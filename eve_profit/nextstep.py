@@ -1062,10 +1062,18 @@ def next_action(con, g, p, full=False, ahead=False):
         except Exception:                                        # noqa: BLE001
             _owned = []
 
+        try:
+            from . import tools as _tl
+            _tools = {"fitted": _tl.fitted_now(con), "held": _tl.held_anywhere(con)} if (p.ship_name or "") else None
+        except Exception:                                        # noqa: BLE001
+            _tl, _tools = None, None
+
         def _need_ship(a_):
-            """The ship an activity needs when you fly something else: (name, 0, system id) of one you OWN in THIS system (board it: no detour), else None."""
+            """The ship an activity needs when the ship you fly lacks its tool: (name, 0, system id) of a parked one of the usual kind in THIS system (board it: no detour), else None."""
             nh = a_.get("needs_hull")
-            if not nh or any(w.lower() in (p.ship_name or "").lower() for w in nh):
+            if _tools is not None and a_.get("needs_tool") and _tools["fitted"].get(a_["needs_tool"], 0) >= 1:
+                return None                                      # the ship you fly already carries the tool
+            if not nh or (_tools is None and any(w.lower() in (p.ship_name or "").lower() for w in nh)):
                 return None
             try:
                 here_ = g.id_of(p.current_system)
@@ -1084,7 +1092,17 @@ def next_action(con, g, p, full=False, ahead=False):
         def _test_step(act, reason):
             step_txt = experiment_step(act, reason)
             _ship = _need_ship(act)
-            if act.get("needs_hull") and not _ship and not any(w.lower() in (p.ship_name or "").lower() for w in act["needs_hull"]):
+            nt_ = act.get("needs_tool")
+            if nt_ and _tools is not None and _tools["fitted"].get(nt_, 0) < 1 and not _ship:
+                # the tool is not on the ship you fly: if its module lies in THIS station and the hull has a free high slot, fitting it is the step; else it waits (long view / shopping)
+                item_ = _tl.TOOLS[nt_]["buy"][0][0]
+                here_ = g.id_of(p.current_system)
+                held_here = con.execute("SELECT COALESCE(SUM(i.quantity),0) FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE t.name=? COLLATE NOCASE AND i.system_id=?", (item_, here_)).fetchone()[0]
+                if held_here and not (p.ship_name or "").lower().startswith("capsule"):
+                    return (f"STEP: FIT {_tl.TOOLS[nt_]['buy'][0][1]} x {item_} to your {(p.ship_name or '').split(' - ')[0]} (for: {act['name']})\n   DO ONLY THIS: open the fitting window (Alt+F) and drag the {item_} from the hangar into a high slot.\n"
+                            f"   LATER: {act['name']} (about {act.get('minutes', 30)} min, never timed)")
+                return None
+            if not nt_ and act.get("needs_hull") and not _ship and not any(w.lower() in (p.ship_name or "").lower() for w in act["needs_hull"]):
                 return None                                      # a modeling step must be doable NOW: wrong ship and none here -> it waits in the long view
             if _ship:                                            # your own ship lies in this very station: board it, then the activity
                 nm_ = _ship[0]
@@ -1111,7 +1129,7 @@ def next_action(con, g, p, full=False, ahead=False):
             return step_txt
 
         if not haul_on:
-            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep, hull=(p.ship_name or ""), owned=[n_ for n_, _s in _owned])[:3]:
+            for item in equal_footing(con, p.wallet_isk, best_known, here=p.current_system, covered=covered_by_offers(), extra_cost=_prep, hull=(p.ship_name or ""), owned=[n_ for n_, _s in _owned], tools=_tools)[:3]:
                 act = item["act"]
                 try:
                     txt = _test_step(act, "never timed")

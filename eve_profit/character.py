@@ -163,6 +163,11 @@ def sync_character(con, esi, cid, profile):
         pass
     profile.ship_name = ship.get("ship_name", profile.ship_name)
     profile.ship_type_id = ship["ship_type_id"]
+    try:
+        from .shipslots import remember as _slots
+        _slots(con, esi, ship["ship_type_id"])                 # high / turret / launcher slots of the hull you fly: what tools it can carry
+    except Exception:                                                   # noqa: BLE001
+        pass
     cap = next((a["value"] for a in _type(esi, ship["ship_type_id"]).get("dogma_attributes", [])
                 if a["attribute_id"] == CAPACITY_ATTR), None)
     if cap:
@@ -258,6 +263,11 @@ def sync_character(con, esi, cid, profile):
             if _is_ship(con, esi, a["type_id"]):
                 con.execute("INSERT OR REPLACE INTO my_ships VALUES(?,?,?,?)", (a.get("item_id", 0), a["type_id"], sid, lid))
                 _fill_capacity(con, esi, a["type_id"])
+                try:
+                    from .shipslots import remember as _slots2
+                    _slots2(con, esi, a["type_id"])
+                except Exception:                                       # noqa: BLE001
+                    pass
                 ships += 1
             else:
                 skipped += 1                   # assembled non-ship (container, rigged module...)

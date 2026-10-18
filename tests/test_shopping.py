@@ -48,3 +48,25 @@ class ShoppingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ToolsTests(unittest.TestCase):
+    def test_fit_plan_uses_slots(self):
+        from eve_profit import tools
+        self.assertEqual(tools.fit_plan({"high": 3, "turret": 2, "launcher": 1}), [("scanning", 1), ("salvaging", 1), ("mining", 1)])
+        self.assertEqual([t for t, _ in tools.fit_plan({"high": 6, "turret": 4, "launcher": 2})], ["scanning", "salvaging", "mining"])
+        self.assertEqual(tools.fit_plan({"high": 1, "turret": 1, "launcher": 0}), [("salvaging", 1)])
+        self.assertEqual(tools.fit_plan(None), [])
+
+    def test_tool_wishes_follow_the_best_hull(self):
+        from eve_profit import tools
+        con = ShoppingTests()._world()
+        con.execute("INSERT INTO meta VALUES('ship_slots', ?)", ('{"1": {"high": 3, "mid": 2, "low": 3, "turret": 2, "launcher": 1}}',))
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(1,'Frigate X',2500,25)")
+        con.execute("INSERT INTO my_ships(item_id,type_id,system_id,location_id) VALUES(5,1,30000001,60000001)")
+        p = Profile(current_system="Home", wallet_isk=1e7, current_location_id=60000001)
+        p.ship_name = "Capsule - X"
+        p.ship_type_id = 0
+        items = {w["item"] for w in shopping.wishes(con, p)}
+        self.assertTrue({"Core Probe Launcher I", "Salvager I", "Miner I"} <= items, items)
+        self.assertEqual(tools.carrier(con, p)[0], "Frigate X")

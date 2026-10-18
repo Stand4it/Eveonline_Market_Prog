@@ -39,6 +39,24 @@ def wishes(con, p):
             out.append({"item": k["tank_buy"], "qty": 1, "why": "armor repairer (tank)"})
     except Exception:                                                   # noqa: BLE001
         pass
+    try:                                                                # the TOOLS the other careers need (scanning, salvaging, mining): any hull with the slots carries them
+        from . import tools as _tl
+        if (getattr(p, "ship_name", "") or ""):
+            fitted, held = _tl.fitted_now(con), _tl.held_anywhere(con)
+            car = _tl.carrier(con, p)
+            fit = dict(car[2]) if car else {}
+            for t in _tl.PRIORITY:
+                if car and t not in fit:
+                    continue                                            # the best hull you own has no slots left for this tool
+                for item, qty in _tl.TOOLS[t]["buy"]:
+                    qty = fit.get(t, qty) if t == "mining" else qty
+                    first = item == _tl.TOOLS[t]["buy"][0][0]
+                    have = (fitted[t] + held[t]) if first else acquire.held(con, item)
+                    if have < qty:
+                        why = f"{_tl.TOOLS[t]['label']} for {t}" + (f" (fits your {car[0]}: {car[1].get('high', '?')} high slots)" if car else "")
+                        out.append({"item": item, "qty": qty - have, "why": why})
+    except Exception:                                                   # noqa: BLE001
+        pass
     for w in _extras():
         try:
             need = int(w.get("qty", 1)) - acquire.held(con, w["item"])
@@ -86,6 +104,17 @@ def lines(con, g, p):
     if not ws:
         return ""
     L = ["SHOPPING (bought where cheapest, when your route passes: every later step then uses what you own):"]
+    try:
+        from . import tools as _tl
+        car = _tl.carrier(con, p)
+        if car:
+            sl = car[1]
+            L.append(f"   BEST CARRIER you own: {car[0]} ({sl.get('high', 0)} high slots, {sl.get('turret', 0)} turret and {sl.get('launcher', 0)} launcher hardpoints): "
+                     "carries at the same time " + (", ".join(f"{n} x {t}" for t, n in car[2]) or "nothing yet") + " (a bigger hull carries more)")
+        else:
+            L.append("   Hull slots are not known yet: run  python -m eve_profit sync  (it reads them for the ship you fly and every ship you own)")
+    except Exception:                                                   # noqa: BLE001
+        pass
     for w in ws:
         way = _way(con, g, p, w)
         if not way or not way.get("buy"):

@@ -55,7 +55,8 @@
     "Retriever",
     "Procurer",
     "Covetor"
-   ]
+   ],
+   "needs_tool": "mining"
   },
   {
    "id": "haul_stock",
@@ -171,7 +172,8 @@
     "Magnate",
     "Probe",
     "Astero"
-   ]
+   ],
+   "needs_tool": "scanning"
   },
   {
    "id": "salvaging",
@@ -194,7 +196,8 @@
     "Imicus",
     "Catalyst",
     "Cormorant"
-   ]
+   ],
+   "needs_tool": "salvaging"
   },
   {
    "id": "manufacturing_t1",
@@ -441,7 +444,8 @@
     "Retriever",
     "Procurer",
     "Covetor"
-   ]
+   ],
+   "needs_tool": "mining"
   },
   {
    "id": "agent_rd",
