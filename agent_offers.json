@@ -1372,6 +1372,25 @@
    "career": "Distribution",
    "needs": "nothing special (100 m3, no combat); the jump count Oichiya -> Motsu is not known here: enter it, then set available true. Motsu is 0.9 and Oichiya 0.8: both safe. The 46 min clock is tight and covers one way only",
    "note": "Seen 2026-10-18 ~6:05 pm, standing 0.0. 39,000 ISK + 21 LP one way with the bonus: the lowest pay of the couriers except 'Seeding a Future'. Only worth it if Motsu is on a route you fly anyway."
+  },
+  {
+   "agent": "Nani Hananeri (Distribution, L1, Motsu VIII - Moon 1 - Rapid Assembly Warehouse)",
+   "mission": "'Regional Stability - Moving the Consul' (1 of 4): fetch 1 x Minmatar Emissary (0.1 m3) from Motsu VII - Moon 5 - Caldari Constructions Foundry (0.9) and bring him to this station (Motsu VIII, Moon 1). Pays 33,000 ISK + 36 LP; bonus 28,000 ISK within 1 h 24 min.",
+   "isk": 33000,
+   "bonus": 28000,
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "task_min": 12,
+   "jumps": 0,
+   "available": true,
+   "where": "Motsu VIII - Moon 1 - Rapid Assembly Warehouse (0.9)",
+   "agent_system": "Motsu",
+   "to_system": "Motsu",
+   "career": "Distribution",
+   "needs": "nothing special: pickup (Motsu VII Moon 5) and drop-off (Motsu VIII Moon 1) are both in Motsu (0.9), 0.1 m3, no combat",
+   "note": "Seen 2026-10-18 ~6:15 pm, standing 0.0. Part 1 of 4. 61,000 ISK + 36 LP for about 12 minutes inside one 0.9 system (roughly 300k ISK/hr). Motsu III is also where Ikala Iijotsadan's courier (Oichiya) delivers (39k), and Motsu is a 0.9 system so it is safe. Same mission as Adomago Karjus's (Sankkasen), different agent."
   }
  ],
  "min_per_jump": 3.0,

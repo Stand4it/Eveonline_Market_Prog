@@ -385,3 +385,4 @@
 - 2026-10-18: Uchineto Akarichi (Isenairos VII Moon 4) 'A New Venture' 1 of 5 recorded (24k+23k, book at Saila VII): Saila is the hub of three Isenairos jobs (~139k ISK + 96 LP per round trip).
 - 2026-10-18: Chin Irjalamon (Isenairos VI Caldari Constructions Warehouse) 'Corporate Documents' recorded (25k+34k to Laah VIII; unavailable until the jump count is known).
 - 2026-10-18: Ikala Iijotsadan (Oichiya VII Moon 6) 'Move The Goods' recorded (19k+20k to Motsu III; unavailable until the jump count is known).
+- 2026-10-18: Nani Hananeri (Motsu VIII Moon 1) 'Moving the Consul' 1 of 4 recorded (33k+28k, same 0.9 system, available).
