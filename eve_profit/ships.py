@@ -110,12 +110,12 @@ def report(con, g, p, text=""):
         plan = tools.fit_plan(d["slots"])
         rows.append((not ok, pr[0] if pr else 1e18, d, ok, why, pr, plan))
     rows.sort(key=lambda r: (r[0], r[1]))
-    L = [f"{'ship':<22} {'class':<18} {'H/M/L':<7} {'tur/lau':<8} {'price':>12} {'jumps':>5}  can fly / carries at once"]
+    L = [f"{'ship':<22} {'class':<18} {'H/M/L':<7} {'tur/lau':<8} {'price':>12} {'jumps':>5} {'cheapest in':<12} can fly / carries at once"]
     for _, _, d, ok, why, pr, plan in rows[:60]:
         sl = d["slots"]
         carries = ", ".join(f"{n} x {t}" for t, n in plan) or "-"
         L.append(f"{d['name'][:22]:<22} {d['group'][:18]:<18} {sl.get('high', 0)}/{sl.get('mid', 0)}/{sl.get('low', 0):<3} {sl.get('turret', 0)}/{sl.get('launcher', 0):<6} "
-                 + (f"{pr[0]:>12,.0f} {pr[1]:>5}" if pr else f"{'no price':>12} {'':>5}") + "  " + ("YES" if ok else f"needs {why[:40]}") + f"  | {carries}")
+                 + (f"{pr[0]:>12,.0f} {pr[1]:>5} {pr[2][:12]:<12}" if pr else f"{'no price':>12} {'':>5} {'':<12}") + " " + ("YES" if ok else f"needs {why[:40]}") + f"  | {carries}")
     L += ["", f"{len(rows)} ships ({len(cat)} read from the game). Filter by name or class:  ships --item Frigate   |   more ships:  scan, then  ships --refresh"]
     return "\n".join(L)
 
