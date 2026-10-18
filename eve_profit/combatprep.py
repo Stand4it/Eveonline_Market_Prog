@@ -73,6 +73,14 @@ def next_step(con, g, p, hop_to):
                     return (f"STEP: BOARD your {name} (combat hull)\n   DO ONLY THIS: in the station window open the Hangars tab > Ship Hangar > right-click your {name} > Board Ship.\n"
                             f"   LATER: fit guns, ammo and tank; you fly a {s['hull']} now, which is not a combat ship")
                 return hop_to(sysname, f"your {name} is there: board it, then fit guns, ammo and tank", [])
+        try:                                                            # the cheapest source first: fly there, THEN buy (same logic as the guns, ammo and repairer)
+            from .acquire import best_way, first_action
+            w = best_way(con, g, p, k["hulls"][0], 1, None, can_build=False, live=True)
+            t = first_action(con, g, p, w, hop_to) if w else ""
+            if t:
+                return t
+        except Exception:                                               # noqa: BLE001
+            pass
         return ("STEP: BUY a combat frigate\n   DO ONLY THIS: " + f"Market > {k['hulls'][0]} > buy one at the cheapest station near you (about 100,000 ISK); see `next --plan` for the sources.")
     # 2. turrets
     turrets_fitted = sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"]))
