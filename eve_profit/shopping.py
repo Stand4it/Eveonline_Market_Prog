@@ -143,5 +143,5 @@ def lines(con, g, p):
         elif way["mode"] == "build":
             cheaper = "; BUILDING is cheaper than buying"
         where = "HERE" if b["system"] == p.current_system else f"{b['system']} ({b['jumps']} jumps)"
-        L.append(f"   {w['qty']} x {w['item']} ({w['why']}): ~{b['price'] * way['qty']:,.0f} ISK at {b['station'] or b['system']}, {where}{cheaper}")
+        L.append(f"   {w['qty']} x {w['item']} ({w['why']}): ~{b['price'] * way['qty']:,.0f} ISK at " + (f"{b['station']}, " if b['station'] and b['station'] != b['system'] else "") + f"{where}{cheaper}")
     return "\n".join(L)
