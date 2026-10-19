@@ -79,6 +79,24 @@ def hide_here(con, p, name=""):
     return n
 
 
+def _known_places():
+    """Lower-cased text of every recorded offer (agent, where, mission): a station named there was already READ, even when its agents' names are not resolved yet."""
+    import os
+    try:
+        offers = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json"), encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        return ""
+    return "\n".join(f"{o.get('agent', '')} {o.get('where', '')}" for o in offers).lower()
+
+
+def _station_known(con, loc, places):
+    try:
+        r = con.execute("SELECT name FROM stations WHERE station_id=?", (loc,)).fetchone()
+    except Exception:                                                   # noqa: BLE001
+        return False
+    return bool(r and r[0] and r[0].lower() in places)
+
+
 def _rate(act, best_known):
     from .catalog import INFO_WEIGHT, RISK_HAIRCUT, voi
     lo, hi = act["prior"]
@@ -104,6 +122,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
     standing = {r[0]: r[1] for r in con.execute("SELECT from_id,standing FROM standings")}
     names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")} if "agent_names" in {r[0] for r in con.execute("SELECT name FROM sqlite_master")} else {}
     known = _known_agent_names()
+    places = _known_places()
     hidden = _none(con)
     shown = _shown(con)
     docked = int(getattr(p, "current_location_id", 0) or 0)
@@ -116,7 +135,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
         if not eligible(con, r, standing, hidden):
             continue
         nm = names.get(r["agent_id"], "")
-        if nm.lower() in known or now - shown.get(str(r["location_id"]), 0) < 12 * 3600:
+        if nm.lower() in known or now - shown.get(str(r["location_id"]), 0) < 12 * 3600 or _station_known(con, r["location_id"], places):
             continue
         act = acts.get(DIV_ACTIVITY[r["division_id"]])
         if not act:
@@ -180,7 +199,7 @@ def here_note(con, p, now=None):
         return ""
     now = now or time.time()
     try:
-        if now - _shown(con).get(str(docked), 0) < 12 * 3600:
+        if now - _shown(con).get(str(docked), 0) < 12 * 3600 or _station_known(con, docked, _known_places()):
             return ""
         from .agentmap import get_map
         div = get_map(con)

@@ -73,6 +73,16 @@ class TestAgentLeads(unittest.TestCase):
         self.assertEqual(agentleads.hide_here(con, _p(500)), 3)
         self.assertEqual(agentleads.candidates(con, G(), _p(), 1_000_000, lambda *a: "x"), [])
 
+    def test_station_with_a_recorded_offer_is_not_read_again(self):
+        from unittest import mock
+        con = _con()
+        with mock.patch.object(agentleads, "_known_places", return_value="agent x (distribution, l1, b ii - depot) b ii - depot"):
+            out = agentleads.candidates(con, G(), _p(), 1_000_000, lambda *a: "x", limit=5)
+        self.assertTrue(all("B" not in o[1].split()[-1] for o in out))          # B II - Depot's agents are known: no read step for system B
+        with mock.patch.object(agentleads, "_known_places", return_value="a iv - plant"):
+            self.assertEqual(agentleads.here_note(con, _p(500)), "")
+            self.assertEqual(agentleads.candidates(con, G(), _p(500), 1_000_000, lambda *a: "x"), [])      # the station is known: no READ step
+
 
 if __name__ == "__main__":
     unittest.main()
