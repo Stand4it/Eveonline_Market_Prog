@@ -408,3 +408,4 @@
 - 2026-10-19: AIR daily goals: a goal already at 3/3 is no step (named 'done already'); Scan 5 Signatures only counts when a probe launcher is FITTED on the ship you fly (not in a capsule, no assumed purchase+fit).
 - 2026-10-19: blocked AIR daily goals (scan needs a launcher hull + kit, mining needs lasers) are listed in SHOPPING by ISK per minute with what is missing; the scanning kit becomes a shopping wish (bought where cheapest when the route passes) once you own a hull with a launcher hardpoint; they join the plan as steps when doable.
 - 2026-10-19: next --plan shows EVERYTHING BY ISK PER MINUTE (allplans.py): every catalog activity + blocked daily goals on one list, READY or LATER with its missing prerequisites, modeled or guess, and unmodeled ones counted with their value of information (collecting models/offers is worth ISK).
+- 2026-10-19: Aakalen Naniro (Saila, Mining L1) 'Asteroid Catastrophe' 40k+43k, 1,080 m3 Augumene, entered in agent_offers.json.

@@ -16,3 +16,4 @@ Open agent offers (agent_offers.json):
 - Nani Hananeri: 'Regional Stability - Moving the Consul' (1 of 4): fetch 1 x
 - Ibeshi Keirsaa: 'The Heiress' (1 of 5): courier 1 x Miniature Slaver (0.0 m3
 - Torimanoi Vittoh: 'A Special Breed': courier 3 x Group of Kameiras (210 m3) fr
+- Aakalen Naniro: 'Asteroid Catastrophe': scan the mission site in Saila (0.9,

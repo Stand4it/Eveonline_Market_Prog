@@ -1450,6 +1450,26 @@
    "m3": 210.0,
    "needs": "a ship with 210 m3 of cargo (a capsule cannot carry it); pickup is at the agent's station, drop in the same system",
    "note": "Seen 2026-10-19, standing 0.0. Same station as Ibeshi: accept both, deliver this one inside Saila."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Saila",
+   "career": "Mining",
+   "where": "Saila VII - Moon 11 - Rapid Assembly Factory (0.9)",
+   "agent": "Aakalen Naniro (Mining, L1, Saila VII - Moon 11 - Rapid Assembly Factory)",
+   "mission": "'Asteroid Catastrophe': scan the mission site in Saila (0.9, bookmark given) for Augumene, mine 3,600 units (1,080 m3) and bring them to the agent at Saila VII - Moon 11. Pays 40,000 ISK + 46 LP; bonus 43,000 ISK within 1 h 14 min.",
+   "isk": 40000,
+   "bonus": 43000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Saila",
+   "m3": 1080.0,
+   "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the site is a scanned mission site in Saila",
+   "note": "Seen 2026-10-19, standing 0.0. Same station as the Saila distribution agents, so one visit reads and accepts all of them."
   }
  ],
  "min_per_jump": 3.0,
