@@ -35,3 +35,9 @@
 - Add a 'lead' command (system, what, count, activity) so a scan can be recorded without editing leads.json; per-wreck value from real salvage runs.
 - HyperNet Relay raffles (seen 2026-10-17: Naglfar 512 nodes at 10,745,704 ISK, est. value 4.22B, 284 left, collect in Uuna 0.4 lowsec 9 jumps): expected value per node = est value / nodes = 8.24M vs 10.75M price = -23%; 1 node = the whole wallet; prize is collected in lowsec. SKIP unless EV >= price AND the pickup is in safe space AND one node is under ~5% of the wallet; model it as a plan only then.
 - 2026-10-18 RULE (from the Incursus loss): anything done UNATTENDED or half-watched (mining, AFK waiting, long autopilot, 'looked away') belongs in 1.0 space with the right ship and a watched local; 0.5-0.9 space is only for active, watched work. Planner follow-up: tag mining / waiting steps as needing 1.0 and warn when the system is lower.
+
+## Hourly refresh (scripts/hourly.bat)
+Create the task once (PowerShell, one line):
+schtasks /Create /SC HOURLY /TN "EveProfitRefresh" /TR "\"C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline\scripts\hourly.bat\"" /F
+Remove it:  schtasks /Delete /TN "EveProfitRefresh" /F      Log: hourly.log in the project folder.
+Open: more grabs (agent lists are already in the game data; add mission windows only from screenshots); runs only while the PC is on and awake.
