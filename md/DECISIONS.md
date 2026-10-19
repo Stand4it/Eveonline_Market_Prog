@@ -415,3 +415,4 @@
 - 2026-10-19: next no longer crashes when the hourly refresh holds the database (sqlite 'disk I/O error' while setting the game destination): it prints a note instead.
 - 2026-10-19: an agent station named in any recorded offer (agent_offers.json agent/where text) is treated as already read, even when its agents' names are not resolved (bug: Kahmaken Wamonen at Santola was offered for a re-read).
 - 2026-10-19: hourly.bat also runs 'agents --within 6' so agent and station names near you are resolved (the already-read check needs station names; unresolved ones showed 'a station in Santola').
+- 2026-10-19: Juunigaishi agents read (Epas Hopara 'Party Goods' 23k+23k 270 m3 to Isikesu; Porhila Huken 'Move The Goods' 23k+23k 100 m3 to Haatomo); jump counts are estimates.
