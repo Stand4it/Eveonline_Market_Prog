@@ -1,4 +1,5 @@
 """Command line: python -m eve_profit <command>"""
+import sqlite3
 import argparse
 import os
 import sys
@@ -569,7 +570,10 @@ def _run(a):
         print(txt if (a.all or a.plan) else task_block(txt))
         if not (a.all or a.plan):
             from .autopilot import auto_destination
-            line = auto_destination(txt, Graph(con), a.client_id)
+            try:
+                line = auto_destination(txt, Graph(con), a.client_id)
+            except sqlite3.OperationalError as e:                      # the hourly refresh writes the database at the same time: the step above is still right
+                line = f"(could not set the game destination: the database was busy: {e}; run  python -m eve_profit next  again in a minute)"
             if line:
                 print("\n" + line)
     elif a.cmd == "zkill":
