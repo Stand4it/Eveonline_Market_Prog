@@ -37,7 +37,8 @@
 - 2026-10-18 RULE (from the Incursus loss): anything done UNATTENDED or half-watched (mining, AFK waiting, long autopilot, 'looked away') belongs in 1.0 space with the right ship and a watched local; 0.5-0.9 space is only for active, watched work. Planner follow-up: tag mining / waiting steps as needing 1.0 and warn when the system is lower.
 
 ## Hourly refresh (scripts/hourly.bat)
-Create the task once (PowerShell, one line):
-schtasks /Create /SC HOURLY /TN "EveProfitRefresh" /TR "\"C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline\scripts\hourly.bat\"" /F
-Remove it:  schtasks /Delete /TN "EveProfitRefresh" /F      Log: hourly.log in the project folder.
+Create the task once (PowerShell, one line; schtasks /TR chokes on the spaces in the path, so use the cmdlets):
+$a = New-ScheduledTaskAction -Execute 'C:\Users\Martin Dahl\OneDrive\Documents\EVE\eveonline\scripts\hourly.bat'; $t = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1); Register-ScheduledTask -TaskName EveProfitRefresh -Action $a -Trigger $t
+Run it now:  Start-ScheduledTask -TaskName EveProfitRefresh
+Remove it:  Unregister-ScheduledTask -TaskName EveProfitRefresh -Confirm:$false      Log: hourly.log in the project folder.
 Open: more grabs (agent lists are already in the game data; add mission windows only from screenshots); runs only while the PC is on and awake.
