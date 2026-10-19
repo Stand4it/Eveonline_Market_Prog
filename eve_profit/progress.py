@@ -8,7 +8,7 @@ from .careers import MIN_RUNS, career_of_activity
 
 _FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "progress_values.json")
 DEFAULTS = {"career_point_isk": 55000.0, "agent_step": 30000.0, "new_career_run": 60000.0, "career_runs_until_measured": MIN_RUNS,
-            "priors_isk_hr": {"Project Discovery": 120000.0, "Mining": 150000.0}, "prior_minutes": {"Project Discovery": 30, "Mining": 45}}
+            "priors_isk_hr": {"Project Discovery": 300000.0, "Mining": 150000.0}, "prior_minutes": {"Project Discovery": 30, "Mining": 45}}
 
 
 def values():
@@ -24,6 +24,8 @@ def run_counts(con):
         for (n,) in con.execute("SELECT activity FROM activity_log WHERE hours>0"):
             c = career_of_activity(n)
             out[c] = out.get(c, 0) + 1
+        if out.get("Project Discovery"):                                # the first run is the one-time tutorial: it is not a model run
+            out["Project Discovery"] -= 1
     except Exception:                                                   # noqa: BLE001
         pass
     return out

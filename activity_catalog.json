@@ -26,13 +26,14 @@
     "project discovery"
    ],
    "prior": [
-    60000,
-    300000
+    250000,
+    450000
    ],
    "minutes": 30,
+   "skip_first_runs": 1,
    "risk": "none",
    "requires": {},
-   "how": "Neocom > Business > Project Discovery: classify cell images for about 30 minutes (works docked)."
+   "how": "Neocom > Business > Project Discovery: classify cell images for about 30 minutes (works docked; the tutorial is done, samples pay about 28,500-30,000 ISK each at 90%+ accuracy)."
   },
   {
    "id": "mining_belt",

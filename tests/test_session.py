@@ -581,9 +581,13 @@ class CatalogTests(unittest.TestCase):
         self.assertTrue(st["pd"]["unlocked"])
         self.assertFalse(st["agent_l2_security"]["unlocked"])               # needs Gallente Frigate 3 etc.
         self.assertIn("Trade 2", st["station_trading"]["missing"] or ["Trade 2"])
-        for i in range(3):
+        for i in range(4):                                                  # the first run is the one-time tutorial: it does not count
             con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Project Discovery',50000,0.5,?)", (i,))
         self.assertEqual({a["id"]: a for a in status(con)}["pd"]["state"], "MODELED")
+        con2 = self._con()
+        con2.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Project Discovery',116000,0.8,1)")
+        pd = {a["id"]: a for a in status(con2)}["pd"]
+        self.assertEqual((pd["runs"], pd["state"]), (0, "UNMODELED"))      # tutorial-only run: still the prior
         self.assertIn("MODEL MAP", models_report(con, 6_900_000))
 
     def test_experiment_is_offered_every_fourth_step_and_on_new_unlock(self):

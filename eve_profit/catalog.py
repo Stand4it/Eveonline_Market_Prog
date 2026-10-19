@@ -66,10 +66,11 @@ def missing_for(act, levels, wallet, lp=None, hull=None, owned=(), bps=None, too
 def runs_for(con, act):
     """(runs, ISK/hr or None) from the activity_log names that contain one of the activity's match words."""
     try:
-        rows = con.execute("SELECT activity,isk,hours FROM activity_log WHERE hours>0").fetchall()
+        rows = con.execute("SELECT activity,isk,hours FROM activity_log WHERE hours>0 ORDER BY rowid").fetchall()
     except Exception:                                                   # noqa: BLE001
         return 0, None
     hit = [r for r in rows if any(m in r["activity"].lower() for m in act.get("match", []))]
+    hit = hit[int(act.get("skip_first_runs", 0)):]                       # a one-time start-up (Project Discovery's tutorial) is in the first run only: it does not count as a model run
     h = sum(r["hours"] for r in hit)
     return len(hit), (sum(r["isk"] for r in hit) / h if h else None)
 
