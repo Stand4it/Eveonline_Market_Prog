@@ -48,13 +48,10 @@ IDX_KEY = "screens_idx"
 
 
 def items():
-    """The screens to send, one per step: the AIR benefits window, then each agent window with an open offer."""
+    """The screens to send, one per step: the AIR benefits window, the epic arcs, then each agent window with an open offer (missions are not in the game data)."""
     out = [("the AIR Opportunities window with its top tabs visible (Opportunities | Active | Rewards)",
             "the Daily Goals and the tab bar: an amber number in brackets next to Rewards = rewards waiting to be claimed (claim them); no number = nothing to claim, no Rewards screenshot needed")]
-    for kind, why in (("Mining Agents", "mining missions: ore delivery (fits your Venture)"), ("Distribution Agents", "courier / cargo moves (no combat)")):
-        out.append((f"the Agency window > Agents & Missions > Mission Agents > {kind} (the third card on the Mission Agents page for Mining, the second for Distribution; "
-                    f"skip Security, R&D and Locator: combat is parked), sorted by distance",
-                    f"the list of {kind}: name, level, corporation, jumps away, standing needed ({why}; tip: Filters on the left: Level 1, Location, Security)"))
+    # the agent LISTS (who, where, level, division, jumps) come from the game data (agents table + names): only what the game does not give needs a screenshot
     out.append(("the Agency window > Agents & Missions > Epic Arcs",
                 "the arcs offered, their start system and how many jumps away"))
     out += [(f"{a}'s agent window (Start Conversation, so the current mission shows)", "the whole mission window: step title and number, objectives, rewards, bonus reward and its time limit, the agent's standing with you") for a in _agents()[:8]]
