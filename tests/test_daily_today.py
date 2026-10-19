@@ -21,5 +21,16 @@ class TodayPool(unittest.TestCase):
             del os.environ["EVE_TODAY_FILE"]
 
 
+class TestScanNeedsLauncher(unittest.TestCase):
+    def test_scan_goal_not_offered_without_a_fitted_launcher(self):
+        from unittest import mock
+        from eve_profit import dailygoals as d
+        with mock.patch.object(d, "_has_skill", return_value=True), mock.patch.object(d, "_fitted_names", return_value=[]):
+            o = d.scan_option(None)
+        self.assertFalse(o["ok"])
+        with mock.patch.object(d, "_has_skill", return_value=True), mock.patch.object(d, "_fitted_names", return_value=["core probe launcher i"]), mock.patch.object(d, "_min_ask", return_value=1000.0):
+            self.assertTrue(d.scan_option(None)["ok"])
+
+
 if __name__ == "__main__":
     unittest.main()

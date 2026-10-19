@@ -166,8 +166,11 @@ def scan_option(con):
     skill = _has_skill(con, "Astrometrics")
     if not skill:
         return {"goal": "Scan 5 Signatures", "ok": False, "why_not": "needs the Astrometrics skill (train I, about 5 min of queue)", "minutes": 0, "cash": 0}
+    if not launcher:                                                    # only what can be done NOW counts: a ship with the launcher fitted (a capsule has no slots)
+        return {"goal": "Scan 5 Signatures", "ok": False, "minutes": 0, "cash": 0,
+                "why_not": "needs a probe launcher FITTED on the ship you fly (you have none fitted; a capsule cannot): it waits until you fly a ship with one"}
     probes = (_min_ask(con, "Core Scanner Probe I") or 15000.0) * 8
-    cash = probes if launcher else probes + 150000.0
+    cash = probes
     how = "fit a Probe Launcher and 8 probes in your Imicus" if not launcher else "scan down 5 signatures in Rotonos or next door"
     return {"goal": "Scan 5 Signatures", "ok": True, "minutes": 25.0 if launcher else 35.0, "cash": cash, "how": how + "  (?)", "jumps_away": 0}
 
@@ -338,7 +341,7 @@ def compact_plan(pl, progress=None):
     if not b:
         return "STEP: AIR DAILY GOALS - no pair of goals is doable right now (see `next --plan`)"
     a1, a2 = b["pair"]
-    names = " + ".join(o["goal"] for o in sorted(b["pair"], key=lambda o: o["goal"] != "Complete 3 Jumps"))
+    names = " + ".join(o["goal"] + (" (done already)" if o.get("done") else "") for o in sorted(b["pair"], key=lambda o: o["goal"] != "Complete 3 Jumps"))
     L = [f"STEP: AIR DAILY GOALS - about {pl['reward']:,.0f} ISK for 2 of the 5 goals ({names}), ~{b['minutes']:.0f} min, ~{max(b['cash'], 0):,.0f} ISK to do it", ""]
     jumps = next((o for o in b["pair"] if o["goal"] == "Complete 3 Jumps"), None)
     build = next((o for o in b["pair"] if o["goal"] == "Manufacture an Item" and o.get("mb")), None)
@@ -359,7 +362,8 @@ def compact_plan(pl, progress=None):
         steps.append(("Collect the finished job in Industry: that is Manufacture an Item", []))
     else:
         for o in b["pair"]:
-            steps.append((f"{o['goal']}: " + o["how"].split("\n")[0].strip(), []))
+            if not o.get("done"):                                       # a goal already at 3/3 is not a step
+                steps.append((f"{o['goal']}: " + o["how"].split("\n")[0].strip(), []))
     steps.append(("Open Opportunities > AIR Daily Goals: both goals should show complete, then stop the timer", []))
     for n, (txt, subs) in enumerate(steps, 1):
         L.append(f"   {n}. {txt}")

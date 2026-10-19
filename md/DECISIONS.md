@@ -405,3 +405,4 @@
 - 2026-10-19: agent reads: every unread agent within 6 jumps (up to 10 systems) is a plan on the ISK/hr list; a dock step says 'ALSO, same stop: read the agents'; any step done while docked at a station with unread agents gets one extra 'ALSO, same dock: read the agents here' line (agentleads.here_note, once per 12 h).
 - 2026-10-19: agent reads only for agents YOU can see: best of agent/corp/faction standing must reach the level's minimum (L1 -2, L2 +1), none below -5; new command noagents (docked station or --item NAME) hides agents the game does not show you.
 - 2026-10-19: Saila agents read (Ibeshi Keirsaa 'The Heiress' 16k+24k, Torimanoi Vittoh 'A Special Breed' 20k+19k, 210 m3) entered in agent_offers.json.
+- 2026-10-19: AIR daily goals: a goal already at 3/3 is no step (named 'done already'); Scan 5 Signatures only counts when a probe launcher is FITTED on the ship you fly (not in a capsule, no assumed purchase+fit).
