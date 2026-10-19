@@ -2,7 +2,7 @@
 its level and division; it does NOT carry the missions (the game shows them only when you are docked at the agent's station). So an agent you have not read is an UNKNOWN
 mission: modeled from its division's activity (Security -> Level 1 security missions, Mining, Distribution -> courier) like any untimed activity (expected ISK/hr x risk +
 value of information), charged the dock-and-read time and the travel. Reading it (one short step per station) turns it into a known offer (agent_offers.json, from your
-screenshot) that is ranked by its real ISK/hr. One candidate per STATION, best agent first, at most three on the list. Each station is offered once per 12 hours."""
+screenshot) that is ranked by its real ISK/hr. One candidate per STATION, best agent first, at most ten on the list. Each station is offered once per 12 hours."""
 import json
 import time
 
@@ -10,7 +10,7 @@ TYPE_ACTIVITY = {"Security": "agent_l1_security", "Mining": "agent_mining_l1", "
 SHOWN_KEY = "agentleads_shown"
 READ_MIN = 5.0
 JUMP_MIN = 3.0
-MAX_JUMPS = 4
+MAX_JUMPS = 6
 SAFE = 0.5
 STANDING_FOR_LEVEL = {1: -10.0, 2: 1.0}
 
@@ -38,7 +38,7 @@ def _rate(act, best_known):
     return (lo + hi) / 2.0 * (1.0 - RISK_HAIRCUT.get(act.get("risk", "low"), 0.0)) + INFO_WEIGHT * voi({**act, "runs": 0}, best_known)
 
 
-def candidates(con, g, p, best_known, hop_to, now=None, limit=3):
+def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
     """-> [(eff ISK/hr, label, step text, note)]"""
     from .catalog import load
     now = now or time.time()
@@ -104,7 +104,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=3):
                 STATION[head] = int(loc)
             except Exception:                                           # noqa: BLE001
                 pass
-            text = f"{head}\n   DO ONLY THIS: dock at {sname} (the game destination is set to it).\n   LATER: read the agents there: {who}"
+            text = f"{head}\n   DO ONLY THIS: dock at {sname} (the game destination is set to it).\n   ALSO, same stop: read the agents there ({who}): station window > Agents tab, send me the orange 'Offered' windows (do not accept yet)."
             here_station = False
         else:
             text = hop_to(top["system"], f"{who} at {sname}: dock and read their missions", [])
@@ -122,3 +122,30 @@ def mark_read(con, p, now=None):
     shown[str(int(getattr(p, "current_location_id", 0) or 0))] = now or time.time()
     con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (SHOWN_KEY, json.dumps(shown)))
     con.commit()
+
+
+def here_note(con, p, now=None):
+    """Agents of the station you are docked in whose missions are not modeled yet: ONE extra line for whatever step you do here (dock = also read). '' when none.
+    Marks the station read for 12 hours."""
+    docked = int(getattr(p, "current_location_id", 0) or 0)
+    if not docked:
+        return ""
+    now = now or time.time()
+    try:
+        if now - _shown(con).get(str(docked), 0) < 12 * 3600:
+            return ""
+        from .agentmap import get_map
+        div = get_map(con)
+        q = ",".join(str(int(d)) for d in div) or "0"
+        known = _known_agent_names()
+        names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")} if "agent_names" in {r[0] for r in con.execute("SELECT name FROM sqlite_master")} else {}
+        rows = con.execute(f"SELECT agent_id,level,division_id FROM agents WHERE agent_type=2 AND level<=2 AND location_id=? AND division_id IN ({q})", (docked,)).fetchall()
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    who = [f"{names.get(r['agent_id']) or 'a level %d agent' % r['level']} (L{r['level']} {div[r['division_id']]})" for r in rows
+           if (names.get(r["agent_id"], "") or "").lower() not in known]
+    if not who:
+        return ""
+    mark_read(con, p, now)
+    return ("   ALSO, same dock (about 2 minutes): read the agents here, " + ", ".join(who[:4])
+            + ": station window > Agents tab, send me the orange 'Offered' windows (do not accept yet); each mission then joins the plan at its own ISK/hr.")

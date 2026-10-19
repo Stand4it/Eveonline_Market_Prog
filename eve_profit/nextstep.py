@@ -1304,6 +1304,14 @@ def next_action(con, g, p, full=False, ahead=False):
                     first = drop_done_buys(con, g, p, first)                                        # buys that had their own step are not listed again on the flight
             except Exception:                                                                    # noqa: BLE001
                 pass
+        if not first.startswith(("STEP: READ the agents at", "STEP: DOCK at")):             # docked with unread agents: collect them in the same step
+            try:
+                from .agentleads import here_note
+                _hn = here_note(con, p)
+                if _hn:
+                    first = first + "\n" + _hn
+            except Exception:                                                                    # noqa: BLE001
+                pass
         if first.startswith("STEP: READ the agents at"):                                        # shown once per station per 12 h
             try:
                 from .agentleads import mark_read

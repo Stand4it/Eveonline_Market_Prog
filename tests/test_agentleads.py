@@ -54,6 +54,17 @@ class TestAgentLeads(unittest.TestCase):
         out = agentleads.candidates(con, G(), _p(), 1_000_000, lambda s, w, l: f"STEP: FLY to {s}", limit=5)
         self.assertEqual(len(out), 2)
 
+    def test_here_note_adds_read_to_any_dock_step_once(self):
+        con = _con()
+        note = agentleads.here_note(con, _p(500))
+        self.assertIn("read the agents here", note)
+        self.assertEqual(agentleads.here_note(con, _p(500)), "")        # marked read: not repeated
+        self.assertEqual(agentleads.here_note(con, _p(0)), "")          # not docked: nothing
+
+    def test_dock_step_also_reads_in_the_same_step(self):
+        out = agentleads.candidates(_con(), G(), _p(), 1_000_000, lambda s, w, l: f"STEP: FLY to {s}")
+        self.assertIn("ALSO, same stop: read the agents", out[0][2])
+
 
 if __name__ == "__main__":
     unittest.main()
