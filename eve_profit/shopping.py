@@ -75,10 +75,18 @@ def wishes(con, p, g=None):
     return out
 
 
+def _owns_blueprint(con, item):
+    """True when you own the blueprint of `item` (a build is only an option then; without it the only way is to buy)."""
+    try:
+        return con.execute("SELECT 1 FROM my_blueprints b JOIN types t ON t.type_id=b.blueprint_id WHERE t.name=? COLLATE NOCASE LIMIT 1", (item + " Blueprint",)).fetchone() is not None
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
 def _way(con, g, p, w, live=False):
     from . import acquire
     try:
-        return acquire.best_way(con, g, p, w["item"], w["qty"], None, can_build=True, live=live)
+        return acquire.best_way(con, g, p, w["item"], w["qty"], None, can_build=_owns_blueprint(con, w["item"]), live=live)
     except Exception:                                                   # noqa: BLE001
         return None
 

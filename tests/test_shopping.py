@@ -90,3 +90,20 @@ class ShipsTests(unittest.TestCase):
         self.assertIn("carries", up["why"])
         self.assertIn("Big Frigate", [w["item"] for w in shopping.wishes(con, p, g)])
         self.assertIn("Big Frigate", ships.report(con, g, p))
+
+
+class BuildOnlyWithBlueprint(unittest.TestCase):
+    def test_no_blueprint_means_buy(self):
+        con = ShoppingTests()._world()
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(880003,'Incursus Blueprint',0.01,2)")
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(880004,'Tritanium',0.01,3)")
+        con.execute("INSERT INTO orders VALUES(990004,880004,60000001,1,10000001,0,1.0,500000,1,'',1)")
+        con.execute("INSERT INTO bp_materials VALUES(880003,880004,13333)")             # building looks far cheaper than the 100,000 market price
+        g = Graph(con)
+        p = Profile(current_system="Home", wallet_isk=1e7, current_location_id=60000001)
+        w = {"item": "Incursus", "qty": 1, "why": "x"}
+        self.assertFalse(shopping._owns_blueprint(con, "Incursus"))
+        self.assertEqual(shopping._way(con, g, p, w)["mode"], "buy")
+        con.execute("INSERT INTO my_blueprints VALUES(880003,0,0,-1)")
+        self.assertTrue(shopping._owns_blueprint(con, "Incursus"))
+        self.assertEqual(shopping._way(con, g, p, w)["mode"], "build")
