@@ -1050,6 +1050,11 @@ def next_action(con, g, p, full=False, ahead=False):
         from . import combatprep
         _hop = _hop_step(g, p, con)
         best_known = min(max((c[0] for c in cands), default=0.0), 5_000_000.0)      # a near-zero-minute step gives absurd ISK/hr: cap it
+        try:                                                     # a detour jump costs what ~2 minutes of the best plan earn
+            from . import acquire as _acq
+            _acq.JUMP_VALUE_ISK = min(150_000.0, max(20_000.0, best_known / 30.0))
+        except Exception:                                    # noqa: BLE001
+            pass
         haul_on = False
         try:                                                     # a haul under way (cargo to deliver / sell) is never interrupted by a test
             from .haulchain import load as _hload
@@ -1221,13 +1226,9 @@ def next_action(con, g, p, full=False, ahead=False):
             m = _FLY.search(c[2] or "")
             return _rev(con, m.group(1).strip(), p.current_system) if m else 0
         if cands and _flip(cands[0]):
-            lvl = _flip(cands[0])
             alt = next((i for i, c in enumerate(cands[1:], 1) if not _flip(c)), None)
-            need = 2.0 if lvl == 2 else 1.5                      # a loop already under way needs to be twice as good to go back again
-            if alt is not None and cands[0][0] < cands[alt][0] * need:
+            if alt is not None:                                  # never bounce back: carry on one more step with the plan under way (and again if the bounce shows up again)
                 cands.insert(0, cands.pop(alt))
-            elif alt is None or cands[0][0] >= cands[alt][0] * need:
-                cands[0] = (cands[0][0], cands[0][1], (cands[0][2] or "") + f"\n   (going back to where you just came from: it is still the best plan by {need:g}x, but check it is worth the trip)", cands[0][3])
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # remember the FLY step given, to recognise a reversal at the next stop

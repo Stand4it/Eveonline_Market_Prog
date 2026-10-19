@@ -155,13 +155,13 @@ def best_way(con, g, p, item, qty=1, dest=None, can_build=True, live=False):
         return None
     lines = [] if not fresh else ["prices re-checked live just now"]
     if buy:
-        alt = "; next: " + ", ".join(f"{s['system']} {s['price']:,.0f}" for s in src[1:3]) if len(src) > 1 else ""
+        alt = ""
         lines.append(f"BUY: {buy['price'] * need:,.0f} ISK at {buy['station'] or buy['system']} ({buy['jumps']} jumps from here"
                      + (f", {buy['detour']} extra jumps against going straight" if dest else "") + f"){alt}")
     if build:
         lines.append(f"BUILD: about {build['cost']:,.0f} ISK of materials ({'; '.join(build['lines'][:4])}) plus the job time; mining/refining them yourself is not priced")
     mode = "buy" if buy and (not build or buy["cost"] <= build["cost"]) else "build"
-    lines.append(f"CHEAPEST: {mode.upper()}" + (f" (saves about {abs((build['cost'] if mode == 'buy' else buy['cost']) - (buy['cost'] if mode == 'buy' else build['cost'])):,.0f} ISK)" if buy and build else ""))
+    lines = [l for l in lines if not l.startswith("BUILD" if mode == "buy" else "BUY")]      # ONE option only: the best, no alternatives
     return {"mode": mode, "cost": (buy["cost"] if mode == "buy" else build["cost"]), "item": item, "qty": need, "src": buy, "buy": buy, "build": build, "lines": lines}
 
 
