@@ -1215,6 +1215,12 @@ def next_action(con, g, p, full=False, ahead=False):
         from .shopping import lines as _shop_lines
         sl = _shop_lines(con, g, p)
         long_view = (long_view + "\n\n" + sl) if (long_view and sl) else (long_view or sl)
+        try:
+            from .allplans import lines as _all_lines
+            _al = _all_lines(con, g, p, cands, p.ship_name or "", [n for n, _s in __import__("eve_profit.combatprep", fromlist=["x"]).state(con, p)["ships"]], _tools)
+            long_view = (long_view + "\n\n" + _al) if (long_view and _al) else (long_view or _al)
+        except Exception:                                        # noqa: BLE001
+            pass
     except Exception:                                            # noqa: BLE001
         pass
     try:                                                         # NO PING-PONG: a first step that flies straight back to the system you just left must be clearly better than the best step that does not
