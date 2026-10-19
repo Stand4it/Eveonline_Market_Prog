@@ -406,3 +406,4 @@
 - 2026-10-19: agent reads only for agents YOU can see: best of agent/corp/faction standing must reach the level's minimum (L1 -2, L2 +1), none below -5; new command noagents (docked station or --item NAME) hides agents the game does not show you.
 - 2026-10-19: Saila agents read (Ibeshi Keirsaa 'The Heiress' 16k+24k, Torimanoi Vittoh 'A Special Breed' 20k+19k, 210 m3) entered in agent_offers.json.
 - 2026-10-19: AIR daily goals: a goal already at 3/3 is no step (named 'done already'); Scan 5 Signatures only counts when a probe launcher is FITTED on the ship you fly (not in a capsule, no assumed purchase+fit).
+- 2026-10-19: blocked AIR daily goals (scan needs a launcher hull + kit, mining needs lasers) are listed in SHOPPING by ISK per minute with what is missing; the scanning kit becomes a shopping wish (bought where cheapest when the route passes) once you own a hull with a launcher hardpoint; they join the plan as steps when doable.

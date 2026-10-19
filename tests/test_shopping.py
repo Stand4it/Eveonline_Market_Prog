@@ -46,6 +46,18 @@ class ShoppingTests(unittest.TestCase):
         self.assertEqual(shopping.candidates(con, g, p, 500_000.0, lambda *a, **k: ""), [])
 
 
+class TestBlockedGoals(unittest.TestCase):
+    def test_blocked_goals_listed_by_isk_per_minute(self):
+        from unittest import mock
+        from eve_profit import dailygoals as dg, shopping
+        blocked = lambda goal: {"goal": goal, "ok": False, "why_not": "x", "minutes": 0, "cash": 0}
+        with mock.patch.object(dg, "scan_option", return_value=blocked("Scan 5 Signatures")), mock.patch.object(dg, "mine_option", return_value=blocked("Mine 2000 units of Ore")), \
+                mock.patch.object(dg, "today_goals", return_value=None):
+            out = shopping.blocked_goals(None, None, None)
+        self.assertEqual([b["goal"] for b in out], ["Mine 2000 units of Ore", "Scan 5 Signatures"])        # 15 min beats 35 min
+        self.assertGreater(out[0]["per_min"], out[1]["per_min"])
+
+
 if __name__ == "__main__":
     unittest.main()
 

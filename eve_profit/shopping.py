@@ -75,6 +75,57 @@ def wishes(con, p, g=None):
     return out
 
 
+GOAL_ISK = 222_500.0                                  # an AIR daily goal pays about 445,000 ISK for two, so about this per goal
+BLOCKED_MIN = {"Scan 5 Signatures": 35.0, "Mine 2000 units of Ore": 15.0}
+
+
+def _launcher_hulls(con, g, p):
+    """-> (owned hulls with a launcher hardpoint [(name, where)], cheapest flyable hull on the market with one (name, price, jumps, system) or None)."""
+    from . import shipslots, ships, skills
+    own = [(n, g.name.get(sid, "with you") if sid else "with you") for n, sid, sl in shipslots.owned_hulls(con, p) if sl and sl.get("launcher", 0) >= 1 and not n.lower().startswith("capsule")]
+    best = None
+    try:
+        have, prices = skills.have(con), ships._prices(con, g, p)
+        for tid, d in ships.catalog(con).items():
+            if d["slots"].get("launcher", 0) < 1 or not ships._flyable(con, tid, have)[0] or d["name"] not in prices:
+                continue
+            pr = prices[d["name"]]
+            if best is None or pr[0] < best[1]:
+                best = (d["name"], pr[0], pr[1], pr[2])
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return own, best
+
+
+def blocked_goals(con, g, p):
+    """AIR daily goals that cannot be done NOW for lack of ship or tools, by ISK per MINUTE: [{goal, per_min, minutes, lines}] (lines = how to get able to do it)."""
+    from . import dailygoals as dg
+    today = dg.today_goals()
+    out = []
+    for o in (dg.scan_option(con), dg.mine_option(con)):
+        if o["ok"] or (today and o["goal"] not in today):
+            continue
+        minutes = BLOCKED_MIN.get(o["goal"], 30.0)
+        lines = []
+        if o["goal"] == "Scan 5 Signatures":
+            own, cheap = _launcher_hulls(con, g, p) if g is not None else ([], None)
+            if own:
+                lines.append("hull: " + ", ".join(f"your {n} ({w})" for n, w in own[:2]) + " has a launcher hardpoint: fly it")
+            elif cheap:
+                lines.append(f"hull: no ship you own has a launcher hardpoint; the cheapest you can fly that has one: {cheap[0]} ~{cheap[1]:,.0f} ISK at {cheap[3]} ({cheap[2]} jumps)")
+            else:
+                lines.append("hull: none you own is known to have a launcher hardpoint (run  python -m eve_profit ships --refresh  to read ship slots)")
+            for item, qty in (("Core Probe Launcher I", 1), ("Core Scanner Probe I", 8)):
+                w = _way(con, g, p, {"item": item, "qty": qty}) if g is not None else None
+                if w and w.get("buy"):
+                    lines.append(f"{qty} x {item}: ~{w['buy']['price'] * w['qty']:,.0f} ISK at {w['buy']['system']} ({w['buy']['jumps']} jumps)")
+        else:
+            lines.append(o.get("why_not", "needs gear"))
+        out.append({"goal": o["goal"], "per_min": GOAL_ISK / minutes, "minutes": minutes, "lines": lines, "why": o.get("why_not", "")})
+    out.sort(key=lambda d: -d["per_min"])
+    return out
+
+
 def _owns_blueprint(con, item):
     """True when you own the blueprint of `item` (a build is only an option then; without it the only way is to buy)."""
     try:
@@ -131,6 +182,15 @@ def lines(con, g, p):
             L.append("   Hull slots are not known yet: run  python -m eve_profit sync  (it reads them for the ship you fly and every ship you own)")
     except Exception:                                                   # noqa: BLE001
         pass
+    try:
+        bl = blocked_goals(con, g, p)
+    except Exception:                                                   # noqa: BLE001
+        bl = []
+    if bl:
+        L.append("   BLOCKED DAILY GOALS (by ISK per minute; each joins the plan as soon as you can do it; what is missing is bought when your route passes):")
+        for b in bl:
+            L.append(f"      {b['goal']}: ~{b['per_min']:,.0f} ISK/min ({b['per_min'] * 60:,.0f} ISK/hr) once able; {b['why']}")
+            L += [f"         needs {x}" for x in b["lines"]]
     for w in ws:
         way = _way(con, g, p, w)
         if not way or not way.get("buy"):
