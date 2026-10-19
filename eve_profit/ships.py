@@ -102,6 +102,7 @@ def report(con, g, p, text=""):
     if not cat:
         return "No ship data yet: run  python -m eve_profit scan  (prices) and then  python -m eve_profit ships --refresh  (reads slots and class from the game, once)."
     have, rows, prices = skills.have(con), [], _prices(con, g, p)
+    mine = {n.lower() for n, _sid, _sl in shipslots.owned_hulls(con, p) if not n.lower().startswith("capsule")}
     for tid, d in cat.items():
         if text and text.lower() not in (d["name"] + " " + d["group"]).lower():
             continue
@@ -114,9 +115,10 @@ def report(con, g, p, text=""):
     for _, _, d, ok, why, pr, plan in rows[:60]:
         sl = d["slots"]
         carries = ", ".join(f"{n} x {t}" for t, n in plan) or "-"
-        L.append(f"{d['name'][:22]:<22} {d['group'][:18]:<18} {sl.get('high', 0)}/{sl.get('mid', 0)}/{sl.get('low', 0):<3} {sl.get('turret', 0)}/{sl.get('launcher', 0):<6} "
+        own = " (own)" if d["name"].lower() in mine else ""
+        L.append(f"{(d['name'] + own)[:22]:<22} {d['group'][:18]:<18} {sl.get('high', 0)}/{sl.get('mid', 0)}/{sl.get('low', 0):<3} {sl.get('turret', 0)}/{sl.get('launcher', 0):<6} "
                  + (f"{pr[0]:>12,.0f} {pr[1]:>5} {pr[2][:12]:<12}" if pr else f"{'no price':>12} {'':>5} {'':<12}") + " " + ("YES" if ok else f"needs {why[:40]}") + f"  | {carries}")
-    L += ["", f"{len(rows)} ships ({len(cat)} read from the game). Filter by name or class:  ships --item Frigate   |   more ships:  scan, then  ships --refresh"]
+    L += ["", "price = what it costs to BUY near you; (own) = a ship you already have; YES = your skills allow it (not that you own it).", f"{len(rows)} ships ({len(cat)} read from the game). Filter by name or class:  ships --item Frigate   |   more ships:  scan, then  ships --refresh"]
     return "\n".join(L)
 
 
