@@ -65,6 +65,14 @@ class TestAgentLeads(unittest.TestCase):
         out = agentleads.candidates(_con(), G(), _p(), 1_000_000, lambda s, w, l: f"STEP: FLY to {s}")
         self.assertIn("ALSO, same stop: read the agents", out[0][2])
 
+    def test_hidden_and_negative_standing_agents_are_not_planned(self):
+        con = _con()
+        con.execute("INSERT INTO standings VALUES(7,-6.0)")
+        self.assertEqual(agentleads.candidates(con, G(), _p(), 1_000_000, lambda *a: "x"), [])
+        con.execute("DELETE FROM standings")
+        self.assertEqual(agentleads.hide_here(con, _p(500)), 3)
+        self.assertEqual(agentleads.candidates(con, G(), _p(), 1_000_000, lambda *a: "x"), [])
+
 
 if __name__ == "__main__":
     unittest.main()

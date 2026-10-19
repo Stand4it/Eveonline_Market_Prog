@@ -262,6 +262,9 @@ FITSTOCK  -  modules, charges, drones and ships you own with slot and fighting n
 SHIPS  -  the ship tree as a table: class, slots, skills to fly, price, how many tools it carries at once (--refresh reads new ships, --item filters)
    example: python -m eve_profit ships --item Frigate
 
+NOAGENTS  -  hide the agents you cannot see in the game (docked station, or --item NAME) so they are never planned
+   example: python -m eve_profit noagents
+
 STOPSYNC  -  stop the timer, then sync with the game (both, in the right order)
    example: python -m eve_profit stopsync
 

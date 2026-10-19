@@ -32,6 +32,53 @@ def _known_agent_names():
     return {o.get("agent", "").split(" (")[0].lower() for o in offers}
 
 
+NONE_KEY = "agentleads_none"
+MIN_STANDING = {1: -2.0, 2: 1.0}                                        # effective standing an agent of this level needs (best of agent, corporation, faction)
+
+
+def _none(con):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (NONE_KEY,)).fetchone()
+        return set(json.loads(r[0])) if r else set()
+    except Exception:                                                   # noqa: BLE001
+        return set()
+
+
+def eligible(con, row, standing, hidden=None):
+    """Can YOU see this agent? Not when you reported it hidden (`noagents`), when any of your standings with it, its corporation or its faction is below the level's minimum,
+    or when the best of the three does not reach it. Agents you are not eligible for are never viewable in the game, so they are never a plan."""
+    hidden = _none(con) if hidden is None else hidden
+    if int(row["agent_id"]) in hidden:
+        return False
+    try:
+        fac = con.execute("SELECT faction_id FROM corp_faction WHERE corporation_id=?", (row["corporation_id"],)).fetchone()
+    except Exception:                                                   # noqa: BLE001
+        fac = None
+    sts = [standing.get(row["agent_id"], 0.0), standing.get(row["corporation_id"], 0.0)] + ([standing.get(fac[0], 0.0)] if fac and fac[0] else [])
+    return max(sts) >= MIN_STANDING.get(int(row["level"]), 99.0) and min(sts) > -5.0
+
+
+def hide_here(con, p, name=""):
+    """`noagents`: the agents of the station you are docked in (or the one agent called `name`) are not viewable for you: remember it for good. -> number hidden."""
+    docked = int(getattr(p, "current_location_id", 0) or 0)
+    hidden = _none(con)
+    n = 0
+    if name:
+        for r in con.execute("SELECT agent_id FROM agent_names WHERE name LIKE ?", (f"%{name}%",)):
+            hidden.add(int(r[0]))
+            n += 1
+    elif docked:
+        known = _known_agent_names()
+        names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")}
+        for r in con.execute("SELECT agent_id FROM agents WHERE agent_type=2 AND location_id=?", (docked,)):
+            if (names.get(r[0], "") or "").lower() not in known:
+                hidden.add(int(r[0]))
+                n += 1
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (NONE_KEY, json.dumps(sorted(hidden))))
+    con.commit()
+    return n
+
+
 def _rate(act, best_known):
     from .catalog import INFO_WEIGHT, RISK_HAIRCUT, voi
     lo, hi = act["prior"]
@@ -57,6 +104,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
     standing = {r[0]: r[1] for r in con.execute("SELECT from_id,standing FROM standings")}
     names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")} if "agent_names" in {r[0] for r in con.execute("SELECT name FROM sqlite_master")} else {}
     known = _known_agent_names()
+    hidden = _none(con)
     shown = _shown(con)
     docked = int(getattr(p, "current_location_id", 0) or 0)
     best = {}                                                           # station -> (eff, agents)
@@ -65,7 +113,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
         sid = r["system_id"]
         if sid not in reach or g.sec[sid] < SAFE:
             continue
-        if r["level"] == 2 and max(standing.get(r["agent_id"], -10.0), standing.get(r["corporation_id"], -10.0)) < STANDING_FOR_LEVEL[2]:
+        if not eligible(con, r, standing, hidden):
             continue
         nm = names.get(r["agent_id"], "")
         if nm.lower() in known or now - shown.get(str(r["location_id"]), 0) < 12 * 3600:
@@ -94,7 +142,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
         sname = (st[0] if st and st[0] else "") or f"a station in {top['system']}"
         who = ", ".join(f"{i['name']} (L{i['level']} {i['div']})" for i in items[:3])
         if docked == loc:
-            text = (f"STEP: READ the agents at {sname} (about {READ_MIN:.0f} minutes)\\n   DO ONLY THIS: station window > Agents tab: {who}. Orange 'Offered' = a mission is waiting: send me those windows (do not accept yet).\\n"
+            text = (f"STEP: READ the agents at {sname} (about {READ_MIN:.0f} minutes)\\n   DO ONLY THIS: station window > Agents tab: {who}. Orange 'Offered' = a mission is waiting: send me those windows (do not accept yet). An agent you cannot see in that list is not available to you: run  python -m eve_profit noagents\\n"
                     "   LATER: each mission joins the plan at its own ISK/hr").replace("\\n", "\n")
             here_station = True
         elif top["system"] == p.current_system:
@@ -139,7 +187,9 @@ def here_note(con, p, now=None):
         q = ",".join(str(int(d)) for d in div) or "0"
         known = _known_agent_names()
         names = {r[0]: r[1] for r in con.execute("SELECT agent_id,name FROM agent_names")} if "agent_names" in {r[0] for r in con.execute("SELECT name FROM sqlite_master")} else {}
-        rows = con.execute(f"SELECT agent_id,level,division_id FROM agents WHERE agent_type=2 AND level<=2 AND location_id=? AND division_id IN ({q})", (docked,)).fetchall()
+        standing = {r[0]: r[1] for r in con.execute("SELECT from_id,standing FROM standings")}
+        rows = [r for r in con.execute(f"SELECT agent_id,corporation_id,level,division_id FROM agents WHERE agent_type=2 AND level<=2 AND location_id=? AND division_id IN ({q})", (docked,))
+                if eligible(con, r, standing)]
     except Exception:                                                   # noqa: BLE001
         return ""
     who = [f"{names.get(r['agent_id']) or 'a level %d agent' % r['level']} (L{r['level']} {div[r['division_id']]})" for r in rows
