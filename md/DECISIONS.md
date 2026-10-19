@@ -414,3 +414,4 @@
 - 2026-10-19: scripts/hourly.bat refreshes character (sync), every region's market prices (scan --live --max-age 50) and the other grabs once an hour via a Windows scheduled task (schtasks, see md/BACKLOG.md); the plan reads the fresh data. Needs the PC on; the cloud session cannot run it.
 - 2026-10-19: next no longer crashes when the hourly refresh holds the database (sqlite 'disk I/O error' while setting the game destination): it prints a note instead.
 - 2026-10-19: an agent station named in any recorded offer (agent_offers.json agent/where text) is treated as already read, even when its agents' names are not resolved (bug: Kahmaken Wamonen at Santola was offered for a re-read).
+- 2026-10-19: hourly.bat also runs 'agents --within 6' so agent and station names near you are resolved (the already-read check needs station names; unresolved ones showed 'a station in Santola').
