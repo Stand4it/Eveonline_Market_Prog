@@ -107,3 +107,32 @@ class BuildOnlyWithBlueprint(unittest.TestCase):
         con.execute("INSERT INTO my_blueprints VALUES(880003,0,0,-1)")
         self.assertTrue(shopping._owns_blueprint(con, "Incursus"))
         self.assertEqual(shopping._way(con, g, p, w)["mode"], "build")
+
+
+class SourceRanking(unittest.TestCase):
+    def test_a_near_dearer_listing_beats_a_far_bargain_even_past_the_twelve_cheapest(self):
+        from eve_profit import acquire
+        con = ShoppingTests()._world()
+        con.execute("DELETE FROM orders WHERE type_id=880001")
+        g = Graph(con)
+        p = Profile(current_system="Home", wallet_isk=1e7, current_location_id=60000001)
+        far = g.id_of("Sys28")                                        # 6 jumps away in the mock map
+        home = g.id_of("Home")
+        for i in range(14):                                           # 14 cheap listings far away fill the old top-12 cut
+            con.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", (991000 + i, 880001, 61000000 + i, far, 10000001, 0, 1000.0 + i, 5, 1, "", 1))
+        con.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", (992000, 880001, 60000001, home, 10000001, 0, 100000.0, 5, 1, "", 1))
+        best = acquire.sources(con, g, p, "Incursus", 1)[0]
+        self.assertEqual(best["system"], "Home")                      # 100,000 here beats 1,000 six jumps away (6 x 50,000 for the trip)
+
+    def test_carrier_prefers_the_hull_that_carries_more(self):
+        from eve_profit import tools
+        con = ShoppingTests()._world()
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(1,'Imicusish',2500,25)")
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(2,'Venturish',2500,25)")
+        con.execute("INSERT INTO meta VALUES('ship_slots', ?)", ('{"1": {"high": 3, "turret": 1, "launcher": 0}, "2": {"high": 3, "turret": 2, "launcher": 0}}',))
+        con.execute("INSERT INTO my_ships(item_id,type_id,system_id,location_id) VALUES(5,1,30000001,60000001)")
+        con.execute("INSERT INTO my_ships(item_id,type_id,system_id,location_id) VALUES(6,2,30000001,60000001)")
+        p = Profile(current_system="Home", wallet_isk=1e7)
+        p.ship_name = "Capsule - X"
+        p.ship_type_id = 0
+        self.assertEqual(tools.carrier(con, p)[0], "Venturish")

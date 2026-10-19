@@ -61,7 +61,7 @@ def wishes(con, p, g=None):
         try:                                                            # a hull that carries more tools at once than your best one, at the lowest price per extra tool
             from . import ships as _ships
             up = _ships.upgrade(con, g, p)
-            if up:
+            if up and up["item"].lower() not in {w["item"].lower() for w in out}:      # the combat hull may already be the wish
                 out.append(up)
         except Exception:                                               # noqa: BLE001
             pass

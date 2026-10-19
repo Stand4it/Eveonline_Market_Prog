@@ -65,11 +65,13 @@ def fit_plan(slots):
 
 
 def carrier(con, p):
-    """The hull you own (or fly) with the most high slots: (name, slots, fit plan) or None."""
+    """The hull you own (or fly) that carries the most tools at once (ties: more high slots): (name, slots, fit plan) or None."""
     best = None
     for name, _sid, slots in shipslots.owned_hulls(con, p):
-        if slots and (best is None or slots.get("high", 0) > best[1].get("high", 0)):
-            best = (name, slots)
-    if not best:
-        return None
-    return best[0], best[1], fit_plan(best[1])
+        if not slots or name.lower().startswith("capsule"):
+            continue
+        plan = fit_plan(slots)
+        key = (sum(n for _t, n in plan), slots.get("high", 0))
+        if best is None or key > best[0]:
+            best = (key, name, slots, plan)
+    return (best[1], best[2], best[3]) if best else None

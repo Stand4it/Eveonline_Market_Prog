@@ -39,7 +39,7 @@ def sources(con, g, p, item, qty=1, dest=None, max_jumps=14, limit=12):
     except Exception:                                                   # noqa: BLE001
         return []
     cand = [(r[0], r[1], float(r[2]), r[3]) for r in rows if r[0] in reach and (r[3] or 0) >= qty and g.sec[r[0]] >= SAFE_SEC]
-    cand.sort(key=lambda r: r[2])
+    cand.sort(key=lambda r: r[2] + reach[r[0]].jumps * JUMP_VALUE_ISK)    # a near listing a little dearer beats a far bargain: rank by price + the trip BEFORE cutting to `limit`
     did = None
     direct = 0
     if dest:

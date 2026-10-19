@@ -143,7 +143,7 @@ def upgrade(con, g, p, wallet=None):
             continue
         score = pr[0] / (total - base)
         if best is None or score < best[0]:
-            best = (score, d["name"], total, pr[0])
+            best = (score, d["name"], total, pr[0], ", ".join(f"{n} x {t}" for t, n in tools.fit_plan(d["slots"])))
     if not best:
         return None
-    return {"item": best[1], "qty": 1, "why": f"upgrade: carries {best[2]} tools at once (scanner + salvager + miners as the slots allow) against {base} on your best hull"}
+    return {"item": best[1], "qty": 1, "why": f"upgrade: carries {best[2]} tools at once ({best[4]}) against {base} on your best hull"}
