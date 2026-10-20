@@ -67,7 +67,8 @@ def candidate(con, g, p):
         pass
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
-    items = [f"      {q:>9,} x {n:<32} ~{net:>11,.0f} at {dest}" for n, q, net, local in st["items"][:6]]
+    worth = [it for it in st["items"] if it[2] >= 5_000.0][:4] or st["items"][:1]            # only stacks worth a line (cosmetic odds and ends ride along unlisted)
+    items = [f"      {q:>9,} x {n:<32} ~{net:>11,.0f} at {dest}" for n, q, net, local in worth]
     if here != dest and st.get("arrived"):                              # you were at the destination and have left: the haul is over (no trip back)
         clear(con)
         return None

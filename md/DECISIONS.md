@@ -450,3 +450,4 @@
 - 2026-10-20: steps no longer list worthless stock: route pickups only for stock worth >= 10,000 ISK (max 3), haul step lists only stacks worth >= 5,000 ISK (max 4); cosmetic odds and ends (SKINs, fireworks) ride along unlisted.
 - 2026-10-20: the skill-queue step is first even when nothing can be queued without a book (then it says to run trainplan and buy the first book); 'STEP: FILL THE SKILL QUEUE' maps to the Skills queue timer. Trigger: less than 12 h queued, a paused queue counts as empty.
 - 2026-10-20: the haul chain's 'look around' stop skips agents whose offers are already recorded (Abata Kavalala was offered as a 'look' although her offer was entered; she is also at another station than the one docked in).
+- 2026-10-20: the haul CHAIN (stops after the first jump) lists only stacks worth >= 5,000 ISK (max 4) too; the first-jump haul text had the filter already.
