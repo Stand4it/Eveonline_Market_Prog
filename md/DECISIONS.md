@@ -433,3 +433,4 @@
 - 2026-10-20: shopping steps only when the purchase can be used: guns/ammo/tank need a combat hull flown or owned; any module/ammo needs a ship of yours flown or parked in THIS system (a capsule buying ammo just left it in a hangar). Hull and upgrade wishes are still bought at the cheapest place.
 - 2026-10-20: Sassainen Aizakonen (Inaro XI, Mining) 'Asteroid Catastrophe' 48k+33k, 1,080 m3 Augumene, entered, available false until a mining ship is at hand.
 - 2026-10-20: Illen Hasunmaa (Ikao VII, Security) 'After The Seven - Replacement' 59k+64k, escort at Santola, entered, available false (combat).
+- 2026-10-20: Ananam Besuda (Kaaputenen VII) 'Miracle Drug' 19k+25k, 200 m3 inside Kaaputenen, entered; chains with Abata Kavalala's oxygen drop-off at the same station.

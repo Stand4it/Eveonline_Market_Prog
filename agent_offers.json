@@ -1902,6 +1902,26 @@
    "to_system": "Santola",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: an escort mission with attackers of unknown number until you arrive; Santola is only 1 jump from Ikao",
    "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5; 123,000 ISK + 70 LP with the bonus. Ikao is the first system the plan flies to, and Santola is where you were: this is the closest combat offer to where you are."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kaaputenen",
+   "career": "Distribution",
+   "where": "Kaaputenen VII - Moon 4 - Joint Harvesting Plantation (0.8)",
+   "agent": "Ananam Besuda (Distribution, L1, Kaaputenen VII - Moon 4 - Joint Harvesting Plantation)",
+   "mission": "'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) from Kaaputenen VII Moon 4 (the agent's station) to Kaaputenen III - Moon 7 - Caldari Provisions Plantation (0.8), same system. Pays 19,000 ISK + 26 LP; bonus 25,000 ISK within 54 min.",
+   "isk": 19000,
+   "bonus": 25000,
+   "task_min": 10,
+   "jumps": 0,
+   "to_system": "Kaaputenen",
+   "m3": 200.0,
+   "needs": "a ship with 200 m3 of cargo (not a capsule)",
+   "note": "Seen 2026-10-20, standing 0.0. Kaaputenen VII Moon 4 is also the drop-off of Abata Kavalala's oxygen (from Sirppala), so one trip to Kaaputenen delivers that and starts this one."
   }
  ],
  "min_per_jump": 3.0,
