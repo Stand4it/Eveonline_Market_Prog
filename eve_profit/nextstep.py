@@ -939,6 +939,13 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # unallocated skill points: spend them (instant, free) on the skills the plan needs
+        from .spendsp import candidate as _sp
+        _s = _sp(con)
+        if _s:
+            cands.append((_s[0], "spend skill points", _s[1], "instant and free: saves days of training"))
+    except Exception:                                            # noqa: BLE001
+        pass
     try:                                                         # a freelance delivery job paid from stock you hold here: accept, fly, deliver
         from .jobchain import candidate as _jc
         _j = _jc(con, g, p)
