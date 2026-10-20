@@ -1726,6 +1726,25 @@
    "to_system": "Isikesu",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; the hostiles are unknown until accepted. Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5. Same station (Anttiri V Moon 14) as Poukinen Ukilen's frozen-food pickup."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Anttiri",
+   "career": "Security",
+   "where": "Anttiri V - Moon 14 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent": "Obanari Kachomala (Security, L1, Anttiri V - Moon 14 - Spacelane Patrol Assembly Plant)",
+   "mission": "'Undue Attention - Poking Around' (1 of 3): fly to the coordinates at Anttiri (0.7), approach and investigate any large objects, come back. 'If anything pokes back, just run.' Pays 51,000 ISK + 63 LP; bonus 50,000 ISK within 2 h 2 min.",
+   "isk": 51000,
+   "bonus": 50000,
+   "task_min": 25,
+   "jumps": 0,
+   "to_system": "Anttiri",
+   "needs": "a ship that can warp out fast (a frigate) and the site's hostiles are unknown: a scouting mission, no kill order. Set available true once you decide a frigate may scout it (the objective allows running away)",
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 3; 101,000 ISK + 63 LP with the bonus, the best non-kill Security offer so far. Same station as Icard Vacymoutte and Poukinen Ukilen's frozen-food pickup."
   }
  ],
  "min_per_jump": 3.0,
