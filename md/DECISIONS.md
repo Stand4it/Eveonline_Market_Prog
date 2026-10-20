@@ -427,3 +427,4 @@
 - 2026-10-20: Tenpaa Hyynita (Anttiri III, Mining) 'Burnt Traces' 34k+36k, 1,080 m3 Augumene, entered, available false until a mining ship is at hand.
 - 2026-10-20: Veis Kingato (Anttiri V Moon 6, Security) 'Smuggler Interception' 99k+98k entered, available false (combat, best combat offer so far).
 - 2026-10-20: Ienonanen Sitsigainen (Sirppala IV, Security) 'To the Rescue' 32k+42k entered, available false (combat).
+- 2026-10-20: Abata Kavalala (Sirppala IV Moon 4) 'Supplies For The Needy' 21k+20k, 210 m3 to Kaaputenen, entered.

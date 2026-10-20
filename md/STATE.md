@@ -26,3 +26,4 @@ Open agent offers (agent_offers.json):
 - Yarjonoisen Koshamagae: 'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) fro
 - Ausmunen Karantala: 'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Isik
 - Kouyonen Kaimienen: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
+- Abata Kavalala: 'Supplies For The Needy': courier 3 x Crates of Oxygen (210 
