@@ -526,7 +526,7 @@ def _section(title, body):
     return f"{'=' * 70}\n {title}\n{'=' * 70}\n{body}" if body else ""
 
 
-def skill_note(con, g, p, min_hours=8.0):
+def skill_note(con, g, p, min_hours=12.0):
     """Remind the user when the skill queue is short or empty, and name the first thing to train (plus its book if unowned)."""
     import calendar
     import time as _t
@@ -549,8 +549,13 @@ def skill_note(con, g, p, min_hours=8.0):
         now_steps, books = [], []
     L = [f"SKILL QUEUE: only {hours:.1f} h left. Fill it before you leave."]
     if now_steps:
-        st = now_steps[0]
-        L.append(f"   QUEUE NOW (no purchase needed): {st['skill']} {st['level']} ({st['minutes'] / 60:.1f} h) - {st['why']}")
+        have_h, shown = hours, 0
+        for st in now_steps:                                            # fill the queue to about a day: several skills, in the plan's order
+            if have_h >= 24.0 and shown:
+                break
+            L.append(f"   QUEUE NOW (no purchase needed): {st['skill']} {st['level']} ({st['minutes'] / 60:.1f} h) - {st['why']}")
+            have_h += st["minutes"] / 60.0
+            shown += 1
         L.append("   (in game: Skills > find it > + / Train Now; the full ordered list: python -m eve_profit trainplan --hours 24)")
     else:
         L.append("   Nothing in your plan can be queued without a new skill book (see below).")
@@ -912,8 +917,9 @@ def next_action(con, g, p, full=False, ahead=False):
         steps.append("STEP: BUY A SKILL BOOK HERE\n   " + book.splitlines()[0].replace("BUY NOW - ", ""))
     sk = skill_note(con, g, p)
     queue = [l.strip() for l in sk.splitlines() if "QUEUE NOW" in l]
-    if queue:
-        steps.append("STEP: QUEUE A SKILL (takes 30 seconds, free)\n   " + queue[0].replace("QUEUE NOW (no purchase needed): ", ""))
+    if queue:                                                    # JOB NUMBER 1 until every skill is learned: the queue is never left short, and this step goes first
+        steps.insert(0, "STEP: FILL THE SKILL QUEUE (takes a minute, free; it trains while you play)\n   QUEUE, in this order (Skills > find each > + / Train Now):\n      " + "\n      ".join(
+            q.replace("QUEUE NOW (no purchase needed): ", "") for q in queue))
     agent, rate = _agent_step(con, g, p)
     # ---- the MAIN activity: every candidate scored in ISK per hour, same currency, best one wins -----------------------------------
     cands = []                                                   # (ISK/hr, label, step text, note)

@@ -5,25 +5,30 @@ The planner-driven `skills` advice takes over once the character has ISK and opp
 from .advisor import ATTR_NAMES, _skill_row, fmt_minutes, train_minutes, virtual_levels
 
 GOALS = [
+    # PROGRESS FIRST (ships and tools that earn, then the multipliers): a hull with a hold, the frigate and destroyer line, guns, scanning, mining, then trade and industry.
+    ("Gallente Hauler", 1, "fly the Nereus: a big hold turns courier offers into ISK"),
+    ("Gallente Frigate", 5, "every Gallente frigate and the way to destroyers and cruisers"),
+    ("Small Hybrid Turret", 3, "guns for Gallente frigates and destroyers"),
+    ("Mechanics", 3, "tougher hull for combat and mining"),
+    ("Astrometrics", 3, "scan sites: exploration income and the daily scan goal"),
+    ("Gallente Destroyer", 3, "destroyers: more guns and hold than a frigate"),
+    ("Mining", 3, "ore mining yield for the mining offers"),
+    ("Light Drone Operation", 3, "drones: easy damage for a new pilot"),
+    ("Small Hybrid Turret", 5, "more damage per gun"),
     ("Trade", 3, "more market orders; prerequisite for the tax/fee skills"),
     ("Accounting", 3, "lower sales tax on everything you sell"),
     ("Broker Relations", 3, "lower fee on every sell/buy order you place"),
-    ("Gallente Hauler", 2, "fly the Iteron hauler; +5% cargo per level"),
-    ("Gallente Frigate", 3, "fly Gallente frigates for missions and ratting"),
+    ("Gallente Hauler", 3, "+5% cargo per level"),
+    ("Science", 3, "T2 invention (later)"),
+    ("Industry", 3, "T2 manufacturing (later)"),
     ("Retail", 2, "more simultaneous market orders"),
-    ("Mechanics", 3, "tougher hull for combat and mining"),
-    ("Light Drone Operation", 3, "drones: easy damage for a new pilot"),
-    ("Small Hybrid Turret", 3, "guns for Gallente frigates"),
     ("Evasive Maneuvering", 3, "faster align: less time and risk per jump"),
     ("Contracting", 2, "more contract slots (courier and item contracts)"),
-    ("Astrometrics", 3, "scan sites: exploration income"),
     ("Archaeology", 2, "relic sites (exploration)"),
     ("Hacking", 2, "data sites (exploration)"),
-    ("Mining", 3, "ore mining yield"),
     ("Accounting", 4, "lower sales tax again"),
     ("Broker Relations", 4, "lower broker fee again"),
     ("Retail", 4, "more simultaneous market orders"),
-    ("Gallente Hauler", 3, "+5% cargo per level"),
 ]
 
 
