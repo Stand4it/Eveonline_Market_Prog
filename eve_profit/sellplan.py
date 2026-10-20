@@ -81,6 +81,7 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     world = world or {}
+    _far = None
     rows = []
     for r in con.execute("SELECT type_id,quantity FROM inventory WHERE system_id=?", (cur,)).fetchall():
         tid, qty = r["type_id"], r["quantity"]
@@ -109,6 +110,17 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
                 opts.append((f"CARRY along the trip, sell at {g.name[s]}", net, DOCK_MIN + extra_trips * round_trip, f"{rt.jumps} jumps, on your way{tnote}"))
             else:
                 opts.append((f"DETOUR to {g.name[s]}", net, (1 + extra_trips) * round_trip, f"{rt.jumps} jumps each way{tnote}"))
+        try:                                                       # buy orders with a RANGE: you only need to reach a station inside the order's range and region, not the order's own station
+            from .remoterange import entry_options
+            if _far is None:
+                _far = g.reach(cur, 60, p.avoid_yellow)
+            for net_r, entry, j_r, osys, price_r, rng_r in entry_options(con, g, p, tid, qty, cur, _far, now):
+                if g.id_of(entry) in on_path:
+                    opts.append((f"CARRY along the trip, sell at {entry}", net_r, DOCK_MIN, f"{j_r} jumps, on your way: sells into the buy order in {osys} ({price_r:,.0f}, range {rng_r}), no need to reach its station"))
+                else:
+                    opts.append((f"DETOUR to {entry}", net_r, 2 * _minutes(p, j_r) + 2 * DOCK_MIN, f"{j_r} jumps each way: sells into the buy order in {osys} ({price_r:,.0f}, range {rng_r}), no need to reach its station"))
+        except Exception:                                           # noqa: BLE001
+            pass
         for d in world.get(tid, [])[:5]:
             if d["jumps"] is None or d["system"] == g.name[cur]:
                 continue

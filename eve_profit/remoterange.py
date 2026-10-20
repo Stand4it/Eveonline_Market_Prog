@@ -74,3 +74,47 @@ def remote_bid(con, g, tid, qty, from_sid, from_loc, tax, min_sec=0.5):
         return None
     best.update({"net": net, "sold": qty - left})
     return best
+
+
+MAX_ORDERS = 60          # best-priced buy orders per item looked at
+
+
+def entry_options(con, g, p, tid, qty, cur, reach, now_net):
+    """Buy orders elsewhere (high-sec, a scanned region) that pay clearly more than `now_net`, and the NEAREST place you can sell to them: any station system in the ORDER'S region
+    within the order's range of it (you do not have to go to the order's own station). -> [(net, entry system name, jumps from you, order system, price, rng)] best first.
+    `reach` = g.reach(cur, ...) (safe routes from you)."""
+    try:
+        rows = con.execute("SELECT o.price,o.volume_remain,o.min_volume,o.system_id,o.region_id,r.rng FROM orders o JOIN order_range r ON r.order_id=o.order_id "
+                           "WHERE o.type_id=? AND o.is_buy=1 AND o.volume_remain>=? ORDER BY o.price DESC LIMIT ?", (tid, 1, MAX_ORDERS * 3)).fetchall()
+        stations = {r[0] for r in con.execute("SELECT DISTINCT system_id FROM stations")}
+    except Exception:                                                   # noqa: BLE001
+        return []
+    out, tax = [], p.sales_tax
+    for r in rows:
+        if len(out) >= MAX_ORDERS:
+            break
+        osys, rng = r["system_id"], _num(r["rng"])
+        if g.sec.get(osys, 0.0) < 0.5 or r["volume_remain"] < max(r["min_volume"], qty if r["min_volume"] > 1 else 1):
+            continue
+        sold = min(qty, r["volume_remain"])
+        net = sold * r["price"] * (1 - tax)
+        if net <= now_net * 1.1 + 5_000:
+            continue
+        if rng == -2:                                                   # station range: only that station
+            cand = [osys]
+        elif rng == -1:
+            cand = [osys]
+        else:
+            lim = 40 if rng == 10 ** 6 else rng
+            cand = list(gate_jumps(g, osys, min(lim, 40)))
+        best = None
+        for s in cand:
+            if s in stations and s in reach and g.sec.get(s, 0.0) >= 0.5 and g.region.get(s) == g.region.get(osys):
+                j = reach[s].jumps
+                if best is None or j < best[0]:
+                    best = (j, s)
+        if best is None:
+            continue
+        out.append((net, g.name[best[1]], best[0], g.name[osys], r["price"], r["rng"]))
+    out.sort(key=lambda x: (-x[0], x[2]))
+    return out[:5]
