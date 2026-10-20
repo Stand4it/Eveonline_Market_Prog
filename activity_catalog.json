@@ -524,7 +524,7 @@
    "requires": {
     "Gallente Frigate": 4
    },
-   "how": "Warp to a combat anomaly in a 0.5+ system with a combat-ready ship that passes the 99% rule; time one hour. Same ship and skills as ratting.",
+   "how": "Warp to a combat anomaly in a 0.5+ system with a combat-ready ship that passes the 99% rule; time one hour. Same ship and skills as ratting. First open Agency > Exploration to see how many are in THIS system (send me the card), then time one run: loot, salvage and gear you keep are valued at market when you stop the timer.",
    "needs_tool": "gun"
   },
   {
@@ -543,7 +543,7 @@
    "requires": {
     "Astrometrics": 1
    },
-   "how": "Probe-scan the signature down (see Probe-scanning data/relic sites).",
+   "how": "Probe-scan the signature down (see Probe-scanning data/relic sites). First open Agency > Exploration to see how many are in THIS system (send me the card), then time one run: loot, salvage and gear you keep are valued at market when you stop the timer.",
    "needs_hull": [
     "Imicus",
     "Heron",
