@@ -281,6 +281,9 @@ def trade_extras(con, g, p, o):
             continue
         if r["trade_profit"] <= 0:
             continue
+        if any(q > 0 and cost / q < 5.0 for st in r["stops"] for _n, q, cost in st[2]["buy"]):
+            lines.append(f"{label}: trades NOT counted: one buy order costs under 5 ISK a unit (a 1-ISK trap or mistaken order: check it with `check` before trusting the margin)")
+            continue
         extra_min = max(0.0, r["hours"] * 60 - r["jumps"] * p.jump_seconds / 60.0 - 2 * DOCK_MIN)
         isk += r["trade_profit"]
         mins += extra_min
