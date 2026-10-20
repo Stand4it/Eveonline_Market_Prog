@@ -1589,6 +1589,26 @@
    "to_system": "Anttiri",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; enemy ships unknown until accepted (the briefing says jingoist Gallente factions may attack). Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all. Part 1 of 5; best pay of the five (121,000 ISK + 72 LP with the bonus)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isikesu",
+   "career": "Distribution",
+   "where": "Isikesu IV - Moon 14 - Hyasyoda Corporation Mining Outpost (0.7)",
+   "agent": "Ruotkaishi Karjiras (Distribution, L1, Isikesu IV - Moon 14 - Hyasyoda Corporation Mining Outpost)",
+   "mission": "'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates of Frozen Food (40 m3) from Juunigaishi VII - Perkone Factory (0.6) to Isikesu IV - Moon 14. Pays 28,000 ISK + 33 LP; bonus 23,000 ISK within 1 h 2 min.",
+   "isk": 28000,
+   "bonus": 23000,
+   "task_min": 10,
+   "jumps": 4,
+   "to_system": "Juunigaishi",
+   "m3": 40.0,
+   "needs": "a ship with 40 m3 of cargo; the pickup is at Juunigaishi VII (jump count Isikesu -> Juunigaishi is an estimate: confirm it)",
+   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 14 is also the drop-off of Epas Hopara's spiced wine (Juunigaishi -> Isikesu): one Juunigaishi trip can serve both. Part 1 of 3."
   }
  ],
  "min_per_jump": 3.0,
