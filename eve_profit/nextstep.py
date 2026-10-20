@@ -240,7 +240,11 @@ def _next_action_core(con, g, p):
         L.append("   then route:                  python -m eve_profit go --pick 1 --send")
         L.append(AFTER)
         return "\n".join(L)
-    return "No clear action. Refresh data:  python -m eve_profit scan --live   then   python -m eve_profit next"
+    try:
+        from .pricefresh import advice, status_line
+        return "No clear action right now. " + (advice(con, needed=True) or status_line(con) or "The hourly refresh keeps the prices current.") + "  Then:  python -m eve_profit next"
+    except Exception:                                                   # noqa: BLE001
+        return "No clear action. Refresh data:  python -m eve_profit scan --live   then   python -m eve_profit next"
 
 
 HOME_NOTE = ("EARLY-GAME TASK: your home station is a player-owned structure. Owners can charge docking fees and market taxes there. "

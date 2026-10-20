@@ -262,13 +262,12 @@ def _watch_lines(watch):
     """Where there may be a kill on the route: ships destroyed in the last hour (CCP) and hauler losses in 7 days (zKillboard)."""
     flagged = [w for w in watch if w["level"] != "ok"]
     if not flagged:
-        return ["ROUTE WATCH: no recent kills or hauler losses on any system of this route (data may be stale: run `scan --live`"
-                " and `zkill` for fresh numbers).", ""]
+        return ["ROUTE WATCH: no recent kills or hauler losses on any system of this route (refreshed by the hourly task).", ""]
     L = ["ROUTE WATCH (kills in the last hour / hauler losses in 7 days / security):"]
     for w in flagged:
         L.append(f"   {w['level']:<8} {w['name']:<14} sec {w['sec']:.1f}   ships killed last hour: {w['kills']:<3} "
                  f"hauler losses 7d: {w['gank']}")
-    L.append("   DANGER = avoid or wait; CAUTION = fly it awake, not on autopilot. Refresh with: scan --live  and  zkill")
+    L.append("   DANGER = avoid or wait; CAUTION = fly it awake, not on autopilot. (kills refresh with the hourly task)")
     return L + [""]
 
 
