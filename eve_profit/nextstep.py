@@ -792,7 +792,7 @@ def _name_of(step):
         return f"Market list {item}".strip()
     if lo.startswith("step: buy a skill book"):
         return "Skills buy book"
-    if lo.startswith("step: queue a skill"):
+    if lo.startswith("step: queue a skill") or lo.startswith("step: fill the skill queue"):
         return "Skills queue"
     if lo.startswith("step: air daily goals"):
         return "AIR Daily Goals"
@@ -917,6 +917,9 @@ def next_action(con, g, p, full=False, ahead=False):
         steps.append("STEP: BUY A SKILL BOOK HERE\n   " + book.splitlines()[0].replace("BUY NOW - ", ""))
     sk = skill_note(con, g, p)
     queue = [l.strip() for l in sk.splitlines() if "QUEUE NOW" in l]
+    _hdr = next((l.strip() for l in sk.splitlines() if l.strip().startswith("SKILL QUEUE:")), "")
+    if _hdr and not queue:                                       # queue short but nothing can be queued without a book: still job number 1 (the book trip is in `trainplan`)
+        steps.insert(0, "STEP: FILL THE SKILL QUEUE (job number 1)\n   " + _hdr + "\n   Nothing in the plan can be queued without a skill book: run  python -m eve_profit trainplan --hours 24  and buy the first book it lists, or queue any skill you can train (Skills > + ).")
     if queue:                                                    # JOB NUMBER 1 until every skill is learned: the queue is never left short, and this step goes first
         steps.insert(0, "STEP: FILL THE SKILL QUEUE (takes a minute, free; it trains while you play)\n   QUEUE, in this order (Skills > find each > + / Train Now):\n      " + "\n      ".join(
             q.replace("QUEUE NOW (no purchase needed): ", "") for q in queue))
