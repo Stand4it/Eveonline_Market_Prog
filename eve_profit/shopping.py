@@ -30,13 +30,13 @@ def wishes(con, p, g=None):
         have_t = sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"]))
         have_t += sum(sum(q for _sid, q in rows) for n, rows in s["stock"].items() if any(w in n.lower() for w in k["turret_words"]) and "civilian" not in n.lower())
         if have_t < k["turrets"]:
-            out.append({"item": k["turret_buy"], "qty": k["turrets"] - have_t, "why": "guns for the combat fit"})
+            out.append({"item": k["turret_buy"], "qty": k["turrets"] - have_t, "why": "guns for the combat fit", "needs_combat_hull": True})
         if acquire.held(con, k["ammo"]) < k["ammo_qty"]:
-            out.append({"item": k["ammo"], "qty": k["ammo_qty"] - acquire.held(con, k["ammo"]), "why": "ammo for the guns"})
+            out.append({"item": k["ammo"], "qty": k["ammo_qty"] - acquire.held(con, k["ammo"]), "why": "ammo for the guns", "needs_combat_hull": True})
         has_tank = any(any(w in n.lower() for w in k["tank_words"]) for n, _q in s["fitted"]) or any(
             any(w in n.lower() for w in k["tank_words"]) for n in s["stock"]) or acquire.held(con, k["tank_buy"]) >= 1
         if not has_tank:
-            out.append({"item": k["tank_buy"], "qty": 1, "why": "armor repairer (tank)"})
+            out.append({"item": k["tank_buy"], "qty": 1, "why": "armor repairer (tank)", "needs_combat_hull": True})
     except Exception:                                                   # noqa: BLE001
         pass
     try:                                                                # the TOOLS the other careers need (scanning, salvaging, mining): any hull with the slots carries them
@@ -142,12 +142,41 @@ def _way(con, g, p, w, live=False):
         return None
 
 
+def _ship_here(con, g, p):
+    """True when you fly a ship (not a capsule) or one of your ships is parked in THIS system: what you buy can be fitted right away."""
+    from . import combatprep
+    try:
+        if (p.ship_name or "") and not p.ship_name.lower().startswith("capsule"):
+            return True
+        here = g.id_of(p.current_system)
+        return any(sid == here for _n, sid in combatprep.state(con, p)["ships"])
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
+def has_combat_hull(con, p):
+    """True when you fly or own a hull of the combat kit (guns, ammo and a tank bought before it would only sit in a hangar)."""
+    from . import combatprep
+    try:
+        k, st = combatprep.kit(), combatprep.state(con, p)
+        hulls = [h.lower() for h in k["hulls"]]
+        return any(h in (st["hull"] or "").lower() for h in hulls) or any(any(h in n.lower() for h in hulls) for n, _sid in st["ships"])
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
 def candidates(con, g, p, best_known, hop_to):
     """-> [(rate, label, step text, note)]: a purchase step when THIS system is the cheapest way (buy beats build, detours counted) to get a wished item."""
     from . import acquire
     out = []
     wallet = float(getattr(p, "wallet_isk", 0.0) or 0.0)
+    hull_ok = has_combat_hull(con, p)
+    ship_here = _ship_here(con, g, p)
     for w in wishes(con, p, g):
+        if w.get("needs_combat_hull") and not hull_ok:
+            continue                                                    # no combat hull yet: the hull comes first, these would only sit in a hangar
+        if not w["why"].startswith(("combat hull", "upgrade")) and not ship_here:
+            continue                                                    # a module or ammo bought where no ship of yours is would just sit in the hangar: buy it when you are with the ship
         way = _way(con, g, p, w)
         if not way or way["mode"] != "buy" or not way.get("buy") or way["buy"]["system"] != p.current_system:
             continue

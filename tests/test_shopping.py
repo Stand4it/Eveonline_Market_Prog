@@ -58,6 +58,21 @@ class TestBlockedGoals(unittest.TestCase):
         self.assertGreater(out[0]["per_min"], out[1]["per_min"])
 
 
+class TestNoPointlessPurchase(unittest.TestCase):
+    def test_modules_and_ammo_wait_for_a_ship_here(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        from eve_profit import shopping
+        p = SimpleNamespace(ship_name="Capsule - X", current_system="A", wallet_isk=15_000_000.0)
+        ws = [{"item": "Antimatter Charge S", "qty": 200, "why": "ammo for the guns", "needs_combat_hull": True},
+              {"item": "Salvager I", "qty": 1, "why": "a salvager for salvaging"}]
+        g = SimpleNamespace(id_of=lambda n: 1)
+        with mock.patch.object(shopping, "wishes", return_value=ws), mock.patch.object(shopping, "has_combat_hull", return_value=False), \
+                mock.patch.object(shopping, "_ship_here", return_value=False), mock.patch.object(shopping, "_way") as way:
+            self.assertEqual(shopping.candidates(None, g, p, 1_000_000.0, lambda *a: "x"), [])
+            way.assert_not_called()                                         # nothing even priced: no ship here, no purchase
+
+
 if __name__ == "__main__":
     unittest.main()
 
