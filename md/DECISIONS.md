@@ -438,3 +438,4 @@
 - 2026-10-20: Inainshatsu Onelari (Kaaputenen III, Mining) 'Mercium Experiments' 47k+45k, 1,080 m3 Mercium, entered, available false until a mining ship is at hand.
 - 2026-10-20: Surjinen Hakomairos (Sirseshin VI) 'The Heiress' 22k+20k, 0 m3 from Tuurainas IV, entered.
 - 2026-10-20: new grab 'incursions' (ESI public /incursions/, hourly via grabs) and an INCURSIONS block in next --plan (nearest staging systems; fleet content, not routed). Crimson Harvest, Homefront Operations, Pirate Strongholds and Abyssal Deadspace have no agents and no ESI list: they stay catalog/screens items.
+- 2026-10-20: Agency Exploration cards added to activity_catalog.json: Combat Anomalies and Cosmic Signatures (gated by tools like ratting / probe scanning), Escalations, Triglavian Space, ESS banks and Zarzakh as blocked (not routed). None of these cards has agents or an ESI list.

@@ -507,6 +507,120 @@
    },
    "blocked": "LATER: needs very high skills and a strong, well-defended and well-armed ship (user, 2026-10-12). Not routed for a new character. Duels are consensual and cost no ship, but need a willing opponent. Re-check when skills and ship allow.",
    "how": "Later in the game: AIR Duels / PvP / Faction Warfare goals (each goal 25,000 ISK + 10 career points)."
+  },
+  {
+   "id": "combat_anomalies",
+   "name": "Combat Anomalies (Agency > Exploration; visible in the scanner, no probes)",
+   "area": "combat",
+   "match": [
+    "anomal"
+   ],
+   "prior": [
+    400000,
+    3000000
+   ],
+   "minutes": 40,
+   "risk": "high",
+   "requires": {
+    "Gallente Frigate": 4
+   },
+   "how": "Warp to a combat anomaly in a 0.5+ system with a combat-ready ship that passes the 99% rule; time one hour. Same ship and skills as ratting.",
+   "needs_tool": "gun"
+  },
+  {
+   "id": "cosmic_signatures",
+   "name": "Cosmic Signatures (Agency > Exploration; same as probe scanning)",
+   "area": "exploration",
+   "match": [
+    "cosmic signature"
+   ],
+   "prior": [
+    300000,
+    2000000
+   ],
+   "minutes": 30,
+   "risk": "medium",
+   "requires": {
+    "Astrometrics": 1
+   },
+   "how": "Probe-scan the signature down (see Probe-scanning data/relic sites).",
+   "needs_hull": [
+    "Imicus",
+    "Heron",
+    "Magnate",
+    "Probe",
+    "Astero"
+   ],
+   "needs_tool": "scanning"
+  },
+  {
+   "id": "escalations",
+   "name": "Escalations (deep-space mystery sites)",
+   "area": "exploration",
+   "match": [
+    "escalation"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "UNAVAILABLE in the Agency for your character (appears after exploring sites): not routed",
+   "how": "Later."
+  },
+  {
+   "id": "triglavian_space",
+   "name": "Triglavian Space (Pochven)",
+   "area": "combat",
+   "match": [
+    "pochven",
+    "triglavian"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "Pochven is low-sec-like space with Triglavian ships: outside the 0.5+ safe rule, not routed",
+   "how": "Later, if ever."
+  },
+  {
+   "id": "ess_banks",
+   "name": "Encounter Surveillance System (ESS banks)",
+   "area": "combat",
+   "match": [
+    "ess bank"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "ESS banks sit in low-sec and null-sec and are fought over by players: outside the 0.5+ safe rule, not routed",
+   "how": "Later, if ever."
+  },
+  {
+   "id": "zarzakh",
+   "name": "Zarzakh (Deathless Circle pirate haven)",
+   "area": "combat",
+   "match": [
+    "zarzakh"
+   ],
+   "prior": [
+    0,
+    0
+   ],
+   "minutes": 0,
+   "risk": "high",
+   "requires": {},
+   "blocked": "Zarzakh is a dangerous pirate-haven system outside safe space: not routed",
+   "how": "Later, if ever."
   }
  ]
 }
