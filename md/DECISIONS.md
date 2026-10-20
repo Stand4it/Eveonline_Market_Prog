@@ -420,3 +420,4 @@
 - 2026-10-20: Ruotkaishi Karjiras (Isikesu IV Moon 14) 'Food for Fun' 28k+23k, 40 m3 from Juunigaishi VII, entered; same drop-off station as Epas Hopara's wine.
 - 2026-10-20: commands no longer crash at start when the hourly refresh holds the database (seed_defaults write is skipped; defaults are already stored).
 - 2026-10-20: Isikesu IV Moon 10 agents read (Yarjonoisen Koshamagae courier 33k+34k 180 m3; Shitula Akama combat 43k+29k, available false) entered.
+- 2026-10-20: Isikesu IV Moon 5 agents read (Ausmunen Karantala courier 24k+27k 240 m3; Ahvaken Tommii combat 68k+73k, available false) entered.
