@@ -1883,6 +1883,25 @@
    "m3": 1080.0,
    "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the site is a scanned mission site in Inaro",
    "note": "Seen 2026-10-20, standing 0.0. The same mission as Aakalen Naniro at Saila (40,000 ISK) and Tenpaa Hyynita at Anttiri (34,000 ISK), but this one pays the most: 81,000 ISK + 49 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Ikao",
+   "career": "Security",
+   "where": "Ikao VII - Moon 1 - Sukuuvestaa Corporation Production Plant (0.6)",
+   "agent": "Illen Hasunmaa (Security, L1, Ikao VII - Moon 1 - Sukuuvestaa Corporation Production Plant)",
+   "mission": "'After The Seven - \"Replacement\"' (1 of 5): go to Santola (0.8), meet the civilian convoy and protect it; 'if they are in any kind of trouble, take care of it'. Pays 59,000 ISK + 70 LP; bonus 64,000 ISK within 2 h 2 min.",
+   "isk": 59000,
+   "bonus": 64000,
+   "task_min": 35,
+   "jumps": 1,
+   "to_system": "Santola",
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule: an escort mission with attackers of unknown number until you arrive; Santola is only 1 jump from Ikao",
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5; 123,000 ISK + 70 LP with the bonus. Ikao is the first system the plan flies to, and Santola is where you were: this is the closest combat offer to where you are."
   }
  ],
  "min_per_jump": 3.0,
