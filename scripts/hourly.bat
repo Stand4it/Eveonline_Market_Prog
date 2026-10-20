@@ -6,6 +6,6 @@ set EVE_CHAR=Stand4it Dahl
 cd /d "%~dp0.."
 echo === %date% %time% >> hourly.log
 python -m eve_profit sync --char "%EVE_CHAR%" >> hourly.log 2>&1
-python -m eve_profit scan --live --max-age 50 --char "%EVE_CHAR%" >> hourly.log 2>&1
+python -m eve_profit scan --live --max-age 50 --budget 0 --char "%EVE_CHAR%" >> hourly.log 2>&1
 python -m eve_profit grabs --char "%EVE_CHAR%" >> hourly.log 2>&1
 python -m eve_profit agents --within 6 --char "%EVE_CHAR%" >> hourly.log 2>&1

@@ -937,7 +937,9 @@ def _run(a):
                     print("\n=== SELL PLAN UPDATED with the fresh prices (default: sell now) ===")
                     print(format_sellplan(sell_plan(con, gg, p, None, None, min_value=0.0), limit=40))
                 except Exception as e:                                   # noqa: BLE001 (never break a scan over this)
-                    print("Sell plan update skipped:", e)
+                    import traceback as _tb
+                    _t = _tb.extract_tb(e.__traceback__)[-1]
+                    print(f"Sell plan update skipped: {e}  (at {os.path.basename(_t.filename)}:{_t.lineno} in {_t.name})")
             elif a.cmd == "watch":
                 from .mock import refresh_mock_orders
                 refresh_mock_orders(con, random.Random())
