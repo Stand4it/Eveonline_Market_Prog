@@ -435,3 +435,4 @@
 - 2026-10-20: Illen Hasunmaa (Ikao VII, Security) 'After The Seven - Replacement' 59k+64k, escort at Santola, entered, available false (combat).
 - 2026-10-20: Ananam Besuda (Kaaputenen VII) 'Miracle Drug' 19k+25k, 200 m3 inside Kaaputenen, entered; chains with Abata Kavalala's oxygen drop-off at the same station.
 - 2026-10-20: Ozomawa Jindaken (Kaaputenen V Moon 16) 'Cool Cat' 25k+22k, 240 m3 to Inaro X Moon 4, entered.
+- 2026-10-20: Inainshatsu Onelari (Kaaputenen III, Mining) 'Mercium Experiments' 47k+45k, 1,080 m3 Mercium, entered, available false until a mining ship is at hand.

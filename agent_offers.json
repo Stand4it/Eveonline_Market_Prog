@@ -1942,6 +1942,26 @@
    "m3": 240.0,
    "needs": "a ship with 240 m3 of cargo (not a capsule); jump count Kaaputenen -> Inaro is an estimate: confirm it",
    "note": "Seen 2026-10-20, standing 0.0. Inaro X Moon 4 is also the station of Turppo Futsen (Security): one dock there."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Kaaputenen",
+   "career": "Mining",
+   "where": "Kaaputenen III - Moon 7 - Caldari Provisions Plantation (0.8)",
+   "agent": "Inainshatsu Onelari (Mining, L1, Kaaputenen III - Moon 7 - Caldari Provisions Plantation)",
+   "mission": "'Mercium Experiments': mine 1,800 units of Mercium (1,080 m3) in the Kaaputenen system (0.8, a rich deposit) and bring them to the agent at Kaaputenen III Moon 7. Pays 47,000 ISK + 54 LP; bonus 45,000 ISK within 1 h 16 min.",
+   "isk": 47000,
+   "bonus": 45000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Kaaputenen",
+   "m3": 1080.0,
+   "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the Mercium deposit is in the Kaaputenen system (a rare ore: right-click the Mercium icon in the mission log to add it to the overview)",
+   "note": "Seen 2026-10-20, standing 0.0. 92,000 ISK + 54 LP with the bonus, the best mining offer so far. Kaaputenen III Moon 7 is also the drop-off of Ananam Besuda's Zemnar crates (same system)."
   }
  ],
  "min_per_jump": 3.0,
