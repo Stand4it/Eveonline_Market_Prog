@@ -422,3 +422,4 @@
 - 2026-10-20: Isikesu IV Moon 10 agents read (Yarjonoisen Koshamagae courier 33k+34k 180 m3; Shitula Akama combat 43k+29k, available false) entered.
 - 2026-10-20: Isikesu IV Moon 5 agents read (Ausmunen Karantala courier 24k+27k 240 m3; Ahvaken Tommii combat 68k+73k, available false) entered.
 - 2026-10-20: Kouyonen Kaimienen (Anttiri V Moon 20) 'A Humble Gift' 23k+20k, 320 m3 to Isikesu IV Moon 6, entered.
+- 2026-10-20: Icard Vacymoutte (Anttiri V Moon 14, Security) 'To the Rescue' 50k+46k entered, available false (combat).

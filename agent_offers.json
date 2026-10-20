@@ -1707,6 +1707,25 @@
    "m3": 320.0,
    "needs": "a ship with 320 m3 of cargo (not a capsule); jump count Anttiri -> Isikesu is an estimate: confirm it",
    "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 6 is also the drop-off of Ausmunen Karantala's coolant and of Renin Heleneto's recruits: one stop there delivers all three. Poukinen Ukilen's frozen food starts at Anttiri V Moon 14 (same system)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Anttiri",
+   "career": "Security",
+   "where": "Anttiri V - Moon 14 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent": "Icard Vacymoutte (Security, L1, Anttiri V - Moon 14 - Spacelane Patrol Assembly Plant)",
+   "mission": "'Fair Play - To the Rescue' (1 of 5): investigate a distress call at Isikesu (0.7) and eliminate all hostiles. Pays 50,000 ISK + 53 LP; bonus 46,000 ISK within 1 h 44 min.",
+   "isk": 50000,
+   "bonus": 46000,
+   "task_min": 30,
+   "jumps": 2,
+   "to_system": "Isikesu",
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; the hostiles are unknown until accepted. Do not accept until the Incursus has ammo and a repairer",
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5. Same station (Anttiri V Moon 14) as Poukinen Ukilen's frozen-food pickup."
   }
  ],
  "min_per_jump": 3.0,
