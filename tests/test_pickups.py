@@ -15,6 +15,8 @@ class PickupTests(unittest.TestCase):
         load_mock(con)
         con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(881001,'Spare Part',2,1)")
         con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(881002,'Huge Thing',500,1)")
+        con.execute("INSERT OR REPLACE INTO prices VALUES(881001, 5000)")          # 10 x 5,000 = 50,000: worth a line (stock under 10,000 ISK is not listed)
+        con.execute("INSERT OR REPLACE INTO prices VALUES(881002, 50000)")
         con.execute("INSERT INTO inventory VALUES(881001,1,10)")
         con.execute("INSERT INTO inventory VALUES(881002,1,1)")
         return con, Graph(con), Profile(current_system="Home", cargo_m3=100, wallet_isk=1e7, current_location_id=60000001)
@@ -39,3 +41,15 @@ class PickupTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WorthlessStock(unittest.TestCase):
+    def test_cosmetic_stock_is_not_listed(self):
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        load_mock(con)
+        con.execute("INSERT OR REPLACE INTO types(type_id,name,volume,group_id) VALUES(881003,'Some SKIN',0,1)")
+        con.execute("INSERT INTO inventory VALUES(881003,1,3)")
+        g = Graph(con)
+        p = Profile(current_system="Home", cargo_m3=100, wallet_isk=1e7, current_location_id=60000001)
+        self.assertEqual(tripplus.pickups(con, g, p, [g.id_of("Home")]), [])
+

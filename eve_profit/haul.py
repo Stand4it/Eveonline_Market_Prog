@@ -313,7 +313,8 @@ def haul_step(h, g=None, p=None, con=None):
     hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
     L = [f"STEP: FLY to {hop[0]} - jump 1 of {hop[2]}, hauling your stock to {h['dest']}" if hop[0]
          else f"STEP: HAUL your stock to {h['dest']} ({h['jumps']} jumps, one way: `next` plans again at every stop)"]
-    for n, q, net, local in h["items"][:6]:
+    shown = [it for it in h["items"] if it[2] >= 5_000.0][:4] or h["items"][:1]      # only stacks worth a line: the cosmetic odds and ends ride along without being listed
+    for n, q, net, local in shown:
         L.append(f"   {q:>9,} x {n:<32} {net:>12,.0f} there vs {local:>10,.0f} here")
     L.append(f"   {h['trips']} trip(s), about {h['minutes']:.0f} min, +{h['gain']:,.0f} ISK more than selling here = {h['rate_hr']:,.0f} ISK/hr"
              + ("   (ore rides in your mining ship's ore hold)" if h["ore"] else ""))

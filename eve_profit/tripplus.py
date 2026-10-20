@@ -147,7 +147,10 @@ def mark_picked(con, system_name):
     return f"Noted: the stock in {system_name} is picked up (it rides along and is sold or delivered where it pays most)."
 
 
-def pickups(con, g, p, system_ids, mission_m3=0.0, limit=6):
+MIN_PICK_VALUE = 10_000.0          # stock worth less than this is not worth a line in a step (SKINs, fireworks and the like stay in the hangar)
+
+
+def pickups(con, g, p, system_ids, mission_m3=0.0, limit=3):
     """Stock lying in hangars at `system_ids` (a trip's route) that fits the free cargo space, best value per m3 first: consolidates your stock as you travel.
     -> [{system, item, qty, m3, value}]. Gear on the keep list stays where it is; cargo you already carry is not counted."""
     import time
@@ -178,6 +181,8 @@ def pickups(con, g, p, system_ids, mission_m3=0.0, limit=6):
             if q <= 0 or str(nm).lower() in keep:
                 continue
             m3 = q * vol.get(tid, 0.0)
+            if q * adj.get(tid, 0.0) < MIN_PICK_VALUE:
+                continue
             rows.append({"system": name, "item": nm, "qty": q, "m3": m3, "value": q * adj.get(tid, 0.0), "per_m3": q * adj.get(tid, 0.0) / max(m3, 0.0001)})
     rows.sort(key=lambda d: -d["per_m3"])
     out = []
