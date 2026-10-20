@@ -5,6 +5,7 @@ from .journey import TIME_VALUE_ISK_HR
 from .orders import load_books, sell_into_bids
 
 DOCK_MIN = 2.0
+SAFE_SEC = 0.5             # loot and gear are valued at what HIGH-SEC buyers pay (buy orders in 0.5+ systems): the places you can really sell to in safe space
 
 
 def snapshot(con):
@@ -47,14 +48,14 @@ def value_loot(con, g, p, gain_rows, rate=TIME_VALUE_ISK_HR, radius=6):
     name = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
     here_net, rows = {}, []
     for tid, sysid, qty in gain_rows:
-        sold, net = sell_into_bids(buys.get(tid, {}).get(sysid, []), qty, p.sales_tax)
+        sold, net = sell_into_bids(buys.get(tid, {}).get(sysid, []) if g.sec.get(sysid, 0.0) >= SAFE_SEC else [], qty, p.sales_tax)
         here_net[(tid, sysid)] = net
         rows.append({"tid": tid, "name": name.get(tid, tid), "qty": qty, "here": net})
     base = sum(here_net.values())
     best = (0.0, None, 0.0, {})                 # extra ISK after time cost, system, travel hours, per-stack nets
     for d, route in reach.items():
-        if d == cur or route.jumps == 0:
-            continue
+        if d == cur or route.jumps == 0 or g.sec[d] < SAFE_SEC:
+            continue                                                    # only high-sec buyers count
         hours = (2 * route.jumps * p.jump_seconds / 60.0 + DOCK_MIN) / 60.0
         nets, extra = {}, 0.0
         for tid, sysid, qty in gain_rows:
