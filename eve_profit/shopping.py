@@ -22,6 +22,13 @@ def wishes(con, p, g=None):
     """-> [{item, qty, why}] still missing, in the order they are needed."""
     from . import acquire, combatprep
     out = []
+    if g is not None:
+        try:
+            hu = hull_unlock(con, g, p)
+            if hu:
+                out.append(hu)
+        except Exception:                                               # noqa: BLE001
+            pass
     try:
         k = combatprep.kit()
         s = combatprep.state(con, p)
@@ -126,6 +133,52 @@ def blocked_goals(con, g, p):
     return out
 
 
+def _offers_waiting():
+    """[(m3, reward ISK incl. bonus)] of the open courier (Distribution) offers you could do with a ship that has a hold."""
+    import os
+    try:
+        offers = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json"), encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        return []
+    return [(float(o.get("m3", 0.0)), float(o.get("isk", 0)) + float(o.get("bonus", 0))) for o in offers
+            if o.get("available") and o.get("career") == "Distribution" and o.get("m3") is not None]
+
+
+def hull_unlock(con, g, p):
+    """No ship with a hold at hand (a capsule, nothing parked here) but courier offers wait: the cheapest hull you can fly that carries the most of them.
+    -> {item, qty, why, unlock: reward ISK, rate: ISK/hr} or None. Buying it is PROGRESS: it turns waiting offers into ISK and every later plan uses it."""
+    if _ship_here(con, g, p):
+        return None
+    waiting = _offers_waiting()
+    if not waiting:
+        return None
+    try:
+        from . import ships, skills
+        cat, prices, have = ships.catalog(con), ships._prices(con, g, p), skills.have(con)
+        cap = {r[0]: float(r[1] or 0.0) for r in con.execute("SELECT type_id,capacity FROM types WHERE category_id=6")}
+    except Exception:                                                   # noqa: BLE001
+        return None
+    wallet = float(getattr(p, "wallet_isk", 0.0) or 0.0)
+    best = None
+    for tid, d in cat.items():
+        pr = prices.get(d["name"])
+        room = cap.get(int(tid), 0.0)
+        if not pr or room <= 0 or pr[0] > wallet * MAX_SHARE or not ships._flyable(con, tid, have)[0]:
+            continue
+        got = [r for m, r in waiting if m <= room]
+        if not got:
+            continue
+        gain = sum(got) - pr[0]
+        if best is None or gain > best[0]:
+            best = (gain, d["name"], len(got), sum(got), pr[0], room)
+    if not best:
+        return None
+    _g, name, n, reward, price, room = best
+    rate = reward * 60.0 / (n * 20.0 + 30.0)                            # about 20 minutes per offer (travel, dock, hand-in) plus half an hour to get set
+    return {"item": name, "qty": 1, "unlock": reward, "rate": rate,
+            "why": f"unlock: a ship with {room:,.0f} m3 of hold turns {n} waiting courier offers into about {reward:,.0f} ISK (the hull costs ~{price:,.0f})"}
+
+
 def _owns_blueprint(con, item):
     """True when you own the blueprint of `item` (a build is only an option then; without it the only way is to buy)."""
     try:
@@ -175,9 +228,14 @@ def candidates(con, g, p, best_known, hop_to):
     for w in wishes(con, p, g):
         if w.get("needs_combat_hull") and not hull_ok:
             continue                                                    # no combat hull yet: the hull comes first, these would only sit in a hangar
-        if not w["why"].startswith(("combat hull", "upgrade")) and not ship_here:
+        if not w["why"].startswith(("combat hull", "upgrade", "unlock")) and not ship_here:
             continue                                                    # a module or ammo bought where no ship of yours is would just sit in the hangar: buy it when you are with the ship
         way = _way(con, g, p, w)
+        if w.get("unlock") and way and way["mode"] == "buy" and way.get("buy") and way["buy"]["system"] != p.current_system:
+            txt = acquire.first_action(con, g, p, way, hop_to)           # the hop toward the cheapest hull: progress ranks above the plain best step
+            if txt.startswith("STEP:"):
+                return [(max(best_known * 1.25, w["rate"]), f"shopping: {w['item']}", txt, w["why"])]
+            continue
         if not way or way["mode"] != "buy" or not way.get("buy") or way["buy"]["system"] != p.current_system:
             continue
         if way["buy"]["price"] * way["qty"] > wallet * MAX_SHARE:

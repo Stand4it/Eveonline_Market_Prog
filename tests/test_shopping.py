@@ -73,6 +73,26 @@ class TestNoPointlessPurchase(unittest.TestCase):
             way.assert_not_called()                                         # nothing even priced: no ship here, no purchase
 
 
+class TestHullUnlock(unittest.TestCase):
+    def test_waiting_courier_offers_make_the_cheapest_hold_a_wish(self):
+        import sqlite3
+        from types import SimpleNamespace
+        from unittest import mock
+        from eve_profit import shopping, ships, skills
+        con = sqlite3.connect(":memory:")
+        con.execute("CREATE TABLE types(type_id INTEGER, category_id INTEGER, capacity REAL)")
+        con.execute("INSERT INTO types VALUES(1,6,165),(2,6,400)")
+        p = SimpleNamespace(wallet_isk=15_000_000.0, ship_name="Capsule", current_system="A")
+        cat = {"1": {"name": "Small", "slots": {}}, "2": {"name": "Big", "slots": {}}}
+        prices = {"Small": (100_000.0, 1, "A"), "Big": (400_000.0, 2, "B")}
+        with mock.patch.object(shopping, "_ship_here", return_value=False), mock.patch.object(shopping, "_offers_waiting", return_value=[(100.0, 50_000.0), (300.0, 60_000.0)]), \
+                mock.patch.object(ships, "catalog", return_value=cat), mock.patch.object(ships, "_prices", return_value=prices), \
+                mock.patch.object(ships, "_flyable", return_value=(True, "")), mock.patch.object(skills, "have", return_value={}):
+            w = shopping.hull_unlock(con, None, p)
+        self.assertEqual(w["item"], "Small")                           # 165 m3: 50,000 reward for 100,000 vs Big: 110,000 for 400,000: gain 110,000-400,000 < 50,000-100,000? both negative: the better gain wins
+        self.assertIn("unlock", w["why"])
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -163,3 +183,23 @@ class SourceRanking(unittest.TestCase):
         p.ship_name = "Capsule - X"
         p.ship_type_id = 0
         self.assertEqual(tools.carrier(con, p)[0], "Venturish")
+
+class TestHullUnlock(unittest.TestCase):
+    def test_waiting_courier_offers_make_the_cheapest_hold_a_wish(self):
+        import sqlite3
+        from types import SimpleNamespace
+        from unittest import mock
+        from eve_profit import shopping, ships, skills
+        con = sqlite3.connect(":memory:")
+        con.execute("CREATE TABLE types(type_id INTEGER, category_id INTEGER, capacity REAL)")
+        con.execute("INSERT INTO types VALUES(1,6,165),(2,6,400)")
+        p = SimpleNamespace(wallet_isk=15_000_000.0, ship_name="Capsule", current_system="A")
+        cat = {"1": {"name": "Small", "slots": {}}, "2": {"name": "Big", "slots": {}}}
+        prices = {"Small": (100_000.0, 1, "A"), "Big": (400_000.0, 2, "B")}
+        with mock.patch.object(shopping, "_ship_here", return_value=False), mock.patch.object(shopping, "_offers_waiting", return_value=[(100.0, 50_000.0), (300.0, 60_000.0)]), \
+                mock.patch.object(ships, "catalog", return_value=cat), mock.patch.object(ships, "_prices", return_value=prices), \
+                mock.patch.object(ships, "_flyable", return_value=(True, "")), mock.patch.object(skills, "have", return_value={}):
+            w = shopping.hull_unlock(con, None, p)
+        self.assertEqual(w["item"], "Small")                           # 165 m3: 50,000 reward for 100,000 vs Big: 110,000 for 400,000: gain 110,000-400,000 < 50,000-100,000? both negative: the better gain wins
+        self.assertIn("unlock", w["why"])
+
