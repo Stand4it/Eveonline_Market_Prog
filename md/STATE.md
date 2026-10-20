@@ -29,3 +29,4 @@ Open agent offers (agent_offers.json):
 - Abata Kavalala: 'Supplies For The Needy': courier 3 x Crates of Oxygen (210 
 - Ananam Besuda: 'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) from K
 - Ozomawa Jindaken: 'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Kaap
+- Surjinen Hakomairos: 'The Heiress' (1 of 5): courier 1 x Miniature Slaver (0.0 m3

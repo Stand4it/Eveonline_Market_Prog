@@ -1962,6 +1962,26 @@
    "m3": 1080.0,
    "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the Mercium deposit is in the Kaaputenen system (a rare ore: right-click the Mercium icon in the mission log to add it to the overview)",
    "note": "Seen 2026-10-20, standing 0.0. 92,000 ISK + 54 LP with the bonus, the best mining offer so far. Kaaputenen III Moon 7 is also the drop-off of Ananam Besuda's Zemnar crates (same system)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sirseshin",
+   "career": "Distribution",
+   "where": "Sirseshin VI - Moon 1 - Mercantile Club Bureau (0.7)",
+   "agent": "Surjinen Hakomairos (Distribution, L1, Sirseshin VI - Moon 1 - Mercantile Club Bureau)",
+   "mission": "'The Heiress' (1 of 5): courier 1 x Miniature Slaver (0.0 m3) from Tuurainas IV - Core Complexion Inc. Factory (0.6) to Sirseshin VI - Moon 1 (the agent's station). Pays 22,000 ISK + 30 LP; bonus 20,000 ISK within 1 h.",
+   "isk": 22000,
+   "bonus": 20000,
+   "task_min": 8,
+   "jumps": 2,
+   "to_system": "Tuurainas",
+   "m3": 0.0,
+   "needs": "a ship (0 m3 of cargo, no combat); the pickup is at Tuurainas, so it is a round trip; jump count Sirseshin -> Tuurainas is an estimate: confirm it",
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5, the same chain type as Ibeshi Keirsaa's 'The Heiress' at Saila."
   }
  ],
  "min_per_jump": 3.0,
