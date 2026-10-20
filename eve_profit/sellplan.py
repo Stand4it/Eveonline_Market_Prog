@@ -6,6 +6,7 @@ detour to a nearby buyer, or haul to the best market anywhere?  Every option is 
 where your time is worth the ISK/hr of your best alternative task (top of `scan`). Carrying along a trip you make anyway costs
 ~2 minutes (dock + sell); a detour or a dedicated haul costs the round trip. Options that add under 2% are ignored (not worth
 the hassle/risk); the hold size and the value you carry are respected."""
+from .health import record as _hrec
 from .along import _bids_at
 from .orders import load_books, sell_into_bids
 import dataclasses
@@ -39,8 +40,8 @@ def ore_hold_m3(con, p=None):
     names = []
     try:
         names += [n for (n,) in con.execute("SELECT t.name FROM my_ships s JOIN types t ON t.type_id=s.type_id")]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('sellplan', _he)
     if p is not None:
         names.append(getattr(p, "ship_name", "") or "")
         try:
@@ -48,8 +49,8 @@ def ore_hold_m3(con, p=None):
             r = con.execute("SELECT name FROM types WHERE type_id=?", (tid,)).fetchone() if tid else None
             if r:
                 names.append(r[0])
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('sellplan', _he)
         best = max(best, int(getattr(p, "ore_hold_m3", 0) or 0))
     for n in names:
         for k, v in ORE_HOLDS.items():
@@ -119,8 +120,8 @@ def sell_plan(con, g, p, dest=None, world=None, min_value=100_000.0, rate=None):
                     opts.append((f"CARRY along the trip, sell at {entry}", net_r, DOCK_MIN, f"{j_r} jumps, on your way: sells into the buy order in {osys} ({price_r:,.0f}, range {rng_r}), no need to reach its station"))
                 else:
                     opts.append((f"DETOUR to {entry}", net_r, 2 * _minutes(p, j_r) + 2 * DOCK_MIN, f"{j_r} jumps each way: sells into the buy order in {osys} ({price_r:,.0f}, range {rng_r}), no need to reach its station"))
-        except Exception:                                           # noqa: BLE001
-            pass
+        except Exception as _he:                                           # noqa: BLE001
+            _hrec('sellplan', _he)
         for d in world.get(tid, [])[:5]:
             if d["jumps"] is None or d["system"] == g.name[cur]:
                 continue

@@ -6,6 +6,7 @@
  * A free enabler (a skill you can queue right now) becomes a 30-second step in the chain, before the main step.
  * Unmodeled activities stay on the table: their prior is deliberately conservative until you time 3 runs.
 Rates are per ACTIVE hour; training time runs on the clock in the background."""
+from .health import record as _hrec
 import calendar
 import time as _t
 
@@ -42,8 +43,8 @@ def _queue_hours(con, skill_name):
         r = con.execute("SELECT MAX(q.finish_date) FROM skill_queue q JOIN types t ON t.type_id=q.skill_id WHERE t.name=? COLLATE NOCASE", (skill_name,)).fetchone()
         if r and r[0]:
             return max(0.0, (calendar.timegm(_t.strptime(r[0].rstrip("Z")[:19], "%Y-%m-%dT%H:%M:%S")) - _t.time()) / 3600.0)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('lookahead', _he)
     return 0.0
 
 
@@ -66,8 +67,8 @@ def _owned(con, item):
                 "SELECT COALESCE(SUM(f.quantity),0) FROM fitted f JOIN types t ON t.type_id=f.type_id WHERE t.name=? COLLATE NOCASE"):
         try:
             n += int(con.execute(sql, (item,)).fetchone()[0] or 0)
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('lookahead', _he)
     return n
 
 
@@ -83,8 +84,8 @@ def _price(con, g, p, item, est, qty=1):
                     best = (price, sid)
             if best:
                 return best[0] * qty, g.name[best[1]], reach[best[1]].jumps, True
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('lookahead', _he)
     return float(est) * qty, "", None, False
 
 
@@ -272,8 +273,8 @@ def deferred_modeling(con, g, p):
                 continue
             if a.get("where") and str(a["where"]).lower() != str(here).lower():
                 out.append((a["name"], f"when you are in {a['where']}"))
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('lookahead', _he)
     return out
 
 

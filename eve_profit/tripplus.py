@@ -3,6 +3,7 @@
    * things you NEED anyway (gear on the keep list, spare probes...) that are much cheaper on the route than here,
    * trades on the way there and back (spare hold space, half the profit counted).
 `extras(con, g, p, dest)` -> {"lines": [...], "isk": N, "minutes": N}; lines are ready to print under a step."""
+from .health import record as _hrec
 from .along import keep_rules
 
 
@@ -78,20 +79,20 @@ def extras(con, g, p, dest, m3=0.0):
     try:                                                                # stock lying in hangars along the route: collect it as you pass (consolidates your inventory)
         for d in pickups(con, g, p, path, m3):
             out["lines"].append(f"pick up in {d['system']}: {d['qty']:,} x {d['item']} ({d['m3']:,.0f} m3, ~{d['value']:,.0f} ISK): consolidates your stock, rides along")
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('tripplus', _he)
     try:
         out["lines"] += cheap_needs(con, g, p, path)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('tripplus', _he)
     try:
         from .dailygoals import _trades
         isk, mins, lines = _trades(con, g, p, dest, m3)
         if isk > 0:
             out["isk"], out["minutes"] = isk, mins
             out["lines"] += lines + [f"trades there and back add ~{isk:,.0f} ISK (half counted) for ~{mins:.0f} more min"]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('tripplus', _he)
     return out
 
 
@@ -243,8 +244,8 @@ def buy_here_step(con, g, p, text):
             try:
                 from .tradestep import STATION
                 STATION[head] = loc
-            except Exception:                                           # noqa: BLE001
-                pass
+            except Exception as _he:                                           # noqa: BLE001
+                _hrec('tripplus', _he)
         shown[key] = now
         con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (BUYSHOWN_KEY, json.dumps(shown)))
         pend = _meta_json(con, LOADPEND_KEY)                            # what you buy lands in the item hangar: the next step loads it into the ship

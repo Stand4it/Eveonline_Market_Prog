@@ -2,6 +2,7 @@
 leaves the hangar it can no longer see it. At every stop `next` plans again: the haul only continues if it is still the best step (a started haul
 gets a 25% head start so the plan does not flip-flop); at the destination the step is to sell, and after that the best next step is chosen fresh.
 There is no planned return trip."""
+from .health import record as _hrec
 import json
 import time
 
@@ -31,8 +32,8 @@ def clear(con):
     try:
         con.execute("DELETE FROM meta WHERE key=?", (KEY,))
         con.commit()
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
 
 
 def make(h, origin):
@@ -49,8 +50,8 @@ def _held_at_origin(con, g, st):
             r = con.execute("SELECT COALESCE(SUM(i.quantity),0) FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE t.name=? COLLATE NOCASE AND i.system_id=?", (name, sid)).fetchone()
             if int(r[0] or 0) >= max(1, qty // 2):
                 return True
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
     return False
 
 
@@ -63,8 +64,8 @@ def candidate(con, g, p):
     st["t"] = time.time()                                               # still in use: keep it alive
     try:
         save(con, st)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
     worth = [it for it in st["items"] if it[2] >= 5_000.0][:4] or st["items"][:1]            # only stacks worth a line (cosmetic odds and ends ride along unlisted)
@@ -103,13 +104,13 @@ def candidate(con, g, p):
         if way:
             lines.append("   ON THE WAY (optional; confirm each buy with `check` first):")
             lines += [f"      {x}" for x in way]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
     try:
         from .haul import agents_on_route
         lines += ["   " + x for x in agents_on_route(g, p, dest)]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
     return rate * STICKY, "\n".join(lines)
 
 
@@ -148,8 +149,8 @@ def _look_around(con, g, p, st, here):
         from .agentleads import _known_agent_names
         known = _known_agent_names()
         names = [n for n in names if n.lower() not in known]            # an agent whose offer is already recorded is not "looked at" again: that offer is a plan of its own (accept / deliver)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haulchain', _he)
     todo = [n for n in names if n not in lh["agents"]]
     if not todo:
         return ""
@@ -164,8 +165,8 @@ def _look_around(con, g, p, st, here):
             try:
                 from .tradestep import STATION
                 STATION[head] = sid
-            except Exception:                                           # noqa: BLE001
-                pass
+            except Exception as _he:                                           # noqa: BLE001
+                _hrec('haulchain', _he)
         save(con, st)
         return "\n".join([head, f"   DO ONLY THIS: dock at {sname or 'the station'} (the game destination is set to it: autopilot / right-click the station > Dock).",
                            f"   LATER: {len(todo)} agent(s) here, one step each: {', '.join(todo)}"])

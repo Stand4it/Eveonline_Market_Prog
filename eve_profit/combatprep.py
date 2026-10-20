@@ -1,6 +1,7 @@
 """Getting a combat-ready ship, ONE concrete step at a time. A 'test a combat mission' turn is only valid when the ship you fly is a combat hull with guns, ammo and a
 tank; until then the step is the first missing piece: board the right hull, fit the turrets you own (fetching them where they lie), buy ammo / the armor repairer where
 that is cheapest, show the fitting window, and only then go to a security agent. The kit comes from ship_fits.json `combat_kit`."""
+from .health import record as _hrec
 import json
 import os
 
@@ -79,8 +80,8 @@ def next_step(con, g, p, hop_to):
             t = first_action(con, g, p, w, hop_to) if w else ""
             if t:
                 return t
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('combatprep', _he)
         return ("STEP: BUY a combat frigate\n   DO ONLY THIS: " + f"Market > {k['hulls'][0]} > buy one at the cheapest station near you (about 100,000 ISK); see `next --plan` for the sources.")
     # 2. turrets
     turrets_fitted = sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"]))
@@ -102,8 +103,8 @@ def next_step(con, g, p, hop_to):
             t = first_action(con, g, p, w, hop_to) if w else ""
             if t:
                 return t
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('combatprep', _he)
         return f"STEP: BUY {need} x {k['turret_buy']}\n   DO ONLY THIS: Market > {k['turret_buy']} > buy {need} at the cheapest station near you."
     # 3. ammo in the hold
     have_ammo = s["cargo"].get(k["ammo"], 0)
@@ -121,8 +122,8 @@ def next_step(con, g, p, hop_to):
             t = first_action(con, g, p, w, hop_to) if w else ""
             if t:
                 return t
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('combatprep', _he)
         return f"STEP: BUY {k['ammo_qty']} x {k['ammo']}\n   DO ONLY THIS: Market > {k['ammo']} > buy {k['ammo_qty']} at the cheapest station near you."
     # 4. tank
     if not any(any(w in n.lower() for w in k["tank_words"]) for n, _ in s["fitted"]):
@@ -138,8 +139,8 @@ def next_step(con, g, p, hop_to):
             t = first_action(con, g, p, w, hop_to) if w else ""
             if t:
                 return t
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('combatprep', _he)
         return f"STEP: BUY 1 x {k['tank_buy']}\n   DO ONLY THIS: Market > {k['tank_buy']} > buy 1 at the cheapest station near you."
     # 5. numbers for the model
     if not _meta(con, "combat_fit_seen").get(s["hull"]):
@@ -178,8 +179,8 @@ def agent_step(g, p, hop_to):
                 return (f"STEP: ACCEPT a Level {a['level']} security mission from {a['name']} ({a['corp']})\n   DO ONLY THIS: station window > Agents tab > {a['name']} > Start Conversation > read it > Accept.\n"
                         f"   LATER: fly the mission in your combat frigate; time it (combat only if the win chance is above 99%: show me the fitting numbers first)")
             return hop_to(a["system"], f"{a['name']} ({a['corp']}, level {a['level']} security) is there: accept a mission", [])
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('combatprep', _he)
     return ""
 
 
@@ -207,8 +208,8 @@ def prep_estimate(con, g, p):
             reach = g.reach(g.id_of(p.current_system), 40, p.avoid_yellow)
             js = [reach[sid].jumps for name, sid in s["ships"] if any(h.lower() in name.lower() for h in k["hulls"]) and sid in reach]
             mins += 3 * (min(js) if js else 0)
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('combatprep', _he)
     if sum(q for n, q in s["fitted"] if any(w in n.lower() for w in k["turret_words"])) < k["turrets"]:
         names = [n for n in s["stock"] if any(w in n.lower() for w in k["turret_words"]) and "civilian" not in n.lower()]
         mins += 12 + 3 * (min((_jumps_to(n, 1) for n in names), default=_jumps_to(k["turret_buy"], k["turrets"])))

@@ -3,6 +3,7 @@ exploration, industry ...), the plans that are ready now, the agent reads and th
 or what is missing (skills, ship, tool, blueprint, LP: each prerequisite is a step the plan buys or trains on the way, see SHOPPING), and whether it is already MODELED
 (3 timed runs) or still a guess. Collecting models and agent offers is worth ISK in itself, so an untimed activity is ranked at its expected rate PLUS its value of
 information (catalog.INFO_WEIGHT x voi), the same yardstick `equal_footing` uses."""
+from .health import record as _hrec
 from .catalog import INFO_WEIGHT, MODELED_RUNS, RISK_HAIRCUT, status, voi
 from .lookahead import act_rate
 
@@ -25,8 +26,8 @@ def rows(con, g, p, best_known, hull=None, owned=(), tools=None):
         for b in blocked_goals(con, g, p):
             out.append({"name": "AIR daily goal: " + b["goal"], "per_min": b["per_min"], "rate": b["per_min"] * 60.0, "info": 0.0, "state": "DAILY", "src": "reward / time",
                         "ready": False, "missing": b["lines"] or [b["why"]], "where": None, "kind": "daily"})
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('allplans', _he)
     out.sort(key=lambda r: -r["per_min"])
     return out
 

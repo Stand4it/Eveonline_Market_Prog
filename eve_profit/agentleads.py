@@ -3,6 +3,7 @@ its level and division; it does NOT carry the missions (the game shows them only
 mission: modeled from its division's activity (Security -> Level 1 security missions, Mining, Distribution -> courier) like any untimed activity (expected ISK/hr x risk +
 value of information), charged the dock-and-read time and the travel. Reading it (one short step per station) turns it into a known offer (agent_offers.json, from your
 screenshot) that is ranked by its real ISK/hr. One candidate per STATION, best agent first, at most ten on the list. Each station is offered once per 12 hours."""
+from .health import record as _hrec
 import json
 import time
 
@@ -169,8 +170,8 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
             try:
                 from .tradestep import STATION
                 STATION[head] = int(loc)
-            except Exception:                                           # noqa: BLE001
-                pass
+            except Exception as _he:                                           # noqa: BLE001
+                _hrec('agentleads', _he)
             text = f"{head}\n   DO ONLY THIS: dock at {sname} (the game destination is set to it).\n   ALSO, same stop: read the agents there ({who}): station window > Agents tab, send me the orange 'Offered' windows (do not accept yet)."
             here_station = False
         else:

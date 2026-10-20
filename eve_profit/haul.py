@@ -1,6 +1,7 @@
 """Hauling candidate for `next`: stock lying here that sells much better at another scanned market. Scored in ISK per hour like every
 other activity: (extra ISK vs selling it right here) / (the trip ONE WAY + docking; extra loads add their round trips). There is no planned
 return: `next` plans again at every stop, so at the destination the best next step is chosen fresh. Ore may ride in a mining ship's ore hold."""
+from .health import record as _hrec
 import math
 import os
 
@@ -86,8 +87,8 @@ def enrich_route(con, g, p, h):
             for k in range(h["trips"]):
                 extra_isk += isk * (1.0 if k == 0 else 0.5)             # repeat trips: market depth is partly used up
                 extra_min += mins
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     try:
         from .planner import plan
         there = dataclasses.replace(p, current_system=h["dest"])
@@ -96,16 +97,16 @@ def enrich_route(con, g, p, h):
             o = opps[0]
             lines.append(f"AT {h['dest']} after selling: next best activity there is {o.kind} '{o.description[:70]}' ~{o.isk_per_hour:,.0f} ISK/hr "
                          "(`next` re-plans from wherever you are)")
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     try:
         did = g.id_of(h["dest"])
         ag = con.execute("SELECT level,COUNT(*) FROM agents WHERE system_id=? GROUP BY level ORDER BY level", (did,)).fetchall()
         if ag:
             lines.append(f"AGENTS at {h['dest']}: " + ", ".join(f"{n} level-{lv}" for lv, n in ag)
                          + " - open their windows: a mission you can do there beats flying back empty")
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     if h["trips"] > 1:
         lines.append(f"{h['trips']} trips needed: the first load goes one way; the return for the next batch is decided when you get there.")
     h["extra_lines"] = lines
@@ -122,8 +123,8 @@ def _hop(g, p, dest):
         r = g.route(g.id_of(p.current_system), g.id_of(dest), 60, p.avoid_yellow)
         if r and len(r.path) > 1:
             return g.name[r.path[1]], r.jumps, r.jumps
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     return None, 0, 0
 
 
@@ -162,15 +163,15 @@ def agents_near(g, p, system, max_jumps=2):
         for kind in ("security", "mining", "distribution_nearest", "locator_nearest", "rd_nearest"):
             for a in d.get(kind, []):
                 add(a.get("agent"), a.get("system"), kind.split("_")[0])
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     try:
         for x in json.load(open(os.path.join(root, "agent_offers.json"), encoding="utf-8")).get("offers", []):
             nm = x.get("agent", "").split(" (")[0]
             if not nm.startswith("BOTH"):
                 add(nm, x.get("agent_system"), "career/mission")
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('haul', _he)
     out = []
     for j, name, sysname, kind in sorted(found):
         if j == 0:
@@ -222,8 +223,8 @@ def ship_lines(con, g, p, h):
                 t2 = max(1, -(-int(need) // int(sh["capacity"])))
                 L.append(f"      better: swap to your parked {sh['name']} (cargo {sh['capacity']:,.0f} m3) -> {t2} trip{'s' if t2 != 1 else ''}")
                 break
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('haul', _he)
     if con is not None:
         fitted = {r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id")}
         rows = con.execute("SELECT t.name,i.quantity FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=?", (here,)).fetchall()
@@ -324,8 +325,8 @@ def haul_step(h, g=None, p=None, con=None):
         try:
             L += ["   " + x for x in agents_on_route(g, p, h["dest"])]
             L += ["   " + x for x in ship_lines(con, g, p, h)]
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('haul', _he)
     if h.get("extra_isk"):
         L.append(f"   includes about +{h['extra_isk']:,.0f} ISK of trades along the route")
     L += ["   " + x for x in h.get("extra_lines", [])]

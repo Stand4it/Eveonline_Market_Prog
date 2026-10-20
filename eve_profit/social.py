@@ -1,5 +1,6 @@
 """AIR Career Program 'Social' goals (Soldier of Fortune): each pays 25,000 ISK + 10 career points for a one-minute click task (risk none). One goal per step;
 `done` marks the one shown. Join a Fleet / Join a Corporation are NOT offered (a fleet needs an invite; a corporation changes your corp)."""
+from .health import record as _hrec
 import json
 
 KEY = "social_done"
@@ -50,8 +51,8 @@ def mark_shown(con, text):
     try:
         con.execute("DELETE FROM meta WHERE key IN (?,?)", (SHOWN, "wanted_shown"))
         con.commit()
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('social', _he)
     first = (text or "").split("\n", 1)[0]
     if first.startswith("STEP: AIR SOCIAL GOAL - "):
         name = first[len("STEP: AIR SOCIAL GOAL - "):].split(" (about")[0]

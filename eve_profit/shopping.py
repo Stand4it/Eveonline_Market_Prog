@@ -2,6 +2,7 @@
 your time), at the moment your route is in that place, and every later plan then uses what you own. A wish is one of: a missing piece of the combat kit (hull, guns,
 ammo, tank: combatprep) or an extra you list in ship_fits.json under "wishlist" ([{"item": "Expanded Cargohold I", "qty": 1, "why": "more m3 for hauls"}]: an upgrade to a ship you own).
 `candidates` offers a purchase as a step only when THIS place is the cheapest source; `lines` lists every wish with its cheapest source for `next --plan`."""
+from .health import record as _hrec
 import json
 import os
 
@@ -27,8 +28,8 @@ def wishes(con, p, g=None):
             hu = hull_unlock(con, g, p)
             if hu:
                 out.append(hu)
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('shopping', _he)
     try:
         k = combatprep.kit()
         s = combatprep.state(con, p)
@@ -44,8 +45,8 @@ def wishes(con, p, g=None):
             any(w in n.lower() for w in k["tank_words"]) for n in s["stock"]) or acquire.held(con, k["tank_buy"]) >= 1
         if not has_tank:
             out.append({"item": k["tank_buy"], "qty": 1, "why": "armor repairer (tank)", "needs_combat_hull": True})
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('shopping', _he)
     try:                                                                # the TOOLS the other careers need (scanning, salvaging, mining): any hull with the slots carries them
         from . import tools as _tl
         if (getattr(p, "ship_name", "") or ""):
@@ -62,16 +63,16 @@ def wishes(con, p, g=None):
                     if have < qty:
                         why = f"{_tl.TOOLS[t]['label']} for {t}" + (f" (fits your {car[0]}: {car[1].get('high', '?')} high slots)" if car else "")
                         out.append({"item": item, "qty": qty - have, "why": why})
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('shopping', _he)
     if g is not None:
         try:                                                            # a hull that carries more tools at once than your best one, at the lowest price per extra tool
             from . import ships as _ships
             up = _ships.upgrade(con, g, p)
             if up and up["item"].lower() not in {w["item"].lower() for w in out}:      # the combat hull may already be the wish
                 out.append(up)
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('shopping', _he)
     for w in _extras():
         try:
             need = int(w.get("qty", 1)) - acquire.held(con, w["item"])
@@ -99,8 +100,8 @@ def _launcher_hulls(con, g, p):
             pr = prices[d["name"]]
             if best is None or pr[0] < best[1]:
                 best = (d["name"], pr[0], pr[1], pr[2])
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('shopping', _he)
     return own, best
 
 
@@ -267,8 +268,8 @@ def lines(con, g, p):
                      "carries at the same time " + (", ".join(f"{n} x {t}" for t, n in car[2]) or "nothing yet") + " (a bigger hull carries more)")
         else:
             L.append("   Hull slots are not known yet: run  python -m eve_profit sync  (it reads them for the ship you fly and every ship you own)")
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('shopping', _he)
     try:
         bl = blocked_goals(con, g, p)
     except Exception:                                                   # noqa: BLE001

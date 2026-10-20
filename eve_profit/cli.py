@@ -53,7 +53,7 @@ def print(*args, sep=" ", **kw):                                          # noqa
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "stopsync", "syncstop"])
+    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "health", "stopsync", "syncstop"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -659,6 +659,9 @@ def _run(a):
         from .graph import Graph
         from .trainplan import book_list, format_books
         print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
+    elif a.cmd == "health":
+        from .health import report as _hreport
+        print(_hreport())
     elif a.cmd == "noagents":
         from .agentleads import hide_here
         print(f"Hidden {hide_here(con, p, a.item or '')} agent(s) that are not viewable for you; they will not be planned again.")

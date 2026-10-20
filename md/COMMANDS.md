@@ -265,6 +265,9 @@ SHIPS  -  the ship tree as a table: class, slots, skills to fly, price, how many
 NOAGENTS  -  hide the agents you cannot see in the game (docked station, or --item NAME) so they are never planned
    example: python -m eve_profit noagents
 
+HEALTH  -  problems hidden inside steps or the hourly log in the last 24 hours (so a bug shows without running things by hand)
+   example: python -m eve_profit health
+
 STOPSYNC  -  stop the timer, then sync with the game (both, in the right order)
    example: python -m eve_profit stopsync
 

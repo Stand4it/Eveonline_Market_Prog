@@ -1,5 +1,6 @@
 """`next`: ONE short instruction at a time. Priority: (1) cash in the liquid stock here, (2) list the single best
 high-gap item, (3) the best trade (verify with `check`). Do the step, run `sync`, run `next` again."""
+from .health import record as _hrec
 from .along import plan_along
 from .planner import plan
 
@@ -33,8 +34,8 @@ def _detour_step(con, g, p, where, sells, d, b):
     jumps = 1
     try:
         jumps = g.reach(g.id_of(where), 10, p.avoid_yellow)[g.id_of(place)].jumps
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     trips = int(b.get("trips") or 1)
     per_trip = -(-d["sold"] // max(trips, 1))
     bid = station = None
@@ -43,8 +44,8 @@ def _detour_step(con, g, p, where, sells, d, b):
                         "ORDER BY o.price DESC LIMIT 1", (d["tid"], g.id_of(place))).fetchone()
         if r:
             bid, station = r[0], r[1]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     item = d["name"]
     L = [f"STEP: SELL {item.upper()} {jumps} JUMP{'S' if jumps != 1 else ''} AWAY in {place} - about {b['best_net']:,.0f} ISK",
          f"   {d['sold']:>9,} x {item:<34} @ {b['best_net'] / max(d['sold'], 1):>12,.2f} each = ~{b['best_net']:>12,.0f}   (net of tax)",
@@ -69,8 +70,8 @@ def _detour_step(con, g, p, where, sells, d, b):
         ro = refine_option(con, g, p, d["name"], d["sold"], d["net"])
         if ro:
             L += _rdesc(d["name"], ro)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     others = [x for x in sells[1:6]]
     if others:
         L.append(f"   also sell here in {where}: " + "; ".join(f"{x['sold']:,} x {x['name']} (~{x['net']:,.0f})" for x in others))
@@ -95,8 +96,8 @@ def _next_action_core(con, g, p):
         for d in [x for x in sells if any(h and h in x["name"].lower() for h in _hold)]:        # the part of the name you typed is enough
             keep_lines.append(f"   keep {d['sold']:,} x {d['name']}: on your HOLD list (better price elsewhere; release: done --goal \"release {d['name']}\")")
             sells.remove(d)
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     if sells:
         better = _better_places(con, g, p)
         try:                                                     # light stacks that pay several times more far away: keep them, do not dump them here
@@ -108,8 +109,8 @@ def _next_action_core(con, g, p):
                 if adv:
                     keep_lines.append("   " + keep_line(d["name"], d["sold"], adv))
                     sells.remove(d)
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
     try:                                                         # stacks in this station that are skipped for other reasons: say why (plan view)
         for l in res.get("losses", []):
             keep_lines.append(f"   keep {l['qty']:,} x {l['name']}: the best price here ({l['best_here']:,.0f}) is BELOW what you paid ({l['cost']:,.0f})"
@@ -120,8 +121,8 @@ def _next_action_core(con, g, p):
             keep_lines.append(f"   keep {n}: you already have a sell order for it on the market")
         for n in res.get("kept_gear", []):
             keep_lines.append(f"   keep {n}: on your keep list (gear you will use)")
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a buy order with a RANGE that reaches you pays its price with no travel: sell to it from here
         from .remoterange import remote_bid
         _from_sid = g.id_of(where)
@@ -137,8 +138,8 @@ def _next_action_core(con, g, p):
                 sells.append({"tid": row[0], "name": n_, "sold": rb["sold"], "net": rb["net"], "advice": "SELL", "remote": rb})
                 keep_lines = [l for l in keep_lines if f"x {n_}:" not in l]
         sells.sort(key=lambda d: -d["net"])
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     KEEP_NOTES.clear()
     KEEP_NOTES.extend(keep_lines)
     if sells:
@@ -146,8 +147,8 @@ def _next_action_core(con, g, p):
         try:                                                     # so `stop` can take exactly these stacks out of the stock (ESI assets lag an hour)
             from .invoverlay import remember_sell_step
             remember_sell_step(con, g.id_of(where), [(d["tid"], d["sold"]) for d in sells])
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
         for d in sells[:8]:
@@ -173,8 +174,8 @@ def _next_action_core(con, g, p):
                 ro = refine_option(con, g, p, d["name"], d["sold"], d["net"])
                 if ro:
                     L += _rdesc(d["name"], ro)
-            except Exception:                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                    # noqa: BLE001
+                _hrec('nextstep', _he)
         if len(sells) > 8:
             L.append(f"   ...and {len(sells) - 8} more smaller stacks (all marked SELL NOW in `along`)")
         L += keep_lines
@@ -184,8 +185,8 @@ def _next_action_core(con, g, p):
                               "ORDER BY price DESC LIMIT 1", (g.id_of(where), sells[0]["tid"])).fetchone()
             if row:
                 STATION[L[0]] = int(row[0])
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         big = sells[0]
         if big["net"] >= 5_000_000:
             L.append(f"   BIG ONE: before selling {big['name']}, compare other markets:  python -m eve_profit bestprice --item \"{big['name']}\"")
@@ -226,8 +227,8 @@ def _next_action_core(con, g, p):
                     mm = _re.match(r"Collect \+ sell ([\d,]+ x .+?) \(stock at", o.description)
                     if mm:
                         load = f"load {mm.group(1)} into your ship, then "
-            except Exception:                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                    # noqa: BLE001
+                _hrec('nextstep', _he)
             return (f"STEP: FLY to {hop}\n   DO ONLY THIS: {load}fly to {hop} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
                     f"   LATER: {o.description}: about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr; confirm the buy-order price in the game before you sell)\n" + AFTER)
         L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
@@ -274,8 +275,8 @@ def agent_note(con, g, p):
     try:
         opps = plan(con, p, 30, False)
         best = opps[0].isk_per_hour if opps else 0.0
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     L = [f"AGENT MISSIONS (measured): {rate:,.0f} ISK/hr over {runs} timed run(s), {isk:,.0f} ISK in {hours:.1f} h"
          + (f"  |  best ranked trade/haul: {best:,.0f} ISK/hr" if best else "")]
     for r in sorted(rows, key=lambda r: -(r[2] / r[3]))[:3]:
@@ -338,8 +339,8 @@ def offers_rows(con, g=None, p=None):
             r = con.execute("SELECT MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0", (item,)).fetchone()
             if r and r[0]:
                 return float(r[0]), "mkt"
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('nextstep', _he)
         return float(est), "est"
 
     rows = []
@@ -363,8 +364,8 @@ def offers_rows(con, g=None, p=None):
                         pr, src, how = w_["cost"] / max(it["qty"], 1), "mkt", f" ({w_['mode']})"
                     elif w_:
                         pr, src, how = 0.0, "mkt", " (held)"
-                except Exception:                                       # noqa: BLE001
-                    pass
+                except Exception as _he:                                       # noqa: BLE001
+                    _hrec('nextstep', _he)
             cost += pr * it["qty"]
             tags.append(f"buy {it['qty']:,} x {it['item']} -{pr * it['qty']:,.0f}{how}{'' if src == 'mkt' else '?'}")
         net = cash + loot - cost
@@ -611,8 +612,8 @@ def next_action_all(con, g, p):
     try:
         from .listings import import_snapshots
         import_snapshots(con)                                    # new screenshots I recorded: compare with the stored lists (new / gone / change rate)
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     core = _next_action_core(con, g, p)
     parts = []
     sk = "\n\n".join(x for x in (books_here_note(con, g, p), skill_note(con, g, p)) if x)
@@ -643,8 +644,8 @@ def _unit_price(con, item, est):
         r = con.execute("SELECT MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0", (item,)).fetchone()
         if r and r[0]:
             return float(r[0])
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     return float(est or 0)
 
 
@@ -663,8 +664,8 @@ def _hop_step(g, p, con_=None):
             ps = pickup_step(con_, g, p, system)
             if ps:
                 return ps
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('nextstep', _he)
         return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
                 f"   LATER: {why} ({left} jumps to {system})" + ((": " + " | ".join(lines)) if lines else ""))
     return hop_to
@@ -742,8 +743,8 @@ def _agent_step(con, g, p):
         if ex["lines"]:
             L.append("   ALSO ON THE WAY (to earn more on this trip):")
             L += ["      " + x for x in ex["lines"][:8]]
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     AGENT_FIRST["text"] = _agent_first(con, g, p, o, ways)
     return "\n".join(L), rate
 
@@ -756,8 +757,8 @@ def _timer(name, con=None):
         r = con.execute("SELECT value FROM meta WHERE key='session'").fetchone() if con is not None else None
         if r and _j.loads(r[0]).get("activity") == name:
             return f'   Timer: already running for "{name}". Stop it only when the whole task is finished.'
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
     return f'   Time it:  python -m eve_profit start --activity "{name}"'
 
 
@@ -964,29 +965,29 @@ def next_action(con, g, p, full=False, ahead=False):
             _pl = _dg_plan(con, dg["reward_isk"], g=g, p=p)
             _rate = _pl["best"]["rate"] if _pl["best"] else dg["reward_isk"] * 60.0 / dg.get("minutes_estimate", 20)
             cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a screen the model still needs (screens_wanted.json): asked once each, one at a time
         from .screens import wanted_candidate as _wc
         _w = _wc(con, g, p)
         if _w:
             cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # unallocated skill points: spend them (instant, free) on the skills the plan needs
         from .spendsp import candidate as _sp
         _s = _sp(con)
         if _s:
             cands.append((_s[0], "spend skill points", _s[1], "instant and free: saves days of training"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a freelance delivery job paid from stock you hold here: accept, fly, deliver
         from .jobchain import candidate as _jc
         _j = _jc(con, g, p)
         if _j:
             cands.append((_j[0], "freelance job delivery", _j[1], "from stock, more than selling"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # AIR Social goals: 25,000 ISK + 10 career points for a one-minute click task
         from .social import candidate as _soc
         from .progress import values as _vals
@@ -994,22 +995,22 @@ def next_action(con, g, p, full=False, ahead=False):
         _sc = _soc(con, 25000.0 + 10 * float(_v.get("career_point_isk", 0)))
         if _sc:
             cands.append((_sc[0], "AIR social goal", _sc[1], "25,000 ISK + 10 career points each"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # screenshots the tool needs from the game: a short step now and then (data makes later steps better)
         from . import screens as _sc
         if _sc.due(con) and daily_goal_program() is not None:
             cands.append((_sc.rate(), "update the model from the game", _sc.step(con), "once a day (every 12 h)"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     if agent:
         rate_adj = rate
         try:
             rows_ = offers_rows(con, g, p)
             (r_, net_, min_, o_, tags_), career_, known_ = pick_offers(rows_, measured_careers(con), 1)[0]
             rate_adj = (net_ + progress_isk(career_, counts, vals)) * 60.0 / max(min_, 1.0)
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         cands.append((rate_adj, "agent mission", (agent if ahead or not AGENT_FIRST["text"] else AGENT_FIRST["text"]),
                       f"{rate:,.0f} cash + progression/model value"))
     try:
@@ -1017,8 +1018,8 @@ def next_action(con, g, p, full=False, ahead=False):
             if label_ == "test Mining" and not any(w in (p.ship_name or "").lower() for w in ("venture", "retriever", "procurer", "covetor", "mining")):
                 continue                                         # a modeling test must be doable NOW: it needs a mining ship under you (it waits in the long view)
             cands.append((r_, label_, text_, "never timed: builds the model"))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:
         from .haul import haul_option, haul_step
         h = haul_option(con, g, p)
@@ -1035,8 +1036,8 @@ def next_action(con, g, p, full=False, ahead=False):
         try:
             from .haulchain import load as _hl
             _st = _hl(con)
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         cands.append((hc[0], f"haul stock to {(_st or {}).get('dest', '?')} (under way)", hc[1], "re-planned at every stop; keeps going unless something pays 25% more"))
     elif h:
         h_rate = h["rate_hr"]
@@ -1045,8 +1046,8 @@ def next_action(con, g, p, full=False, ahead=False):
             sv = needs_saving(con, g, p, h["dest"])
             if sv > 0 and h.get("minutes"):
                 h_rate = (h["gain"] + sv) * 60.0 / h["minutes"]
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         cands.append((h_rate, f"haul stock to {h['dest']}", haul_step(h, g, p, con), "sell-now prices at the far market"))
     best_trade, trade_text = 0.0, None
     if not selling:
@@ -1063,8 +1064,8 @@ def next_action(con, g, p, full=False, ahead=False):
         if cands and cands[0][1].startswith("haul stock to ") and "(under way)" not in cands[0][1] and h:
             from .haulchain import make as _hmake, save as _hsave
             _hsave(con, _hmake(h, p.current_system))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a trade whose BUY step wins: from now on the cargo is flown on one jump at a time
         if cands:
             from .tradestep import pending as _pend
@@ -1072,8 +1073,8 @@ def next_action(con, g, p, full=False, ahead=False):
             if _h:
                 from .haulchain import make as _hmake2, save as _hsave2
                 _hsave2(con, _hmake2(_h, p.current_system))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # every trip gets the same extras: agents on the route, cheap things you need, trades both ways
         from .tripplus import extras as _extras
         dest_ = None
@@ -1085,8 +1086,8 @@ def next_action(con, g, p, full=False, ahead=False):
             if keep_lines:
                 c0 = cands[0]
                 cands[0] = (c0[0], c0[1], c0[2] + "\n   ALSO ON THE ROUTE:\n" + "\n".join("      " + l for l in keep_lines), c0[3])
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     why = ""
     exp_note = ""
     try:                                                         # UNMODELED activities compete on equal footing: expected ISK/hr (prior x risk + value of information, set-up spread over 5 runs)
@@ -1097,14 +1098,14 @@ def next_action(con, g, p, full=False, ahead=False):
         try:                                                     # a detour jump costs what ~2 minutes of the best plan earn
             from . import acquire as _acq
             _acq.JUMP_VALUE_ISK = min(150_000.0, max(20_000.0, best_known / 30.0))
-        except Exception:                                    # noqa: BLE001
-            pass
+        except Exception as _he:                                    # noqa: BLE001
+            _hrec('nextstep', _he)
         haul_on = False
         try:                                                     # a haul under way (cargo to deliver / sell) is never interrupted by a test
             from .haulchain import load as _hload
             haul_on = bool(_hload(con))
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
 
         try:
             _owned = list(combatprep.state(con, p)["ships"])      # [(ship name, system id)] parked in your hangars
@@ -1196,8 +1197,8 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.extend(_agl(con, g, p, best_known, _hop))                  # every agent in the game data near you, unknown mission modeled like any untimed activity
             from .shopping import candidates as _shop
             cands.extend(_shop(con, g, p, best_known, _hop))                 # a wished ship / module / ammo when THIS is the cheapest place to buy it (buy vs build)
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         cands.sort(key=lambda c: -c[0])
         try:                                                     # no flip-flop: stay on the plan you were on unless another one is clearly (15%) better
             import json as _jj
@@ -1219,19 +1220,19 @@ def next_action(con, g, p, full=False, ahead=False):
                         _t = stage_text(con, g, p, _o)
                         if _t.startswith("STEP: ACCEPT"):
                             cands.insert(0, (cands[0][0] * 1.0001 if cands else 1.0, "agent mission", _t, "you flew here for this mission: accept it, then decide"))
-            except Exception:                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                    # noqa: BLE001
+                _hrec('nextstep', _he)
             if cands:
                 _a = LAST_OFFER.get("o", {}).get("agent") if cands[0][1] == "agent mission" else None
                 if cands[0][1] == "agent mission" and cands[0][2].startswith("STEP: ACCEPT"):
                     _m = __import__("re").match(r"STEP: ACCEPT (.+?)'s MISSION", cands[0][2])
                     _a = next((x for x in (LAST_OFFER.get("o", {}).get("agent"), _lp.get("agent")) if x and _m and x.startswith(_m.group(1))), _a)
                 con.execute("INSERT OR REPLACE INTO meta VALUES('last_plan', ?)", (_jj.dumps({"label": cands[0][1], "agent": _a, "at": p.current_system}),))
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         con.commit()
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     long_view = ""
     try:                                                         # LOOK AHEAD: what pays most over the next hours, and which free enabler to queue now
         from .lookahead import analyse, enabler_step, format_long_view
@@ -1247,8 +1248,8 @@ def next_action(con, g, p, full=False, ahead=False):
         _w = _lw()
         if _w:
             long_view = (long_view + "\n\n" if long_view else "") + "SEEN ON THE MAP, NOT DOABLE YET:\n" + "\n".join(_w)
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     if KEEP_NOTES:
         kn = "STOCK HERE I AM NOT SELLING (on purpose):\n" + "\n".join(KEEP_NOTES)
         long_view = (long_view + "\n\n" + kn) if long_view else kn
@@ -1263,16 +1264,16 @@ def next_action(con, g, p, full=False, ahead=False):
             from .incursions import lines as _inc_lines
             _il = _inc_lines(con, g, p)
             long_view = (long_view + "\n\n" + _il) if (long_view and _il) else (long_view or _il)
-        except Exception:                                        # noqa: BLE001
-            pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
         try:
             from .allplans import lines as _all_lines
             _al = _all_lines(con, g, p, cands, p.ship_name or "", [n for n, _s in __import__("eve_profit.combatprep", fromlist=["x"]).state(con, p)["ships"]], _tools)
             long_view = (long_view + "\n\n" + _al) if (long_view and _al) else (long_view or _al)
-        except Exception:                                        # noqa: BLE001
-            pass
-    except Exception:                                            # noqa: BLE001
-        pass
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # NO PING-PONG: a first step that flies straight back to the system you just left must be clearly better than the best step that does not
         import re as _re
         from .livepos import reversal as _rev
@@ -1285,22 +1286,22 @@ def next_action(con, g, p, full=False, ahead=False):
             alt = next((i for i, c in enumerate(cands[1:], 1) if not _flip(c)), None)
             if alt is not None:                                  # never bounce back: carry on one more step with the plan under way (and again if the bounce shows up again)
                 cands.insert(0, cands.pop(alt))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # remember the FLY step given, to recognise a reversal at the next stop
         from .livepos import note_fly as _nf
         _m = _FLY.search((cands[0][2] if cands else "") or "")
         if _m:
             _nf(con, p.current_system, _m.group(1).strip())
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a mission whose objective is ON THE WAY of the haul under way: accept it before leaving, do it when passing through
         from .ontheway import step as _otw
         _o = _otw(con, g, p)
         if _o and _o[0]:
             cands.insert(0, ((cands[0][0] * 1.001) if cands else 1.0, "agent mission (on the way)", _o[0], _o[1]))
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     plans_txt = ""
     if cands:                                                    # every plan on ONE list, best ISK/hr first, each with the step it would take next
         def _first(t):
@@ -1335,8 +1336,8 @@ def next_action(con, g, p, full=False, ahead=False):
         from .screens import wanted_mark_shown as _wms
         _ms(con, steps[0] if steps else "")
         _wms(con, steps[0] if steps else "", g, p)
-    except Exception:                                            # noqa: BLE001
-        pass
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
         first = steps[0]
@@ -1358,24 +1359,31 @@ def next_action(con, g, p, full=False, ahead=False):
                 else:
                     from .tripplus import drop_done_buys
                     first = drop_done_buys(con, g, p, first)                                        # buys that had their own step are not listed again on the flight
-            except Exception:                                                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                                                    # noqa: BLE001
+                _hrec('nextstep', _he)
         if not first.startswith(("STEP: READ the agents at", "STEP: DOCK at")):             # docked with unread agents: collect them in the same step
             try:
                 from .agentleads import here_note
                 _hn = here_note(con, p)
                 if _hn:
                     first = first + "\n" + _hn
-            except Exception:                                                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                                                    # noqa: BLE001
+                _hrec('nextstep', _he)
         if first.startswith("STEP: READ the agents at"):                                        # shown once per station per 12 h
             try:
                 from .agentleads import mark_read
                 mark_read(con, p)
-            except Exception:                                                                    # noqa: BLE001
-                pass
+            except Exception as _he:                                                                    # noqa: BLE001
+                _hrec('nextstep', _he)
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
+        try:
+            from .health import line as _hline
+            _hl = _hline()
+            if _hl:
+                out += "\n" + _hl
+        except Exception:                                        # noqa: BLE001
+            pass
         return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + plans_txt) if plans_txt else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
     out += "\n(everything: python -m eve_profit next --all)"

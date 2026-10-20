@@ -1,6 +1,7 @@
 """AIR Daily Goals planner: the reward (445,000 ISK seen) is paid for ANY 2 of the 5 daily goals, so pick the cheapest pair.
 Every goal is costed in minutes (travel included) and ISK to get it done; jumps are free when the trip is going there anyway.
 Numbers marked '?' are guesses: edit the "plan" block of a goal in bonus_programs.json (minutes, cash, feasible, why_not) after you time one."""
+from .health import record as _hrec
 import itertools
 import time
 
@@ -56,15 +57,15 @@ def _far_places(con, mining=None, offers=None):
         for rate, net, minutes, o, tags in offers if offers is not None else offers_rows(con):
             if o.get("jumps", 0) >= 3:
                 out.append((rate, f"{o['agent']} (agent mission, {o['jumps']} jumps)", o["jumps"], o.get("agent_system")))
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .mining_sites import rank_sites
         for s in mining if mining is not None else rank_sites(con):
             if s["jumps"] >= 3:
                 out.append((0.0, f"{s['system']} (mining, {s['jumps']} jumps)", s["jumps"], s["system"]))
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     out.sort(key=lambda x: -x[0])
     return out
 
@@ -131,8 +132,8 @@ def build_option(con, g=None, p=None, free=None):
                             + "\n      ".join(t_lines))
                 return {"goal": "Manufacture an Item", "ok": True, "minutes": o["minutes"] + t_cnt_min, "cash": -(o["net"] + t_cnt_isk), "jumps_away": 0, "job_min": o.get("job_min", 0.0),
                         "how": how, "mb": o}
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('dailygoals', _he)
     best = None
     for bp, name in _q(con, "SELECT b.blueprint_id, t.name FROM my_blueprints b LEFT JOIN types t ON t.type_id=b.blueprint_id"):
         mats = _q(con, "SELECT m.material_id, m.quantity, t.name FROM bp_materials m LEFT JOIN types t ON t.type_id=m.material_id WHERE m.blueprint_id=?", (bp,))
@@ -235,8 +236,8 @@ def jumps_option(con, places=None, g=None, p=None, idx=0):
         more = _agents(g, path) + cheap_needs(con, g, p, path) if path else []
         if more:
             how += "\n      also on that route:\n         " + "\n         ".join(more)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     return {"goal": "Complete 3 Jumps", "ok": True, "minutes": 3 * PER_JUMP_MIN + t_min, "cash": -t_isk, "jumps_away": 0,
             "how": how, "dest": dest, "dest_system": sysname}
 
@@ -266,8 +267,8 @@ def mine_option(con):
         top = rank_sites(con)
         if top:
             jumps, where = top[0]["jumps"], f"{top[0]['system']} ({top[0]['jumps']} jumps)"
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     return {"goal": "Mine 2000 units of Ore", "ok": True, "minutes": 10.0 + 2 * jumps * PER_JUMP_MIN, "cash": 0.0, "jumps_away": jumps,
             "how": f"mine 2000 units of any ore in {where} (a few hundred m3, about 10 minutes); the Pyroxeres freelance job and the Banidine agent mission count too  (?)"}
 
@@ -434,8 +435,8 @@ def chain_clear(con):
     try:
         con.execute("DELETE FROM meta WHERE key=?", (CHAIN_KEY,))
         con.commit()
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
 
 
 def chain_done(con, changed=None, bought_ok=True):
@@ -444,49 +445,49 @@ def chain_done(con, changed=None, bought_ok=True):
         mb = mark_bought(con) if bought_ok else ""                      # at the chain's home with the shopping not yet seen: `done` = "I bought it"
         if mb:
             return mb
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .agentchain import done as _adone
         m = _adone(con)
         if m:
             return m
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .jobchain import done as _jdone
         m = _jdone(con)
         if m:
             return m
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .miningchain import job_done
         m = job_done(con)
         if m:
             return m
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .screens import wanted_done
         m = wanted_done(con, changed)
         if m:
             return m
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .social import done as _social_done
         m = _social_done(con)
         if m:
             return m
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     try:
         from .screens import advance, due
         if due(con):                                                    # the game-screens step is the one on screen: that screen was sent, on to the next
             return advance(con)
-    except Exception:                                                   # noqa: BLE001
-        pass
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('dailygoals', _he)
     st = _chain_load(con)
     if st:
         st["epic_done"] = True
@@ -609,8 +610,8 @@ def chain_step(con, g, p, pl, reward_ok=True):
         try:
             con.execute("DELETE FROM meta WHERE key=?", (CHAIN_KEY,))
             con.commit()
-        except Exception:                                               # noqa: BLE001
-            pass
+        except Exception as _he:                                               # noqa: BLE001
+            _hrec('dailygoals', _he)
         return None
     st = _chain_load(con)
     if st is None:
