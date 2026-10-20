@@ -431,3 +431,4 @@
 - 2026-10-20: Turppo Futsen (Inaro VII, Security) 'Cargo Delivery' 36k+36k, 60 m3 from a possibly guarded Kaaputenen warehouse, entered, available false.
 - 2026-10-20: Inogainen Shinatsu (Inaro X, Security) 'Onslaught' 86k+107k, Ikao 0.6 site, entered, available false.
 - 2026-10-20: shopping steps only when the purchase can be used: guns/ammo/tank need a combat hull flown or owned; any module/ammo needs a ship of yours flown or parked in THIS system (a capsule buying ammo just left it in a hangar). Hull and upgrade wishes are still bought at the cheapest place.
+- 2026-10-20: Sassainen Aizakonen (Inaro XI, Mining) 'Asteroid Catastrophe' 48k+33k, 1,080 m3 Augumene, entered, available false until a mining ship is at hand.
