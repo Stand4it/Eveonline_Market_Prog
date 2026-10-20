@@ -418,3 +418,4 @@
 - 2026-10-19: Juunigaishi agents read (Epas Hopara 'Party Goods' 23k+23k 270 m3 to Isikesu; Porhila Huken 'Move The Goods' 23k+23k 100 m3 to Haatomo); jump counts are estimates.
 - 2026-10-20: Isikesu agents read (Ohminen Saskora, Poukinen Ukilen, Renin Heleneto: courier; Tattikko Hollalaila: combat, available false until the 99% rule passes) entered in agent_offers.json.
 - 2026-10-20: Ruotkaishi Karjiras (Isikesu IV Moon 14) 'Food for Fun' 28k+23k, 40 m3 from Juunigaishi VII, entered; same drop-off station as Epas Hopara's wine.
+- 2026-10-20: commands no longer crash at start when the hourly refresh holds the database (seed_defaults write is skipped; defaults are already stored).
