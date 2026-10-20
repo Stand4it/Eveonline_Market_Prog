@@ -1824,6 +1824,26 @@
    "m3": 210.0,
    "needs": "a ship with 210 m3 of cargo (not a capsule); jump count Sirppala -> Kaaputenen is an estimate: confirm it",
    "note": "Seen 2026-10-20, standing 0.0."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Inaro",
+   "career": "Security",
+   "where": "Inaro VII - Moon 4 - Lai Dai Corporation Factory (0.8)",
+   "agent": "Turppo Futsen (Security, L1, Inaro VII - Moon 4 - Lai Dai Corporation Factory)",
+   "mission": "'Cargo Delivery': warp to the outpost at Kaaputenen (0.8), pick up 1 x Crates of Synthetic Oil (60 m3) from the warehouse and bring it to the agent at Inaro VII Moon 4. Pays 36,000 ISK + 42 LP; bonus 36,000 ISK within 1 h 34 min.",
+   "isk": 36000,
+   "bonus": 36000,
+   "task_min": 25,
+   "jumps": 2,
+   "to_system": "Kaaputenen",
+   "m3": 60.0,
+   "needs": "a ship with 60 m3 of cargo; the warehouse is a mission site (the agent says 'keep a lookout for any suspicious activity': the icon marks a possible pirate site). The red site icon suggests hostiles: do not accept until the combat ship and the 99% rule are met; jump count Inaro -> Kaaputenen is an estimate",
+   "note": "Seen 2026-10-20, standing 0.0. 72,000 ISK + 42 LP with the bonus; a courier-like Security mission, but the pickup site may be guarded."
   }
  ],
  "min_per_jump": 3.0,
