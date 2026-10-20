@@ -621,6 +621,26 @@
    "requires": {},
    "blocked": "Zarzakh is a dangerous pirate-haven system outside safe space: not routed",
    "how": "Later, if ever."
+  },
+  {
+   "id": "homefront_ops",
+   "name": "Homefront Operations (Agency > Encounters; faction sites in high-sec)",
+   "area": "combat",
+   "match": [
+    "homefront"
+   ],
+   "prior": [
+    300000,
+    2500000
+   ],
+   "minutes": 40,
+   "risk": "high",
+   "requires": {
+    "Gallente Frigate": 4
+   },
+   "needs_tool": "gun",
+   "where_seen": "2026-10-20 Agency list: Sirseshin 0.7 (current system, 1 site), Shihuken 0.9 (2 jumps, 12 sites), Waskisen 0.7 (2 jumps, 1 site: Emergency Aid: Convoy), Unpas 0.9 (3 jumps, 2 sites); 30 systems listed",
+   "how": "Agency > Encounters > Homefront Operations lists sites by system. Example: 'Emergency Aid: Convoy' at Waskisen: Guristas ambushed a repatriation convoy; keep the Charon freighter alive until reinforcements arrive (defence, combat). Needs a combat-ready ship that passes the 99% rule; time one site; loot and rewards are valued at market when you stop."
   }
  ]
 }

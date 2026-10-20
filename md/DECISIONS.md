@@ -441,3 +441,4 @@
 - 2026-10-20: Agency Exploration cards added to activity_catalog.json: Combat Anomalies and Cosmic Signatures (gated by tools like ratting / probe scanning), Escalations, Triglavian Space, ESS banks and Zarzakh as blocked (not routed). None of these cards has agents or an ESI list.
 - 2026-10-20: Exploration test steps (anomalies, signatures) say to look at the Agency card for THIS system first, then time one run; loot and gear are valued at market at stop. They are offered as tests only when able (skills, hull, tool) and shown as LATER in the long view otherwise.
 - 2026-10-20: loot and gear are valued at the best price HIGH-SEC (0.5+) buyers pay (buy orders only in 0.5+ systems, here and on one side trip), never a low-sec or null-sec bid.
+- 2026-10-20: Homefront Operations added to the catalog (combat-gated like ratting) with the sites seen in the Agency list: Sirseshin 1, Shihuken 12, Waskisen 1 (Emergency Aid: Convoy), Unpas 2.
