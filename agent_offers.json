@@ -1687,6 +1687,26 @@
    "to_system": "Anttiri",
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; the hideout is 'heavily guarded by Guristas fighters' (number and size unknown until accepted). Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-20, standing 0.0. Same station as the other Isikesu IV Moon 5 agent: one dock reads both. Best pay of the combat offers (141,000 ISK + 84 LP with the bonus)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Anttiri",
+   "career": "Distribution",
+   "where": "Anttiri V - Moon 20 - Perkone Factory (0.7)",
+   "agent": "Kouyonen Kaimienen (Distribution, L1, Anttiri V - Moon 20 - Perkone Factory)",
+   "mission": "'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (320 m3) from Anttiri V Moon 20 (the agent's station) to Isikesu IV - Moon 6 - CBD Sell Division Warehouse (0.7). Pays 23,000 ISK + 29 LP; bonus 20,000 ISK within 56 min.",
+   "isk": 23000,
+   "bonus": 20000,
+   "task_min": 10,
+   "jumps": 2,
+   "to_system": "Isikesu",
+   "m3": 320.0,
+   "needs": "a ship with 320 m3 of cargo (not a capsule); jump count Anttiri -> Isikesu is an estimate: confirm it",
+   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 6 is also the drop-off of Ausmunen Karantala's coolant and of Renin Heleneto's recruits: one stop there delivers all three. Poukinen Ukilen's frozen food starts at Anttiri V Moon 14 (same system)."
   }
  ],
  "min_per_jump": 3.0,

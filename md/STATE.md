@@ -25,3 +25,4 @@ Open agent offers (agent_offers.json):
 - Ruotkaishi Karjiras: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
 - Yarjonoisen Koshamagae: 'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) fro
 - Ausmunen Karantala: 'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Isik
+- Kouyonen Kaimienen: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
