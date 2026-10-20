@@ -1,6 +1,7 @@
 """BUY ORDERS WITH A RANGE: a buy order's range ("40 jumps", "region", "solar system", "station") says how far away a seller may be and still sell into it. If you are docked
-within range, you can sell your item to that order from where you stand (the Sell window lists it with its own station): NO TRAVEL. A better price in another system can
-therefore be free money: the minimum 'distance' is simply 'inside the order's range'. Ranges are stored at scan time (order_range); `remote_bid` finds the best one that reaches you."""
+within range AND in the SAME REGION, you can sell to that order from where you stand (the Sell window lists it with its own station): no travel. The EVE market is
+per REGION: an order in another region never shows in your Sell window, whatever its range (seen in game: a 40-jump order in Amarr, Domain, was not offered in Jita, The Forge).
+Ranges are stored at scan time (order_range); `remote_bid` finds the best one that reaches you."""
 
 STRING_RANGES = {"station": -2, "solarsystem": -1, "region": 10 ** 6}
 
@@ -57,7 +58,9 @@ def remote_bid(con, g, tid, qty, from_sid, from_loc, tax, min_sec=0.5):
         if g.sec.get(sid, 0.0) < min_sec or r["location_id"] == from_loc:
             continue
         j = reach.get(sid)
-        ok = (rng == 10 ** 6 and r["region_id"] == my_region) or (rng >= 0 and j is not None and j <= rng) or (rng == -1 and sid == from_sid)
+        if r["region_id"] != my_region:
+            continue                                                    # another region's market: not offered to you, whatever the range
+        ok = rng == 10 ** 6 or (rng >= 0 and j is not None and j <= rng) or (rng == -1 and sid == from_sid)
         if not ok or r["volume_remain"] < max(r["min_volume"], 1):
             continue
         take = min(left, r["volume_remain"])
