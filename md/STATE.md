@@ -23,3 +23,4 @@ Open agent offers (agent_offers.json):
 - Poukinen Ukilen: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
 - Renin Heleneto: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
 - Ruotkaishi Karjiras: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
+- Yarjonoisen Koshamagae: 'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) fro
