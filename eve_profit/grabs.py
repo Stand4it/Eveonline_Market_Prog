@@ -12,8 +12,15 @@ def _freelance(con):
     return f"{n} jobs, {LAST.get('new', 0)} new, {LAST.get('gone', 0)} gone, {d} details", frac, LAST.get("expires")
 
 
+def _incursions(con):
+    from .esi import ESI
+    from .incursions import fetch
+    return fetch(con, ESI(timeout=20))
+
+
 # id, label, start hours between runs, fastest, slowest, function
-GRABS = [("freelance", "Freelance Jobs (ESI, public; about 4,500 jobs worldwide, a pull takes ~2 min)", 6.0, 1.0, 48.0, _freelance)]
+GRABS = [("freelance", "Freelance Jobs (ESI, public; about 4,500 jobs worldwide, a pull takes ~2 min)", 6.0, 1.0, 48.0, _freelance),
+         ("incursions", "Incursions (ESI, public; a handful of Sansha incursions)", 1.0, 1.0, 12.0, _incursions)]
 
 
 def _ts(con, gid):
