@@ -19,3 +19,6 @@ Open agent offers (agent_offers.json):
 - Aakalen Naniro: 'Asteroid Catastrophe': scan the mission site in Saila (0.9,
 - Epas Hopara: 'Party Goods': courier 3 x Crates of Spiced Wine (270 m3) fr
 - Porhila Huken: 'Move The Goods': courier 10 x Small Sealed Cargo Containers
+- Ohminen Saskora: 'Save The Children': courier 3 x Crates of Clothing (180 m3)
+- Poukinen Ukilen: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
+- Renin Heleneto: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
