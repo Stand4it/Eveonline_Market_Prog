@@ -110,6 +110,11 @@ def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0
             [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid,
               int(o["is_buy_order"]), o["price"], o["volume_remain"], o.get("min_volume", 1),
               o.get("issued", ""), now) for o in rows])
+        try:
+            from .remoterange import store as _store_range
+            _store_range(con, rows)                                     # a buy order's range: how far away a seller may be
+        except Exception:                                               # noqa: BLE001
+            pass
         con.commit()
         n += len(rows)
     con.execute("DELETE FROM system_kills")
@@ -164,6 +169,11 @@ def refresh_item(con, esi, region_ids, type_id):
             "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
             [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid, int(o["is_buy_order"]),
               o["price"], o["volume_remain"], o.get("min_volume", 1), o.get("issued", ""), now) for o in rows])
+        try:
+            from .remoterange import store as _store_range
+            _store_range(con, rows)
+        except Exception:                                               # noqa: BLE001
+            pass
         n += len(rows)
     con.commit()
     return n

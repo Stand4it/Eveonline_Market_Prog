@@ -122,6 +122,24 @@ def _next_action_core(con, g, p):
             keep_lines.append(f"   keep {n}: on your keep list (gear you will use)")
     except Exception:                                            # noqa: BLE001
         pass
+    try:                                                         # a buy order with a RANGE that reaches you pays its price with no travel: sell to it from here
+        from .remoterange import remote_bid
+        _from_sid = g.id_of(where)
+        _loc = int(getattr(p, "current_location_id", 0) or 0)
+        for d in sells:
+            rb = remote_bid(con, g, d["tid"], d["sold"], _from_sid, _loc, p.sales_tax)
+            if rb and rb["net"] > d["net"] * 1.10 + 5_000:
+                d["net"], d["remote"] = rb["net"], rb
+        for n_, q_ in list(res.get("no_bids", [])):              # stacks with no buyer at your station may still have one in range elsewhere
+            row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (n_,)).fetchone()
+            rb = remote_bid(con, g, row[0], q_, _from_sid, _loc, p.sales_tax) if row else None
+            if rb and rb["net"] >= 50_000:
+                sells.append({"tid": row[0], "name": n_, "sold": rb["sold"], "net": rb["net"], "advice": "SELL", "remote": rb})
+                keep_lines = [l for l in keep_lines if f"x {n_}:" not in l]
+        sells.sort(key=lambda d: -d["net"])
+    except Exception:                                            # noqa: BLE001
+        pass
+    KEEP_NOTES.clear()
     KEEP_NOTES.extend(keep_lines)
     if sells:
         total = sum(d["net"] for d in sells)
@@ -141,6 +159,9 @@ def _next_action_core(con, g, p):
             return _detour_step(con, g, p, where, sells, detour[0], detour[1])
         for d in sells[:8]:
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} @ {d['net'] / max(d['sold'], 1):>12,.2f} each = ~{d['net']:>12,.0f}")
+            if d.get("remote"):
+                rb = d["remote"]
+                L.append(f"      sells to the buy order in {rb['system']} ({rb['price']:,.0f} each, range {rb['rng']}, {rb['jumps']} jumps from here): NO TRAVEL, it shows in the Sell window")
             b = better.get(d["tid"])
             if b:
                 L.append(f"      BETTER PLACE: {b['best_label']} pays ~{b['best_net']:,.0f} (+{b['extra']:,.0f} ISK for ~{b['mins']:.0f} min extra)"
