@@ -143,6 +143,12 @@ def _look_around(con, g, p, st, here):
         lh = {"system": here, "agents": []}
     here_station = _docked_station(con, p)
     names = [n for n in names if _agent_here(n, here_station)]          # only agents whose station you are docked in (agents elsewhere in the system wait)
+    try:
+        from .agentleads import _known_agent_names
+        known = _known_agent_names()
+        names = [n for n in names if n.lower() not in known]            # an agent whose offer is already recorded is not "looked at" again: that offer is a plan of its own (accept / deliver)
+    except Exception:                                                   # noqa: BLE001
+        pass
     todo = [n for n in names if n not in lh["agents"]]
     if not todo:
         return ""
