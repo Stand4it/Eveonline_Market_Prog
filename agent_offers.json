@@ -1785,6 +1785,25 @@
    "m3": 20.0,
    "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; 'a small escort' of unknown size until accepted. Do not accept until the Incursus has ammo and a repairer",
    "note": "Seen 2026-10-20, standing 0.0. 197,000 ISK + 103 LP with the bonus: the best combat offer seen so far. Same station family as the other Anttiri V Security agents (this one at Moon 6)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Sirppala",
+   "career": "Security",
+   "where": "Sirppala IV - Moon 16 - Kaalakiota Corporation Warehouse (0.9)",
+   "agent": "Ienonanen Sitsigainen (Security, L1, Sirppala IV - Moon 16 - Kaalakiota Corporation Warehouse)",
+   "mission": "'Fair Play - To the Rescue' (1 of 5): investigate a distress call at Inaro (0.8) and eliminate all hostiles. Pays 32,000 ISK + 43 LP; bonus 42,000 ISK within 1 h 44 min.",
+   "isk": 32000,
+   "bonus": 42000,
+   "task_min": 30,
+   "jumps": 2,
+   "to_system": "Inaro",
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; the hostiles are unknown until accepted. Do not accept until the Incursus has ammo and a repairer; the jump count Sirppala -> Inaro is an estimate",
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5; the same mission as Icard Vacymoutte's at Anttiri but with lower pay (74,000 ISK + 43 LP with the bonus)."
   }
  ],
  "min_per_jump": 3.0,
