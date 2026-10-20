@@ -1765,6 +1765,26 @@
    "m3": 1080.0,
    "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the site is a mission site in Anttiri",
    "note": "Seen 2026-10-20, standing 0.0. Same mission type as Aakalen Naniro at Saila (3,600 Augumene, 1,080 m3). Anttiri III is also one of the stations with the Poksu Mineral Group mining agents."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": false,
+   "agent_system": "Anttiri",
+   "career": "Security",
+   "where": "Anttiri V - Moon 6 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent": "Veis Kingato (Security, L1, Anttiri V - Moon 6 - Spacelane Patrol Assembly Plant)",
+   "mission": "'Smuggler Interception': intercept a small convoy at Isikesu (0.7, normal ship restrictions): destroy the ships if they do not surrender their goods, bring 10 x Militants (20 m3) back to the agent. Pays 99,000 ISK + 103 LP; bonus 98,000 ISK within 3 h 22 min.",
+   "isk": 99000,
+   "bonus": 98000,
+   "task_min": 45,
+   "jumps": 2,
+   "to_system": "Isikesu",
+   "m3": 20.0,
+   "needs": "a combat-ready ship (guns, ammo, tank) that passes the 99% win rule; 'a small escort' of unknown size until accepted. Do not accept until the Incursus has ammo and a repairer",
+   "note": "Seen 2026-10-20, standing 0.0. 197,000 ISK + 103 LP with the bonus: the best combat offer seen so far. Same station family as the other Anttiri V Security agents (this one at Moon 6)."
   }
  ],
  "min_per_jump": 3.0,

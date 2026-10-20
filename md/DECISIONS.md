@@ -425,3 +425,4 @@
 - 2026-10-20: Icard Vacymoutte (Anttiri V Moon 14, Security) 'To the Rescue' 50k+46k entered, available false (combat).
 - 2026-10-20: Obanari Kachomala (Anttiri V Moon 14, Security) 'Poking Around' 51k+50k entered, available false until a frigate may scout (no kill order, running allowed).
 - 2026-10-20: Tenpaa Hyynita (Anttiri III, Mining) 'Burnt Traces' 34k+36k, 1,080 m3 Augumene, entered, available false until a mining ship is at hand.
+- 2026-10-20: Veis Kingato (Anttiri V Moon 6, Security) 'Smuggler Interception' 99k+98k entered, available false (combat, best combat offer so far).
