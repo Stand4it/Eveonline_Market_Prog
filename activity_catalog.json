@@ -289,10 +289,13 @@
    "risk": "none",
    "requires": {
     "Science": 3,
-    "Industry": 3
+    "Industry": 3,
+    "Caldari Encryption Methods": 1,
+    "Mechanical Engineering": 1,
+    "Electronic Engineering": 1
    },
    "isk_min": 20000000,
-   "how": "Needs datacores and decryptors; model after Science and Industry are trained."
+   "how": "Turn a T1 blueprint COPY into a T2 one, then build the T2 item. In game: Neocom > Industry (Alt+S) > Blueprints tab > right-click your T1 blueprint copy > Invention; the job window lists the 2 datacore types it needs (buy them on the Market) and the chance of success; click Start (needs a station with a Research/Invention service). Gate: an Encryption Methods skill + the two science skills the datacores name (Caldari: Mechanical + Electronic Engineering)."
   },
   {
    "id": "ratting",

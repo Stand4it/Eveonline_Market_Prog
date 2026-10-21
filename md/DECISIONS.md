@@ -473,3 +473,4 @@
 - 2026-10-21 air_career.json: Explorer 230 CP (was 150, +80); Enforcer 175, Industrialist 305, Soldier of Fortune 65 unchanged; 775/3000 overall.
 - 2026-10-21 scripts/add_offer.py, air_cp.py, finish.py: screenshot updates in one call each (auto jumps, docs, tests, commit, push).
 - 2026-10-21 haulchain.py: a haul subtracts units sold (wallet transactions) since 1 h before it was planned (asset list lag), never before the last buy; all sold = haul cleared. Fixed 'fly to Funtanainen with 247 Insignia' after they were sold.
+- 2026-10-21 activity_catalog.json invention_t2: needs Caldari Encryption Methods + Mechanical + Electronic Engineering (was only Science/Industry 3, so next offered it to a char that cannot invent); how = click-by-click. esi.py: after one call exhausts retries on 5xx/420, later calls that run get 1 try for 5 min (a 503 outage cost ~31 s per call, ~5 min per next). scripts/skills.py: print trained skill levels.

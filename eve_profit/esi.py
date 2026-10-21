@@ -13,6 +13,10 @@ from .config import USER_AGENT
 BASE = "https://esi.evetech.net/latest"
 
 
+DOWN_S = 300          # after a call fails all its retries on 5xx/420, later calls in this run get ONE try for this long
+_DOWN_UNTIL = 0.0
+
+
 class ESI:
     def __init__(self, timeout=20):
         self.timeout, self.etags, self.cache = timeout, {}, {}
@@ -21,8 +25,11 @@ class ESI:
 
     def get(self, path, **params):
         """-> (json, pages). Retries on 420/5xx; uses ETag for cheap refreshes."""
+        global _DOWN_UNTIL
         url = BASE + path + ("?" + urllib.parse.urlencode(params) if params else "")
-        for attempt in range(5):
+        tries = 1 if time.time() < _DOWN_UNTIL else 5            # ESI already failed this run: one quick try, no 31 s of back-off per call
+        busy = None
+        for attempt in range(tries):
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
                                                        "Accept": "application/json"})
             if self.token:
@@ -43,8 +50,10 @@ class ESI:
                 if e.code == 304 and url in self.cache:
                     return self.cache[url]
                 if e.code in (420, 429, 500, 502, 503, 504):
-                    print(f"  ESI answered {e.code} (busy/limited); retrying in {2 ** attempt}s...", flush=True)
-                    time.sleep(2 ** attempt)
+                    busy = e.code
+                    if attempt + 1 < tries:
+                        print(f"  ESI answered {e.code} (busy/limited); retrying in {2 ** attempt}s...", flush=True)
+                        time.sleep(2 ** attempt)
                     continue
                 raise
             except (socket.timeout, TimeoutError, ConnectionError, http.client.IncompleteRead,
@@ -53,6 +62,9 @@ class ESI:
                 print(f"  network stall/error ({type(e).__name__}); retry {attempt + 1}/5 in {wait}s...", flush=True)
                 time.sleep(wait)
                 continue
+        if busy and time.time() >= _DOWN_UNTIL:
+            _DOWN_UNTIL = time.time() + DOWN_S
+            print(f"  ESI keeps answering {busy}: CCP's server is busy or down. For the next {DOWN_S // 60} min this run tries each call once and uses saved data.", flush=True)
         raise RuntimeError(f"ESI failed: {url}")
 
     def region_orders(self, region_id, max_pages=None, log=None):
