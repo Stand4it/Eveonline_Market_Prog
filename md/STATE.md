@@ -40,3 +40,5 @@ Open agent offers (agent_offers.json):
 - Veinalen Elonko: 'The Heiress (3 of 5)': MINE 20 x Polygypsum (320 m3; missio
 - Saun Otsusen: 'Undue Attention - Poking Around (1 of 3)': task to the miss
 - Tashudan Shizomi: 'For the Birds': task to the deadspace site in Veisto (accel
+- Ootoh Litiura: 'Mercium Experiments': courier 1,800 x Mercium (mission ore,
+- Oitko Shiomiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
