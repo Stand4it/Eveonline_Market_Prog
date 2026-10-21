@@ -65,6 +65,12 @@ class ESI:
         if busy and time.time() >= _DOWN_UNTIL:
             _DOWN_UNTIL = time.time() + DOWN_S
             print(f"  ESI keeps answering {busy}: CCP's server is busy or down. For the next {DOWN_S // 60} min this run tries each call once and uses saved data.", flush=True)
+            try:
+                from .serverstatus import summary
+                for ln in summary():
+                    print("  " + ln, flush=True)
+            except Exception:                                           # noqa: BLE001
+                pass
         raise RuntimeError(f"ESI failed: {url}")
 
     def region_orders(self, region_id, max_pages=None, log=None):
