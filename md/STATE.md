@@ -45,3 +45,4 @@ Open agent offers (agent_offers.json):
 - Jukosoni Kauniki: 'The Drone Infestation': task to the deadspace belt in Veist
 - Vasala Akochi: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Okuro Petsiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
+- Haba Mintof: 'Army Recruits': courier 5 x Group of Army Recruits from the

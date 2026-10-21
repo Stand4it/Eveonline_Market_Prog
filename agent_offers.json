@@ -2314,6 +2314,26 @@
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 55 LP with the bonus; same mission as Vasala Akochi's (also Sobaseki): each agent has its own site.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isanamo",
+   "career": "Distribution",
+   "where": "Isanamo VII - Moon 1 - Nurtura Warehouse (0.6)",
+   "agent": "Haba Mintof (Distribution, L1, Isanamo VII - Moon 1 - Nurtura Warehouse (0.6))",
+   "mission": "'Army Recruits': courier 5 x Group of Army Recruits from the agent's station (300 m3) to Isikano IX - Moon 11 - Wiyrkomi Peace Corps Logistic Support (0.7). Pays 20,000 ISK + 30 LP; bonus 27,000 ISK within 54 min.",
+   "isk": 20000,
+   "bonus": 27000,
+   "task_min": 6,
+   "jumps": 1,
+   "to_system": "Isikano",
+   "m3": 300.0,
+   "needs": "300 m3 of cargo; Isikano is 1 jump(s) from Isanamo (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 47,000 ISK + 30 LP with the bonus; fits the Catalyst (300 of 450 m3)."
   }
  ],
  "min_per_jump": 3.0,
