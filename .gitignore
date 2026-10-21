@@ -19,3 +19,4 @@ md/LOCAL_STATE.md
 .last_db
 hourly.log
 errors.log
+health.log

@@ -818,6 +818,8 @@ def _name_of(step):
         return f"Market list {item}".strip()
     if lo.startswith("step: buy a skill book"):
         return "Skills buy book"
+    if lo.startswith("step: show me the health report"):
+        return "Health report"
     if lo.startswith("step: queue a skill") or lo.startswith("step: fill the skill queue"):
         return "Skills queue"
     if lo.startswith("step: air daily goals"):
@@ -974,6 +976,13 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.append((_w[0], "show me a screen", _w[1], "the model needs it"))
     except Exception as _he:                                            # noqa: BLE001
         _hrec('nextstep', _he)
+    try:                                                         # new hidden problems (errors swallowed inside steps, trouble in hourly.log): show them once
+        from .health import candidate as _hc2
+        _hh = _hc2(con)
+        if _hh:
+            cands.append((_hh[0], "health report", _hh[1], "bugs show the day they happen"))
+    except Exception:                                            # noqa: BLE001
+        pass
     try:                                                         # unallocated skill points: spend them (instant, free) on the skills the plan needs
         from .spendsp import candidate as _sp
         _s = _sp(con)
@@ -1377,13 +1386,6 @@ def next_action(con, g, p, full=False, ahead=False):
                 _hrec('nextstep', _he)
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
-        try:
-            from .health import line as _hline
-            _hl = _hline()
-            if _hl:
-                out += "\n" + _hl
-        except Exception:                                        # noqa: BLE001
-            pass
         return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + plans_txt) if plans_txt else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE
     out += "\n(everything: python -m eve_profit next --all)"

@@ -81,3 +81,44 @@ def report():
     if len(L) == 1:
         L.append("   all quiet: no swallowed errors and no trouble in hourly.log")
     return "\n".join(L)
+
+
+RATE = 5_900_000.0              # a 30-second step: right behind the model-update screens
+
+
+def fingerprint():
+    """A short hash of the problems of the last 24 h (what failed and where, not how many times), '' when all is quiet."""
+    import hashlib
+    keys = sorted({f"{w}|{m}|{a}" for (w, m, a) in recent()} | {ln for ln in log_problems()})
+    return hashlib.md5("\n".join(keys).encode()).hexdigest() if keys else ""
+
+
+def due(con):
+    """True when there are problems you have not been shown yet (a new or changed set): the step appears once, then stays quiet until the problems change."""
+    fp = fingerprint()
+    if not fp:
+        return False
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='health_reported'").fetchone()
+    except Exception:                                                   # noqa: BLE001
+        return True
+    return not r or r[0] != fp
+
+
+def mark(con):
+    """`health` was run: these problems are reported."""
+    try:
+        con.execute("INSERT OR REPLACE INTO meta VALUES('health_reported', ?)", (fingerprint(),))
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass
+
+
+def candidate(con):
+    """(rate, step text) when new problems are waiting, else None."""
+    if not due(con):
+        return None
+    n = sum(recent().values()) + len(log_problems())
+    return RATE, "\n".join([f"STEP: SHOW ME THE HEALTH REPORT (about 30 seconds)",
+                            f"   DO ONLY THIS: run  python -m eve_profit health  and paste what it prints into the chat ({n} problem(s) hidden inside steps or the hourly log in the last 24 h).",
+                            "   Why: a hidden error means part of the plan is silently not working; I fix it from the file and line it prints."])

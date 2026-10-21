@@ -28,5 +28,28 @@ class T(unittest.TestCase):
             health.ERR_FILE, health.HOURLY = old_e, old_h
 
 
+
+class StepTests(unittest.TestCase):
+    def test_step_appears_once_per_set_of_problems(self):
+        import sqlite3
+        d = tempfile.mkdtemp()
+        err = os.path.join(d, "errors.log")
+        with open(err, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"t": time.time(), "where": "w", "msg": "TypeError: x", "at": "a.py:1 in f"}) + "\n")
+        old_e, old_h = health.ERR_FILE, health.HOURLY
+        health.ERR_FILE, health.HOURLY = err, os.path.join(d, "none.log")
+        try:
+            con = sqlite3.connect(":memory:")
+            con.execute("CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)")
+            self.assertIn("SHOW ME THE HEALTH REPORT", health.candidate(con)[1])
+            health.mark(con)
+            self.assertIsNone(health.candidate(con))                       # reported: quiet
+            with open(err, "a", encoding="utf-8") as f:
+                f.write(json.dumps({"t": time.time(), "where": "w2", "msg": "KeyError: y", "at": "b.py:2 in g"}) + "\n")
+            self.assertIsNotNone(health.candidate(con))                    # a new problem: shown again
+        finally:
+            health.ERR_FILE, health.HOURLY = old_e, old_h
+
+
 if __name__ == "__main__":
     unittest.main()

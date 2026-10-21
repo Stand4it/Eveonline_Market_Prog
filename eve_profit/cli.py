@@ -665,8 +665,9 @@ def _run(a):
         from .trainplan import book_list, format_books
         print(format_books(book_list(con, Graph(con), p, res), p.wallet_isk))
     elif a.cmd == "health":
-        from .health import report as _hreport
+        from .health import report as _hreport, mark as _hmark
         print(_hreport())
+        _hmark(con)                                              # these problems are now reported: the next step stays quiet until they change
     elif a.cmd == "noagents":
         from .agentleads import hide_here
         print(f"Hidden {hide_here(con, p, a.item or '')} agent(s) that are not viewable for you; they will not be planned again.")
