@@ -61,10 +61,11 @@ def confirm_sold(con):
             f"Did you keep one? run  python -m eve_profit done --goal \"kept NAME\"  to put it back.")
 
 
-def remember_buy_step(con, system_id, items):
-    """items: [(type_id, qty)] the BUY step asked you to buy here."""
+def remember_buy_step(con, system_id, items, haul=None):
+    """items: [(type_id, qty)] the BUY step asked you to buy here. haul: the trade's sale leg (haulchain dict input: dest, jumps, gain, net, items),
+    so confirming the buy starts that haul even when no chain was saved."""
     try:
-        _put(con, "last_buy_step", {"sid": system_id, "items": [[int(t), int(q)] for t, q in items], "t": time.time()})
+        _put(con, "last_buy_step", {"sid": system_id, "items": [[int(t), int(q)] for t, q in items], "t": time.time(), "haul": haul})
         con.commit()
     except Exception:                                                   # noqa: BLE001
         pass
@@ -86,6 +87,17 @@ def confirm_bought(con):
     _put(con, "pending_bought", {"sig": _sig(con), "sid": st["sid"], "items": st["items"], "t": time.time()})
     _add(con, st["sid"], st["items"])
     _put(con, "last_buy_step", None)
+    try:                                                                # the trade's haul is UNDER WAY now: `next` flies the cargo on instead of offering the buy again
+        hc = _get(con, "haul_chain")
+        if not hc and st.get("haul"):                                   # no chain was saved for this trade: start it from the buy step's sale leg
+            from .haulchain import make
+            r = con.execute("SELECT name FROM systems WHERE system_id=?", (st["sid"],)).fetchone()
+            hc = make(st["haul"], r[0] if r else "")
+        if hc:
+            hc["bought"], hc["t"] = True, time.time()
+            _put(con, "haul_chain", hc)
+    except Exception:                                                   # noqa: BLE001
+        pass
     con.commit()
     names = []
     for tid, q in st["items"]:

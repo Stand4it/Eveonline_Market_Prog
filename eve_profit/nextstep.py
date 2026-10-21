@@ -1114,7 +1114,13 @@ def next_action(con, g, p, full=False, ahead=False):
         if cands:
             from .tradestep import pending as _pend
             _h = _pend(cands[0][2])
-            if _h:
+            _cur = None
+            try:
+                from .haulchain import load as _hload
+                _cur = _hload(con)
+            except Exception:                                           # noqa: BLE001
+                _cur = None
+            if _h and not (_cur and _cur.get("bought")):                # never overwrite a haul you already bought for (that was the buy-again loop)
                 from .haulchain import make as _hmake2, save as _hsave2
                 _hsave2(con, _hmake2(_h, p.current_system))
     except Exception as _he:                                            # noqa: BLE001

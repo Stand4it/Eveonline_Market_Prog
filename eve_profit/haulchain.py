@@ -138,8 +138,8 @@ def candidate(con, g, p):
         save(con, st)
     except Exception as _he:                                                   # noqa: BLE001
         _hrec('haulchain', _he)
-    if here == st["origin"] and _held_at_origin(con, g, st):
-        return None                                                     # not started: the normal haul candidate handles it
+    if here == st["origin"] and _held_at_origin(con, g, st) and not st.get("bought"):
+        return None                                                     # not started: the normal haul candidate handles it (a trade you BOUGHT for is under way: fly on)
     held_ = _held(con)
     sold_ = _sold_since(con, st)
     scaled = []                                                         # the plan's quantities are capped at what you really carry, minus what you already sold

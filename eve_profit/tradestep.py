@@ -65,7 +65,7 @@ def trade_step(con, g, p, o):
         PENDING[text] = h
         try:                                                            # so `stop` can put the bought stack into the stock now (ESI shows it only within an hour)
             from .invoverlay import remember_buy_step
-            remember_buy_step(con, a, [(tid, sum(by_price.values()) or units)])
+            remember_buy_step(con, a, [(tid, sum(by_price.values()) or units)], haul=h)
         except Exception:                                               # noqa: BLE001
             pass
         if st_id:
