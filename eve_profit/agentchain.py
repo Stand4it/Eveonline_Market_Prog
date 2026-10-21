@@ -26,9 +26,57 @@ def _brief(o):
     return (m.split(":", 1)[-1] if ":" in m[:60] else m)[:170].strip()
 
 
+CHEAP_ALT = {"mining": ["Civilian Miner"]}          # cheaper stand-ins that do the same job for one mission
+ISK_PER_JUMP = 20_000.0                              # a jump of detour is worth this much when picking where to buy
+
+
+def gear_step(con, g, p, o):
+    """An offer that needs a tool you have not fitted (o['needs_tool'] = a key of tools.TOOLS): the step that gets it, BEFORE accepting
+    (the bonus clock starts at accept). -> text or None (fitted, unknown tool, or no seller found)."""
+    nt = o.get("needs_tool")
+    try:
+        from . import tools as _tl
+        if not nt or nt not in _tl.TOOLS or _tl.fitted_now(con).get(nt, 0) >= 1:
+            return None
+        item, qty = _tl.TOOLS[nt]["buy"][0]
+        label = _tl.TOOLS[nt]["label"]
+        here = g.id_of(p.current_system)
+        names = CHEAP_ALT.get(nt, []) + [item]
+        held = con.execute("SELECT t.name FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=? AND t.name IN (%s) AND i.quantity>=1"
+                           % ",".join("?" * len(names)), [here] + names).fetchone()
+        ship = (p.ship_name or "").split(" - ")[0] or "ship"
+        if held:
+            return (f"STEP: FIT {qty} x {held[0]} to your {ship} (needed for: {o['agent'].split(' (')[0]}'s mission)\n"
+                    f"   DO ONLY THIS: open the fitting window (Alt+F) and drag the {held[0]} from the hangar into empty high slots. Then run  python -m eve_profit next")
+        reach = g.reach(here, 10, p.avoid_yellow)
+        import time as _t
+        best = None
+        for nm in names:
+            for price, sid, loc in con.execute("SELECT o.price, o.system_id, o.location_id FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0 "
+                                               "AND o.volume_remain>=1 AND o.fetched_at>?", (nm, _t.time() - 2 * 86400)):
+                if sid in reach:
+                    score = price * qty + reach[sid].jumps * 2 * ISK_PER_JUMP
+                    if best is None or score < best[0]:
+                        best = (score, nm, price, sid, loc, reach[sid].jumps)
+        if not best:
+            return None
+        _, nm, price, sid, loc, jumps = best
+        st_name = con.execute("SELECT name FROM stations WHERE station_id=?", (loc,)).fetchone()
+        where = st_name[0] if st_name else g.name[sid]
+        return (f"STEP: BUY {qty} x {nm} FIRST ({label} for {o['agent'].split(' (')[0]}'s mission; you have none fitted)\n"
+                f"   DO ONLY THIS: {'here' if jumps == 0 else f'fly {jumps} jump(s) to {g.name[sid]} and'} buy {qty} x {nm} at {where} (~{price:,.0f} ISK each; "
+                f"Market > search '{nm}' > Buy), then fit them (Alt+F > drag into empty high slots).\n"
+                f"   Do this BEFORE accepting: the mission's bonus clock starts when you accept. Then run  python -m eve_profit next")
+    except Exception:                                                   # noqa: BLE001
+        return None
+
+
 def stage_text(con, g, p, o, rate_note=""):
     """The one step for the chosen agent offer `o` (a dict from agent_offers.json)."""
     agent = o["agent"].split(" (")[0]
+    gear = gear_step(con, g, p, o)
+    if gear:
+        return gear
     st = _load(con)
     if not st or st.get("agent") != agent:
         st = {"agent": agent, "stage": "accept"}

@@ -2166,7 +2166,8 @@
    "note": "2026-10-21: part 1 (Miniature Slaver from Sarekuwa III, 22,000 + 22,000 bonus + 26 LP) DONE, standing 0.1. Part 2 = 20,600 ISK + 14 LP with the bonus; tight 30-min bonus. Accepted 2026-10-21; bonus window 29 min left at accept. 2026-10-21: part 2 (Hard Currency to Sobaseki) DONE, standing 0.2. Part 3 offered (not accepted yet): 151,000 ISK + 92 LP with the bonus.",
    "accepted": false,
    "expires": "",
-   "lp": 92
+   "lp": 92,
+   "needs_tool": "mining"
   },
   {
    "taxed": false,
@@ -2206,7 +2207,8 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. L1 combat, in-system, site has ship restrictions (frigate/destroyer: the Catalyst fits). 123,000 ISK + 80 LP with the bonus: best L1 offer seen today."
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat, in-system, site has ship restrictions (frigate/destroyer: the Catalyst fits). 123,000 ISK + 80 LP with the bonus: best L1 offer seen today.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
