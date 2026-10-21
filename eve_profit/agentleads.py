@@ -98,9 +98,36 @@ def _station_known(con, loc, places):
     return bool(r and r[0] and r[0].lower() in places)
 
 
-def _rate(act, best_known):
-    """An unread agent's mission is worth the best known ISK/hr right now (owner rule 2026-10-21, same as untested activities);
-    the caller discounts it for the read and the travel. The division's prior is only the fallback when nothing is known."""
+MIN_SAMPLES = 5                 # this many recorded offers of a division make its missions KNOWN (no longer 'unknown = best')
+_OBSERVED = {}
+
+
+def observed_rate(division):
+    """Median ISK/hr of the real Level 1 offers recorded in agent_offers.json for this division (Security / Mining / Distribution),
+    cash with bonus over task time only (no travel: the caller adds the trip). None when fewer than MIN_SAMPLES are known."""
+    key = (division or "").lower()
+    if key in _OBSERVED:
+        return _OBSERVED[key]
+    import json
+    import os
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json")
+    try:
+        offers = json.load(open(f, encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        offers = []
+    rates = sorted((o.get("isk", 0) + o.get("bonus", 0)) * 60.0 / max(o.get("task_min", 10) + 2 * o.get("jumps", 0) * 3.0, 5.0)
+                   for o in offers if (o.get("career") or "").lower() == key and o.get("isk"))
+    _OBSERVED[key] = rates[len(rates) // 2] if len(rates) >= MIN_SAMPLES else None
+    return _OBSERVED[key]
+
+
+def _rate(act, best_known, division=None):
+    """An unread agent's mission: once enough real offers of its division are recorded, it is worth their MEDIAN ISK/hr (known, not a guess:
+    2026-10-21 'read agents' plans at 3.6M/hr sent the owner to Isanamo for offers worth ~0.2M/hr). Without that data it is worth the best
+    known ISK/hr (owner rule: unknown = best); the caller discounts it for the read and the travel."""
+    obs = observed_rate(division)
+    if obs is not None:
+        return float(obs)
     if best_known > 0:
         return float(best_known)
     from .catalog import INFO_WEIGHT, RISK_HAIRCUT, voi
@@ -147,7 +174,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
             continue
         j = reach[sid].jumps
         work = float(act.get("minutes") or 25)
-        eff = _rate(act, best_known) * work / (work + READ_MIN + j * JUMP_MIN)
+        eff = _rate(act, best_known, DIV_NAME[r["division_id"]]) * work / (work + READ_MIN + j * JUMP_MIN)
         cur_best = best.get(sid)                                        # one candidate per SYSTEM (the best agent's station is where you dock)
         item = {"loc": r["location_id"], "id": r["agent_id"], "name": nm or f"a level {r['level']} {DIV_NAME[r['division_id']]} agent", "level": r["level"], "div": DIV_NAME[r["division_id"]],
                 "system": g.name[sid], "jumps": j, "eff": eff, "act": act["name"]}
