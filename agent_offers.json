@@ -2062,6 +2062,26 @@
    "m3": 180.0,
    "needs": "a ship with 180 m3 of cargo (the Catalyst has 450); one way to Hageken (0.6); jump count Isikemi -> Hageken is an estimate: confirm it",
    "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked. 33,000 ISK + 20 LP with the bonus; same agent station and Hageken drop as Peselien's: together 340 m3 fits the Catalyst's 450."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isikemi",
+   "career": "Security",
+   "where": "Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse (0.8)",
+   "agent": "Halulen Heinulaila (Security, L1, Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse)",
+   "mission": "'Undue Attention - Poking Around' (1 of 3): fly to the coordinates in Isikemi (0.8) and approach/investigate any large objects, come back. Pays 53,000 ISK + 58 LP; bonus 44,000 ISK within 2 h 2 min.",
+   "isk": 53000,
+   "bonus": 44000,
+   "task_min": 15,
+   "jumps": 0,
+   "to_system": "Isikemi",
+   "m3": 0.0,
+   "needs": "a ship (the Catalyst); in-system site in Isikemi (0.8), no hauling; the text says if anything pokes back, run (possible NPC aggro: stay ready to warp out)",
+   "note": "Seen 2026-10-21, standing 0.0. 97,000 ISK + 58 LP with the bonus for an in-system scout: strong. Same station system as Peselien/Xarasier (Isikemi VII, other moon)."
   }
  ],
  "min_per_jump": 3.0,
