@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 
 
 
@@ -45,8 +45,7 @@ class HopOnlyTests(unittest.TestCase):
         o = hop_only(t)
         self.assertNotIn("Jita", o)
         self.assertIn("STEP: FLY to Tiberis", o)
-        self.assertIn("2 x Entropic Rose", o)
-        self.assertNotIn("there vs", o)
+        self.assertNotIn("2 x Entropic Rose", o)                         # owner 2026-10-21: the step says load ALL cargo, no item list
 
 
 class DestinationTests(unittest.TestCase):
@@ -86,7 +85,7 @@ class HopOnlyChainTests(unittest.TestCase):
         from eve_profit.haul import hop_only
         o = hop_only("STEP: FLY to Fortitude\n           2 x Entropic Rose Metallic - Limited ~  1,152,550 at Jita\n")
         self.assertNotIn("Jita", o)
-        self.assertIn("2 x Entropic Rose Metallic - Limited", o)
+        self.assertNotIn("2 x Entropic Rose Metallic - Limited", o)      # item lists live in `next --plan` only
 
 
 class HopOnlyElsewhereTests(unittest.TestCase):

@@ -279,7 +279,7 @@ def hop_only(text, here=None):
         else:
             m = re.match(r"^(\s+[\d,]+ x .+?)(\s{2,}.*there vs.*|\s+~\s.*)$", ln)
             if m:
-                ln = m.group(1)
+                continue                                                # owner 2026-10-21: the step says 'load ALL cargo'; the item list is in `next --plan`
         out.append(ln)
     res = []
     for i, ln in enumerate(out):                                        # drop section headers whose lines were all removed
@@ -309,6 +309,44 @@ def hop_only(text, here=None):
     return "\n".join(res)
 
 
+def _hangar_here(con, g, p):
+    """[(name, qty, m3, value)] of everything you hold in THIS system (ships excluded); value = best fresh buy order, else CCP's adjusted price."""
+    import time as _t
+    rows = con.execute("SELECT t.type_id, t.name, i.quantity, COALESCE(t.volume, 1) FROM inventory i JOIN types t ON t.type_id=i.type_id "
+                       "WHERE i.system_id=? AND COALESCE(t.category_id, 0) != 6", (g.id_of(p.current_system),)).fetchall()
+    out = []
+    for tid, name, qty, vol in rows:
+        b = con.execute("SELECT MAX(price) FROM orders WHERE type_id=? AND is_buy=1 AND volume_remain>0 AND fetched_at>?", (tid, _t.time() - 2 * 86400)).fetchone()[0]
+        if not b:
+            r = con.execute("SELECT adjusted_price FROM prices WHERE type_id=?", (tid,)).fetchone()
+            b = r[0] if r else 0.0
+        out.append((name, int(qty), float(qty) * float(vol), float(qty) * float(b or 0.0)))
+    return out
+
+
+def _all_fits(con, g, p):
+    """True when every item you hold in THIS system (ships excluded) fits in your ship's cargo hold."""
+    cargo = float(getattr(p, "cargo_m3", 0) or 0)
+    return cargo > 0 and sum(x[2] for x in _hangar_here(con, g, p)) <= cargo
+
+
+def take_leave(con, g, p):
+    """Not everything fits: fill the hold with the most valuable stacks per m3, leave the least needed. -> lines (TAKE / LEAVE), [] when all fits."""
+    cargo = float(getattr(p, "cargo_m3", 0) or 0)
+    items = _hangar_here(con, g, p)
+    if cargo <= 0 or sum(x[2] for x in items) <= cargo:
+        return []
+    take, leave, used = [], [], 0.0
+    for it in sorted(items, key=lambda x: -(x[3] / max(x[2], 1e-6))):  # ISK per m3, best first
+        (take if used + it[2] <= cargo else leave).append(it)
+        if take and take[-1] is it:
+            used += it[2]
+    L = [f"   NOT EVERYTHING FITS ({sum(x[2] for x in items):,.0f} m3 here, hold {cargo:,.0f} m3): take the most valuable per m3, leave the least needed:"]
+    L += [f"      TAKE  {q:,} x {n} ({m3:,.1f} m3, ~{v:,.0f} ISK)" for n, q, m3, v in take]
+    L += [f"      LEAVE {q:,} x {n} ({m3:,.1f} m3, ~{v:,.0f} ISK)" for n, q, m3, v in sorted(leave, key=lambda x: x[3] / max(x[2], 1e-6))]
+    return L
+
+
 def haul_step(h, g=None, p=None, con=None):
     """The haul as ONE jump at a time: the first jump is the step; at every stop `next` plans again."""
     hop = _hop(g, p, h["dest"]) if (g is not None and p is not None) else (None, 0, 0)
@@ -320,7 +358,16 @@ def haul_step(h, g=None, p=None, con=None):
     L.append(f"   {h['trips']} trip(s), about {h['minutes']:.0f} min, +{h['gain']:,.0f} ISK more than selling here = {h['rate_hr']:,.0f} ISK/hr"
              + ("   (ore rides in your mining ship's ore hold)" if h["ore"] else ""))
     if hop[0]:
-        L.append(f"   DO ONLY THIS: load the stock into your ship and fly to {hop[0]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {h['jumps']} jumps left to {h['dest']}, no planned trip back).")
+        load, tl = "load the stock into your ship", []
+        try:                                                            # owner 2026-10-21: take EVERYTHING in this hangar along when it fits, nothing is left scattered to fetch later
+            if con is not None and p is not None:
+                tl = take_leave(con, g, p)
+                load = ("load the TAKE items below into your ship" if tl else
+                        "load ALL your items in this station's hangar into your ship (everything, not only what is sold, so nothing stays behind)")
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('haul', _he)
+        L += tl
+        L.append(f"   DO ONLY THIS: {load} and fly to {hop[0]} and stop there. Then run  python -m eve_profit next  (it plans again from there: {h['jumps']} jumps left to {h['dest']}, no planned trip back).")
     if g is not None and p is not None:
         try:
             L += ["   " + x for x in agents_on_route(g, p, h["dest"])]
