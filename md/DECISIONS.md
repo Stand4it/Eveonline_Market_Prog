@@ -467,3 +467,4 @@
 - 2026-10-21 agent_offers.json: Peselien Ronier (Isikemi, Distribution L1) 'High Command' courier 4 x Crates of Command Reports 160 m3 to Hageken X, 19,000 + 17,000 bonus (44 min) + 21 LP; same Hageken drop as Outaka's.
 - 2026-10-21 agent_offers.json: Xarasier Proun (Isikemi, Distribution L1) 'Send in the Marines' 3 x Group of Marines 180 m3 to Hageken XI, 18,000 + 15,000 bonus (40 min) + 20 LP.
 - 2026-10-21 agent_offers.json: Halulen Heinulaila (Isikemi VII Moon 2, Security L1) 'Undue Attention - Poking Around' 1 of 3: in-system scout, 53,000 + 44,000 bonus (2h02) + 58 LP.
+- 2026-10-21 agent_offers.json: Omae Adora (Isikemi VII Moon 2, Distribution L1) 'Bio-Engineering Pays' 300 m3 within Isikemi (0 jumps), 30,000 + 25,000 bonus (1h10) + 34 LP.

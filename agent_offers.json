@@ -2082,6 +2082,26 @@
    "m3": 0.0,
    "needs": "a ship (the Catalyst); in-system site in Isikemi (0.8), no hauling; the text says if anything pokes back, run (possible NPC aggro: stay ready to warp out)",
    "note": "Seen 2026-10-21, standing 0.0. 97,000 ISK + 58 LP with the bonus for an in-system scout: strong. Same station system as Peselien/Xarasier (Isikemi VII, other moon)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isikemi",
+   "career": "Distribution",
+   "where": "Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse (0.8)",
+   "agent": "Omae Adora (Distribution, L1, Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse)",
+   "mission": "'Bio-Engineering Pays': courier 3 x Group of Genetically Enhanced Livestock (300 m3) from Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse (the agent's station; pickup already done) to Isikemi I - Home Guard Assembly Plant (0.8), same system. Pays 30,000 ISK + 34 LP; bonus 25,000 ISK within 1 h 10 min.",
+   "isk": 30000,
+   "bonus": 25000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Isikemi",
+   "m3": 300.0,
+   "needs": "a ship with 300 m3 of cargo (the Catalyst has 450); drop-off is in the same system (Isikemi I station, 0 jumps)",
+   "note": "Seen 2026-10-21, standing 0.0. 55,000 ISK + 34 LP with the bonus, no gate jumps: very good per minute. Same station as Halulen's scout offer."
   }
  ],
  "min_per_jump": 3.0,
