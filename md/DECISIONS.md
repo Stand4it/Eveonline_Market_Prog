@@ -468,3 +468,4 @@
 - 2026-10-21 agent_offers.json: Xarasier Proun (Isikemi, Distribution L1) 'Send in the Marines' 3 x Group of Marines 180 m3 to Hageken XI, 18,000 + 15,000 bonus (40 min) + 20 LP.
 - 2026-10-21 agent_offers.json: Halulen Heinulaila (Isikemi VII Moon 2, Security L1) 'Undue Attention - Poking Around' 1 of 3: in-system scout, 53,000 + 44,000 bonus (2h02) + 58 LP.
 - 2026-10-21 agent_offers.json: Omae Adora (Isikemi VII Moon 2, Distribution L1) 'Bio-Engineering Pays' 300 m3 within Isikemi (0 jumps), 30,000 + 25,000 bonus (1h10) + 34 LP.
+- 2026-10-21 agent_offers.json: Mumine Dalamoure (Isikemi II Moon 1, Distribution L1) 'Save The Children' 180 m3 clothing to Uosusuokko VII (1 jump), 22,000 + 21,000 bonus (54 min) + 26 LP.

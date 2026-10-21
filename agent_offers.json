@@ -2102,6 +2102,26 @@
    "m3": 300.0,
    "needs": "a ship with 300 m3 of cargo (the Catalyst has 450); drop-off is in the same system (Isikemi I station, 0 jumps)",
    "note": "Seen 2026-10-21, standing 0.0. 55,000 ISK + 34 LP with the bonus, no gate jumps: very good per minute. Same station as Halulen's scout offer."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isikemi",
+   "career": "Distribution",
+   "where": "Isikemi II - Moon 1 (0.8)",
+   "agent": "Mumine Dalamoure (Distribution, L1, Isikemi II - Moon 1)",
+   "mission": "'Save The Children': courier clothing (180 m3) from the agent's station in Isikemi to Uosusuokko VII (0.7). Pays 22,000 ISK + 26 LP; bonus 21,000 ISK within 54 min.",
+   "isk": 22000,
+   "bonus": 21000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Uosusuokko",
+   "m3": 180.0,
+   "needs": "a ship with 180 m3 of cargo (the Catalyst has 450); Uosusuokko is 1 jump from Isikemi (route from the map DB)",
+   "note": "Seen 2026-10-21, standing 0.0. 43,000 ISK + 26 LP with the bonus for a 1-jump courier."
   }
  ],
  "min_per_jump": 3.0,

@@ -36,3 +36,4 @@ Open agent offers (agent_offers.json):
 - Xarasier Proun: 'Send in the Marines': courier 3 x Group of Marines (180 m3)
 - Halulen Heinulaila: 'Undue Attention - Poking Around' (1 of 3): fly to the coord
 - Omae Adora: 'Bio-Engineering Pays': courier 3 x Group of Genetically Enh
+- Mumine Dalamoure: 'Save The Children': courier clothing (180 m3) from the agen
