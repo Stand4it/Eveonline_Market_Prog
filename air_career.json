@@ -2,7 +2,7 @@
  "_help": "AIR Career Program (seen 2026-10-12). Four careers, each 750 career points (CP) to graduate; overall 3,000 CP. Sub-goals are bubbles inside each career. Edit from screenshots. RESET 2026-11-10: the program moves into Achievements and all progress resets (Fractured Skies); claim rewards before then.",
  "careers": {
   "Enforcer": {
-   "cp": 175,
+   "cp": 185,
    "of": 750,
    "bubbles": {
     "Career Agent Missions": "0/10",
@@ -16,7 +16,7 @@
     "Market": "3/4",
     "Standings": "4/4"
    },
-   "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist."
+   "note": "Seen 2026-10-13. 125 CP from Standings 4/4 + Market 3/4 only (7 goals, ~18 CP each avg). Career Agent Missions 0/10 here (separate from the Soldier of Fortune missions). Graduation: 100,000 SP (Omega) + 100,000 SP + Caracal/Rupture/Thorax/Omen Aspirant Enforcer SKINs. Market 3/4: the Enforcer Market goals probably share the ISK-earned-on-market counter with Industrialist. Update 2026-10-21: 185 CP (was 175, +10)."
   },
   "Explorer": {
    "cp": 230,
