@@ -549,7 +549,7 @@ def _station_of(con, g, item, system_name):
         return ""
 
 
-def way_lines(res, wallet, max_lines=3, hold_fn=None):
+def way_lines(res, wallet, max_lines=3, hold_fn=None, hold_m3=0.0, vol_of=None):
     """Lines for what is worth buying, selling or carrying on the way: stock from your hangar sold at a stop, and trades (buy at one stop,
     sell at a later one) that pass a sanity check: margin under 100% (one-unit 200% margins are usually traps) and within your wallet (owner 2026-10-21: no 30% cap; everything is sold at the destination)."""
     buys, sells = {}, {}
@@ -568,7 +568,7 @@ def way_lines(res, wallet, max_lines=3, hold_fn=None):
                 cost, rev = c * u / q, r * u / q2
                 if cost <= 0 or rev / cost - 1 > 1.0 or cost > 1.0 * wallet or rev - cost < 10000:
                     continue
-                lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK"))
+                lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK", u * (vol_of or {}).get(nm, 0.0)))
     keeps = []
     for nm, sl in sells.items():
         if nm in buys:
@@ -579,15 +579,16 @@ def way_lines(res, wallet, max_lines=3, hold_fn=None):
                 from .worldprices import keep_line
                 keeps.append(keep_line(nm, q, adv))
             elif r >= 10000:
-                lines.append((r, f"sell {q:,} x {nm} from your hangar at {b} (+{r:,.0f})"))
+                lines.append((r, f"sell {q:,} x {nm} from your hangar at {b} (+{r:,.0f})", 0.0))
     lines.sort(key=lambda x: -x[0])
-    picked, spent = [], 0.0                                             # no share cap, but the buys TOGETHER must fit the wallet (all sold at the destination)
-    for gain, txt in lines:
+    picked, spent, used = [], 0.0, 0.0                                  # owner 2026-10-21: the cap is the HOLD (all is sold at the destination);
+    for gain, txt, m3 in lines:                                         # the wallet only stops buys you cannot pay for at all
         m = re.search(r"\(-([\d,]+)\)", txt)
         cost = float(m.group(1).replace(",", "")) if m else 0.0
-        if spent + cost > wallet:
+        if spent + cost > wallet or (hold_m3 > 0 and used + m3 > hold_m3):
             continue
         spent += cost
+        used += m3
         picked.append(txt)
         if len(picked) >= max_lines:
             break
@@ -609,7 +610,14 @@ def _on_the_way(con, g, p, dest):
                 return None
             tid, have, vol = stacks[name]
             return hold_advice(con, tid, min(qty, have), vol, local_net)
-        return way_lines(res, p.wallet_isk or 0, hold_fn=hold_fn)
+        vols = {}
+        try:                                                            # every bought name, for the hold check
+            names = sorted({n for _s, _d, a in res.get("stops", []) for n, _q, _c in a.get("buy", [])})
+            if names:
+                vols = {r[0]: float(r[1] or 0.0) for r in con.execute("SELECT name, volume FROM types WHERE name IN (%s)" % ",".join("?" * len(names)), names)}
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('dailygoals', _he)
+        return way_lines(res, p.wallet_isk or 0, hold_fn=hold_fn, hold_m3=float(getattr(p, "cargo_m3", 0) or 0), vol_of=vols)
     except Exception:                                                   # noqa: BLE001
         return []
 
