@@ -38,7 +38,8 @@ def candidate(con, today=None):
         "   DO ONLY THIS (1 minute, free):",
         "      1. Neocom (left bar) > Opportunities (or press the AIR Career Program icon).",
         "      2. Click 'Your Rewards' (top left). Every reward with a Claim button: click Claim.",
-        "      3. Skill points land as unallocated SP; ISK goes to your wallet; items to your hangar.",
+        "      3. ALSO: Neocom > Opportunities > Rewards tab (daily goals such as 'Complete 3 Jumps', 500,000 ISK): click Claim on each.",
+        "      4. Skill points land as unallocated SP; ISK goes to your wallet; items to your hangar.",
         "   Then run:  python -m eve_profit done --goal \"air claimed\"",
         "   (Partial career progress is lost at the reset too: until then prefer AIR goals that finish a milestone.)",
     ])
