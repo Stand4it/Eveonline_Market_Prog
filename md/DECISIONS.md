@@ -470,3 +470,4 @@
 - 2026-10-21 agent_offers.json: Omae Adora (Isikemi VII Moon 2, Distribution L1) 'Bio-Engineering Pays' 300 m3 within Isikemi (0 jumps), 30,000 + 25,000 bonus (1h10) + 34 LP.
 - 2026-10-21 agent_offers.json: Mumine Dalamoure (Isikemi II Moon 1, Distribution L1) 'Save The Children' 180 m3 clothing to Uosusuokko VII (1 jump), 22,000 + 21,000 bonus (54 min) + 26 LP.
 - 2026-10-21 Project moved to E:\EVE\eveonline (owner: keep code, data and DBs on E). The old C path is now a junction to E, so scripts still run from C. Old copy kept at C:\...\EVE\eveonline_OLD_moved_to_E until the owner deletes it.
+- 2026-10-21 air_career.json: Explorer 230 CP (was 150, +80); Enforcer 175, Industrialist 305, Soldier of Fortune 65 unchanged; 775/3000 overall.
