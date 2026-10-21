@@ -1,4 +1,4 @@
-﻿"""Order-book helpers shared by trade/mining."""
+"""Order-book helpers shared by trade/mining."""
 from collections import defaultdict
 
 

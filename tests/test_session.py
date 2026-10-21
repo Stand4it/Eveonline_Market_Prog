@@ -629,7 +629,7 @@ class HaulSafetyTests(unittest.TestCase):
         from eve_profit.config import Profile
         from eve_profit.graph import Graph
         from eve_profit.mock import load_mock
-        self.assertLessEqual(haul.TRADE_WALLET_SHARE, 0.5)
+        self.assertLessEqual(haul.TRADE_WALLET_SHARE, 1.0)                 # owner 2026-10-21: up to the whole wallet, all sold at the destination
         self.assertLess(haul.TRADE_HAIRCUT, 1.0)
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         load_mock(con)
@@ -1248,7 +1248,7 @@ class DailyChainTests(unittest.TestCase):
         t6 = chain_step(con, g, mk("Home", slots=0), pl)                          # job delivered
         self.assertIn("Opportunities > AIR Daily Goals", t6)
         for t in (t1, t2, t3, t4, t5, t6):
-            self.assertLess(len(t.splitlines()), 8)                              # always a short step
+            self.assertLess(len(t.splitlines()), 8, t)                           # always a short step
 
     def test_the_epic_arc_is_offered_once_at_manifest_and_done_moves_on(self):
         import json
@@ -1290,7 +1290,7 @@ class WayLinesTests(unittest.TestCase):
         txt = "\n".join(lines)
         self.assertIn("Sane Thing", txt)                                         # +30% on 100k
         self.assertNotIn("Trap Thing", txt)                                      # +220%: usually a trap
-        self.assertNotIn("Whale Thing", txt)                                     # 4M of an 8M wallet
+        self.assertIn("Whale Thing", txt)                                        # 4M of an 8M wallet: allowed now (owner 2026-10-21, sold at the destination)
         self.assertIn("sell 30,000 x Scordite from your hangar at Manifest", txt)
 
     def test_the_fly_step_has_no_next_step_in_it_and_says_when_there_is_nothing_on_the_way(self):

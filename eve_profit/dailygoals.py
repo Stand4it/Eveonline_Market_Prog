@@ -3,6 +3,7 @@ Every goal is costed in minutes (travel included) and ISK to get it done; jumps 
 Numbers marked '?' are guesses: edit the "plan" block of a goal in bonus_programs.json (minutes, cash, feasible, why_not) after you time one."""
 from .health import record as _hrec
 import itertools
+import re
 import time
 
 PER_JUMP_MIN = 3.0           # minutes per jump (same as agent_offers.json min_per_jump)
@@ -548,9 +549,9 @@ def _station_of(con, g, item, system_name):
         return ""
 
 
-def way_lines(res, wallet, max_lines=4, hold_fn=None):
+def way_lines(res, wallet, max_lines=3, hold_fn=None):
     """Lines for what is worth buying, selling or carrying on the way: stock from your hangar sold at a stop, and trades (buy at one stop,
-    sell at a later one) that pass a sanity check: margin under 100% (one-unit 200% margins are usually traps) and under 30% of your wallet."""
+    sell at a later one) that pass a sanity check: margin under 100% (one-unit 200% margins are usually traps) and within your wallet (owner 2026-10-21: no 30% cap; everything is sold at the destination)."""
     buys, sells = {}, {}
     for sysname, detour, acts in res.get("stops", []):
         for nm, q, c in acts.get("buy", []):
@@ -565,7 +566,7 @@ def way_lines(res, wallet, max_lines=4, hold_fn=None):
                     continue
                 u = min(q, q2)
                 cost, rev = c * u / q, r * u / q2
-                if cost <= 0 or rev / cost - 1 > 1.0 or cost > 0.3 * wallet or rev - cost < 10000:
+                if cost <= 0 or rev / cost - 1 > 1.0 or cost > 1.0 * wallet or rev - cost < 10000:
                     continue
                 lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK"))
     keeps = []
@@ -580,14 +581,24 @@ def way_lines(res, wallet, max_lines=4, hold_fn=None):
             elif r >= 10000:
                 lines.append((r, f"sell {q:,} x {nm} from your hangar at {b} (+{r:,.0f})"))
     lines.sort(key=lambda x: -x[0])
-    return keeps + [x[1] for x in lines[:max_lines]]
+    picked, spent = [], 0.0                                             # no share cap, but the buys TOGETHER must fit the wallet (all sold at the destination)
+    for gain, txt in lines:
+        m = re.search(r"\(-([\d,]+)\)", txt)
+        cost = float(m.group(1).replace(",", "")) if m else 0.0
+        if spent + cost > wallet:
+            continue
+        spent += cost
+        picked.append(txt)
+        if len(picked) >= max_lines:
+            break
+    return keeps + picked
 
 
 def _on_the_way(con, g, p, dest):
     try:
         import dataclasses
         from .journey import plan_journey
-        res = plan_journey(con, g, dataclasses.replace(p, wallet_isk=0.3 * (p.wallet_isk or 0) + 1), dest, detour=1)
+        res = plan_journey(con, g, dataclasses.replace(p, wallet_isk=1.0 * (p.wallet_isk or 0) + 1), dest, detour=1)
         stacks = {}
         for r in con.execute("SELECT i.type_id, i.quantity, t.name, t.volume FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=?", (g.id_of(p.current_system),)):
             stacks[r["name"]] = (r["type_id"], r["quantity"], r["volume"] or 0.0)

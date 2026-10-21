@@ -1,4 +1,4 @@
-﻿"""Open or sell closed? Log what a crate gave, compare with selling it closed, and learn the average over every opening.
+"""Open or sell closed? Log what a crate gave, compare with selling it closed, and learn the average over every opening.
 python scripts/crate_log.py "<crate name>" "<item inside>" ["<item inside>" ...]     (log one opening; items: exact or partial names, "3x Name" for stacks)
 python scripts/crate_log.py "<crate name>"                                            (show the history and the verdict before you open the next one)
 Values = the best BUY order the DB has seen (what you get instantly), else the lowest sell order x 0.9. Log kept in data/crate_opens.json (local, not on GitHub)."""

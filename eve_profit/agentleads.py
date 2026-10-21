@@ -1,4 +1,4 @@
-﻿"""EVERY mission agent in the game data near you is a plan on the one list, without you checking what is near. The game data (agents table) carries where each agent is,
+"""EVERY mission agent in the game data near you is a plan on the one list, without you checking what is near. The game data (agents table) carries where each agent is,
 its level and division; it does NOT carry the missions (the game shows them only when you are docked at the agent's station). So an agent you have not read is an UNKNOWN
 mission: modeled from its division's activity (Security -> Level 1 security missions, Mining, Distribution -> courier) like any untimed activity (expected ISK/hr x risk +
 value of information), charged the dock-and-read time and the travel. Reading it (one short step per station) turns it into a known offer (agent_offers.json, from your

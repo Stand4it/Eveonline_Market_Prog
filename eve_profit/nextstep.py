@@ -1385,6 +1385,7 @@ def next_action(con, g, p, full=False, ahead=False):
     steps = [x if x.startswith("AGENT MISSION") else x + "\n" + _timer(_name_of(x), con) for x in steps]
     if not ahead:                                                # KISS: ONE step at a time; look ahead only when asked
         first = steps[0]
+        _full_first = first
         from .miningchain import prestep as _mp
         first = _mp(con, g, p, first)                                                                    # accept jobs, fly, undock before the mining itself
         first = "\n".join(l for l in first.split("\n") if not l.startswith("   LATER:"))       # future steps belong in --plan, not in this one
@@ -1419,6 +1420,11 @@ def next_action(con, g, p, full=False, ahead=False):
                 mark_read(con, p)
             except Exception as _he:                                                                    # noqa: BLE001
                 _hrec('nextstep', _he)
+        try:                                                                                     # a booster you hold that pays more used on THIS step than sold: use it first
+            from .boosters import insert as _boost
+            first = _boost(con, g, p, first, cands[0][0] if cands else best_known, raw=_full_first)
+        except Exception as _he:                                                                    # noqa: BLE001
+            _hrec('nextstep', _he)
         out = finish_block(first)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home

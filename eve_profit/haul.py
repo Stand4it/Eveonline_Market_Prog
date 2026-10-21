@@ -13,7 +13,7 @@ DOCK_MIN = 2.0
 MIN_GAIN = 50_000.0
 MAX_JUMPS = 25
 MAX_TRIPS = 3
-TRADE_WALLET_SHARE = 0.30    # side trades may use at most this share of your wallet
+TRADE_WALLET_SHARE = 1.00    # owner 2026-10-21: no cap: route trades are bought on the way and SOLD at the destination, so the wallet is whole again for the next round
 TRADE_HAIRCUT = 0.5          # count only half of the projected side-trade profit: prices move and thin orders vanish
 
 
@@ -82,7 +82,7 @@ def enrich_route(con, g, p, h):
         isk, mins, tl = trade_extras(con, g, capped, {"to_system": h["dest"], "m3": hold, "one_way": True})
         isk *= TRADE_HAIRCUT                                                                    # prices move before you get there
         if isk > 0:
-            lines += [f"ON THE WAY (spare hold, one way; at most {TRADE_WALLET_SHARE:.0%} of your wallet; counted at {TRADE_HAIRCUT:.0%} because prices move; "
+            lines += [f"ON THE WAY (spare hold, one way; up to your whole wallet: all of it is sold at the destination; counted at {TRADE_HAIRCUT:.0%} because prices move; "
                       "CONFIRM each buy with `check`/the market window first, a huge margin on one unit is often a trap):"] + ["      " + x for x in tl]
             for k in range(h["trips"]):
                 extra_isk += isk * (1.0 if k == 0 else 0.5)             # repeat trips: market depth is partly used up

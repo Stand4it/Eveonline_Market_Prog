@@ -1,4 +1,4 @@
-﻿"""Every open agent offer ranked by net ISK per hour (cash after tax + loot - items to buy, over task time + travel), with LP shown.
+"""Every open agent offer ranked by net ISK per hour (cash after tax + loot - items to buy, over task time + travel), with LP shown.
 python scripts/rank_offers.py [--top 15]
 Same math as `next` (nextstep.offers_rows), without the slow market planning."""
 import os

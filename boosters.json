@@ -1,0 +1,11 @@
+{
+ "_help": "Boosters and other consumables worth USING before the step they help instead of selling them. helps: 'fly' = travel/haul steps (FLY to ...), 'mine' = mining steps, 'always' = use at once (it helps whatever you do, e.g. skill training). minutes_saved_per_hour = how much faster the helped step gets while it runs (a guess until timed). min_jumps = only worth it on a trip of at least this many jumps. Add a line when you get a new booster.",
+ "boosters": [
+  {"name": "AIR Agility Booster II", "effect": "-10% inertia (the ship aligns and warps off faster) for 1 hour", "duration_min": 60, "helps": ["fly"], "minutes_saved_per_hour": 4, "min_jumps": 2,
+   "how": "cargo or hangar > right-click AIR Agility Booster II > Consume"},
+  {"name": "AIR Agility Booster I", "effect": "-5% inertia for 1 hour", "duration_min": 60, "helps": ["fly"], "minutes_saved_per_hour": 2, "min_jumps": 3,
+   "how": "cargo or hangar > right-click AIR Agility Booster I > Consume"},
+  {"name": "Standard Cerebral Accelerator", "effect": "+training speed for its duration (skill points come faster while you play)", "duration_min": 1440, "helps": ["always"], "minutes_saved_per_hour": 0, "min_jumps": 0,
+   "how": "hangar > right-click > Consume (it starts at once and runs out on its own: never leave it in the hangar)"}
+ ]
+}

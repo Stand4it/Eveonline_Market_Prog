@@ -1,4 +1,4 @@
-﻿"""Deterministic offline universe + market so everything runs without EVE/ESI."""
+"""Deterministic offline universe + market so everything runs without EVE/ESI."""
 import random
 import time
 
