@@ -290,6 +290,13 @@ def sync_character(con, esi, cid, profile):
         con.execute("INSERT OR REPLACE INTO meta VALUES('cargo_now', ?)", (__import__("json").dumps({str(k): v for k, v in cargo_now.items()}),))
     except Exception:                      # noqa: BLE001
         pass
+    try:                                   # items newer than our SDE copy (e.g. 63810 = AIR Agility Booster II): name them from ESI so steps do not print bare ids
+        for (tid,) in con.execute("SELECT DISTINCT i.type_id FROM inventory i LEFT JOIN types t ON t.type_id=i.type_id WHERE t.name IS NULL").fetchall()[:20]:
+            info, _ = esi.get(f"/universe/types/{tid}/")
+            con.execute("INSERT OR IGNORE INTO types(type_id,name,volume,group_id) VALUES(?,?,?,?)",
+                        (tid, info.get("name", str(tid)), float(info.get("packaged_volume") or info.get("volume") or 1.0), info.get("group_id")))
+    except Exception:                      # noqa: BLE001
+        pass
     names = [r[0].lower() for r in con.execute("SELECT t.name FROM fitted f JOIN types t ON t.type_id=f.type_id "
                                                "WHERE f.flag LIKE '%Slot%'")]
     profile.can_salvage = any("salvager" in n for n in names)

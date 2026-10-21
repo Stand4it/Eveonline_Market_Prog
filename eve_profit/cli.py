@@ -741,6 +741,9 @@ def _run(a):
         if a.goal.lower() in ("air claimed", "air rewards", "air"):
             from .airclaim import mark
             print(mark(con))
+        elif a.goal.lower().startswith("opened "):
+            from .invoverlay import mark_opened
+            print(mark_opened(con, a.goal[7:]))
         elif a.goal.lower().startswith("seen "):
             from .screens import mark_seen
             print(mark_seen(con, a.goal[5:].strip()))

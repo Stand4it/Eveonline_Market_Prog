@@ -140,6 +140,12 @@ def _next_action_core(con, g, p):
         sells.sort(key=lambda d: -d["net"])
     except Exception as _he:                                            # noqa: BLE001
         _hrec('nextstep', _he)
+    try:                                                         # stacks that came in through a ranged bid skipped the better-market check above:
+        _new = [d for d in sells if d.get("remote") and d["tid"] not in better]      # a 240k ranged bid must not win over a 2.99M bid 2 jumps away
+        if _new:
+            better.update({k: v for k, v in _better_places(con, g, p).items() if k not in better})
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     KEEP_NOTES.clear()
     KEEP_NOTES.extend(keep_lines)
     if sells:

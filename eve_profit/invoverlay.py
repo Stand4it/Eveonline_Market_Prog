@@ -112,6 +112,30 @@ def after_sync(con):
     _subtract(con, p["sid"], p["items"])
 
 
+def mark_opened(con, name, qty=1):
+    """`done --goal "opened NAME"`: you opened a crate (or used up an item) in the game: take it out of the stock NOW and keep it out after every `sync`
+    while ESI still returns the old asset list (same rule as a sale). What came out of it shows up by itself once ESI refreshes (about an hour). -> text."""
+    rows = con.execute("SELECT i.type_id, i.system_id, i.quantity, t.name FROM inventory i JOIN types t ON t.type_id=i.type_id "
+                       "WHERE t.name LIKE ? COLLATE NOCASE ORDER BY (LOWER(t.name)=LOWER(?)) DESC, i.quantity DESC", (f"%{name.strip()}%", name.strip())).fetchall()
+    if not rows:
+        return f"No item matching '{name}' is in your stock (already gone, or a typo)."
+    if len({r[3] for r in rows}) > 1 and rows[0][3].lower() != name.strip().lower():
+        return "More than one item matches: " + "; ".join(sorted({r[3] for r in rows})) + ". Use the full name."
+    tid, sid, have, nm = rows[0]
+    q = min(qty, have)
+    p = _get(con, "pending_sold")
+    if p and time.time() - p["t"] <= MAX_AGE_S and p.get("sid") == sid:
+        p["items"].append([tid, q])                                      # the stock already has this pending change applied; add to it
+        p["t"] = time.time()
+    else:
+        p = {"sig": _sig(con), "sid": sid, "items": [[tid, q]], "t": time.time()}
+    _put(con, "pending_sold", p)
+    _subtract(con, sid, [[tid, q]])
+    con.commit()
+    return (f"Noted: {q:,} x {nm} is out of your stock now (opened/used). What came out of it appears after a sync once ESI refreshes (within about an hour). "
+            f"Log what was inside to learn whether opening pays:  python scripts/crate_log.py \"{nm}\" \"<item>\" [\"<item>\" ...]")
+
+
 def restore(con, name):
     """`done --goal "kept NAME"`: that stack was NOT sold after all: put it back into inventory and out of the pending sale. -> text."""
     p = _get(con, "pending_sold")
