@@ -1,4 +1,4 @@
-"""EVERY mission agent in the game data near you is a plan on the one list, without you checking what is near. The game data (agents table) carries where each agent is,
+﻿"""EVERY mission agent in the game data near you is a plan on the one list, without you checking what is near. The game data (agents table) carries where each agent is,
 its level and division; it does NOT carry the missions (the game shows them only when you are docked at the agent's station). So an agent you have not read is an UNKNOWN
 mission: modeled from its division's activity (Security -> Level 1 security missions, Mining, Distribution -> courier) like any untimed activity (expected ISK/hr x risk +
 value of information), charged the dock-and-read time and the travel. Reading it (one short step per station) turns it into a known offer (agent_offers.json, from your
@@ -99,6 +99,10 @@ def _station_known(con, loc, places):
 
 
 def _rate(act, best_known):
+    """An unread agent's mission is worth the best known ISK/hr right now (owner rule 2026-10-21, same as untested activities);
+    the caller discounts it for the read and the travel. The division's prior is only the fallback when nothing is known."""
+    if best_known > 0:
+        return float(best_known)
     from .catalog import INFO_WEIGHT, RISK_HAIRCUT, voi
     lo, hi = act["prior"]
     return (lo + hi) / 2.0 * (1.0 - RISK_HAIRCUT.get(act.get("risk", "low"), 0.0)) + INFO_WEIGHT * voi({**act, "runs": 0}, best_known)
@@ -180,7 +184,7 @@ def candidates(con, g, p, best_known, hop_to, now=None, limit=10):
         if not text:
             continue
         out.append((eff, f"read agents at {top['system']}", text,
-                    f"{len(items)} agent(s) from the game data, missions unknown until read: modeled as {top['act']} (prior) minus {READ_MIN + top['jumps'] * JUMP_MIN:.0f} min of docking, reading and travel"))
+                    f"{len(items)} agent(s) from the game data, missions unknown until read: modeled as your best known ISK/hr (owner rule) minus {READ_MIN + top['jumps'] * JUMP_MIN:.0f} min of docking, reading and travel"))
     return out
 
 
