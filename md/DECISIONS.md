@@ -1,4 +1,4 @@
-# Decisions log (append only; newest last)
+﻿# Decisions log (append only; newest last)
 - 2026-10-07: Loot counts in ISK/hr (value at best market net of round-trip travel time at 6M ISK/hr; trip hours added).
 - 2026-10-07: Character is auto-picked by who is online; per-character DB/profile/tokens.
 - 2026-10-07: Agent-missions work was found only on the user's PC; saved to branch agent-missions-local and merged. Lesson: ask for `git status` early.
@@ -488,4 +488,4 @@
 - 2026-10-21 agent_offers.json: Saun Otsusen (Sobaseki, Security L1) 'Undue Attention - Poking Around (1 of 3)' 0 m3 to Sobaseki (0 jumps), 40,000 + 48,000 bonus (2 h 2 min) + 54 LP.
 - 2026-10-21 nextstep.py: stacks added via a ranged buy order now also get the better-market check (Historic Crimson Harvest SKIN Crate was offered at 240,500 via a Kakakela ranged bid while Jita, 2 jumps, bid 2,993,000). invoverlay.mark_opened + done --goal 'opened NAME': an opened crate leaves the stock now and stays out while ESI assets lag. scripts/crate_log.py: log crate contents vs selling closed (2026-10-21: Historic crate gave Tengu Deathglow Remnant SKIN 2.0M vs 2.99M closed; SKINR crate gave Savant Carmine Gloss 20k vs 688k closed: SELL CLOSED). sync names unknown type ids from ESI (63810 = AIR Agility Booster II). scripts/sql.py: read-only DB query.
 - 2026-10-21 agent_offers.json: Tashudan Shizomi (Veisto, Security L1) 'For the Birds' 0 m3 to Veisto (0 jumps), 63,000 + 60,000 bonus (3 h 2 min) + 80 LP.
-- 2026-10-21 agentchain.py: offers marked accepted (offer_update.py --accepted) go straight to the DO/FLY step; next was telling the owner to accept Veinalen Elonko's mission he had already accepted.
+- 2026-10-21 agentchain.py: offers marked accepted (offer_update.py --accepted) go straight to the DO/FLY step; next was telling the owner to accept Veinalen Elonko's mission that was already accepted.
