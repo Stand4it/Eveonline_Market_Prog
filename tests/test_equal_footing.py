@@ -17,12 +17,16 @@ class EqualFooting(unittest.TestCase):
         self.assertLess(prepped["agent_l2_security"]["eff"], plain["agent_l2_security"]["eff"])
         self.assertEqual(prepped["agent_l2_security"]["prep_min"], 60.0)
 
-    def test_early_options_fade_as_the_best_known_rate_grows(self):
-        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
-        low = {d["act"]["id"]: d["eff"] for d in catalog.equal_footing(con, 1e7, 0.0)}
-        high = {d["act"]["id"]: d["eff"] for d in catalog.equal_footing(con, 1e7, 5_000_000)}
-        for k in set(low) & set(high):
-            self.assertLessEqual(high[k], low[k] + 1e-6)
+    def test_an_untested_activity_is_worth_the_best_known_rate_until_set_up_costs_time(self):
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))      # owner rule 2026-10-21
+        free = catalog.equal_footing(con, 1e7, 2_000_000)
+        self.assertTrue(free)
+        for d in free:
+            if not d["prep_min"]:
+                self.assertAlmostEqual(d["eff"], 2_000_000)
+        setup = catalog.equal_footing(con, 1e7, 2_000_000, extra_cost=lambda a: (60.0, 0.0))
+        for d in setup:
+            self.assertLess(d["eff"], 2_000_000)
 
 
 if __name__ == "__main__":

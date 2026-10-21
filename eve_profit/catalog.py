@@ -159,7 +159,8 @@ SKIP_IDS = ("agent_career", "pd", "mining_belt")          # offered by progress.
 
 def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=None, hull=None, owned=(), tools=None):
     """Every unlocked, unmodeled activity as ONE comparable number so it competes with agents, trades and hauls on the same list (no forced turns):
-    expected ISK/hr = midpoint of its prior x (1 - risk haircut) + INFO_WEIGHT x value of information (it shrinks as you time it and as your best known rate grows).
+    expected ISK/hr = the best known rate right now (owner rule 2026-10-21: an untested option is as good as the best until timed), minus its set-up;
+    only with no known rate at all: midpoint of its prior x (1 - risk haircut) + INFO_WEIGHT x value of information.
     extra_cost(act) -> (prep minutes, prep ISK) for things that need set-up first (a combat ship); the set-up is spread over 5 runs.
     -> [{act, eff, mid, voi, prep_min}] best first."""
     out = []
@@ -175,7 +176,10 @@ def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=Non
             continue
         mid = (lo + hi) / 2.0
         v = voi(a, best_known)
-        eff = mid * (1.0 - RISK_HAIRCUT.get(a.get("risk", "low"), 0.0)) + INFO_WEIGHT * v
+        if best_known > 0:                                              # owner rule 2026-10-21: an untested activity is worth what the best known option pays now;
+            eff = float(best_known)                                     # its set-up (below) and travel (only offered where you are) make it lose when it costs time
+        else:
+            eff = mid * (1.0 - RISK_HAIRCUT.get(a.get("risk", "low"), 0.0)) + INFO_WEIGHT * v
         prep_min = prep_isk = 0.0
         if extra_cost:
             try:
