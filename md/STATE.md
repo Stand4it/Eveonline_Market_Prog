@@ -44,3 +44,4 @@ Open agent offers (agent_offers.json):
 - Oitko Shiomiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Jukosoni Kauniki: 'The Drone Infestation': task to the deadspace belt in Veist
 - Vasala Akochi: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
+- Okuro Petsiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore

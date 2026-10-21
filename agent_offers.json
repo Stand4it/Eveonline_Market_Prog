@@ -2293,6 +2293,27 @@
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 85,000 ISK + 55 LP with the bonus. Same mission as Oitko Shiomiken's in Veisto.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Mining",
+   "where": "Sobaseki VI - Minedrill Mineral Reserve (0.8)",
+   "agent": "Okuro Petsiken (Mining, L1, Sobaseki VI - Minedrill Mineral Reserve (0.8))",
+   "mission": "'Bountiful Banidine': courier 20,000 x Banidine (mission ore, not on the market) mined at the site in Sobaseki (2000 m3) to the agent's station. Pays 42,000 ISK + 55 LP; bonus 51,000 ISK within 1 h 22 min.",
+   "isk": 42000,
+   "bonus": 51000,
+   "task_min": 35,
+   "jumps": 0,
+   "to_system": "Sobaseki",
+   "m3": 2000.0,
+   "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 55 LP with the bonus; same mission as Vasala Akochi's (also Sobaseki): each agent has its own site.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,
