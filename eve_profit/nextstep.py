@@ -1432,6 +1432,12 @@ def next_action(con, g, p, full=False, ahead=False):
         except Exception as _he:                                                                    # noqa: BLE001
             _hrec('nextstep', _he)
         out = finish_block(first)
+        try:                                                                                     # CCP patch notes / news that touch ISK making, read daily by the hourly job
+            from .patchnotes import notice as _pn
+            if _pn():
+                out += "\n\n" + _pn()
+        except Exception as _he:                                                                    # noqa: BLE001
+            _hrec('nextstep', _he)
         out += "\n\n(look ahead: python -m eve_profit next --plan   |   everything: python -m eve_profit next --all)"
         return out + home
     out = _chain(steps) + (("\n\n" + exp_note) if exp_note else "") + (("\n\n" + plans_txt) if plans_txt else "") + (("\n\n" + why) if why else "") + (("\n\n" + long_view) if long_view else "") + "\n\n" + DONE

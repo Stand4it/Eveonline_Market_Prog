@@ -10,3 +10,5 @@ python -m eve_profit scan --live --max-age 50 --budget 0 --char "%EVE_CHAR%" >> 
 python -m eve_profit grabs --char "%EVE_CHAR%" >> hourly.log 2>&1
 python -m eve_profit agents --within 6 --char "%EVE_CHAR%" >> hourly.log 2>&1
 python -m eve_profit health --char "%EVE_CHAR%" >> health.log 2>&1
+rem Patch notes + news from CCP's RSS feeds (no login); reads at most once a day, `next` shows a notice when something touches ISK making.
+python -m eve_profit.patchnotes >> hourly.log 2>&1
