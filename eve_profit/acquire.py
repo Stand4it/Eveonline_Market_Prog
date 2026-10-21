@@ -45,8 +45,11 @@ def sources(con, g, p, item, qty=1, dest=None, max_jumps=14, limit=12):
         floor = float(floor[0]) if floor and floor[0] else 0.0
     except Exception:                                                   # noqa: BLE001
         floor = 0.0
-    if floor > 0 and any(r[2] <= floor * SANITY_X for r in cand):
-        cand = [r for r in cand if r[2] <= floor * SANITY_X]
+    sane = [r for r in cand if r[2] <= floor * SANITY_X] if floor > 0 else cand
+    if sane and len(sane) < len(cand):                                  # drop a dear quote only when it is not cheaper ONCE THE TRIP IS COUNTED: a 9,996 Miner I
+        cheapest = min(sane, key=lambda r: r[2] * qty + reach[r[0]].jumps * JUMP_VALUE_ISK)          # 2 jumps away beats a 2,211 one 13 jumps away
+        bar = cheapest[2] * qty + reach[cheapest[0]].jumps * JUMP_VALUE_ISK
+        cand = [r for r in cand if r[2] <= floor * SANITY_X or r[2] * qty + reach[r[0]].jumps * JUMP_VALUE_ISK < bar]
     cand.sort(key=lambda r: r[2] + reach[r[0]].jumps * JUMP_VALUE_ISK)    # a near listing a little dearer beats a far bargain: rank by price + the trip BEFORE cutting to `limit`
     did = None
     direct = 0
