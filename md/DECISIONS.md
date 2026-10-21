@@ -465,3 +465,4 @@
 - 2026-10-21: Outaka Okiembunya (Funtanainen VIII) 'Move The Goods' 16k+17k, 100 m3 to Hageken IV, entered.
 - 2026-10-21 acquire.sources: price sanity (a source dearer than 2.5x the cheapest known ask is dropped while a saner one exists; Salvager I quoted 250,000 vs ~55,000 market); jump value capped at 60,000 ISK.
 - 2026-10-21 agent_offers.json: Peselien Ronier (Isikemi, Distribution L1) 'High Command' courier 4 x Crates of Command Reports 160 m3 to Hageken X, 19,000 + 17,000 bonus (44 min) + 21 LP; same Hageken drop as Outaka's.
+- 2026-10-21 agent_offers.json: Xarasier Proun (Isikemi, Distribution L1) 'Send in the Marines' 3 x Group of Marines 180 m3 to Hageken XI, 18,000 + 15,000 bonus (40 min) + 20 LP.

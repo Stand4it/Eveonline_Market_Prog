@@ -33,3 +33,4 @@ Open agent offers (agent_offers.json):
 - Sigoshioka Uona: 'Regional Stability - Moving the Consul' (1 of 4): courier 1
 - Outaka Okiembunya: 'Move The Goods': courier 10 x Small Sealed Cargo Containers
 - Peselien Ronier: 'High Command': courier 4 x Crates of Command Reports (160 m
+- Xarasier Proun: 'Send in the Marines': courier 3 x Group of Marines (180 m3)
