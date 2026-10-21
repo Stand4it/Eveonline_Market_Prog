@@ -33,6 +33,9 @@ def stage_text(con, g, p, o, rate_note=""):
     if not st or st.get("agent") != agent:
         st = {"agent": agent, "stage": "accept"}
         _save(con, st)
+    if st["stage"] == "accept" and o.get("accepted"):                    # already accepted in the game (offer_update.py --accepted): go straight to doing it
+        st["stage"] = "go"
+        _save(con, st)
     title = o.get("mission", "")[:60]
     if st["stage"] == "accept":
         return "\n".join([f"STEP: ACCEPT {agent}'s MISSION (about 1 minute)",
