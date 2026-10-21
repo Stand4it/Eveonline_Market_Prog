@@ -2144,6 +2144,26 @@
    "m3": 70.0,
    "needs": "70 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. Part 1 of 5. Round trip Veisto>Uosusuokko>Veisto. 69,000 ISK + 42 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Distribution",
+   "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
+   "agent": "Veinalen Elonko (Distribution, L1, Veisto V - Moon 15 - Caldari Steel Factory (0.8))",
+   "mission": "'The Heiress (2 of 5)': courier 1 x Hard Currency from the agent's station (1 m3) to Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8); leave it in your hangar there, then talk to the agent. Pays 11,000 ISK + 14 LP; bonus 9,600 ISK within 30 min.",
+   "isk": 11000,
+   "bonus": 9600,
+   "task_min": 5,
+   "jumps": 1,
+   "to_system": "Sobaseki",
+   "m3": 1.0,
+   "needs": "1 m3 of cargo; Sobaseki is 1 jump(s) from Veisto (map DB route)",
+   "note": "2026-10-21: part 1 (Miniature Slaver from Sarekuwa III, 22,000 + 22,000 bonus + 26 LP) DONE, standing 0.1. Part 2 = 20,600 ISK + 14 LP with the bonus; tight 30-min bonus."
   }
  ],
  "min_per_jump": 3.0,

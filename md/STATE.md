@@ -37,3 +37,4 @@ Open agent offers (agent_offers.json):
 - Omae Adora: 'Bio-Engineering Pays': courier 3 x Group of Genetically Enh
 - Mumine Dalamoure: 'Save The Children': courier clothing (180 m3) from the agen
 - Onavirpio Asorela: 'They, Robots (1 of 5)': courier 1 x Crates of Robotics, pic
+- Veinalen Elonko: 'The Heiress (2 of 5)': courier 1 x Hard Currency from the a
