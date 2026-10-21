@@ -1136,6 +1136,12 @@ class StyleTests(unittest.TestCase):
 
 
 class DetourStepTests(unittest.TestCase):
+    def setUp(self):                                                    # the dated 'claim AIR rewards' step would outrank the step under test
+        from unittest import mock
+        p = mock.patch("eve_profit.airclaim.candidate", lambda con, today=None: None)
+        p.start()
+        self.addCleanup(p.stop)
+
     def test_a_clearly_better_market_one_jump_away_becomes_the_step(self):
         from eve_profit.config import Profile
         from eve_profit.graph import Graph
