@@ -55,6 +55,62 @@ def _held_at_origin(con, g, st):
     return False
 
 
+HERE_RATE = 1_000_000.0          # ISK/hr a minute of flying is worth when comparing "sell here now" with "carry on"
+
+
+def _held(con):
+    """{type name lower: units in your ship's cargo} (cargo_now, read at sync), {} when unknown."""
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='cargo_now'").fetchone()
+        cargo = json.loads(r[0]) if r else {}
+        names = {int(t): n for t, n in con.execute("SELECT type_id,name FROM types")}
+        return {names[int(t)].lower(): int(q) for t, q in cargo.items() if int(t) in names}
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('haulchain', _he)
+        return {}
+
+
+def _sell_here(con, g, p, st, here):
+    """The stock you really carry, sold at the buy orders in THIS system (NPC stations and structures you can read), against carrying on to the destination.
+    -> (net here, per-item rows [(name, qty, net)], station id of the best order) when selling here beats carrying on (the destination's net minus the time the rest of the flight costs), else None."""
+    from .orders import load_books, sell_into_bids
+    try:
+        sid = g.id_of(here)
+        r = g.route(sid, g.id_of(st["dest"]), 60, p.avoid_yellow)
+        left = r.jumps if r else 0
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('haulchain', _he)
+        return None
+    held = _held(con)
+    _, buys = load_books(con, {sid})
+    tot_here = tot_dest = 0.0
+    rows, loc = [], 0
+    for name, q, net_dest, _local in st["items"]:
+        have = held.get(name.lower(), q) if held else q
+        have = min(have, q)
+        if have <= 0:
+            continue
+        row = con.execute("SELECT type_id FROM types WHERE name=? COLLATE NOCASE", (name,)).fetchone()
+        if not row:
+            continue
+        bids = buys.get(row[0], {}).get(sid, [])
+        sold, net = sell_into_bids(bids, have, p.sales_tax)
+        if sold < have * 0.5:
+            continue                                                    # the buyers here take too little of it
+        rows.append((name, sold, net))
+        tot_here += net
+        tot_dest += net_dest * have / max(q, 1)
+        if not loc:
+            b = con.execute("SELECT location_id FROM orders WHERE type_id=? AND is_buy=1 AND system_id=? AND volume_remain>0 ORDER BY price DESC LIMIT 1", (row[0], sid)).fetchone()
+            loc = int(b[0]) if b and b[0] else 0
+    if not rows:
+        return None
+    minutes = left * max(p.jump_seconds / 60.0, MIN_PER_JUMP) + 2.0
+    if tot_here >= tot_dest - HERE_RATE * minutes / 60.0:
+        return tot_here, rows, loc
+    return None
+
+
 def candidate(con, g, p):
     """The haul in progress as a `next` candidate: (rate ISK/hr, text) or None (no haul, not started yet, or finished)."""
     st = load(con)
@@ -68,6 +124,14 @@ def candidate(con, g, p):
         _hrec('haulchain', _he)
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
+    held_ = _held(con)
+    scaled = []                                                         # the plan's quantities are capped at what you really carry
+    for n_, q_, net_, loc_ in st["items"]:
+        have_ = min(q_, held_.get(n_.lower(), q_)) if held_ else q_
+        if have_ > 0:
+            scaled.append([n_, have_, net_ * have_ / max(q_, 1), loc_])
+    if scaled:
+        st = dict(st, items=scaled, net=sum(x[2] for x in scaled))
     worth = [it for it in st["items"] if it[2] >= 5_000.0][:4] or st["items"][:1]            # only stacks worth a line (cosmetic odds and ends ride along unlisted)
     items = [f"      {q:>9,} x {n:<32} ~{net:>11,.0f} at {dest}" for n, q, net, local in worth]
     if here != dest and st.get("arrived"):                              # you were at the destination and have left: the haul is over (no trip back)
@@ -81,6 +145,26 @@ def candidate(con, g, p):
                          + ["   After this `next` chooses the best step from here: there is no planned trip back."])
         return 1e12, text                                               # you are there with the goods: finishing the sale comes first
     if here != st["origin"]:
+        try:                                                            # passing a market that pays as much as the destination (after the flight's time): SELL HERE, the ISK comes sooner
+            sh = _sell_here(con, g, p, st, here)
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('haulchain', _he)
+            sh = None
+        if sh:
+            net_here, rows_here, loc = sh
+            st["dest"], st["net"], st["arrived"] = here, net_here, True
+            st["items"] = [[n, int(q), float(net), 0.0] for n, q, net in rows_here]
+            save(con, st)
+            head = f"STEP: SELL YOUR HAULED STOCK in {here} - about {net_here:,.0f} ISK"
+            try:
+                from .tradestep import STATION
+                if loc:
+                    STATION[head] = loc                                 # the game destination = the station or structure with the best buy order
+            except Exception as _he:                                    # noqa: BLE001
+                _hrec('haulchain', _he)
+            lines = [head, f"   {here} pays as much as the destination, and it is here and now (no more flying): dock and sell to the HIGHEST buy orders (Market > item > Sell):"] \
+                + [f"      {q:>9,} x {n:<32} ~{net:>11,.0f}" for n, q, net in rows_here] + ["   After this `next` chooses the best step from here: there is no planned trip back."]
+            return 1e12, "\n".join(lines)
         step = _look_around(con, g, p, st, here)
         if step:
             return 1e11, step
