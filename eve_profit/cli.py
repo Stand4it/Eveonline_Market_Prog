@@ -738,7 +738,10 @@ def _run(a):
         print(summary(con))
     elif a.cmd == "done":
         from .dailygoals import chain_done
-        if a.goal.lower().startswith("seen "):
+        if a.goal.lower() in ("air claimed", "air rewards", "air"):
+            from .airclaim import mark
+            print(mark(con))
+        elif a.goal.lower().startswith("seen "):
             from .screens import mark_seen
             print(mark_seen(con, a.goal[5:].strip()))
         elif a.goal.lower().startswith("hold "):

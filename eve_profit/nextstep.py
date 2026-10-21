@@ -969,6 +969,13 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.append((_rate, "AIR daily goals", daily_goal_step(dg, con, g=g, p=p, compact=not ahead), "once a day"))
     except Exception as _he:                                            # noqa: BLE001
         _hrec('nextstep', _he)
+    try:                                                         # AIR Career rewards are wiped 2026-11-10: claim them once a day until then
+        from .airclaim import candidate as _ac
+        _a = _ac(con)
+        if _a:
+            cands.append((_a[0], "claim AIR rewards", _a[1], "rewards wiped 2026-11-10"))
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # a screen the model still needs (screens_wanted.json): asked once each, one at a time
         from .screens import wanted_candidate as _wc
         _w = _wc(con, g, p)
