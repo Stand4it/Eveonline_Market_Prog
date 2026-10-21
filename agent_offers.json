@@ -2186,6 +2186,26 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. In-system scout, same mission as Halulen Heinulaila's; 88,000 ISK + 54 LP with the bonus: strong. If anything shoots, warp out (text: 'if anything pokes back, just run')."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Security",
+   "where": "Veisto V - Moon 15 - Sukuuvestaa Corporation Factory (0.8)",
+   "agent": "Tashudan Shizomi (Security, L1, Veisto V - Moon 15 - Sukuuvestaa Corporation Factory (0.8))",
+   "mission": "'For the Birds': task to the deadspace site in Veisto (acceleration gates; kill the lead terrorist, loot 1 x Achuran White Song Birds, bring them back to the agent). Pays 63,000 ISK + 80 LP; bonus 60,000 ISK within 3 h 2 min.",
+   "isk": 63000,
+   "bonus": 60000,
+   "task_min": 25,
+   "jumps": 0,
+   "to_system": "Veisto",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat, in-system, site has ship restrictions (frigate/destroyer: the Catalyst fits). 123,000 ISK + 80 LP with the bonus: best L1 offer seen today."
   }
  ],
  "min_per_jump": 3.0,
