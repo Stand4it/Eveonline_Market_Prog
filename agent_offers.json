@@ -2166,6 +2166,26 @@
    "note": "2026-10-21: part 1 (Miniature Slaver from Sarekuwa III, 22,000 + 22,000 bonus + 26 LP) DONE, standing 0.1. Part 2 = 20,600 ISK + 14 LP with the bonus; tight 30-min bonus. Accepted 2026-10-21; bonus window 29 min left at accept.",
    "accepted": "2026-10-21",
    "expires": "2026-10-28 15:49"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Security",
+   "where": "Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8)",
+   "agent": "Saun Otsusen (Security, L1, Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8))",
+   "mission": "'Undue Attention - Poking Around (1 of 3)': task to the mission site in Sobaseki (approach and investigate the large objects, then report back). Pays 40,000 ISK + 54 LP; bonus 48,000 ISK within 2 h 2 min.",
+   "isk": 40000,
+   "bonus": 48000,
+   "task_min": 15,
+   "jumps": 0,
+   "to_system": "Sobaseki",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. In-system scout, same mission as Halulen Heinulaila's; 88,000 ISK + 54 LP with the bonus: strong. If anything shoots, warp out (text: 'if anything pokes back, just run')."
   }
  ],
  "min_per_jump": 3.0,

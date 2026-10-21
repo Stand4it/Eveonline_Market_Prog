@@ -38,3 +38,4 @@ Open agent offers (agent_offers.json):
 - Mumine Dalamoure: 'Save The Children': courier clothing (180 m3) from the agen
 - Onavirpio Asorela: 'They, Robots (1 of 5)': courier 1 x Crates of Robotics, pic
 - Veinalen Elonko: 'The Heiress (2 of 5)': courier 1 x Hard Currency from the a
+- Saun Otsusen: 'Undue Attention - Poking Around (1 of 3)': task to the miss
