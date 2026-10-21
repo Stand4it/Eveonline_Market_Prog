@@ -42,3 +42,5 @@ Open agent offers (agent_offers.json):
 - Tashudan Shizomi: 'For the Birds': task to the deadspace site in Veisto (accel
 - Ootoh Litiura: 'Mercium Experiments': courier 1,800 x Mercium (mission ore,
 - Oitko Shiomiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
+- Jukosoni Kauniki: 'The Drone Infestation': task to the deadspace belt in Veist
+- Vasala Akochi: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
