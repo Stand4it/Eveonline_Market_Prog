@@ -119,10 +119,30 @@ class LoginFlow(unittest.TestCase):
 
 
 class ESIRetry(unittest.TestCase):
+    def test_after_one_call_fails_on_503_later_calls_try_once(self):
+        import io, urllib.error
+        from unittest import mock
+        from eve_profit import esi as E
+        E._DOWN_UNTIL = 0.0
+        calls = {"n": 0}
+
+        def busy(req, timeout=0):
+            calls["n"] += 1
+            raise urllib.error.HTTPError("u", 503, "busy", {}, io.BytesIO(b""))
+        with mock.patch.object(E.urllib.request, "urlopen", busy), mock.patch.object(E.time, "sleep", lambda s: None), \
+                mock.patch("eve_profit.serverstatus.summary", lambda: []):
+            for _ in range(3):
+                with self.assertRaises(RuntimeError):
+                    E.ESI().get("/x/")
+        self.assertEqual(calls["n"], 5 + 1 + 1)                   # 5 tries, then one each
+        E._DOWN_UNTIL = 0.0
+
+
     def test_retries_stalls_but_not_http_errors(self):
         import io, socket, urllib.error
         from unittest import mock
         from eve_profit import esi as E
+        E._DOWN_UNTIL = 0.0                                     # another test may have tripped the 'ESI is down' switch
 
         class Resp:
             headers = {"X-Pages": "1"}
