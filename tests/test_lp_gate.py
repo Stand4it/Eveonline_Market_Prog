@@ -43,3 +43,14 @@ class BlueprintGate(unittest.TestCase):
         self.assertTrue(catalog.missing_for(a, {}, 0.0, 0, None, (), 0))
         self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, None, (), 2))
         self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, None, (), None))      # unknown: no gate
+
+
+class GunToolGate(unittest.TestCase):
+    def test_gun_tool_is_a_known_tool(self):
+        from eve_profit import tools
+        a = {"needs_tool": "gun"}
+        t = {"fitted": {k: 0 for k in tools.TOOLS}, "held": {k: 0 for k in tools.TOOLS}}
+        self.assertTrue(catalog.missing_for(a, {}, 0.0, 0, "Capsule - X", (), None, t))     # was a KeyError: 'gun'
+        t["fitted"]["gun"] = 2
+        self.assertFalse(catalog.missing_for(a, {}, 0.0, 0, "Catalyst - X", (), None, t))
+
