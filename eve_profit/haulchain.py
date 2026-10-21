@@ -9,7 +9,8 @@ import time
 KEY = "haul_chain"
 MAX_AGE_S = 72 * 3600          # a long trip with sleep and detours must not make the planner forget the cargo (12 h did)
 MIN_PER_JUMP = 2.0            # minutes per jump, from the timed flights
-STICKY = 1.25                 # a started haul keeps going unless something else pays this many times more
+ASSET_LAG_S = 3600            # the game's asset list can be this stale when a haul is planned
+STICKY = 1.25                # a started haul keeps going unless something else pays this many times more
 
 
 def load(con):
@@ -70,6 +71,21 @@ def _held(con):
         return {}
 
 
+def _sold_since(con, st):
+    """{type name lower: units you SOLD (wallet transactions) since the haul's stock was counted}: stock already sold is no longer hauled.
+    The game's asset list lags up to an hour, so a haul can be planned from stock sold minutes before: sales count from ASSET_LAG_S before
+    the haul started (but never before your last buy of that item, so an older lot sold earlier does not count)."""
+    try:
+        t0 = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(st.get("t0", st.get("t", 0)) - ASSET_LAG_S))
+        rows = con.execute("SELECT LOWER(t.name), SUM(x.quantity) FROM transactions x JOIN types t ON t.type_id=x.type_id "
+                           "WHERE x.is_buy=0 AND x.date>=MAX(?, COALESCE((SELECT MAX(b.date) FROM transactions b WHERE b.type_id=x.type_id AND b.is_buy=1), '')) "
+                           "GROUP BY t.name", (t0,)).fetchall()
+        return {n: int(q or 0) for n, q in rows}
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('haulchain', _he)
+        return {}
+
+
 def _sell_here(con, g, p, st, here):
     """The stock you really carry, sold at the buy orders in THIS system (NPC stations and structures you can read), against carrying on to the destination.
     -> (net here, per-item rows [(name, qty, net)], station id of the best order) when selling here beats carrying on (the destination's net minus the time the rest of the flight costs), else None."""
@@ -125,11 +141,16 @@ def candidate(con, g, p):
     if here == st["origin"] and _held_at_origin(con, g, st):
         return None                                                     # not started: the normal haul candidate handles it
     held_ = _held(con)
-    scaled = []                                                         # the plan's quantities are capped at what you really carry
+    sold_ = _sold_since(con, st)
+    scaled = []                                                         # the plan's quantities are capped at what you really carry, minus what you already sold
     for n_, q_, net_, loc_ in st["items"]:
         have_ = min(q_, held_.get(n_.lower(), q_)) if held_ else q_
+        have_ = min(have_, q_ - sold_.get(n_.lower(), 0))
         if have_ > 0:
             scaled.append([n_, have_, net_ * have_ / max(q_, 1), loc_])
+    if not scaled and sold_:                                            # everything in the haul is sold already: the haul is over
+        clear(con)
+        return None
     if scaled:
         st = dict(st, items=scaled, net=sum(x[2] for x in scaled))
     worth = [it for it in st["items"] if it[2] >= 5_000.0][:4] or st["items"][:1]            # only stacks worth a line (cosmetic odds and ends ride along unlisted)
