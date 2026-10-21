@@ -362,6 +362,11 @@ def _run(a):
                     _cs = confirm_sold(con)
                     if _cs:
                         print(_cs)
+                if act.startswith("trade: buy at"):
+                    from .invoverlay import confirm_bought
+                    _cb = confirm_bought(con)
+                    if _cb:
+                        print(_cb)
                 if act.startswith("air daily goals"):
                     from .dailygoals import mark_bought
                     _mb = mark_bought(con)

@@ -61,8 +61,48 @@ def confirm_sold(con):
             f"Did you keep one? run  python -m eve_profit done --goal \"kept NAME\"  to put it back.")
 
 
+def remember_buy_step(con, system_id, items):
+    """items: [(type_id, qty)] the BUY step asked you to buy here."""
+    try:
+        _put(con, "last_buy_step", {"sid": system_id, "items": [[int(t), int(q)] for t, q in items], "t": time.time()})
+        con.commit()
+    except Exception:                                                   # noqa: BLE001
+        pass
+
+
+def _add(con, sid, items):
+    for tid, qty in items:
+        r = con.execute("UPDATE inventory SET quantity=quantity+? WHERE type_id=? AND system_id=?", (qty, tid, sid))
+        if r.rowcount == 0:
+            con.execute("INSERT INTO inventory(type_id,system_id,quantity) VALUES(?,?,?)", (tid, sid, qty))
+
+
+def confirm_bought(con):
+    """`stop` on a 'Trade: buy at' run: the items the BUY step listed are in your hangar NOW (ESI shows them within about an hour): add them to inventory so the buy step is not offered
+    again, and keep them there after every `sync` while ESI still returns the OLD asset list. -> text."""
+    st = _get(con, "last_buy_step")
+    if not st or time.time() - st["t"] > MAX_AGE_S:
+        return ""
+    _put(con, "pending_bought", {"sig": _sig(con), "sid": st["sid"], "items": st["items"], "t": time.time()})
+    _add(con, st["sid"], st["items"])
+    _put(con, "last_buy_step", None)
+    con.commit()
+    names = []
+    for tid, q in st["items"]:
+        r = con.execute("SELECT name FROM types WHERE type_id=?", (tid,)).fetchone()
+        names.append(f"{q:,} x {r[0] if r else tid}")
+    return (f"Noted: added to your stock now: {'; '.join(names)} (ESI shows the real hangar within about an hour). "
+            f"Did you buy fewer? run  python -m eve_profit done --goal \"bought less\"  is not needed: the next sync corrects it.")
+
+
 def after_sync(con):
     """Called by sync right after inventory was rebuilt from ESI: if ESI still returned the old list, keep the sold stacks out; else forget the pending sale."""
+    pb = _get(con, "pending_bought")
+    if pb:
+        if time.time() - pb["t"] > MAX_AGE_S or _sig(con) != pb["sig"]:
+            _put(con, "pending_bought", None)                          # fresh data (or too old): the real hangar wins
+        else:
+            _add(con, pb["sid"], pb["items"])                          # ESI still shows the old list: the bought stack stays in
     p = _get(con, "pending_sold")
     if not p:
         return

@@ -63,6 +63,11 @@ def trade_step(con, g, p, o):
                          + [f"   DO ONLY THIS: dock at {st_buy}, open Market, search {name}, buy {units:,} at the lowest sell orders (price per unit above; stop if it is above {top * 1.05:,.0f} each).",
                             "   Then run  python -m eve_profit next  (it flies your cargo on, one jump at a time)."])
         PENDING[text] = h
+        try:                                                            # so `stop` can put the bought stack into the stock now (ESI shows it only within an hour)
+            from .invoverlay import remember_buy_step
+            remember_buy_step(con, a, [(tid, sum(by_price.values()) or units)])
+        except Exception:                                               # noqa: BLE001
+            pass
         if st_id:
             STATION[text.split("\n", 1)[0]] = st_id
         return text
