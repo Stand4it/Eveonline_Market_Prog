@@ -38,7 +38,7 @@ class TestAgentLeads(unittest.TestCase):
     def test_one_candidate_per_station_below_the_best_rate(self):
         out = agentleads.candidates(_con(), G(), _p(), 1_000_000, lambda s, w, l: f"STEP: FLY to {s}")
         self.assertEqual(len(out), 1)                                   # B's agent is level 2 with no standing; C is unsafe (0.3); level 3 is out
-        self.assertLess(out[0][0], 1_000_000)
+        self.assertLessEqual(out[0][0], 1_000_000 * 1.0001)              # owner 2026-10-21: in your own system it TIES the top option (and wins the tie)
         self.assertTrue(out[0][2].startswith("STEP: DOCK at A IV - Plant"))
 
     def test_read_step_when_docked_there_and_once_per_12_hours(self):

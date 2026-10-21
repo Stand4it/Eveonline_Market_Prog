@@ -1144,7 +1144,8 @@ def next_action(con, g, p, full=False, ahead=False):
         from .catalog import covered_by_offers, equal_footing, experiment_step
         from . import combatprep
         _hop = _hop_step(g, p, con)
-        best_known = min(max((c[0] for c in cands), default=0.0), 5_000_000.0)      # a near-zero-minute step gives absurd ISK/hr: cap it
+        _not_earning = ("claim AIR rewards", "show me a screen", "health report", "spend skill points")   # priority steps, not ISK options
+        best_known = min(max((c[0] for c in cands if c[0] < 1e10 and c[1] not in _not_earning), default=0.0), 5_000_000.0)   # the top REAL option; a near-zero-minute step gives absurd ISK/hr: cap it
         try:                                                     # a detour jump costs what ~2 minutes of the best plan earn
             from . import acquire as _acq
             _acq.JUMP_VALUE_ISK = min(60_000.0, max(20_000.0, best_known / 30.0))
