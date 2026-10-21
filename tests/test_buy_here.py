@@ -56,12 +56,9 @@ class TestDrop(unittest.TestCase):
 
 
 class TestLoad(unittest.TestCase):
-    def test_load_step_follows_the_buy_once(self):
-        from eve_profit.tripplus import load_step
+    def test_no_separate_load_step_the_buy_step_says_load_at_once(self):
+        from eve_profit.tripplus import load_step                        # owner 2026-10-21
         con, p = _con(), SimpleNamespace(current_system="Tar")
-        self.assertEqual(load_step(con, p), "")
-        buy_here_step(con, G(), p, TXT)
-        t = load_step(con, p)
-        self.assertTrue(t.startswith("STEP: LOAD the gear you bought into your ship (Tar)"))
-        self.assertIn("8 x Medium Gremlin", t)
+        b = buy_here_step(con, G(), p, TXT)
+        self.assertIn("straight into your ship's cargo", b)
         self.assertEqual(load_step(con, p), "")

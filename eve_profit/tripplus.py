@@ -248,11 +248,8 @@ def buy_here_step(con, g, p, text):
                 _hrec('tripplus', _he)
         shown[key] = now
         con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (BUYSHOWN_KEY, json.dumps(shown)))
-        pend = _meta_json(con, LOADPEND_KEY)                            # what you buy lands in the item hangar: the next step loads it into the ship
-        pend[key] = {"item": item, "qty": qty, "system": p.current_system}
-        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (LOADPEND_KEY, json.dumps(pend)))
-        con.commit()
-        return "\n".join([head, f"   DO ONLY THIS: dock at {sname or p.current_system}, Market > {item} > Buy > the cheapest sell orders, {qty:,} unit(s). Check the live price first: if the margin is gone, skip it and run  python -m eve_profit next.",
+        con.commit()                                                    # owner 2026-10-21: you load a purchase into the ship at once, so no separate LOAD step follows
+        return "\n".join([head, f"   DO ONLY THIS: dock at {sname or p.current_system}, Market > {item} > Buy > the cheapest sell orders, {qty:,} unit(s), then drag it from the item hangar straight into your ship's cargo. Check the live price first: if the margin is gone, skip it and run  python -m eve_profit next.",
                           "   LATER: then the flight on with it (the sale is at the far end)"])
     return ""
 
@@ -282,17 +279,10 @@ def drop_done_buys(con, g, p, text):
 
 
 def load_step(con, p):
-    """After the route-trade buys at this station: ONE step to move what you bought from the item hangar into the ship (it rides along to the sale). Shown once. -> step text or ''."""
+    """No separate LOAD step any more (owner 2026-10-21: a purchase goes into the ship right away, the BUY step says so). Clears what older
+    versions left pending. -> '' always."""
     import json
-    pend = _meta_json(con, LOADPEND_KEY)
-    here = {k: v for k, v in pend.items() if v.get("system") == p.current_system}
-    if not here:
-        return ""
-    for k in here:
-        pend.pop(k)
-    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (LOADPEND_KEY, json.dumps(pend)))
-    con.commit()
-    lines = [f"      {v['qty']:>6,} x {v['item']}" for v in here.values()]
-    return "\n".join([f"STEP: LOAD the gear you bought into your ship ({p.current_system})",
-                      "   DO ONLY THIS: item hangar > select these > drag them into your ship's cargo hold (purchases land in the item hangar, not in the ship):"] + lines
-                     + ["   LATER: then the flight on; the sale is at the far end"])
+    if _meta_json(con, LOADPEND_KEY):
+        con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (LOADPEND_KEY, json.dumps({})))
+        con.commit()
+    return ""
