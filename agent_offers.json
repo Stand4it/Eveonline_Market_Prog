@@ -544,7 +544,7 @@
   },
   {
    "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
-   "mission": "chapter 1 of 8 'Holographic Reenactment': report to Holorelay: Heika Torigo at Kita-Aino V - Moon 8 - Chief Executive Panel Bureau (2 jumps from Manifest). Rewards 42,000 ISK + bonus 54,000 ISK; objective details not seen (drone actors / battle reenactment); standing 0.00",
+   "mission": "'Holographic Reenactment' (Visions of Greatness 1 of 8): report to Holorelay: Heika Torigo at Kita-Aino V - Moon 8 - Chief Executive Panel Bureau (1.0), 17 jumps from Kirras. Pays 42,000 ISK + 54,000 bonus.",
    "isk": 42000,
    "bonus": 54000,
    "taxed": false,
@@ -558,7 +558,8 @@
    "agent_system": "Manifest",
    "to_system": "Kita-Aino",
    "career": "Epic arc",
-   "timer_name": "Agent L1 epic Visions of Greatness ch1"
+   "timer_name": "Agent L1 epic Visions of Greatness ch1",
+   "note": "2026-10-21: offer read remotely from Kirras; 17 jumps away, so only worth it when a trade route goes that way."
   },
   {
    "agent": "Avrue Auz (Event - Distribution, L1, Lirsautton I CreoDron Factory)",

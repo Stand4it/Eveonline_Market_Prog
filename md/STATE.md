@@ -7,7 +7,7 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 379 | commands in code: 62
 Open agent offers (agent_offers.json):
 - Arabeton Spilmottin: step 4 'A Friend in Need' (4 of 10): find the disabled vesse
 - Arnelin Ygegnere: step 10 of 10 'Making Mountains of Molehills' (FINAL): acqui
-- Cassandra Ahfrim: chapter 1 of 8 'Holographic Reenactment': report to Holorela
+- Cassandra Ahfrim: 'Holographic Reenactment' (Visions of Greatness 1 of 8): rep
 - Bostiers Oderyncke: 'Mysterious Sightings' (1 of 4): look for signs of 'alien ac
 - Aralusa Isugas: 'Corporate Documents': courier 4 x Crates of Corporate Docum
 - Marukaiken Mamareki: 'A New Venture - Education is Key' (1 of 5): courier 1 x Cor
