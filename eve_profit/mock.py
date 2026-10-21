@@ -1,4 +1,4 @@
-"""Deterministic offline universe + market so everything runs without EVE/ESI."""
+﻿"""Deterministic offline universe + market so everything runs without EVE/ESI."""
 import random
 import time
 
@@ -71,6 +71,7 @@ def load_mock(con, seed=7, systems=30):
     refresh_mock_orders(con, rnd)
     con.execute("INSERT INTO inventory VALUES(3689,1,200)")
     con.commit()
+    __import__("eve_profit.orders", fromlist=["bump"]).bump()       # mock orders written: cached books are stale
 
 
 def refresh_mock_orders(con, rnd=None):
@@ -96,4 +97,6 @@ def refresh_mock_orders(con, rnd=None):
                              rnd.randint(50, 20000) if base < 1000 else rnd.randint(1, 30),
                              1, "", now))
                 oid += 1
+    con.commit()
+    __import__("eve_profit.orders", fromlist=["bump"]).bump()       # mock orders written: cached books are stale
     con.commit()

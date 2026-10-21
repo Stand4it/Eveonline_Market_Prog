@@ -1,4 +1,4 @@
-"""Order-book helpers shared by trade/mining."""
+﻿"""Order-book helpers shared by trade/mining."""
 from collections import defaultdict
 
 
@@ -12,11 +12,31 @@ def set_structure_haircut(profile):
     STRUCT_BID_HAIRCUT = profile.structure_sales_tax / max(1e-9, 1 - profile.sales_tax)
 
 
-def load_books(con, systems):
-    """-> sells[type][system]=[(price,vol,min)] asc ; buys[...] desc."""
+_CACHE = {"key": None, "sys": {}}          # per-system books for this run: `next` asked for them 156 times (274 of 417 s)
+
+
+def _cache_key(con):
+    """Changes whenever the orders could have changed: every writer of the orders table calls `bump()` (esi.py, structures.py), and a commit
+    from another connection moves data_version. Other writes (meta, timers) keep the cache."""
+    try:
+        dv = con.execute("PRAGMA data_version").fetchone()[0]
+    except Exception:                                                   # noqa: BLE001
+        dv = None
+    return (id(con), _VERSION[0], dv, STRUCT_BID_HAIRCUT)
+
+
+_VERSION = [0]
+
+
+def bump():
+    """Call after writing to the orders table: the cached books are stale."""
+    _VERSION[0] += 1
+
+
+def _load_systems(con, systems):
+    """Read the books of `systems` from the DB -> {system: (sells{type:[...]}, buys{type:[...]})}, sorted."""
     structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()
-    sells = defaultdict(lambda: defaultdict(list))
-    buys = defaultdict(lambda: defaultdict(list))
+    out = {s: ({}, {}) for s in systems}
     ids = ",".join(str(int(s)) for s in systems) or "0"
     for r in con.execute(
         f"SELECT type_id,system_id,is_buy,price,volume_remain,min_volume,location_id FROM orders "
@@ -24,14 +44,34 @@ def load_books(con, systems):
         price = r["price"]
         if r["is_buy"] and r["location_id"] in structs:
             price *= 1 - STRUCT_BID_HAIRCUT
-        (buys if r["is_buy"] else sells)[r["type_id"]][r["system_id"]].append(
+        out[r["system_id"]][1 if r["is_buy"] else 0].setdefault(r["type_id"], []).append(
             (price, r["volume_remain"], r["min_volume"]))
-    for book in sells.values():
-        for l in book.values():
+    for s_, b_ in out.values():
+        for l in s_.values():
             l.sort()
-    for book in buys.values():
-        for l in book.values():
+        for l in b_.values():
             l.sort(reverse=True)
+    return out
+
+
+def load_books(con, systems):
+    """-> sells[type][system]=[(price,vol,min)] asc ; buys[...] desc. Cached per system for the run (fresh after any DB write)."""
+    key = _cache_key(con)
+    if _CACHE["key"] != key:
+        _CACHE["key"], _CACHE["sys"] = key, {}
+    cache = _CACHE["sys"]
+    want = {int(s) for s in systems}
+    missing = [s for s in want if s not in cache]
+    if missing:
+        cache.update(_load_systems(con, missing))
+    sells = defaultdict(lambda: defaultdict(list))
+    buys = defaultdict(lambda: defaultdict(list))
+    for s in want:
+        s_, b_ = cache[s]
+        for t, l in s_.items():
+            sells[t][s] = l                                             # shared with the cache: callers only read the lists (checked 2026-10-21)
+        for t, l in b_.items():
+            buys[t][s] = l
     return sells, buys
 
 

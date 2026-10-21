@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS orders(
   price REAL NOT NULL, volume_remain INTEGER NOT NULL, min_volume INTEGER NOT NULL DEFAULT 1,
   issued TEXT, fetched_at REAL NOT NULL);
 CREATE INDEX IF NOT EXISTS ix_ord_type ON orders(type_id, is_buy);
+CREATE INDEX IF NOT EXISTS ix_types_name ON types(name);
+CREATE INDEX IF NOT EXISTS ix_types_name_nc ON types(name COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS ix_ord_sys ON orders(system_id);
 CREATE TABLE IF NOT EXISTS inventory(
   type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
