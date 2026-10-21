@@ -2002,6 +2002,26 @@
    "m3": 0.1,
    "needs": "a ship (0.1 m3 of cargo, no combat); the pickup is at Kappas, away from the agent, so it is a round trip; jump count Funtanainen -> Kappas is an estimate: confirm it",
    "note": "Seen 2026-10-21, standing 0.0. Part 1 of 4, the same chain as Adomago Karjus and Nani Hananeri ('Moving the Consul'). 63,000 ISK + 36 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Funtanainen",
+   "career": "Distribution",
+   "where": "Funtanainen VIII - Caldari Navy Assembly Plant (0.9)",
+   "agent": "Outaka Okiembunya (Distribution, L1, Funtanainen VIII - Caldari Navy Assembly Plant)",
+   "mission": "'Move The Goods': courier 10 x Small Sealed Cargo Containers (100 m3) from Funtanainen VIII - Caldari Navy Assembly Plant (the agent's station; pickup already done) to Hageken IV - Caldari Steel Factory (0.6). Pays 16,000 ISK + 20 LP; bonus 17,000 ISK within 46 min.",
+   "isk": 16000,
+   "bonus": 17000,
+   "task_min": 10,
+   "jumps": 3,
+   "to_system": "Hageken",
+   "m3": 100.0,
+   "needs": "a ship with 100 m3 of cargo (the Catalyst has 450); the pickup is here, the drop-off is at Hageken (0.6): one way; jump count Funtanainen -> Hageken is an estimate: confirm it",
+   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked in the window (the goods are given at accept). 33,000 ISK + 20 LP with the bonus, low pay: only worth it on a trip toward Hageken."
   }
  ],
  "min_per_jump": 3.0,
