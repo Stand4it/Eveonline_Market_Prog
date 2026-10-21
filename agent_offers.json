@@ -2355,6 +2355,27 @@
    "needs": "2000 m3 of cargo; Isanamo is 0 jump(s) from Isanamo (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 132,000 ISK + 69 LP with the bonus: the best-paying Banidine offer so far (0.6 system: a bit riskier).",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kirras",
+   "career": "Security",
+   "where": "Kirras IX - House of Records Information Center (0.8)",
+   "agent": "Ibatei Askawa (Security, L1, Kirras IX - House of Records Information Center (0.8))",
+   "mission": "'Eliminate the Pirate Campers': task to the bookmark near the hidden stargate in Kirras (kill the Sansha ships, then report back). Pays 33,000 ISK + 38 LP; bonus 29,000 ISK within 1 h 24 min.",
+   "isk": 33000,
+   "bonus": 29000,
+   "task_min": 20,
+   "jumps": 0,
+   "to_system": "Kirras",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Kirras is 0 jump(s) from Kirras (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat in-system, Sansha frigates. 62,000 ISK + 38 LP with the bonus.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
