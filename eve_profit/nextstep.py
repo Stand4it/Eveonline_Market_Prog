@@ -330,13 +330,35 @@ def trade_extras(con, g, p, o):
     return isk, mins, lines
 
 
+_OFFERS_CACHE = {}
+
+
 def offers_rows(con, g=None, p=None):
-    """Rank the Level 1 agent offers in agent_offers.json by NET ISK per HOUR: (cash after tax + loot at market - items to buy) / (task time + travel both ways)."""
-    import json
+    """Rank the Level 1 agent offers in agent_offers.json by NET ISK per HOUR: (cash after tax + loot at market - items to buy) / (task time + travel both ways).
+    `next` asks 4 times per run with the same inputs (26 of 53 s): the answer is reused while the offers file, the order books, your profile
+    (location, wallet, ship) and the meta state (haul/agent chains) are unchanged."""
     from pathlib import Path
+    from .orders import _cache_key
     f = Path(__file__).resolve().parents[1] / "agent_offers.json"
     if not f.exists():
         return []
+    try:
+        meta_sig = con.execute("SELECT COUNT(*), TOTAL(LENGTH(value)) FROM meta").fetchone()
+        key = (id(con), _cache_key(con), f.stat().st_mtime_ns, repr(p), g is None, tuple(meta_sig))
+    except Exception:                                                   # noqa: BLE001
+        key = None
+    if key is not None and _OFFERS_CACHE.get("key") == key:
+        return list(_OFFERS_CACHE["rows"])
+    rows = _offers_rows_calc(con, g, p, f)
+    if key is not None:
+        _OFFERS_CACHE.clear()
+        _OFFERS_CACHE.update(key=key, rows=list(rows))
+    return rows
+
+
+def _offers_rows_calc(con, g, p, f):
+    import json
+    from pathlib import Path  # noqa: F401
     d = json.loads(f.read_text(encoding="utf-8"))
     tax, per_jump = d.get("tax", 0.11), d.get("min_per_jump", 3.0)
 
