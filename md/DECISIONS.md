@@ -484,3 +484,4 @@
 - 2026-10-21 agent_offers.json: Onavirpio Asorela (Veisto, Distribution L1) 'They, Robots (1 of 5)' 70 m3 to Uosusuokko (4 jumps), 30,000 + 39,000 bonus (1 h 34 min) + 42 LP.
 - 2026-10-21 agent_offers.json: Veinalen Elonko (Veisto, Distribution L1) 'The Heiress (2 of 5)' 1 m3 to Sobaseki (1 jumps), 11,000 + 9,600 bonus (30 min) + 14 LP.
 - 2026-10-21 air_career.json: Enforcer 185 (was 175, +10); 795/3000 overall.
+- 2026-10-21 agent_offers.json: Veinalen Elonko: ACCEPTED, expires 2026-10-28 15:49 - Accepted 2026-10-21; bonus window 29 min left at accept.
