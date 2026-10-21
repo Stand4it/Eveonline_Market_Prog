@@ -37,6 +37,6 @@ Open agent offers (agent_offers.json):
 - Omae Adora: 'Bio-Engineering Pays': courier 3 x Group of Genetically Enh
 - Mumine Dalamoure: 'Save The Children': courier clothing (180 m3) from the agen
 - Onavirpio Asorela: 'They, Robots (1 of 5)': courier 1 x Crates of Robotics, pic
-- Veinalen Elonko: 'The Heiress (2 of 5)': courier 1 x Hard Currency from the a
+- Veinalen Elonko: 'The Heiress (3 of 5)': MINE 20 x Polygypsum (320 m3; missio
 - Saun Otsusen: 'Undue Attention - Poking Around (1 of 3)': task to the miss
 - Tashudan Shizomi: 'For the Birds': task to the deadspace site in Veisto (accel
