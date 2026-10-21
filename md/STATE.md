@@ -32,3 +32,4 @@ Open agent offers (agent_offers.json):
 - Surjinen Hakomairos: 'The Heiress' (1 of 5): courier 1 x Miniature Slaver (0.0 m3
 - Sigoshioka Uona: 'Regional Stability - Moving the Consul' (1 of 4): courier 1
 - Outaka Okiembunya: 'Move The Goods': courier 10 x Small Sealed Cargo Containers
+- Peselien Ronier: 'High Command': courier 4 x Crates of Command Reports (160 m
