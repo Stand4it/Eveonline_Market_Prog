@@ -2334,6 +2334,27 @@
    "m3": 300.0,
    "needs": "300 m3 of cargo; Isikano is 1 jump(s) from Isanamo (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 47,000 ISK + 30 LP with the bonus; fits the Catalyst (300 of 450 m3)."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Isanamo",
+   "career": "Mining",
+   "where": "Isanamo XIV - Moon 21 - Rapid Assembly Factory (0.6)",
+   "agent": "Ago Andataila (Mining, L1, Isanamo XIV - Moon 21 - Rapid Assembly Factory (0.6))",
+   "mission": "'Bountiful Banidine': courier 20,000 x Banidine (mission ore, not on the market) mined at the site in Isanamo (2000 m3) to the agent's station. Pays 67,000 ISK + 69 LP; bonus 65,000 ISK within 1 h 22 min.",
+   "isk": 67000,
+   "bonus": 65000,
+   "task_min": 35,
+   "jumps": 0,
+   "to_system": "Isanamo",
+   "m3": 2000.0,
+   "needs": "2000 m3 of cargo; Isanamo is 0 jump(s) from Isanamo (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 132,000 ISK + 69 LP with the bonus: the best-paying Banidine offer so far (0.6 system: a bit riskier).",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,

@@ -46,3 +46,4 @@ Open agent offers (agent_offers.json):
 - Vasala Akochi: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Okuro Petsiken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Haba Mintof: 'Army Recruits': courier 5 x Group of Army Recruits from the
+- Ago Andataila: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
