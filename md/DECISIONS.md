@@ -463,3 +463,4 @@
 - 2026-10-21: haul chain re-checks at EVERY stop whether selling HERE (the stock you really carry, at this system's buy orders incl. structures) beats carrying on to the destination minus the time left at 1M ISK/hr: then the step is 'SELL YOUR HAULED STOCK in <here>' with the game destination set to the best order's station or structure. Planned quantities are capped at the cargo you hold (437 planned vs 247 held showed 9.9M instead of ~5.6M). Bug seen: Jita -> Sobaseki -> Funtanainen flew past a 33,330 structure order.
 - 2026-10-21: Sigoshioka Uona (Funtanainen IV) 'Moving the Consul' 28k+35k, 0.1 m3 from Kappas VIII, entered.
 - 2026-10-21: Outaka Okiembunya (Funtanainen VIII) 'Move The Goods' 16k+17k, 100 m3 to Hageken IV, entered.
+- 2026-10-21 acquire.sources: price sanity (a source dearer than 2.5x the cheapest known ask is dropped while a saner one exists; Salvager I quoted 250,000 vs ~55,000 market); jump value capped at 60,000 ISK.

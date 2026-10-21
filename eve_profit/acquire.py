@@ -4,6 +4,7 @@ shows only its FIRST action, `next --plan` shows the comparison. A purchase you 
 import json
 import time
 
+SANITY_X = 2.5                     # a source dearer than 2.5x the cheapest known ask is dropped while a saner one exists
 JUMP_VALUE_ISK = 50_000.0            # 3 minutes per jump at 1,000,000 ISK/hr: a detour has to save more than this per jump
 SAFE_SEC = 0.5
 KEY = "acquired"
@@ -39,6 +40,13 @@ def sources(con, g, p, item, qty=1, dest=None, max_jumps=14, limit=12):
     except Exception:                                                   # noqa: BLE001
         return []
     cand = [(r[0], r[1], float(r[2]), r[3]) for r in rows if r[0] in reach and (r[3] or 0) >= qty and g.sec[r[0]] >= SAFE_SEC]
+    try:                                                                # price sanity: a quote far above the cheapest ask anywhere is a stray/stale order, not "the cheapest place"
+        floor = _one(con, "SELECT MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? COLLATE NOCASE AND o.is_buy=0", (item,))
+        floor = float(floor[0]) if floor and floor[0] else 0.0
+    except Exception:                                                   # noqa: BLE001
+        floor = 0.0
+    if floor > 0 and any(r[2] <= floor * SANITY_X for r in cand):
+        cand = [r for r in cand if r[2] <= floor * SANITY_X]
     cand.sort(key=lambda r: r[2] + reach[r[0]].jumps * JUMP_VALUE_ISK)    # a near listing a little dearer beats a far bargain: rank by price + the trip BEFORE cutting to `limit`
     did = None
     direct = 0

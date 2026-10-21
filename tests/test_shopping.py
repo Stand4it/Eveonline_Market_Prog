@@ -166,10 +166,10 @@ class SourceRanking(unittest.TestCase):
         far = g.id_of("Sys28")                                        # 6 jumps away in the mock map
         home = g.id_of("Home")
         for i in range(14):                                           # 14 cheap listings far away fill the old top-12 cut
-            con.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", (991000 + i, 880001, 61000000 + i, far, 10000001, 0, 1000.0 + i, 5, 1, "", 1))
+            con.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", (991000 + i, 880001, 61000000 + i, far, 10000001, 0, 60000.0 + i, 5, 1, "", 1))
         con.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", (992000, 880001, 60000001, home, 10000001, 0, 100000.0, 5, 1, "", 1))
         best = acquire.sources(con, g, p, "Incursus", 1)[0]
-        self.assertEqual(best["system"], "Home")                      # 100,000 here beats 1,000 six jumps away (6 x 50,000 for the trip)
+        self.assertEqual(best["system"], "Home")                      # 100,000 here beats 60,000 six jumps away (6 x 50,000 for the trip)
 
     def test_carrier_prefers_the_hull_that_carries_more(self):
         from eve_profit import tools

@@ -1106,7 +1106,7 @@ def next_action(con, g, p, full=False, ahead=False):
         best_known = min(max((c[0] for c in cands), default=0.0), 5_000_000.0)      # a near-zero-minute step gives absurd ISK/hr: cap it
         try:                                                     # a detour jump costs what ~2 minutes of the best plan earn
             from . import acquire as _acq
-            _acq.JUMP_VALUE_ISK = min(150_000.0, max(20_000.0, best_known / 30.0))
+            _acq.JUMP_VALUE_ISK = min(60_000.0, max(20_000.0, best_known / 30.0))
         except Exception as _he:                                    # noqa: BLE001
             _hrec('nextstep', _he)
         haul_on = False
