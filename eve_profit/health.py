@@ -54,9 +54,17 @@ def log_problems(path=None, now=None):
         if now - os.path.getmtime(path) > DAY:
             return out
         with open(path, encoding="utf-8", errors="replace") as f:
+            block = []                                                  # a traceback ending in 'ESI failed' is CCP's server being down, not our bug: dropped whole
             for ln in f.readlines()[-4000:]:
-                if any(w in ln for w in ("Traceback", "Error:", "skipped:", " failed", "disk I/O")):
-                    out.append(ln.strip()[:160])
+                if not any(w in ln for w in ("Traceback", "Error:", "skipped:", " failed", "disk I/O")):
+                    continue
+                if "ESI failed" in ln:
+                    block = []
+                    continue
+                block.append(ln.strip()[:160])
+                if "Traceback" not in ln:
+                    out += block
+                    block = []
     except OSError:
         pass
     return out[-8:]
