@@ -2484,7 +2484,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Security",
    "where": "Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6)",
@@ -2497,7 +2497,7 @@
    "to_system": "Haatomo",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. In-system scout, no gear needed (warp out if shot). 84,000 ISK + 53 LP with the bonus."
+   "note": "Seen 2026-10-21, standing 0.0. In-system scout, no gear needed (warp out if shot). 84,000 ISK + 53 LP with the bonus. 2026-10-21: 'Alluring Emanations' DONE (new offer shown)."
   },
   {
    "taxed": false,
@@ -2623,6 +2623,26 @@
    "m3": 40.0,
    "needs": "40 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
    "note": "Seen 2026-10-21 after 'Breakdown' was done. Round trip to Suroken (1 jump), the same system as Aragas Ohmamon's combat site. 65,000 ISK + 35 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Haatomo",
+   "career": "Security",
+   "where": "Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6)",
+   "agent": "Tiukiski Elulen (Security, L1, Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6))",
+   "mission": "'The Disgruntled Employee': task to the bookmark in Suroken (0.7): kill the disgruntled ex-employee (one NPC), then report back. Pays 34,000 ISK + 46 LP; bonus 45,000 ISK within 1 h 20 min.",
+   "isk": 34000,
+   "bonus": 45000,
+   "task_min": 15,
+   "jumps": 1,
+   "to_system": "Suroken",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
+   "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus."
   }
  ],
  "min_per_jump": 3.0,
