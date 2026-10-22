@@ -2559,9 +2559,10 @@
    "to_system": "Haatomo",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 314,000 ISK + 204 LP with the bonus: the best L1 offer recorded. Gates not locked: you can skip rooms 1-2 (warp gate to gate, do not fight); first gate frigate/destroyer only (the Catalyst fits). Angel + Guristas pirates: risky without tank. Accepted 2026-10-21 (6 h bonus window).",
+   "note": "Seen 2026-10-21, standing 0.0. 314,000 ISK + 204 LP with the bonus: the best L1 offer recorded. Gates not locked: you can skip rooms 1-2 (warp gate to gate, do not fight); first gate frigate/destroyer only (the Catalyst fits). Angel + Guristas pirates: risky without tank. Accepted 2026-10-21 (6 h bonus window). 2026-10-21: the damaged Heron in room 3 cannot be accessed while its guards are alive: guns ARE needed despite the unlocked gates.",
    "accepted": "2026-10-21",
-   "expires": "2026-10-28"
+   "expires": "2026-10-28",
+   "needs_tool": "gun"
   },
   {
    "taxed": false,
