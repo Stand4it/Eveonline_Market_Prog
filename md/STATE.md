@@ -62,3 +62,4 @@ Open agent offers (agent_offers.json):
 - Haskatoh Ihimela: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
 - Satama Asenmaa: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
 - Kazakoto Yloruga: 'Mercium Experiments': courier 1,800 x Mercium (mission ore)
+- Aumio Kuppanen: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or

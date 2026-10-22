@@ -534,3 +534,4 @@
 - 2026-10-21 scripts/where_buy.py (owner 2026-10-21): compares every sell order in the universe cheaper than the price HERE, one order at a time: units it has (up to what you need), jumps, trip minutes, saved = (price here - its price) x units, time cost = trip x your ISK/min, NET = saved - time cost; NET < 0 buy here, NET >= 0 buy there. Ends with a VERDICT line.
 - 2026-10-21 agent_offers.json: Haskatoh Ihimela: needs_tool=mining
 - 2026-10-21 agent_offers.json: Kazakoto Yloruga: needs_tool=mining
+- 2026-10-21 agent_offers.json: Aumio Kuppanen: needs_tool=mining

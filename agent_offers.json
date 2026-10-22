@@ -2710,6 +2710,27 @@
    "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 69,000 ISK + 44 LP with the bonus.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Hatakani",
+   "career": "Mining",
+   "where": "Hatakani VII - Moon 18 - Sukuuvestaa Corporation Production Plant (0.9)",
+   "agent": "Aumio Kuppanen (Mining, L1, Hatakani VII - Moon 18 - Sukuuvestaa Corporation Production Plant (0.9))",
+   "mission": "'Asteroid Catastrophe': courier 3,600 x Augumene (mission ore) mined at the crash site in Hatakani (1080 m3) to the agent's station. Pays 36,000 ISK + 43 LP; bonus 38,000 ISK within 1 h 14 min.",
+   "isk": 36000,
+   "bonus": 38000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Hatakani",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 74,000 ISK + 43 LP with the bonus.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,
