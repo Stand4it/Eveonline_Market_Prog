@@ -52,3 +52,6 @@ Open agent offers (agent_offers.json):
 - Uehiro Pe: 'Regional Stability - Moving the Consul (1 of 4)': courier 1
 - Tabanachi Pojus: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
 - Palumola Kaarvonen: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or
+- Atshodan Kiraski: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
+- Tiukiski Elulen: 'Alluring Emanations': task to the hidden asteroid belt in H
+- Odhillafnur Avindisur: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or

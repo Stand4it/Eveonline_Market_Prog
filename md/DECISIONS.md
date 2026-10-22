@@ -522,3 +522,4 @@
 - 2026-10-21 scripts/where_buy.py rewritten (owner 2026-10-21): fetches the item's sell orders live from all 70 regions (ESI refresh_item, ~40 s; --cached skips), jumps from where you are up to 200 (safe route, else via lowsec, marked LOW/NULL), ranks every seller by TOTAL = price x qty + trip (there and back, or only extra jumps with --to) x 2.5 min x your top ISK/min (meta best_rate from next). Prints BEST, the ranked list, and the cheapest price anywhere with how much worse it is all things counted.
 - 2026-10-21 agent_offers.json: Palumola Kaarvonen: needs_tool=mining
 - 2026-10-21 scripts/unbuy.py ITEM: forgets a purchase recorded by mistake (2026-10-21: 'bought 2 Miner I' was entered before buying, so next skipped the buy step).
+- 2026-10-21 agent_offers.json: Odhillafnur Avindisur: needs_tool=mining
