@@ -18,7 +18,8 @@ item, qty = pos[0], int(pos[1]) if len(pos) > 1 else 1
 con = connect(os.environ.get("EVE_PROFIT_DB") or "E:/EveProfit/eve_profit_dahl.db")
 p = Profile.load(os.path.join(ROOT, "profile_dahl.json"))
 p = dataclasses.replace(p, current_system=opt("--from", p.current_system))
-rows = acquire.sources(con, Graph(con), p, item, qty, max_jumps=14)
-print(f"{qty} x {item} from {p.current_system} (a jump counted at {acquire.JUMP_VALUE_ISK:,.0f} ISK):")
+dest = opt("--to", None)                                                # where you go next: only the EXTRA jumps count (no coming back)
+rows = acquire.sources(con, Graph(con), p, item, qty, dest=dest, max_jumps=14)
+print(f"{qty} x {item} from {p.current_system}{' on the way to ' + dest if dest else ''} (an extra jump counted at {acquire.JUMP_VALUE_ISK:,.0f} ISK):")
 for r in rows[:int(opt("--top", 6))]:
-    print(f"   {r['price']:>12,.0f} each  {r['jumps']:>2} jumps  total ~{r['cost']:>12,.0f}  {r['system']}  {r['station'][:60]}")
+    print(f"   {r['price']:>12,.0f} each  {r['jumps']:>2} jumps away, {r['detour']:>2} extra  total ~{r['cost']:>12,.0f}  {r['system']}  {r['station'][:60]}")
