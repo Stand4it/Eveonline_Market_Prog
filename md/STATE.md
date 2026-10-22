@@ -64,3 +64,9 @@ Open agent offers (agent_offers.json):
 - Aumio Kuppanen: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or
 - Vaakonen Kaka: 'Unauthorized Military Presence': courier 10 x Militants (20
 - Veirainen Naresa: 'Gone Berserk': task to the rendezvous point in Suroken (0.7
+- Turmesen Taksaken: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
+- Heitalvaari Hodanomi: 'Mercium Experiments': courier 1,800 x Mercium (mission ore)
+- Itera Olakokka: 'Denial of Reconnaissance': task to the patrol site in Kusom
+- Orukka Sossakin: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
+- Aumon Fukkiainen: 'Pirate Intrusion': task to 4 bookmarked pirate groups in Ku
+- Kobakori Otsiainen: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
