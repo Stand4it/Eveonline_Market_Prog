@@ -2648,6 +2648,27 @@
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
    "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Hatakani",
+   "career": "Mining",
+   "where": "Hatakani VI - Moon 5 - Hyasyoda Corporation Refinery (0.9)",
+   "agent": "Haskatoh Ihimela (Mining, L1, Hatakani VI - Moon 5 - Hyasyoda Corporation Refinery (0.9))",
+   "mission": "'Burnt Traces': courier 3,600 x Augumene (mission ore) mined at the rare asteroid in Hatakani (1080 m3) to the agent's station. Pays 33,000 ISK + 38 LP; bonus 35,000 ISK within 1 h 6 min.",
+   "isk": 33000,
+   "bonus": 35000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Hatakani",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 68,000 ISK + 38 LP with the bonus; 0.9 system, safe.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,

@@ -532,3 +532,4 @@
 - 2026-10-21 air_career.json: Industrialist 330 (was 315, +15); 825/3000 overall.
 - 2026-10-21 verify.py: the STEP line itself is scanned for the item (STEP: BUY 978 x Lead Charge S here ...), so gear BUY steps get the where_buy.py CHECK line. nextstep._name_of: 'STEP: BUY N x ITEM here/FIRST' -> timer 'Acquire N x ITEM', so stop records the purchase (was a garbled timer name).
 - 2026-10-21 scripts/where_buy.py (owner 2026-10-21): compares every sell order in the universe cheaper than the price HERE, one order at a time: units it has (up to what you need), jumps, trip minutes, saved = (price here - its price) x units, time cost = trip x your ISK/min, NET = saved - time cost; NET < 0 buy here, NET >= 0 buy there. Ends with a VERDICT line.
+- 2026-10-21 agent_offers.json: Haskatoh Ihimela: needs_tool=mining

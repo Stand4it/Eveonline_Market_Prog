@@ -59,3 +59,4 @@ Open agent offers (agent_offers.json):
 - Aragas Ohmamon: 'Fair Play - To the Rescue (1 of 5)': task to the distress-c
 - Onnomon Aarlunen: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
 - Tiukiski Elulen: 'The Disgruntled Employee': task to the bookmark in Suroken 
+- Haskatoh Ihimela: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
