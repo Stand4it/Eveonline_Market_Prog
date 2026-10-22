@@ -50,35 +50,75 @@ anyr = g.reach(here, MAX_JUMPS, False)
 did = g.id_of(dest) if dest else None
 to_dest = g.reach(did, MAX_JUMPS, True) if did else None
 direct = safe[did].jumps if did in safe else 0
-sellers = con.execute("SELECT system_id, MIN(price), SUM(volume_remain), MAX(location_id) FROM orders WHERE type_id=? AND is_buy=0 AND volume_remain>=? "
-                      "GROUP BY system_id", (tid, qty)).fetchall()
-opts = []
-for sid, price, vol, loc in sellers:
+
+
+def trip_of(sid):
+    """(jumps away, jumps of trip, lowsec only) or None: there and back to your ship, or only the extra jumps on the way to --to."""
     j_safe = safe[sid].jumps if sid in safe else None
     j = j_safe if j_safe is not None else (anyr[sid].jumps if sid in anyr else None)
     if j is None:
+        return None
+    trip = max(0, j + (to_dest[sid].jumps if sid in to_dest else j) - direct) if did else 2 * j
+    return j, trip, j_safe is None
+
+
+# the price you pay HERE (or on your way: no extra jumps): what every other seller is compared with
+rows = con.execute("SELECT system_id, price, volume_remain, location_id FROM orders WHERE type_id=? AND is_buy=0 AND volume_remain>0 ORDER BY price",
+                   (tid,)).fetchall()
+local = [(s, pr, v, loc) for s, pr, v, loc in rows if (trip_of(s) or (0, 99, 0))[1] == 0]
+if local:
+    left, cost_here = qty, 0.0                                          # walk up the cheapest orders here until qty is covered
+    for s, pr, v, loc in local:
+        take = min(v, left)
+        cost_here += take * pr
+        left -= take
+        if not left:
+            break
+    here_each = cost_here / max(qty - left, 1)
+    here_loc = local[0][3]
+else:
+    here_each, cost_here, left, here_loc = None, None, qty, None
+
+print(f"{qty:,} x {name} from {p.current_system}: your time = {rate:,.0f} ISK/hr = {rate / 60:,.0f} ISK/min (a jump ~{MIN_PER_JUMP} min = {per_jump:,.0f} ISK)"
+      f"{'; going to ' + dest + ' (only the extra jumps count)' if dest else '; trip counted there and back'}")
+if here_each is not None:
+    st = con.execute("SELECT name FROM stations WHERE station_id=?", (here_loc,)).fetchone()
+    print(f"HERE: {here_each:,.2f} each = {cost_here:,.0f} ISK for {qty - left:,}{' (only ' + str(qty - left) + ' for sale here)' if left else ''}  {st[0] if st else ''}")
+else:
+    print("HERE: nobody sells it here or on your way")
+
+# EVERY cheaper seller in the universe, one ORDER at a time: saved = (price here - its price) x the units it has (up to what you need),
+# time = its trip in minutes x your ISK/min; NET = saved - time. NET < 0: buy here. NET >= 0: buy there.
+ref = here_each if here_each is not None else float("inf")
+out = []
+for s, pr, v, loc in rows:
+    if pr >= ref:
+        break
+    t = trip_of(s)
+    if t is None or t[1] == 0:
         continue
-    if did:
-        trip = max(0, j + (to_dest[sid].jumps if sid in to_dest else j) - direct)      # extra jumps on the way to where you go next
-    else:
-        trip = 2 * j                                                    # there and back to your ship
-    opts.append({"sys": g.name[sid], "sec": g.sec.get(sid, 0.0), "price": price, "jumps": j, "trip": trip, "lowsec_only": j_safe is None,
-                 "total": price * qty + trip * per_jump, "loc": loc})
-if not opts:
-    sys.exit(f"nobody sells {qty} x {name} anywhere reachable")
-opts.sort(key=lambda o: o["total"])
-best = opts[0]
-st = con.execute("SELECT name FROM stations WHERE station_id=?", (best["loc"],)).fetchone()
-print(f"{qty} x {name} from {p.current_system}: your time = {rate:,.0f} ISK/hr = {rate / 60:,.0f} ISK/min, a jump = {per_jump:,.0f} ISK"
-      f"{'; going to ' + dest + ' (only extra jumps count)' if dest else '; trip counted there and back'}")
-where = "HERE" if best["jumps"] == 0 else f"in {best['sys']} ({best['jumps']} jumps)"
-print(f"BEST: buy {where} at {best['price']:,.0f} each = {best['price'] * qty:,.0f} ISK + {best['trip']} jumps of time = {best['total']:,.0f} total"
-      + (f"  {st[0]}" if st else ""))
-print(f"   every seller, lowest TOTAL cost first ({len(opts)} systems):")
-for o in opts[:int(opt("--top", 15))]:
+    j, trip, low = t
+    units = min(v, qty)
+    saved = (ref - pr) * units if here_each is not None else 0.0
+    time_cost = trip * per_jump
+    out.append({"sys": g.name[s], "sec": g.sec.get(s, 0.0), "price": pr, "units": units, "j": j, "trip": trip, "low": low,
+                "saved": saved, "time": time_cost, "net": saved - time_cost})
+out.sort(key=lambda o: -o["net"])
+print(f"   every seller CHEAPER than here ({len(out)} orders), best net first.  NET = saved - ISK your time would have made;  NET < 0 -> buy here, NET >= 0 -> buy there:")
+print(f"      {'price':>9} {'units':>9} {'jumps':>5} {'trip min':>8} {'saved':>11} {'time cost':>11} {'NET':>12}  where")
+for o in out[:int(opt("--top", 25))]:
     tag = "" if o["sec"] >= 0.45 else ("LOW " if o["sec"] > 0 else "NULL ")
-    print(f"      {o['total']:>12,.0f} total = {o['price'] * qty:>11,.0f} price + {o['trip']:>3} jumps ({o['trip'] * MIN_PER_JUMP:>4.0f} min)  "
-          f"{tag}{o['sys']} ({o['sec']:.1f}){' via lowsec' if o['lowsec_only'] else ''}{'   <- here' if o['jumps'] == 0 else ''}")
-cheapest = min(opts, key=lambda o: o["price"])
-if cheapest is not best:
-    print(f"   cheapest price anywhere: {cheapest['price']:,.0f} in {cheapest['sys']} ({cheapest['jumps']} jumps): {cheapest['total'] - best['total']:,.0f} ISK worse all things counted")
+    print(f"      {o['price']:>9,.2f} {o['units']:>9,} {o['j']:>5} {o['trip'] * MIN_PER_JUMP:>8.0f} {o['saved']:>11,.0f} {o['time']:>11,.0f} {o['net']:>+12,.0f}  "
+          f"{tag}{o['sys']} ({o['sec']:.1f}){' via lowsec' if o['low'] else ''}{'   <- BUY THERE' if o['net'] >= 0 else ''}")
+win = [o for o in out if o["net"] >= 0]
+if here_each is None and not out:
+    sys.exit(f"nobody sells {name} anywhere reachable")
+if win:
+    b = win[0]
+    print(f"VERDICT: BUY IN {b['sys']} ({b['j']} jumps): saves {b['saved']:,.0f} ISK, costs {b['time']:,.0f} of your time, net {b['net']:+,.0f}"
+          + (f" (it has only {b['units']:,} of the {qty:,})" if b["units"] < qty else ""))
+elif here_each is not None:
+    print(f"VERDICT: BUY HERE. Every cheaper seller costs more in time than it saves (best net {out[0]['net']:+,.0f})." if out else "VERDICT: BUY HERE (nobody is cheaper).")
+else:
+    b = min(out, key=lambda o: o["price"] * qty + o["time"])
+    print(f"VERDICT: nothing here: buy in {b['sys']} ({b['j']} jumps) at {b['price']:,.2f}")
