@@ -60,3 +60,5 @@ Open agent offers (agent_offers.json):
 - Onnomon Aarlunen: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
 - Tiukiski Elulen: 'The Disgruntled Employee': task to the bookmark in Suroken 
 - Haskatoh Ihimela: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
+- Satama Asenmaa: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
+- Kazakoto Yloruga: 'Mercium Experiments': courier 1,800 x Mercium (mission ore)
