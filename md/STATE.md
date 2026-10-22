@@ -72,3 +72,5 @@ Open agent offers (agent_offers.json):
 - Kobakori Otsiainen: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Kirtikko Aaraken: 'Corporate Records': courier 1 x Ishukone Corporate Records,
 - Okamainen Niuranto: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
+- Ogyura Unao: 'Break Their Will': task to the repair station site in Maura
+- Tuga Nato: 'What's in a Name - Change of Address (1 of 5)': task to the
