@@ -25,6 +25,13 @@ class Verify(unittest.TestCase):
         self.assertEqual(len(L), 1)
         self.assertIn('where_buy.py "Salvager I" 1', L[0])
 
+    def test_buy_here_step_names_the_item_in_its_title(self):
+        t = ("STEP: BUY 978 x Lead Charge S here (ammo for your guns (Veirainen Naresa's mission))\n"
+             "   DO ONLY THIS: Market > search 'Lead Charge S' > Buy 978 at Uedama III (~15 ISK each), then put it straight into your ship.")
+        L = check_lines(t)
+        self.assertEqual(len(L), 1)
+        self.assertIn('where_buy.py "Lead Charge S" 978', L[0])
+
     def test_other_steps_get_nothing(self):
         self.assertEqual(check_lines("STEP: FLY to Sobaseki\n   DO ONLY THIS: fly"), [])
 

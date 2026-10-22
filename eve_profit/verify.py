@@ -2,7 +2,7 @@
 buys cheaper or pays more, priced with your time, so a wrong step (a bug, stale prices) shows at a glance."""
 import re
 
-_ITEM = re.compile(r"(?:^|\s)(?:buy |sell )?([\d,]+) x ([A-Za-z0-9][\w'\-:. ]*?[\w)'])(?=\s{2,}|\s+@|\s+at |\s+~|\s*\(|\s*$|:)")
+_ITEM = re.compile(r"(?:^|\s)(?:buy |sell )?([\d,]+) x ([A-Za-z0-9][\w'\-:. ]*?[\w)'])(?=\s{2,}|\s+@|\s+at |\s+here\b|\s+FIRST\b|\s+~|\s*\(|\s*$|:)")
 MAX_LINES = 3
 
 
@@ -18,7 +18,7 @@ def check_lines(step):
     seen, out = set(), []
     lines = step.split("\n")
     title = re.split(r" - (?:BUY|BUILD|MAKE)\b", lines[0].split(":", 1)[-1])[0]                  # ACQUIRE names the item in its title
-    for ln in ([title] if first.startswith("STEP: ACQUIRE") else []) + lines[1:]:
+    for ln in [title] + lines[1:]:                                       # the STEP line itself often names the item ('BUY 978 x Lead Charge S here')
         if "python -m" in ln or "LATER:" in ln or "keep " in ln.lower():
             continue
         for m in _ITEM.finditer(ln):

@@ -872,6 +872,10 @@ def _name_of(step):
         return "AIR social goal " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: fly to"):
         return "Fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    _mb = __import__("re").match(r"step: buy ([\d,]+) x (.+?) (?:here|first)\b", lo)
+    if _mb:                                                              # a gear purchase: 'Acquire 978 x Lead Charge S' (stop records the purchase)
+        _orig = __import__("re").match(r"STEP: BUY ([\d,]+) x (.+?) (?:here|FIRST)\b", first)
+        return f"Acquire {_mb.group(1)} x {_orig.group(2) if _orig else _mb.group(2)}"
     if lo.startswith("step: buy at"):
         return "Trade: buy at " + first.split("STEP: BUY at ", 1)[-1].split(",")[0].strip()
     if lo.startswith("step: look around"):
