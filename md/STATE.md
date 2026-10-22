@@ -48,3 +48,6 @@ Open agent offers (agent_offers.json):
 - Haba Mintof: 'Army Recruits': courier 5 x Group of Army Recruits from the
 - Ago Andataila: 'Bountiful Banidine': courier 20,000 x Banidine (mission ore
 - Ibatei Askawa: 'Eliminate the Pirate Campers': task to the bookmark near th
+- Ochoras Ueha: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
+- Uehiro Pe: 'Regional Stability - Moving the Consul (1 of 4)': courier 1
+- Tabanachi Pojus: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
