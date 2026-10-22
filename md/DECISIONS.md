@@ -525,3 +525,4 @@
 - 2026-10-21 agent_offers.json: Odhillafnur Avindisur: needs_tool=mining
 - 2026-10-21 air_career.json: Enforcer 200 (was 185, +15); 810/3000 overall.
 - 2026-10-21 agent_offers.json: Onnomon Aarlunen: DONE - 2026-10-21: DONE.
+- 2026-10-21 agent_offers.json: Veirainen Naresa: ACCEPTED, expires 2026-10-28 - Accepted 2026-10-21 (6 h bonus window).

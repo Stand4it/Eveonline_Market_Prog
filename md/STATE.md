@@ -58,3 +58,4 @@ Open agent offers (agent_offers.json):
 - Akimo Oksen: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
 - Veirainen Naresa: 'Worlds Collide': courier 20 x Ship's Crew from the spawn co
 - Aragas Ohmamon: 'Fair Play - To the Rescue (1 of 5)': task to the distress-c
+- Onnomon Aarlunen: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates

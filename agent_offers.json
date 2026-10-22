@@ -2559,7 +2559,9 @@
    "to_system": "Haatomo",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 314,000 ISK + 204 LP with the bonus: the best L1 offer recorded. Gates not locked: you can skip rooms 1-2 (warp gate to gate, do not fight); first gate frigate/destroyer only (the Catalyst fits). Angel + Guristas pirates: risky without tank."
+   "note": "Seen 2026-10-21, standing 0.0. 314,000 ISK + 204 LP with the bonus: the best L1 offer recorded. Gates not locked: you can skip rooms 1-2 (warp gate to gate, do not fight); first gate frigate/destroyer only (the Catalyst fits). Angel + Guristas pirates: risky without tank. Accepted 2026-10-21 (6 h bonus window).",
+   "accepted": "2026-10-21",
+   "expires": "2026-10-28"
   },
   {
    "taxed": false,
@@ -2601,6 +2603,26 @@
    "m3": 280.0,
    "needs": "280 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. Same-system courier, 0 jumps: 47,000 ISK + 31 LP with the bonus in ~6 min. 2026-10-21: DONE."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Haatomo",
+   "career": "Distribution",
+   "where": "Haatomo VI - Moon 6 - Zainou Biotech Production (0.6)",
+   "agent": "Onnomon Aarlunen (Distribution, L1, Haatomo VI - Moon 6 - Zainou Biotech Production (0.6))",
+   "mission": "'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates of Frozen Food, pick up at Suroken VI - Spacelane Patrol Assembly Plant (0.7), bring back to the agent (40 m3) to Haatomo VI - Moon 6 (the agent's station). Pays 30,000 ISK + 35 LP; bonus 35,000 ISK within 1 h 2 min.",
+   "isk": 30000,
+   "bonus": 35000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Suroken",
+   "m3": 40.0,
+   "needs": "40 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
+   "note": "Seen 2026-10-21 after 'Breakdown' was done. Round trip to Suroken (1 jump), the same system as Aragas Ohmamon's combat site. 65,000 ISK + 35 LP with the bonus."
   }
  ],
  "min_per_jump": 3.0,
