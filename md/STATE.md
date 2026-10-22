@@ -55,3 +55,5 @@ Open agent offers (agent_offers.json):
 - Atshodan Kiraski: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
 - Tiukiski Elulen: 'Alluring Emanations': task to the hidden asteroid belt in H
 - Odhillafnur Avindisur: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or
+- Akimo Oksen: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
+- Veirainen Naresa: 'Worlds Collide': courier 20 x Ship's Crew from the spawn co
