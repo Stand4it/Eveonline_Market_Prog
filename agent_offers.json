@@ -2587,7 +2587,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Distribution",
    "where": "Haatomo VI - Moon 6 - Zainou Biotech Production (0.6)",
@@ -2600,7 +2600,7 @@
    "to_system": "Haatomo",
    "m3": 280.0,
    "needs": "280 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Same-system courier, 0 jumps: 47,000 ISK + 31 LP with the bonus in ~6 min."
+   "note": "Seen 2026-10-21, standing 0.0. Same-system courier, 0 jumps: 47,000 ISK + 31 LP with the bonus in ~6 min. 2026-10-21: DONE."
   }
  ],
  "min_per_jump": 3.0,

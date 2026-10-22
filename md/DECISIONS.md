@@ -524,3 +524,4 @@
 - 2026-10-21 scripts/unbuy.py ITEM: forgets a purchase recorded by mistake (2026-10-21: 'bought 2 Miner I' was entered before buying, so next skipped the buy step).
 - 2026-10-21 agent_offers.json: Odhillafnur Avindisur: needs_tool=mining
 - 2026-10-21 air_career.json: Enforcer 200 (was 185, +15); 810/3000 overall.
+- 2026-10-21 agent_offers.json: Onnomon Aarlunen: DONE - 2026-10-21: DONE.
