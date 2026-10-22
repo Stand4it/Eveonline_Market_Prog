@@ -24,7 +24,7 @@ p = dataclasses.replace(p, current_system=opt("--from", p.current_system))
 dest = opt("--to", None)
 r = con.execute("SELECT value FROM meta WHERE key='best_rate'").fetchone()
 rate = float(r[0]) if r and r[0] else 1_000_000.0                       # ISK per hour your time is worth now
-acquire.JUMP_VALUE_ISK = 0.0                                            # rank by price only; the time is priced below
+acquire.JUMP_VALUE_ISK = MIN_PER_JUMP * rate / 60.0                     # a jump = the ISK your time earns in it (also keeps nearby sellers past the price-sanity filter)
 rows = acquire.sources(con, Graph(con), p, item, qty, dest=dest, max_jumps=14, limit=300)   # every seller in reach, or the one here gets cut off
 if not rows:
     sys.exit(f"no seller of {item} found within 14 safe jumps (run a price scan?)")
@@ -70,7 +70,7 @@ for sid, price, vol in rows2[:int(opt("--top", 15))]:
     sec = g.sec.get(sid, 0.0)
     tag = "" if sec >= 0.45 else ("LOW " if sec > 0.0 else "NULL ")
     if j is None:
-        print(f"      {price:>11,.0f}  {g.name.get(sid, sid)} ({sec:.1f}): no route found")
+        print(f"      {price:>11,.0f}  {g.name.get(sid, sid)} ({sec:.1f}): more than 60 jumps away (or no gate route): not worth it")
         continue
     cost = 2 * j * MIN_PER_JUMP * rate / 60.0 if not dest else j * MIN_PER_JUMP * rate / 60.0     # there and on: counted both ways unless it is on your way
     save = (ref - price) * qty

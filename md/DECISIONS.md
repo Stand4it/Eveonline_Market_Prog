@@ -518,3 +518,4 @@
 - 2026-10-21 health.log_problems: a traceback that ends in 'ESI failed' (CCP's server down or busy, e.g. the 2026-10-21 extended downtime) is dropped whole; real code errors still show.
 - 2026-10-21 verify.py: 'STEP: ACQUIRE n x ITEM - BUY at ...' steps (gear purchases from acquire.py) now get the where_buy.py check line too.
 - 2026-10-21 acquire.held also counts wallet BUY transactions of the last 2 h (they sync within minutes; assets lag ~1 h), so an ACQUIRE step is not shown again after a purchase made without its timer (Salvager I, 2026-10-21). New: done --goal " bought [N] ITEM\;
+- 2026-10-21 where_buy.py set acquire.JUMP_VALUE_ISK to 0, so acquire.sources' price-sanity filter (drop asks > 2.5x the cheapest anywhere unless cheaper with the trip) dropped every nearby seller and recommended Josekorn 11 jumps away for 2 Miner I. A jump now costs 2.5 min x your best ISK/hr.
