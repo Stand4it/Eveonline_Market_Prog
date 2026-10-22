@@ -2437,6 +2437,27 @@
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Tsuguwa is 1 jump(s) from Iidoken (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. Reward is 1 x Device (item, value unknown) + 24,000 ISK bonus + 26 LP. Round trip."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kamio",
+   "career": "Mining",
+   "where": "Kamio VI - Moon 7 - Sukuuvestaa Corporation Production Plant (0.7)",
+   "agent": "Palumola Kaarvonen (Mining, L1, Kamio VI - Moon 7 - Sukuuvestaa Corporation Production Plant (0.7))",
+   "mission": "'Asteroid Catastrophe': courier 3,600 x Augumene (mission ore) mined at the crash site in Kamio (bookmark in People & Places) (1080 m3) to the agent's station. Pays 50,000 ISK + 55 LP; bonus 42,000 ISK within 1 h 14 min.",
+   "isk": 50000,
+   "bonus": 42000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Kamio",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Kamio is 0 jump(s) from Kamio (map DB route)",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips in the Catalyst. 92,000 ISK + 55 LP with the bonus. Mining also counts toward the AIR daily goal 'Mine 2000 units of Ore' (check).",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,

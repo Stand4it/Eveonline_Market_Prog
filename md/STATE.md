@@ -51,3 +51,4 @@ Open agent offers (agent_offers.json):
 - Ochoras Ueha: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
 - Uehiro Pe: 'Regional Stability - Moving the Consul (1 of 4)': courier 1
 - Tabanachi Pojus: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
+- Palumola Kaarvonen: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or
