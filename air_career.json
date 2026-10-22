@@ -36,7 +36,7 @@
    "note": "Seen 2026-10-13. 60 CP = 5 goals done (2 missions + Hacking 1 + Combat Sites 1 + Navigation 1): 12 CP each on average. Only 5 career agent missions here. Graduation: 100,000 SP (Omega) + 100,000 SP + Heron/Magnate/Imicus/Probe/Astero Aspirant Explorer SKINs. Update 2026-10-18 1:25 am: 150 CP (was 110): +40 CP from the Navigation goals reached while flying around (stargate jumps). Update 2026-10-21 18:42: 230 CP (was 150): +80 CP; bubbles not re-checked."
   },
   "Industrialist": {
-   "cp": 315,
+   "cp": 330,
    "of": 750,
    "bubbles": {
     "Career Agents Missions": "7/10",
@@ -54,7 +54,7 @@
     "100,000 Skill Points",
     "Venture/Retriever/Procurer/Covetor Aspirant Industrialist SKINs"
    ],
-   "note": "Seen 2026-10-13. 255 CP = 7 missions x10 = 70 + 185 from 7 other goals (4 Market,1 Salvage,1 Resource Harvesting,1 Manufacturing): ~26 CP each on average, so these goals pay MORE CP than missions: hover each to see. Market 4/5 means one more Market goal is probably cheap. Market goals are cumulative 'Earn X ISK on the Market' (click the bubble to open its sub-circle; hover does not). Last one: 402,300 ISK left; trading finishes it. Update 2026-10-21: 315 CP (was 305, +10).",
+   "note": "Seen 2026-10-13. 255 CP = 7 missions x10 = 70 + 185 from 7 other goals (4 Market,1 Salvage,1 Resource Harvesting,1 Manufacturing): ~26 CP each on average, so these goals pay MORE CP than missions: hover each to see. Market 4/5 means one more Market goal is probably cheap. Market goals are cumulative 'Earn X ISK on the Market' (click the bubble to open its sub-circle; hover does not). Last one: 402,300 ISK left; trading finishes it. Update 2026-10-21: 315 CP (was 305, +10). Update 2026-10-21: 330 CP (was 315, +15).",
    "market_goals": {
     "Earn 50,000 ISK on the Market": "done",
     "Earn 100,000": "done",
