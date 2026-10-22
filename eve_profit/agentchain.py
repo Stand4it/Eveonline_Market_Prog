@@ -30,45 +30,118 @@ CHEAP_ALT = {"mining": ["Civilian Miner"]}          # cheaper stand-ins that do 
 ISK_PER_JUMP = 20_000.0                              # a jump of detour is worth this much when picking where to buy
 
 
+GEAR_QTY = {"gun": 6, "mining": 2}                  # how many to fit for a mission (owner 2026-10-21: 6 guns on the Catalyst)
+AMMO = ["Antimatter Charge S", "Plutonium Charge S", "Uranium Charge S", "Thorium Charge S", "Lead Charge S", "Iridium Charge S", "Tungsten Charge S", "Iron Charge S"]   # most damage first: a near-equal price picks the harder-hitting one
+AMMO_NEED = 1200                                     # 200 rounds per gun for 6 guns
+FITTED_KEY = "gear_fitted"
+
+
+def _held_any(con, names):
+    from .acquire import held
+    return sum(held(con, n) for n in names)
+
+
+def _cheapest(con, g, p, names, qty):
+    """(name, price, system id, station id, jumps) of the cheapest place to buy `qty` within 10 jumps, a jump priced at your time (meta best_rate)."""
+    import time as _t
+    r = con.execute("SELECT value FROM meta WHERE key='best_rate'").fetchone()
+    per_jump = 2.5 * (float(r[0]) if r and r[0] else 1_000_000.0) / 60.0
+    reach = g.reach(g.id_of(p.current_system), 10, p.avoid_yellow)
+    best = None
+    for rank, nm in enumerate(names):
+        for price, sid, loc in con.execute("SELECT o.price, o.system_id, o.location_id FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0 "
+                                           "AND o.volume_remain>=? AND o.fetched_at>?", (nm, qty, _t.time() - 2 * 86400)):
+            if sid in reach:
+                score = price * qty * (1 + 0.05 * rank) + reach[sid].jumps * 2 * per_jump      # names are in order of preference
+                if best is None or score < best[0]:
+                    best = (score, nm, price, sid, loc, reach[sid].jumps)
+    return best[1:] if best else None
+
+
+def _buy_or_fly(con, g, p, nm, qty, price, sid, loc, jumps, why):
+    """One step: buy here, or the next hop toward the seller (route trades and boosters are added to a FLY step by `next`)."""
+    st = con.execute("SELECT name FROM stations WHERE station_id=?", (loc,)).fetchone()
+    where = st[0] if st else g.name[sid]
+    if jumps == 0:
+        return (f"STEP: BUY {qty:,} x {nm} here ({why})\n"
+                f"   DO ONLY THIS: Market > search '{nm}' > Buy {qty:,} at {where} (~{price:,.0f} ISK each), then put it straight into your ship.\n"
+                f"   Then:  python -m eve_profit done --goal \"bought {qty} {nm}\"")
+    r = g.route(g.id_of(p.current_system), sid, 60, p.avoid_yellow)
+    hop = g.name[r.path[1]] if r and len(r.path) > 1 else g.name[sid]
+    return (f"STEP: FLY to {hop}\n"
+            f"   WHY: to buy {qty:,} x {nm} in {g.name[sid]} ({jumps} jumps, ~{price:,.0f} ISK each at {where}): {why}\n"
+            f"   DO ONLY THIS: fly to {hop} and stop there. Then run  python -m eve_profit next  (it plans again from there).")
+
+
 def gear_step(con, g, p, o):
-    """An offer that needs a tool you have not fitted (o['needs_tool'] = a key of tools.TOOLS): the step that gets it, BEFORE accepting
-    (the bonus clock starts at accept). -> text or None (fitted, unknown tool, or no seller found)."""
+    """An offer that needs a tool you have not fitted (o['needs_tool'] = a key of tools.TOOLS): the next step that gets it, one item at a time
+    (guns, then ammo for guns), each at the cheapest place counting your time; then FIT. Shown BEFORE accepting (the bonus clock starts at accept)
+    or, for an accepted mission, before doing it. -> text or None (ready, unknown tool, or no seller found)."""
     nt = o.get("needs_tool")
     try:
-        from . import tools as _tl
-        if not nt or nt not in _tl.TOOLS or _tl.fitted_now(con).get(nt, 0) >= 1:
-            return None
-        item, qty = _tl.TOOLS[nt]["buy"][0]
-        label = _tl.TOOLS[nt]["label"]
-        here = g.id_of(p.current_system)
-        names = CHEAP_ALT.get(nt, []) + [item]
-        held = con.execute("SELECT t.name FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE i.system_id=? AND t.name IN (%s) AND i.quantity>=1"
-                           % ",".join("?" * len(names)), [here] + names).fetchone()
-        ship = (p.ship_name or "").split(" - ")[0] or "ship"
-        if held:
-            return (f"STEP: FIT {qty} x {held[0]} to your {ship} (needed for: {o['agent'].split(' (')[0]}'s mission)\n"
-                    f"   DO ONLY THIS: open the fitting window (Alt+F) and drag the {held[0]} from the hangar into empty high slots. Then run  python -m eve_profit next")
-        reach = g.reach(here, 10, p.avoid_yellow)
+        import json as _json
         import time as _t
-        best = None
-        for nm in names:
-            for price, sid, loc in con.execute("SELECT o.price, o.system_id, o.location_id FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? AND o.is_buy=0 "
-                                               "AND o.volume_remain>=1 AND o.fetched_at>?", (nm, _t.time() - 2 * 86400)):
-                if sid in reach:
-                    score = price * qty + reach[sid].jumps * 2 * ISK_PER_JUMP
-                    if best is None or score < best[0]:
-                        best = (score, nm, price, sid, loc, reach[sid].jumps)
-        if not best:
+        from . import tools as _tl
+        if not nt or nt not in _tl.TOOLS:
             return None
-        _, nm, price, sid, loc, jumps = best
-        st_name = con.execute("SELECT name FROM stations WHERE station_id=?", (loc,)).fetchone()
-        where = st_name[0] if st_name else g.name[sid]
-        return (f"STEP: BUY {qty} x {nm} FIRST ({label} for {o['agent'].split(' (')[0]}'s mission; you have none fitted)\n"
-                f"   DO ONLY THIS: {'here' if jumps == 0 else f'fly {jumps} jump(s) to {g.name[sid]} and'} buy {qty} x {nm} at {where} (~{price:,.0f} ISK each; "
-                f"Market > search '{nm}' > Buy), then fit them (Alt+F > drag into empty high slots).\n"
-                f"   Do this BEFORE accepting: the mission's bonus clock starts when you accept. Then run  python -m eve_profit next")
+        r = con.execute("SELECT value FROM meta WHERE key=?", (FITTED_KEY,)).fetchone()
+        fitted_marks = _json.loads(r[0]) if r and r[0] else {}
+        fitted = _tl.fitted_now(con).get(nt, 0) >= 1 or _t.time() - fitted_marks.get(nt, 0) < 3 * 3600
+        item, _q = _tl.TOOLS[nt]["buy"][0]
+        qty = GEAR_QTY.get(nt, _q)
+        label = _tl.TOOLS[nt]["label"]
+        who = o["agent"].split(" (")[0]
+        why = f"{label} for {who}'s mission"
+        names = CHEAP_ALT.get(nt, []) + [item]
+        needs = []                                                          # (names, qty, why): what is still to buy
+        have = _held_any(con, names)
+        if not fitted and have < qty:
+            needs.append((names, qty - have, why + "; you have none fitted"))
+        if nt == "gun" and _held_any(con, AMMO) < AMMO_NEED:                 # guns need ammo: 200 rounds per gun
+            needs.append((AMMO, AMMO_NEED - _held_any(con, AMMO), f"ammo for your guns ({who}'s mission)"))
+        found = [(c, q, w) for n, q, w in needs for c in [_cheapest(con, g, p, n, q)] if c]
+        found.sort(key=lambda x: x[0][4])                                   # whatever can be bought RIGHT HERE first, then the nearest
+        if found:
+            c, q, w = found[0]
+            return _buy_or_fly(con, g, p, c[0], q, c[1], c[2], c[3], c[4], w)
+        if not fitted:
+            ship = (p.ship_name or "").split(" - ")[0] or "ship"
+            return (f"STEP: FIT {qty} x {item} to your {ship} ({why})\n"
+                    f"   DO ONLY THIS: Alt+F (fitting window) > drag them from cargo/hangar into empty high slots; load the ammo (right-click a gun > Reload).\n"
+                    f"   Then:  python -m eve_profit done --goal \"fitted {nt}\"")
+        return None
     except Exception:                                                   # noqa: BLE001
         return None
+
+
+def mark_fitted(con, tool):
+    import json as _json
+    import time as _t
+    r = con.execute("SELECT value FROM meta WHERE key=?", (FITTED_KEY,)).fetchone()
+    st = _json.loads(r[0]) if r and r[0] else {}
+    st[tool] = _t.time()
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (FITTED_KEY, _json.dumps(st)))
+    con.commit()
+    return f"OK, {tool} marked as fitted (the fitting data from the game can lag; this covers 3 hours)."
+
+
+def accepted_candidate(con, g, p, top_rate):
+    """An ACCEPTED mission is a commitment (owner 2026-10-21): its next step (gear first, then the mission) ranks above everything else
+    while its bonus can still be earned. -> (rate, label, text, note) or None."""
+    import json as _json
+    import os as _os
+    f = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "agent_offers.json")
+    try:
+        offers = _json.load(open(f, encoding="utf-8")).get("offers", [])
+    except (OSError, ValueError):
+        return None
+    acc = [o for o in offers if o.get("available", True) and o.get("accepted")]
+    if not acc:
+        return None
+    acc.sort(key=lambda o: -(o.get("isk", 0) + o.get("bonus", 0)))           # the richest accepted mission first
+    o = acc[0]
+    text = stage_text(con, g, p, o)
+    return (max(top_rate, 1.0) * 1.5 + 1.0, f"accepted mission: {o['agent'].split(' (')[0]}", text, "you accepted it: finish it (gear first)")
 
 
 def stage_text(con, g, p, o, rate_note=""):

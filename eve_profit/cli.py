@@ -741,6 +741,9 @@ def _run(a):
         if a.goal.lower() in ("air claimed", "air rewards", "air"):
             from .airclaim import mark
             print(mark(con))
+        elif a.goal.lower().startswith("fitted "):                          # 'fitted gun' / 'fitted mining': the fitting data from the game lags
+            from .agentchain import mark_fitted
+            print(mark_fitted(con, a.goal[7:].strip().lower()))
         elif a.goal.lower().startswith("bought "):                          # bought without its timer: 'bought Salvager I' or 'bought 8 Miner I'
             import re as _re
             from .acquire import confirm as _acq

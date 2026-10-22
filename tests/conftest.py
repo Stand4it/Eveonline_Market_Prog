@@ -9,3 +9,10 @@ def _fresh_order_books():
     orders.bump()
     yield
     orders.bump()
+
+
+@pytest.fixture(autouse=True)
+def _no_real_accepted_missions(monkeypatch):
+    """The owner's real agent_offers.json may hold ACCEPTED missions; they would outrank every step a test checks."""
+    from eve_profit import agentchain
+    monkeypatch.setattr(agentchain, "accepted_candidate", lambda *a, **k: None)

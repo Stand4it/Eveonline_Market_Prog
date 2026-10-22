@@ -1103,6 +1103,14 @@ def next_action(con, g, p, full=False, ahead=False):
         if best_trade > 0 or not cands:
             cands.append((best_trade, "best trade / planned activity", core, "from the last scan"))
             trade_text = core
+    try:                                                         # an ACCEPTED mission is a commitment: its gear, then the mission, before anything else
+        from .agentchain import accepted_candidate as _accd
+        _top = max((c[0] for c in cands if c[0] < 1e10), default=0.0)
+        _ac = _accd(con, g, p, _top)
+        if _ac:
+            cands.append(_ac)
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     cands.sort(key=lambda c: -c[0])
     try:                                                         # a haul that wins starts a chain: from now on it is planned one jump at a time
         if cands and cands[0][1].startswith("haul stock to ") and "(under way)" not in cands[0][1] and h:
