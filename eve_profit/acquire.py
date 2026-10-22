@@ -88,6 +88,13 @@ def held(con, item):
                 n = max(n, int(v["qty"]))
     except Exception:                                                   # noqa: BLE001
         pass
+    try:                                                                # bought in the last 2 h per the wallet (it syncs within minutes; the hangar list lags an hour)
+        since = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - MAX_AGE_S))
+        r = _one(con, "SELECT COALESCE(SUM(x.quantity),0) FROM transactions x JOIN types t ON t.type_id=x.type_id WHERE t.name=? COLLATE NOCASE "
+                      "AND x.is_buy=1 AND x.date>=?", (item, since))
+        n = max(n, int(r[0] or 0) if r else 0)
+    except Exception:                                                   # noqa: BLE001
+        pass
     return n
 
 
@@ -191,6 +198,7 @@ def first_action(con, g, p, way, hop_to):
             except Exception:                                           # noqa: BLE001
                 pass
             return "\n".join([head, f"   DO ONLY THIS: dock at {s['station'] or s['system']}, Market > {item} > Buy > the cheapest sell order, {qty:,} unit(s). Check the live price first.",
+                              f"   Bought it without the timer? Tell the tool:  python -m eve_profit done --goal \"bought {qty} {item}\"",
                               f"   LATER: {'; '.join(way['lines'])}"])
         return hop_to(s["system"], f"to buy {item} ({s['price'] * qty:,.0f} ISK at {s['station'] or s['system']}, the cheapest safe place counting the detour)", way["lines"])
     st = (way["build"] or {}).get("steps") or []

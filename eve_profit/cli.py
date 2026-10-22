@@ -741,6 +741,11 @@ def _run(a):
         if a.goal.lower() in ("air claimed", "air rewards", "air"):
             from .airclaim import mark
             print(mark(con))
+        elif a.goal.lower().startswith("bought "):                          # bought without its timer: 'bought Salvager I' or 'bought 8 Miner I'
+            import re as _re
+            from .acquire import confirm as _acq
+            m_ = _re.match(r"bought\s+(?:(\d+)\s*x?\s+)?(.+)$", a.goal.strip(), _re.I)
+            print(_acq(con, m_.group(2).strip(), int(m_.group(1) or 1)) if m_ else "Use: done --goal \"bought [N] ITEM\"")
         elif a.goal.lower().startswith("opened "):
             from .invoverlay import mark_opened
             print(mark_opened(con, a.goal[7:]))
