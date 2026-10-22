@@ -103,7 +103,7 @@ def check(force=False, quiet=False):
         _save(st)
     except Exception as e:                                              # noqa: BLE001
         if not quiet:
-            print(f"patch notes: could not read the feeds ({type(e).__name__}: {e})")
+            print(f"patch notes: CCP's news site did not answer ({type(e).__name__.replace('Error', '')}); tried again next hour")   # not a bug: no 'Error:' for health
     return new
 
 
