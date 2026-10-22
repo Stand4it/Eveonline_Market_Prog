@@ -2731,6 +2731,27 @@
    "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
    "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 74,000 ISK + 43 LP with the bonus.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Hatakani",
+   "career": "Security",
+   "where": "Hatakani VII - Moon 20 - Rapid Assembly Factory (0.9)",
+   "agent": "Vaakonen Kaka (Security, L1, Hatakani VII - Moon 20 - Rapid Assembly Factory (0.9))",
+   "mission": "'Unauthorized Military Presence': courier 10 x Militants (20 m3) from the Guristas personnel transport in Yashunen (0.9): destroy its guards, loot it, bring them back (20 m3) to Hatakani VII - Moon 20 (the agent's station). Pays 73,000 ISK + 80 LP; bonus 59,000 ISK within 3 h 26 min.",
+   "isk": 73000,
+   "bonus": 59000,
+   "task_min": 30,
+   "jumps": 1,
+   "to_system": "Yashunen",
+   "m3": 20.0,
+   "needs": "20 m3 of cargo; Yashunen is 1 jump(s) from Hatakani (map DB route)",
+   "note": "Seen 2026-10-22, standing 0.0. L1 combat (Guristas escort in groups: pull one group at a time). 132,000 ISK + 80 LP with the bonus; long bonus window.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

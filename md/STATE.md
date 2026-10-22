@@ -63,3 +63,4 @@ Open agent offers (agent_offers.json):
 - Satama Asenmaa: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
 - Kazakoto Yloruga: 'Mercium Experiments': courier 1,800 x Mercium (mission ore)
 - Aumio Kuppanen: 'Asteroid Catastrophe': courier 3,600 x Augumene (mission or
+- Vaakonen Kaka: 'Unauthorized Military Presence': courier 10 x Militants (20

@@ -536,3 +536,4 @@
 - 2026-10-21 agent_offers.json: Kazakoto Yloruga: needs_tool=mining
 - 2026-10-21 agent_offers.json: Aumio Kuppanen: needs_tool=mining
 - 2026-10-21 acquire.confirm: recorded purchases now ADD up within 2 h (5 then 1 = 6; before, each replaced the last so 6 guns never showed); the name is normalised to the item's real spelling (stop wrote '150Mm', done '150mm'); the same quantity confirmed again within 10 min (done, then stop) counts once.
+- 2026-10-22 agent_offers.json: Vaakonen Kaka: needs_tool=gun
