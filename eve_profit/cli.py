@@ -381,6 +381,9 @@ def _run(a):
                 if act.startswith("fitting window "):
                     from .combatprep import mark_fit_seen
                     mark_fit_seen(con, act[len("fitting window "):].strip().title())
+                if act.startswith(("air claim", "claim your air")):               # the claim step: stopped = claimed for today
+                    from .airclaim import mark as _airmark
+                    print(_airmark(con))
                 if act.startswith("acquire "):                                   # a purchase step: remember it until ESI shows it
                     import re as _re
                     from .acquire import confirm as _acq

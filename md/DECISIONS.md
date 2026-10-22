@@ -537,3 +537,4 @@
 - 2026-10-21 agent_offers.json: Aumio Kuppanen: needs_tool=mining
 - 2026-10-21 acquire.confirm: recorded purchases now ADD up within 2 h (5 then 1 = 6; before, each replaced the last so 6 guns never showed); the name is normalised to the item's real spelling (stop wrote '150Mm', done '150mm'); the same quantity confirmed again within 10 min (done, then stop) counts once.
 - 2026-10-22 agent_offers.json: Vaakonen Kaka: needs_tool=gun
+- 2026-10-22 LOSS: Catalyst + fitted 6 railguns, armor repairer, salvager and cargo lost in 'Worlds Collide' (Veirainen Naresa). Owner rules: (1) before combat leave all cargo and spare gear in the station (DO steps of combat missions now say so); (2) accepted COMBAT missions are no longer forced to the top (agentchain.accepted_candidate skips needs_tool=gun): combat waits for combatprep's 99% win rule. Owner is in a capsule; owns a Velator + Imicus (Rotonos) and a Venture (Dodixie).

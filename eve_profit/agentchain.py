@@ -135,7 +135,9 @@ def accepted_candidate(con, g, p, top_rate):
         offers = _json.load(open(f, encoding="utf-8")).get("offers", [])
     except (OSError, ValueError):
         return None
-    acc = [o for o in offers if o.get("available", True) and o.get("accepted")]
+    acc = [o for o in offers if o.get("available", True) and o.get("accepted")
+           and o.get("needs_tool") != "gun"]                                 # combat is NOT forced: it waits for a fit that passes the 99% win rule
+                                                                             # (2026-10-21: a Catalyst with 6 guns + 1 repairer died in 'Worlds Collide')
     if not acc:
         return None
     acc.sort(key=lambda o: -(o.get("isk", 0) + o.get("bonus", 0)))           # the richest accepted mission first
@@ -174,8 +176,11 @@ def stage_text(con, g, p, o, rate_note=""):
                               f"   LATER: {agent}'s mission continues at {dest} ({r.jumps} jumps from here)"])
         except Exception:                                               # noqa: BLE001
             pass
-    return "\n".join([f"STEP: DO {agent}'s MISSION - {title[:40]}",
-                      f"   DO ONLY THIS: {_brief(o)}",
+    combat = o.get("needs_tool") == "gun" or "kill" in (o.get("mission", "") + o.get("needs", "")).lower()
+    return "\n".join([f"STEP: DO {agent}'s MISSION - {title[:40]}"]
+                     + ([f"   FIRST: dock and leave EVERYTHING you do not need for the fight in the station hangar (cargo, spare modules): "
+                         f"a lost ship loses its cargo too (owner rule 2026-10-21). Keep only ammo and the mission item."] if combat else [])
+                     + [f"   DO ONLY THIS: {_brief(o)}",
                       f"   Where: {o.get('where', 'the objective')}.",
                       "   When it is finished and handed in run:  python -m eve_profit done"])
 

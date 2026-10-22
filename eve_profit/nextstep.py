@@ -872,6 +872,8 @@ def _name_of(step):
         return "AIR social goal " + first.split(" - ", 1)[-1].split(" (about")[0]
     if lo.startswith("step: fly to"):
         return "Fly to " + first.split("STEP: FLY to ", 1)[-1].split(" - ")[0].strip()
+    if lo.startswith("step: claim your air career rewards"):            # stop on this timer marks the day's claim done (see cli stop)
+        return "AIR claim rewards"
     _mb = __import__("re").match(r"step: buy ([\d,]+) x (.+?) (?:here|first)\b", lo)
     if _mb:                                                              # a gear purchase: 'Acquire 978 x Lead Charge S' (stop records the purchase)
         _orig = __import__("re").match(r"STEP: BUY ([\d,]+) x (.+?) (?:here|FIRST)\b", first)
@@ -1107,6 +1109,13 @@ def next_action(con, g, p, full=False, ahead=False):
         if best_trade > 0 or not cands:
             cands.append((best_trade, "best trade / planned activity", core, "from the last scan"))
             trade_text = core
+    try:                                                         # in a capsule (ship lost): a replacement ship first
+        from .replaceship import candidate as _rship
+        _rs = _rship(con, g, p, max((c[0] for c in cands if c[0] < 1e10), default=0.0))
+        if _rs:
+            cands.append(_rs)
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('nextstep', _he)
     try:                                                         # an ACCEPTED mission is a commitment: its gear, then the mission, before anything else
         from .agentchain import accepted_candidate as _accd
         _top = max((c[0] for c in cands if c[0] < 1e10), default=0.0)
