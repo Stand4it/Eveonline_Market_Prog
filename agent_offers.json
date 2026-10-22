@@ -2642,7 +2642,8 @@
    "to_system": "Suroken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus."
+   "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
