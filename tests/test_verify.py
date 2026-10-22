@@ -18,6 +18,13 @@ class Verify(unittest.TestCase):
         self.assertEqual(len(L), 1)
         self.assertIn('where_buy.py "Squall Shattered Paradigm SKIN" 1', L[0])
 
+    def test_acquire_step_gets_a_where_buy_check(self):
+        t = ("STEP: ACQUIRE 1 x Salvager I - BUY at Halaima VIII - Moon 17 - Mercantile Club Bureau (about 70,000 ISK)\n"
+             "   DO ONLY THIS: dock at Halaima VIII, Market > Salvager I > Buy > the cheapest sell order, 1 unit(s).")
+        L = check_lines(t)
+        self.assertEqual(len(L), 1)
+        self.assertIn('where_buy.py "Salvager I" 1', L[0])
+
     def test_other_steps_get_nothing(self):
         self.assertEqual(check_lines("STEP: FLY to Sobaseki\n   DO ONLY THIS: fly"), [])
 

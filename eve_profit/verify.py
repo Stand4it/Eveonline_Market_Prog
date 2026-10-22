@@ -9,14 +9,16 @@ MAX_LINES = 3
 def check_lines(step):
     """-> lines with the check command(s) for the items of a BUY / SELL / LIST step, [] for any other step."""
     first = (step or "").split("\n", 1)[0].upper()
-    if first.startswith(("STEP: BUY", "STEP: FIT")) or " BUY " in first:
+    if first.startswith(("STEP: BUY", "STEP: FIT", "STEP: ACQUIRE")) or " BUY " in first:
         script = "where_buy.py"
     elif first.startswith(("STEP: SELL", "STEP: LIST")):
         script = "where_sell.py"
     else:
         return []
     seen, out = set(), []
-    for ln in step.split("\n")[1:]:
+    lines = step.split("\n")
+    title = re.split(r" - (?:BUY|BUILD|MAKE)\b", lines[0].split(":", 1)[-1])[0]                  # ACQUIRE names the item in its title
+    for ln in ([title] if first.startswith("STEP: ACQUIRE") else []) + lines[1:]:
         if "python -m" in ln or "LATER:" in ln or "keep " in ln.lower():
             continue
         for m in _ITEM.finditer(ln):
