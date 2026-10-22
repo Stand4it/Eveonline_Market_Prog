@@ -1437,6 +1437,12 @@ def next_action(con, g, p, full=False, ahead=False):
             first = _boost(con, g, p, first, cands[0][0] if cands else best_known, raw=_full_first)
         except Exception as _he:                                                                    # noqa: BLE001
             _hrec('nextstep', _he)
+        try:                                                                                     # a BUY / SELL step ends with the command that double-checks it
+            from .verify import add as _verify
+            _st, _sep, _tm = first.partition("\n   Start the timer") if "\n   Start the timer" in first else (first, "", "")
+            first = _verify(_st) + _sep + _tm
+        except Exception as _he:                                                                    # noqa: BLE001
+            _hrec('nextstep', _he)
         out = finish_block(first)
         try:                                                                                     # CCP patch notes / news that touch ISK making, read daily by the hourly job
             from .patchnotes import notice as _pn
