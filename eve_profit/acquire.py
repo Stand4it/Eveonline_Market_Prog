@@ -100,15 +100,29 @@ def held(con, item):
 
 def confirm(con, item, qty):
     """`stop` on the buy step: remember the purchase until ESI shows it. -> text."""
-    try:
-        m = _one(con, "SELECT value FROM meta WHERE key=?", (KEY,))
+    try:                                                                # purchases ADD up (5 then 1 = 6); one name per item whatever its spelling;
+        m = _one(con, "SELECT value FROM meta WHERE key=?", (KEY,))     # the same purchase confirmed twice (done, then stop) counts once
         st = json.loads(m[0]) if m else {}
-        st[item] = {"qty": int(qty), "t": time.time()}
+        r = _one(con, "SELECT name FROM types WHERE name=? COLLATE NOCASE", (item,))
+        item = r[0] if r else item
+        old_k = next((k for k in st if k.lower() == item.lower()), None)
+        old = st.pop(old_k) if old_k else None
+        now = time.time()
+        if old and now - old["t"] <= MAX_AGE_S:
+            if old.get("last") == int(qty) and now - old.get("last_t", 0) < 10 * 60:
+                st[item] = old                                          # a repeat of the last confirmation: not a new purchase
+                con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (KEY, json.dumps(st)))
+                con.commit()
+                return f"Noted (already counted): {old['qty']:,} x {item} bought in total."
+            total = int(old["qty"]) + int(qty)
+        else:
+            total = int(qty)
+        st[item] = {"qty": total, "t": now, "last": int(qty), "last_t": now}
         con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (KEY, json.dumps(st)))
         con.commit()
     except Exception:                                                   # noqa: BLE001
         return ""
-    return f"Noted: {qty:,} x {item} bought (ESI shows it in your hangar within about an hour)."
+    return f"Noted: {qty:,} x {item} bought ({total:,} in total; ESI shows it in your hangar within about an hour)."
 
 
 def build_cost(con, g, p, item, dest=None):
