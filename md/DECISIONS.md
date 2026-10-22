@@ -527,3 +527,4 @@
 - 2026-10-21 agent_offers.json: Onnomon Aarlunen: DONE - 2026-10-21: DONE.
 - 2026-10-21 agent_offers.json: Veirainen Naresa: ACCEPTED, expires 2026-10-28 - Accepted 2026-10-21 (6 h bonus window).
 - 2026-10-21 agent_offers.json: Tiukiski Elulen: needs_tool=gun
+- 2026-10-21 agent_offers.json: Marukaiken Mamareki: agent_system=Uedama; to_system=Ikao; isk=29000; bonus=22000; lp=30; m3=40.0; task_min=8; accepted=False; mission='A New Venture - Right People (2 of 5)': courier 1 x Group of Homeless (40 m3) from Ikao VII - Moon 8 - Spacelane Patrol Logistic Support (0.6) to Uedama III - Moon 1 - Caldari Steel Warehouse (the agent's station). Pays 29,000 ISK + 30 LP; bonus 22,000 ISK within 48 min.; jumps 0->1 (map DB) - 2026-10-21: part 1 DONE, standing 0.2. Part 2 offered: 51,000 ISK + 30 LP with the bonus; round trip Uedama>Ikao>Uedama.
