@@ -23,7 +23,21 @@ a.add_argument("--done", action="store_true")
 a.add_argument("--no-finish", action="store_true")
 o = a.parse_args()
 
+from offers_lock import offers_lock  # noqa: E402
 p = os.path.join(ROOT, "agent_offers.json")
+_lock = offers_lock()                                                   # held from read to write: parallel saves lost offers
+_lock.__enter__()
+_held = [True]
+
+
+def _release():
+    if _held[0]:
+        _held[0] = False
+        _lock.__exit__(None, None, None)
+
+
+import atexit  # noqa: E402
+atexit.register(_release)                                               # also on an early sys.exit
 d = json.load(open(p, encoding="utf-8"))
 hits = [x for x in d["offers"] if o.agent.lower() in x["agent"].lower() and x.get("available", True)] or \
        [x for x in d["offers"] if o.agent.lower() in x["agent"].lower()]
@@ -63,6 +77,7 @@ if o.note:
 with open(p, "w", encoding="utf-8", newline="\n") as f:
     json.dump(d, f, indent=1, ensure_ascii=False)
     f.write("\n")
+_release()                                                              # released before the slow finish (tests, push)
 name = x["agent"].split(" (")[0]
 print(f"{name}: " + ("; ".join(changes) or "note only"))
 if not o.no_finish:

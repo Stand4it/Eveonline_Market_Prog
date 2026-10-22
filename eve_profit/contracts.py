@@ -124,6 +124,8 @@ def find_contracts(con, g, p):
     _, buys = load_books(con, systems)
     vol = {r[0]: r[1] for r in con.execute("SELECT type_id,volume FROM types")}
     tname = {r[0]: r[1] for r in con.execute("SELECT type_id,name FROM types")}
+    crystal = lambda t: (" crystal" in " " + (tname.get(t) or "").lower()) or (tname.get(t) or "").endswith((" S", " M", " L", " XL")) and any(  # noqa: E731
+        w in (tname.get(t) or "") for w in ("Gamma", "Multifrequency", "Radio", "Microwave", "Infrared", "Standard", "Ultraviolet", "Xray", "Gleam", "Aurora", "Conflagration", "Scorch"))
     out = []
     for c in cons:
         a = c["start_system_id"]
@@ -163,8 +165,8 @@ def find_contracts(con, g, p):
                 continue          # never plan to deliver into a system with recent kills
             rev = unvalued = 0
             for i in items:
-                if i["is_bpc"]:
-                    unvalued += 1
+                if i["is_bpc"] or crystal(i["type_id"]):                # crystals in contracts are usually DAMAGED: unsellable on the market, unrepairable
+                    unvalued += 1                                       # (2026-10-22: 8 '4% damaged' Imperial Navy Gamma L shown as +4.1M)
                     continue
                 sold, net = sell_into_bids(buys[i["type_id"]].get(b, []), i["quantity"], p.sales_tax)
                 rev += net

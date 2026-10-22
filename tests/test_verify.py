@@ -32,6 +32,13 @@ class Verify(unittest.TestCase):
         self.assertEqual(len(L), 1)
         self.assertIn('where_buy.py "Lead Charge S" 978', L[0])
 
+    def test_item_name_starting_with_a_quote(self):
+        t = ("STEP: SELL NOW in Perimeter - about 769,230 ISK\n"
+             "   1 x 'Arbalest' Rocket Launcher I       @   769,230.00 each = ~     769,230")
+        L = check_lines(t)
+        self.assertEqual(len(L), 1)
+        self.assertIn('where_sell.py "\'Arbalest\' Rocket Launcher I" 1', L[0])
+
     def test_other_steps_get_nothing(self):
         self.assertEqual(check_lines("STEP: FLY to Sobaseki\n   DO ONLY THIS: fly"), [])
 

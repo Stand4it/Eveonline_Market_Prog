@@ -2,7 +2,7 @@
 buys cheaper or pays more, priced with your time, so a wrong step (a bug, stale prices) shows at a glance."""
 import re
 
-_ITEM = re.compile(r"(?:^|\s)(?:buy |sell )?([\d,]+) x ([A-Za-z0-9][\w'\-:. ]*?[\w)'])(?=\s{2,}|\s+@|\s+at |\s+here\b|\s+FIRST\b|\s+~|\s*\(|\s*$|:)")
+_ITEM = re.compile(r"(?:^|\s)(?:buy |sell )?([\d,]+) x (['A-Za-z0-9][\w'\-:. ]*?[\w)'])(?=\s{2,}|\s+@|\s+at |\s+here\b|\s+FIRST\b|\s+~|\s*\(|\s*$|:)")
 MAX_LINES = 3
 
 

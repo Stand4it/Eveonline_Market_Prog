@@ -48,12 +48,14 @@ offer = {
     "needs": f"{o.m3:g} m3 of cargo; {o.to} is {jumps} jump(s) from {o.system} (map DB route)",
     "note": o.note or f"Seen, {o.isk + o.bonus:,} ISK + {o.lp} LP with the bonus.",
 }
+from offers_lock import offers_lock  # noqa: E402
 p = os.path.join(ROOT, "agent_offers.json")
-d = json.load(open(p, encoding="utf-8"))
-d["offers"].append(offer)
-with open(p, "w", encoding="utf-8", newline="\n") as f:
-    json.dump(d, f, indent=1, ensure_ascii=False)
-    f.write("\n")
+with offers_lock():                                                     # one writer at a time (parallel saves lost offers)
+    d = json.load(open(p, encoding="utf-8"))
+    d["offers"].append(offer)
+    with open(p, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(d, f, indent=1, ensure_ascii=False)
+        f.write("\n")
 line = (f"agent_offers.json: {o.agent} ({o.system}, {o.career} {o.level}) '{o.mission}' "
         f"{o.m3:g} m3 to {o.to} ({jumps} jumps), {o.isk:,} + {o.bonus:,} bonus ({o.bonus_time}) + {o.lp} LP.")
 print(f"added: {o.agent}, {jumps} jumps, {o.isk + o.bonus:,} ISK + {o.lp} LP with bonus")
