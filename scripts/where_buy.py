@@ -51,3 +51,34 @@ else:
     print(("" if now else "(no seller here or on your way) ") + f"BUY LATER in {best['system']}: {best['price']:,.0f} each = {best['price'] * qty:,.0f} ISK, {best['detour']} extra jumps ~{mins:.0f} min "
           f"({mins * rate / 60:,.0f} ISK of your time). {best['station'][:60]}"
           + (f"\n   saves {base - best['price'] * qty - mins * rate / 60:,.0f} ISK net vs buying now for {base:,.0f}" if base else ""))
+    now = now or best
+
+# EVERY cheaper seller the DB knows (all scanned regions, highsec AND lowsec), with its trip priced in your time: so a wrong verdict shows
+g = Graph(con)
+here = g.id_of(p.current_system)
+safe = g.reach(here, 60, True)
+anyr = g.reach(here, 60, False)
+ref = now["price"] if now else float("inf")
+rows2 = con.execute("SELECT o.system_id, MIN(o.price), SUM(o.volume_remain) FROM orders o JOIN types t ON t.type_id=o.type_id WHERE t.name=? COLLATE NOCASE "
+                    "AND o.is_buy=0 AND o.volume_remain>=? AND o.price<? GROUP BY o.system_id ORDER BY 2", (item, qty, ref)).fetchall()
+regions = con.execute("SELECT COUNT(DISTINCT region_id) FROM orders").fetchone()[0]
+print(f"   EVERY cheaper seller known ({len(rows2)} systems, {regions} regions scanned; lowsec marked LOW, no route = other side of null/wormhole):")
+for sid, price, vol in rows2[:int(opt("--top", 15))]:
+    j_safe = safe[sid].jumps if sid in safe else None
+    j_any = anyr[sid].jumps if sid in anyr else None
+    j = j_safe if j_safe is not None else j_any
+    sec = g.sec.get(sid, 0.0)
+    tag = "" if sec >= 0.45 else ("LOW " if sec > 0.0 else "NULL ")
+    if j is None:
+        print(f"      {price:>11,.0f}  {g.name.get(sid, sid)} ({sec:.1f}): no route found")
+        continue
+    cost = 2 * j * MIN_PER_JUMP * rate / 60.0 if not dest else j * MIN_PER_JUMP * rate / 60.0     # there and on: counted both ways unless it is on your way
+    save = (ref - price) * qty
+    verdict = "WORTH IT" if save > cost else "not worth it"
+    route = "" if j_safe is not None else f" (only via lowsec/null: {j_any} jumps)"
+    print(f"      {price:>11,.0f}  saves {save:>11,.0f}  {tag}{g.name.get(sid, sid)} ({sec:.1f}) {j} jumps{route} ~{2 * j * MIN_PER_JUMP:.0f} min there+back = {cost:,.0f} ISK of time: {verdict}")
+if False:
+    base = now["price"] * qty if now else None
+    print(("" if now else "(no seller here or on your way) ") + f"BUY LATER in {best['system']}: {best['price']:,.0f} each = {best['price'] * qty:,.0f} ISK, {best['detour']} extra jumps ~{mins:.0f} min "
+          f"({mins * rate / 60:,.0f} ISK of your time). {best['station'][:60]}"
+          + (f"\n   saves {base - best['price'] * qty - mins * rate / 60:,.0f} ISK net vs buying now for {base:,.0f}" if base else ""))
