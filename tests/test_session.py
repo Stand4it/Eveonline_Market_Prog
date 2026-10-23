@@ -1173,11 +1173,10 @@ class DetourStepTests(unittest.TestCase):
         finally:
             sp.sell_plan = old
         first = next(l.strip().lstrip("§ ") for l in txt.splitlines() if "STEP:" in l)           # the step now sits at its number in the command list
-        self.assertTrue(first.startswith("STEP: SELL SCORDITE 0-GRADE 1 JUMP AWAY in "), first)
-        self.assertIn("HOW:", txt)
-        self.assertIn("Load 33,333 x Scordite 0-Grade", txt)                    # 66,666 in 2 trips of the 5,000 m3 hold
-        self.assertIn("QUICK ALTERNATIVE", txt)
-        self.assertTrue(_name_of(first).startswith("Market sell stock "))
+        self.assertTrue(first.startswith("STEP: FLY to "), first)                # owner 2026-10-22: ONE action per step (load + fly the next jump)
+        self.assertIn("33,333 x Scordite 0-Grade", first)                        # 66,666 in 2 trips of the hold
+        self.assertIn("ISK more in ", first)                                      # where and why; the sale is its own step there
+        self.assertNotIn("QUICK ALTERNATIVE", txt)
 
 
 class CompactDailyGoalsTests(unittest.TestCase):

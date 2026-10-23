@@ -48,24 +48,19 @@ def _detour_step(con, g, p, where, sells, d, b):
     except Exception as _he:                                                   # noqa: BLE001
         _hrec('nextstep', _he)
     item = d["name"]
-    L = [f"STEP: SELL {item.upper()} {jumps} JUMP{'S' if jumps != 1 else ''} AWAY in {place} - about {b['best_net']:,.0f} ISK",
-         f"   {d['sold']:>9,} x {item:<34} @ {b['best_net'] / max(d['sold'], 1):>12,.2f} each = ~{b['best_net']:>12,.0f}   (net of tax)",
-         f"   that is +{b['extra']:,.0f} ISK more than selling in {where} (~{d['net']:,.0f}), for about {b['mins']:.0f} more minutes",
-         "   HOW:"]
-    n = 0
-
-    def add(t):
-        nonlocal n
-        n += 1
-        L.append(f"   {n}. {t}")
-    add(f"Load {per_trip:,} x {item} into your ship's hold" + (f" (trip 1 of {trips})" if trips > 1 else ""))
-    add(f"Fly {jumps} jump{'s' if jumps != 1 else ''} to {place}" + (f" and dock at {station}" if station else " and dock"))
-    add(f"Market > {item} > Sell > pick the HIGHEST buy order" + (f" (about {bid:,.2f} ISK each)" if bid else "") + ": instant sale, no listing")
-    if trips > 1:
-        add(f"Fly back and repeat for the other {d['sold'] - per_trip:,} ({trips - 1} more trip{'s' if trips > 2 else ''})")
-    else:
-        add(f"Fly back to {where}")
-    L.append(f"   QUICK ALTERNATIVE: sell it all right here for ~{d['net']:,.0f} ISK in about 3 minutes (the plan above pays more per minute only if you have nothing better to do).")
+    gain = b["best_net"] - d["net"]                                     # the REAL extra (b['extra'] could be vs 0, 2026-10-22: shown +1.13M, was +20k)
+    hop = place
+    try:
+        r_ = g.route(g.id_of(where), g.id_of(place), 60, p.avoid_yellow)
+        hop = g.name[r_.path[1]] if r_ and len(r_.path) > 1 else place
+    except Exception as _he:                                                   # noqa: BLE001
+        _hrec('nextstep', _he)
+    # ONE action (owner 2026-10-22: step by step): load it and fly the next jump; the sale is its own step when you are there
+    L = [f"STEP: FLY to {hop} with {per_trip:,} x {item} (it sells for {gain:+,.0f} ISK more in {place}, {jumps} jump{'s' if jumps != 1 else ''})",
+         f"   DO ONLY THIS: put {per_trip:,} x {item} in your ship's cargo and fly to {hop}. Then run  python -m eve_profit next",
+         f"   LATER: in {place}" + (f" at {station}" if station else "") + f": Market > {item} > Sell to the highest buy order"
+         + (f" (~{bid:,.0f} each)" if bid else "") + f" = ~{b['best_net']:,.0f} after tax (here only ~{d['net']:,.0f})"
+         + (f"; {trips} trips for all of it" if trips > 1 else "")]
     try:
         from .reprocess import describe as _rdesc, refine_option
         ro = refine_option(con, g, p, d["name"], d["sold"], d["net"])
@@ -73,11 +68,13 @@ def _detour_step(con, g, p, where, sells, d, b):
             L += _rdesc(d["name"], ro)
     except Exception as _he:                                                   # noqa: BLE001
         _hrec('nextstep', _he)
-    others = [x for x in sells[1:6]]
-    if others:
-        L.append(f"   also sell here in {where}: " + "; ".join(f"{x['sold']:,} x {x['name']} (~{x['net']:,.0f})" for x in others))
     L.append(AFTER)
     return "\n".join(L)
+
+
+def detour_gain(d, b):
+    """ISK more the better market pays than selling here (after tax)."""
+    return float(b.get("best_net", 0.0)) - float(d.get("net", 0.0))
 
 
 KEEP_NOTES = []                                                  # why stacks here were NOT offered for sale (shown in `next --plan`)
@@ -158,14 +155,23 @@ def _next_action_core(con, g, p):
             _hrec('nextstep', _he)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
+        min_gain = lambda d_: max(100_000.0, 0.25 * d_["net"])   # noqa: E731   a trip must pay this much MORE than selling here
         for d in sells[:8]:
             b = better.get(d["tid"])
-            if b and detour is None and d is sells[0] and (b["best_label"].startswith("DETOUR to")
-                                                           or (b["best_label"].startswith("CARRY") and b["extra"] >= max(100_000.0, 0.25 * d["net"]))):
-                # 2026-10-22: 'CARRY to Ikuchi +1.9M' stayed a note while the step said sell 2 Proof of Destruction here at 426k each (bought ~1.1M)
+            if b and detour is None and d is sells[0] and b["best_label"].startswith(("DETOUR to", "CARRY")) and detour_gain(d, b) >= min_gain(d):
+                # 2026-10-22: 'CARRY to Ikuchi +1.9M' stayed a note while the step said sell 2 Proof of Destruction here at 426k each (bought ~1.1M);
+                # and a +20k 'detour' (Hexfold Terror, Jita) became a 4-action trip step because the gain was read wrong
                 detour = (d, b)
                 break
-        if detour:
+        if detour and len(sells) > 1:                            # step by step: sell what sells HERE first; the carried stack waits for its own step
+            d0, b0 = detour
+            sells = [x for x in sells if x is not d0]
+            keep_lines.append(f"   keep {d0['sold']:,} x {d0['name']}: it sells for {detour_gain(d0, b0):+,.0f} ISK more in "
+                              f"{b0['best_label'].split('sell at ', 1)[-1].split('DETOUR to ', 1)[-1].strip()}: the next step carries it there")
+            total = sum(x["net"] for x in sells)
+            L[0] = f"STEP: SELL NOW in {where} - about {total:,.0f} ISK"
+            detour = None
+        elif detour:
             return _detour_step(con, g, p, where, sells, detour[0], detour[1])
         for d in sells[:8]:
             L.append(f"   {d['sold']:>9,} x {d['name']:<34} @ {d['net'] / max(d['sold'], 1):>12,.2f} each = ~{d['net']:>12,.0f}")
@@ -173,8 +179,8 @@ def _next_action_core(con, g, p):
                 rb = d["remote"]
                 L.append(f"      sells to the buy order in {rb['system']} ({rb['price']:,.0f} each, range {rb['rng']}, {rb['jumps']} jumps from here): NO TRAVEL, it shows in the Sell window")
             b = better.get(d["tid"])
-            if b:
-                L.append(f"      BETTER PLACE: {b['best_label']} pays ~{b['best_net']:,.0f} (+{b['extra']:,.0f} ISK for ~{b['mins']:.0f} min extra)"
+            if b and detour_gain(d, b) >= min_gain(d):                  # only a better place that is worth the trip (the real gain, not b['extra'])
+                L.append(f"      BETTER PLACE: {b['best_label']} pays ~{b['best_net']:,.0f} ({detour_gain(d, b):+,.0f} ISK for ~{b['mins']:.0f} min extra)"
                          + (f" [{b['note']}]" if b["note"] else ""))
             if rebuy_note(d):
                 L.append(rebuy_note(d))

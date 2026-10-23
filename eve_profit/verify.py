@@ -19,7 +19,7 @@ def check_lines(step):
     lines = step.split("\n")
     title = re.split(r" - (?:BUY|BUILD|MAKE)\b", lines[0].split(":", 1)[-1])[0]                  # ACQUIRE names the item in its title
     for ln in [title] + lines[1:]:                                       # the STEP line itself often names the item ('BUY 978 x Lead Charge S here')
-        if "python -m" in ln or "LATER:" in ln or "keep " in ln.lower():
+        if "python -m" in ln or "LATER:" in ln or "keep " in ln.lower() or "into your ship" in ln or "ship's hold" in ln:
             continue
         for m in _ITEM.finditer(ln):
             qty, name = int(m.group(1).replace(",", "")), m.group(2).strip()
