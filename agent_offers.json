@@ -3099,6 +3099,26 @@
    "m3": 300.0,
    "needs": "300 m3 of cargo; Ekura is 3 jump(s) from Tunttaras (map DB route)",
    "note": "Seen 2026-10-23, standing 0.0. One-way courier. 40,000 ISK + 23 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Tennen",
+   "career": "Distribution",
+   "where": "Tennen VIII - Moon 4 - Hyasyoda Corporation Refinery (0.9)",
+   "agent": "Totavuo Ahupittoh (Distribution, L1, Tennen VIII - Moon 4 - Hyasyoda Corporation Refinery (0.9))",
+   "mission": "'Corporate Documents': courier 4 x Crates of Corporate Documents from the agent's station (160 m3) to Iivinen VIII - Moon 13 - Sukuuvestaa Corporation Warehouse (0.7). Pays 27,000 ISK + 31 LP; bonus 24,000 ISK within 1 h 18 min.",
+   "isk": 27000,
+   "bonus": 24000,
+   "task_min": 6,
+   "jumps": 1,
+   "to_system": "Iivinen",
+   "m3": 160.0,
+   "needs": "160 m3 of cargo; Iivinen is 1 jump(s) from Tennen (map DB route)",
+   "note": "Seen 2026-10-23, standing 0.0. One-way courier. 51,000 ISK + 31 LP with the bonus."
   }
  ],
  "min_per_jump": 3.0,
