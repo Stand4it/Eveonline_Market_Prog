@@ -3039,6 +3039,26 @@
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Ansila is 1 jump(s) from Ikuchi (map DB route)",
    "note": "Seen 2026-10-22, standing 0.0. Round trip to Ansila. 48,000 ISK + 26 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Ikuchi",
+   "career": "Distribution",
+   "where": "Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9)",
+   "agent": "Fehela Zassalou (Distribution, L1, Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9))",
+   "mission": "'They, Robots (1 of 5)': courier 1 x Crates of Robotics, pick up at Hykkota V - Moon 17 - Caldari Funds Unlimited Depository (0.8) (70 m3) to Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (the agent's station). Pays 27,000 ISK + 36 LP; bonus 33,000 ISK within 1 h 34 min.",
+   "isk": 27000,
+   "bonus": 33000,
+   "task_min": 8,
+   "jumps": 2,
+   "to_system": "Hykkota",
+   "m3": 70.0,
+   "needs": "70 m3 of cargo; Hykkota is 2 jump(s) from Ikuchi (map DB route)",
+   "note": "Seen 2026-10-22, standing 0.0. Round trip to Hykkota. 60,000 ISK + 36 LP with the bonus."
   }
  ],
  "min_per_jump": 3.0,
