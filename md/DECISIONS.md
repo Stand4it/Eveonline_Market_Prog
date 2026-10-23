@@ -542,3 +542,4 @@
 - 2026-10-22 patchnotes.py: a timeout reading CCP's news feed is printed without 'Error:' so health does not flag it (it retries next hour).
 - 2026-10-22 contracts.find_contracts: frequency/mining crystals in item-exchange contracts get no resale value (ESI contract items carry no damage; damaged crystals cannot be sold on the market or repaired). 2026-10-22: contract #236629796 (8 x 4% damaged Imperial Navy Gamma L, 1.6M) was offered as +4.1M.
 - 2026-10-22 verify.py: item names that start with an apostrophe ('Arbalest' Rocket Launcher I) now get the where_sell/where_buy CHECK line.
+- 2026-10-22 activity_catalog.json: salvaging is blocked (no wrecks without your own combat, which is parked after the ship loss) and needs a salvager fitted; wreck leads on the map still compete as their own option.
