@@ -702,7 +702,7 @@ def _run(a):
     elif a.cmd == "fixlast":
         from .session import fix_last
         try:
-            print(fix_last(con, a.add_min, a.isk, a.activity, a.delete, a.id))
+            print(fix_last(con, a.add_min, a.isk, a.activity, a.delete, a.id, set_min=float(getattr(a, "minutes", 0) or 0)))
         except ValueError as e:
             raise SystemExit(str(e))
     elif a.cmd == "docs":

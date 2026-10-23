@@ -170,7 +170,7 @@ def resume(con, now=None):
     return f"RESUMED '{s['activity']}'. Paused {gone:.0f} min this time ({s['paused_min']:.0f} min in total, not counted). Finish, then run  python -m eve_profit stop"
 
 
-def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False, row_id=0):
+def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False, row_id=0, set_min=0.0):
     """Correct the most recent timed run (or the most recent whose name contains `activity`), e.g. the minutes you worked
     while the timer was paused, or the ISK a run missed because the wallet journal had not updated yet."""
     if row_id:                                                          # any row, by the # shown in `history`
@@ -188,7 +188,7 @@ def fix_last(con, add_min=0.0, add_isk=0.0, activity="", delete=False, row_id=0)
         con.execute("DELETE FROM activity_log WHERE id=?", (r["id"],))
         con.commit()
         return f"Deleted the run '{r['activity']}' ({r['isk']:,.0f} ISK in {r['hours'] * 60:.0f} min)."
-    isk, hours = r["isk"] + add_isk, r["hours"] + add_min / 60.0
+    isk, hours = r["isk"] + add_isk, (set_min / 60.0 if set_min else r["hours"] + add_min / 60.0)    # --minutes N sets the time (timer left running)
     con.execute("UPDATE activity_log SET isk=?, hours=? WHERE id=?", (isk, hours, r["id"]))
     con.commit()
     return (f"Updated '{r['activity']}': {isk:,.0f} ISK in {hours * 60:.0f} min = {isk / max(hours, 1e-9):,.0f} ISK/hr "
