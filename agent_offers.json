@@ -3079,6 +3079,26 @@
    "m3": 180.0,
    "needs": "180 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
    "note": "Seen 2026-10-22, standing 0.0. One-way courier to Eskunen (0.6). 32,000 ISK + 21 LP with the bonus: low pay."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Tunttaras",
+   "career": "Distribution",
+   "where": "Tunttaras IX - Moon 11 - Ytiri Storage (0.9)",
+   "agent": "Iji Kiyura (Distribution, L1, Tunttaras IX - Moon 11 - Ytiri Storage (0.9))",
+   "mission": "'Army Recruits': courier 5 x Group of Army Recruits from the agent's station (300 m3) to Ekura VII - Moon 14 - Caldari Constructions Warehouse (0.9). Pays 21,000 ISK + 23 LP; bonus 19,000 ISK within 54 min.",
+   "isk": 21000,
+   "bonus": 19000,
+   "task_min": 6,
+   "jumps": 3,
+   "to_system": "Ekura",
+   "m3": 300.0,
+   "needs": "300 m3 of cargo; Ekura is 3 jump(s) from Tunttaras (map DB route)",
+   "note": "Seen 2026-10-23, standing 0.0. One-way courier. 40,000 ISK + 23 LP with the bonus."
   }
  ],
  "min_per_jump": 3.0,
