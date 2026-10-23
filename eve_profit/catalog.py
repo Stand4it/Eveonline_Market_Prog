@@ -165,7 +165,7 @@ def equal_footing(con, wallet, best_known, here=None, covered=(), extra_cost=Non
     -> [{act, eff, mid, voi, prep_min}] best first."""
     out = []
     for a in status(con, wallet, hull, owned, tools):
-        if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a["id"] in covered or a.get("blocked"):
+        if not a["unlocked"] or a["state"] == "MODELED" or a["id"] in SKIP_IDS or a["id"] in covered or a.get("blocked") or a.get("no_test"):   # no_test: never a 'TEST it' step (leads still use it)
             continue
         if (a.get("how") or "").lower().startswith("later"):
             continue

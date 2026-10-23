@@ -30,7 +30,8 @@ def rebuy_note(d):
 
 def _detour_step(con, g, p, where, sells, d, b):
     """SELL <ITEM> n JUMPS AWAY in <place>: the stack pays clearly more there, even with several trips of your hold."""
-    place = b["best_label"].split("DETOUR to ", 1)[-1].strip()
+    lab = b["best_label"]
+    place = (lab.split("sell at ", 1)[-1] if "sell at " in lab else lab.split("DETOUR to ", 1)[-1]).strip()
     jumps = 1
     try:
         jumps = g.reach(g.id_of(where), 10, p.avoid_yellow)[g.id_of(place)].jumps
@@ -159,7 +160,9 @@ def _next_action_core(con, g, p):
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
         for d in sells[:8]:
             b = better.get(d["tid"])
-            if b and detour is None and d is sells[0] and b["best_label"].startswith("DETOUR to"):
+            if b and detour is None and d is sells[0] and (b["best_label"].startswith("DETOUR to")
+                                                           or (b["best_label"].startswith("CARRY") and b["extra"] >= max(100_000.0, 0.25 * d["net"]))):
+                # 2026-10-22: 'CARRY to Ikuchi +1.9M' stayed a note while the step said sell 2 Proof of Destruction here at 426k each (bought ~1.1M)
                 detour = (d, b)
                 break
         if detour:

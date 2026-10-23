@@ -33,6 +33,12 @@ def check_lines(step):
     return out
 
 
+WALLET_LINE = ("   AFTER YOU BUY/SELL (the game's wallet reaches the tool up to an hour late): Wallet > Market Transactions > select the new rows > Ctrl+C,"
+               " then run:  python scripts/wallet_paste.py")
+
+
 def add(step):
     lines = check_lines(step)
+    if lines:                                                           # owner 2026-10-22: remind to copy the wallet after every buy or sale
+        lines = lines + [WALLET_LINE]
     return step + ("\n" + "\n".join(lines) if lines else "")

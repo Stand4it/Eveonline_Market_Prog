@@ -76,3 +76,4 @@ Open agent offers (agent_offers.json):
 - Tuga Nato: 'What's in a Name - Change of Address (1 of 5)': task to the
 - Avu Olunatsu: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
 - Gohtiras Uova: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
+- Samivesti Iivonas: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor

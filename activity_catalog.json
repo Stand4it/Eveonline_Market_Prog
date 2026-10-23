@@ -198,8 +198,7 @@
     "Catalyst",
     "Cormorant"
    ],
-   "needs_tool": "salvaging",
-   "blocked": "needs wrecks: only after your own combat missions (combat is parked until a fit passes the 99% rule); wreck leads seen on the map are offered separately"
+   "no_test": "needs wrecks: only after your own combat missions (combat parked after the 2026-10-21 ship loss); wreck leads on the map still compete"
   },
   {
    "id": "manufacturing_t1",
