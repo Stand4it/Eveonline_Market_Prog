@@ -40,13 +40,32 @@ def _subtract(con, sid, items):
     con.execute("DELETE FROM inventory WHERE quantity<=0")
 
 
+def _totals(con, items):
+    """{type id: units held anywhere} as ESI reports them now (before any correction)."""
+    return {str(int(t)): int(con.execute("SELECT COALESCE(SUM(quantity),0) FROM inventory WHERE type_id=?", (int(t),)).fetchone()[0] or 0)
+            for t, _q in items}
+
+
+def _subtract_anywhere(con, sid, tid, qty):
+    """Take qty of a type out of the stock: first where it was sold, then wherever the (stale) asset list puts it now; the ship's cargo moves with you,
+    so after a jump a sold stack shows up in the NEW system (2026-10-23: a Miner II sold in Tunttaras was offered again in Sarekuwa)."""
+    rows = con.execute("SELECT system_id, quantity FROM inventory WHERE type_id=? ORDER BY (system_id=?) DESC, quantity DESC", (tid, sid)).fetchall()
+    for s, q in rows:
+        if qty <= 0:
+            break
+        take = min(q, qty)
+        con.execute("UPDATE inventory SET quantity=quantity-? WHERE type_id=? AND system_id=?", (take, tid, s))
+        qty -= take
+    con.execute("DELETE FROM inventory WHERE quantity<=0")
+
+
 def confirm_sold(con):
     """`stop` on a 'Market sell stock' run: take the listed stacks out of inventory now and remember them against the current (old) asset fingerprint. -> text."""
     st = _get(con, "last_sell_step")
     if not st or time.time() - st["t"] > MAX_AGE_S:
         return ""
     raw = _sig(con)
-    _put(con, "pending_sold", {"sig": raw, "sid": st["sid"], "items": st["items"], "t": time.time()})
+    _put(con, "pending_sold", {"sig": raw, "sid": st["sid"], "items": st["items"], "t": time.time(), "raw": _totals(con, st["items"])})
     _subtract(con, st["sid"], st["items"])
     _put(con, "last_sell_step", None)
     con.commit()
@@ -118,10 +137,22 @@ def after_sync(con):
     p = _get(con, "pending_sold")
     if not p:
         return
-    if time.time() - p["t"] > MAX_AGE_S or _sig(con) != p["sig"]:
-        _put(con, "pending_sold", None)                                # fresh data (or too old): the real hangar wins
+    if time.time() - p["t"] > MAX_AGE_S:
+        _put(con, "pending_sold", None)                                # too old: the real hangar wins
         return
-    _subtract(con, p["sid"], p["items"])
+    raw = p.get("raw")
+    if raw is None:                                                     # an older note: the old rule (any change of the asset list = fresh data)
+        if _sig(con) != p["sig"]:
+            _put(con, "pending_sold", None)
+            return
+        _subtract(con, p["sid"], p["items"])
+        return
+    now_tot = _totals(con, p["items"])                                  # per item: ESI caught up once it shows fewer units than at the sale
+    keep = [[t, q] for t, q in p["items"] if now_tot.get(str(int(t)), 0) >= raw.get(str(int(t)), 0) > 0]
+    for t, q in keep:
+        _subtract_anywhere(con, p["sid"], int(t), int(q))               # a jump moves the cargo, it does not make ESI fresh
+    p["items"] = keep
+    _put(con, "pending_sold", p if keep else None)
 
 
 def mark_opened(con, name, qty=1):
@@ -136,11 +167,12 @@ def mark_opened(con, name, qty=1):
     tid, sid, have, nm = rows[0]
     q = min(qty, have)
     p = _get(con, "pending_sold")
-    if p and time.time() - p["t"] <= MAX_AGE_S and p.get("sid") == sid:
+    if p and time.time() - p["t"] <= MAX_AGE_S and p.get("sid") == sid and p.get("raw") is not None:
         p["items"].append([tid, q])                                      # the stock already has this pending change applied; add to it
+        p["raw"][str(tid)] = p["raw"].get(str(tid), have)
         p["t"] = time.time()
     else:
-        p = {"sig": _sig(con), "sid": sid, "items": [[tid, q]], "t": time.time()}
+        p = {"sig": _sig(con), "sid": sid, "items": [[tid, q]], "t": time.time(), "raw": _totals(con, [[tid, q]])}
     _put(con, "pending_sold", p)
     _subtract(con, sid, [[tid, q]])
     con.commit()
