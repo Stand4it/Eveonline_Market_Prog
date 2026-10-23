@@ -74,3 +74,5 @@ Open agent offers (agent_offers.json):
 - Okamainen Niuranto: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
 - Ogyura Unao: 'Break Their Will': task to the repair station site in Maura
 - Tuga Nato: 'What's in a Name - Change of Address (1 of 5)': task to the
+- Avu Olunatsu: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
+- Gohtiras Uova: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
