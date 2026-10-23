@@ -100,6 +100,7 @@ def import_jsonl(con, zip_path):
                     [(r["_key"], r["factionID"]) for r in _rows(zf, "npcCorporations") if r.get("factionID")])
     st = {r[0]: r[1] for r in con.execute("SELECT station_id,system_id FROM stations")}
     seen_fields = None
+    new_agents = []
     for r in _rows(zf, "npcCharacters"):
         ag = r.get("agent")
         if not ag:
@@ -109,9 +110,11 @@ def import_jsonl(con, zip_path):
         div = next((ag[k] for k in ("divisionID", "divisionId", "division_id", "division") if isinstance(ag.get(k), int)), None)
         typ = next((ag[k] for k in ("agentTypeID", "agentTypeId", "agent_type_id", "agentType") if isinstance(ag.get(k), int)), 2)
         if r.get("locationID") in st and typ == 2:
-            con.execute("INSERT OR REPLACE INTO agents(agent_id,corporation_id,location_id,system_id,level,quality,division_id,agent_type) VALUES(?,?,?,?,?,?,?,?)",
-                        (r["_key"], r.get("corporationID"), r["locationID"], st[r["locationID"]],
-                         ag.get("level", 1), 0, div, typ))
+            new_agents.append((r["_key"], r.get("corporationID"), r["locationID"], st[r["locationID"]], ag.get("level", 1), 0, div, typ))
+    if len(new_agents) > 1000:                                          # a full list: agents CCP removed or moved must go (2026-10-23: a gone agent was still planned)
+        con.execute("DELETE FROM agents")
+    con.executemany("INSERT OR REPLACE INTO agents(agent_id,corporation_id,location_id,system_id,level,quality,division_id,agent_type) VALUES(?,?,?,?,?,?,?,?)",
+                    new_agents)
     n["agent_fields"] = seen_fields
     n["agents_with_division"] = con.execute("SELECT COUNT(*) FROM agents WHERE division_id IS NOT NULL").fetchone()[0]
     n["agents"] = con.execute("SELECT COUNT(*) FROM agents").fetchone()[0]

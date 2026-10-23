@@ -12,3 +12,5 @@ python -m eve_profit agents --within 6 --char "%EVE_CHAR%" >> hourly.log 2>&1
 python -m eve_profit health --char "%EVE_CHAR%" >> health.log 2>&1
 rem Patch notes + news from CCP's RSS feeds (no login); reads at most once a day, `next` shows a notice when something touches ISK making.
 python -m eve_profit.patchnotes >> hourly.log 2>&1
+rem New static game data from CCP (a patch: agents, items, blueprints)? Checked once a day; reloads the universe when the build changed.
+python scripts\sde_refresh.py >> hourly.log 2>&1
