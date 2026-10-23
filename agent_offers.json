@@ -3059,6 +3059,26 @@
    "m3": 70.0,
    "needs": "70 m3 of cargo; Hykkota is 2 jump(s) from Ikuchi (map DB route)",
    "note": "Seen 2026-10-22, standing 0.0. Round trip to Hykkota. 60,000 ISK + 36 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Ikuchi",
+   "career": "Distribution",
+   "where": "Ikuchi VI - Moon 6 - Ytiri Storage (0.9)",
+   "agent": "Naki Vikkiras (Distribution, L1, Ikuchi VI - Moon 6 - Ytiri Storage (0.9))",
+   "mission": "'Save The Children': courier 3 x Crates of Clothing from the agent's station (180 m3) to Eskunen XI - Moon 1 - Caldari Constructions Production Plant (0.6). Pays 17,000 ISK + 21 LP; bonus 15,000 ISK within 54 min.",
+   "isk": 17000,
+   "bonus": 15000,
+   "task_min": 6,
+   "jumps": 4,
+   "to_system": "Eskunen",
+   "m3": 180.0,
+   "needs": "180 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
+   "note": "Seen 2026-10-22, standing 0.0. One-way courier to Eskunen (0.6). 32,000 ISK + 21 LP with the bonus: low pay."
   }
  ],
  "min_per_jump": 3.0,

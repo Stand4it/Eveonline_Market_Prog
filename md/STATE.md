@@ -78,3 +78,4 @@ Open agent offers (agent_offers.json):
 - Gohtiras Uova: 'Burnt Traces': courier 3,600 x Augumene (mission ore) mined
 - Samivesti Iivonas: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
 - Fehela Zassalou: 'They, Robots (1 of 5)': courier 1 x Crates of Robotics, pic
+- Naki Vikkiras: 'Save The Children': courier 3 x Crates of Clothing from the
