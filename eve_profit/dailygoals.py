@@ -566,7 +566,7 @@ def way_lines(res, wallet, max_lines=3, hold_fn=None, hold_m3=0.0, vol_of=None):
                     continue
                 u = min(q, q2)
                 cost, rev = c * u / q, r * u / q2
-                if cost <= 0 or rev / cost - 1 > 1.0 or cost > 1.0 * wallet or rev - cost < 10000:
+                if cost <= 0 or rev / cost - 1 > 1.0 or cost > 1.0 * wallet or rev - cost <= 0:
                     continue
                 lines.append((rev - cost, f"buy {u:,} x {nm} at {a} (-{cost:,.0f}), sell at {b} (+{rev:,.0f}) = +{rev - cost:,.0f} ISK", u * (vol_of or {}).get(nm, 0.0)))
     keeps = []

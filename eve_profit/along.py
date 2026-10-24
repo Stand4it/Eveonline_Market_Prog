@@ -7,7 +7,7 @@ from .skills import order_slots
 
 
 ALLOW_LIST = False           # DEFAULT: sell now into buy orders. A listing can sit for up to 90 days: only used when this is switched on
-LIST_MIN_GAIN = 50_000.0      # a listing must earn at least this much more than selling now (and more than 2 minutes of your measured agent income)
+LIST_MIN_GAIN = 0.0          # owner 2026-10-24: no flat minimum (the 2-minute time check stays)      # a listing must earn at least this much more than selling now (and more than 2 minutes of your measured agent income)
 STALE_ORDER_DAYS = 30        # if the cheapest orders have sat this long, nobody is buying at that price
 
 

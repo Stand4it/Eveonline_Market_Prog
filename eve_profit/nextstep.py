@@ -155,7 +155,12 @@ def _next_action_core(con, g, p):
             _hrec('nextstep', _he)
         L = [f"STEP: SELL NOW in {where} - about {total:,.0f} ISK", docked.rstrip()]
         detour = None                                            # the biggest stack has a clearly better market a few jumps away: THAT becomes the step
-        min_gain = lambda d_: max(100_000.0, 0.25 * d_["net"])   # noqa: E731   a trip must pay this much MORE than selling here
+        try:                                                     # owner 2026-10-24: no flat minimum: a trip must pay more than its minutes earn at your rate
+            _r = con.execute("SELECT value FROM meta WHERE key='best_rate'").fetchone()
+            _per_min = (float(_r[0]) if _r and _r[0] else 1_000_000.0) / 60.0
+        except Exception:                                        # noqa: BLE001
+            _per_min = 1_000_000.0 / 60.0
+        min_gain = lambda d_: max(1.0, float((better.get(d_["tid"]) or {}).get("mins", 0.0)) * _per_min)   # noqa: E731
         for d in sells[:8]:
             b = better.get(d["tid"])
             if b and detour is None and d is sells[0] and b["best_label"].startswith(("DETOUR to", "CARRY")) and detour_gain(d, b) >= min_gain(d):

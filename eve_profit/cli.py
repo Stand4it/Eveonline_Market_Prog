@@ -271,6 +271,14 @@ def _run(a):
                 print(f"SHIP CHANGED: you fly {p.ship_name} now (hold {p.cargo_m3:,.0f} m3); the last sync said {_ship_before[0]}. Plans use this ship from now on.")
             p.save(a.profile)
             print("Profile updated:", a.profile)
+            try:                                                         # fresh wrecks in the system you are in (public killboard): a salvage lead
+                from .graph import Graph as _G
+                from .killleads import refresh as _kl
+                _here = [ld for ld in _kl(con, _G(con), p, max_systems=1, max_jumps=0) if ld["system"] == p.current_system]
+                if _here:
+                    print(f"WRECKS HERE: {_here[0]['what']}")
+            except Exception:                                            # noqa: BLE001
+                pass
             try:
                 from .walletdiff import report as _wd
                 _w = _wd(con, esi, cid, res_.get("wallet", 0) if isinstance(res_, dict) else 0)

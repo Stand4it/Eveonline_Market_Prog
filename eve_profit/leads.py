@@ -11,11 +11,18 @@ SWAP_MIN = 4.0
 JUMP_MIN = 3.0
 
 
+_AUTO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kill_leads.json")
+
+
 def load():
-    try:
-        return json.load(open(_FILE, encoding="utf-8")).get("leads", [])
-    except (OSError, ValueError):
-        return []
+    """Leads you reported (leads.json) + wreck leads found automatically from the public killboard (data/kill_leads.json, killleads.py)."""
+    out = []
+    for f in (_FILE, _AUTO):
+        try:
+            out += json.load(open(f, encoding="utf-8")).get("leads", [])
+        except (OSError, ValueError):
+            pass
+    return out
 
 
 def _ship_system(con, g, p, word):

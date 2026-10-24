@@ -92,7 +92,7 @@ class Profile:
     swap_overhead_s: float = 120.0    # dock, swap ship, undock
     ships: dict = field(default_factory=dict)   # per-hull stats, e.g. {"Vexor": {"combat_dps": 300, "ship_ehp": 40000, "ship_tank_dps": 150, "ship_value_isk": 15000000, "cargo_m3": 500}}
     avoid_yellow: bool = True         # soft avoid
-    min_profit_isk: float = 100_000.0
+    min_profit_isk: float = 1.0      # owner 2026-10-24: no flat ISK minimum; ISK/hr with the time counted decides
     min_margin: float = 0.03
 
     @property

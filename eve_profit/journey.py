@@ -6,7 +6,7 @@ from .orders import load_books, sell_into_bids, walk_trade
 
 DOCK_MIN = 2.0          # minutes per station you stop at
 DEST_RADIUS = 4         # "close out" can use any market this many jumps around the destination
-MIN_TRADE_PROFIT = 50_000.0
+MIN_TRADE_PROFIT = 0.0       # owner 2026-10-24: no flat minimum; a stop must still beat the time it costs (tcost)
 MAX_TRADES = 12
 TIME_VALUE_ISK_HR = 6_000_000.0   # what an hour of your time is worth when deciding if a side trip is worth it
 

@@ -10,7 +10,7 @@ from .orders import load_books, sell_into_bids
 from .sellplan import is_ore, ore_hold_m3
 
 DOCK_MIN = 2.0
-MIN_GAIN = 50_000.0
+MIN_GAIN = 1.0               # owner 2026-10-24: no flat minimum (the ISK/hr ranking decides)
 MAX_JUMPS = 25
 MAX_TRIPS = 3
 TRADE_WALLET_SHARE = 1.00    # owner 2026-10-21: no cap: route trades are bought on the way and SOLD at the destination, so the wallet is whole again for the next round
