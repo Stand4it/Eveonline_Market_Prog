@@ -36,3 +36,11 @@ def check_update(con, fetch=fetch_latest):
 def remember(con, build):
     set_meta(con, "sde_build", build)
     con.commit()
+    try:                                    # a patch may bring a hidden agent back: plan it again (agentleads.recheck_hidden)
+        from .agentleads import recheck_hidden
+        for aid, why in recheck_hidden(con, build):
+            r = con.execute("SELECT name FROM agent_names WHERE agent_id=?", (aid,)).fetchone()
+            print(f"AGENT BACK IN THE PLAN: {r[0] if r else aid} - {why}. The next dock at its station reads it; "
+                  f"if it is still not in the game run  python -m eve_profit noagents --item \"{r[0] if r else aid}\"  again.")
+    except Exception:                       # noqa: BLE001  (never break the data reload)
+        pass

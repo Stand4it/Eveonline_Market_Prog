@@ -84,5 +84,54 @@ class TestAgentLeads(unittest.TestCase):
             self.assertEqual(agentleads.candidates(con, G(), _p(500), 1_000_000, lambda *a: "x"), [])      # the station is known: no READ step
 
 
+class TestHiddenAgentsComeBack(unittest.TestCase):
+    DAY = 86400.0
+
+    def _hidden(self, build="b1", now=1_000_000_000.0):
+        con = _con()
+        con.execute("INSERT INTO agent_names VALUES(10,'Sakiseta Test')")
+        con.execute("INSERT INTO meta VALUES('sde_build',?)", (build,))
+        hidden = {10}
+        info = {10: agentleads._snapshot(con, 10, build, now)}
+        agentleads._save_none(con, hidden, info)
+        return con, now
+
+    def test_unchanged_data_inside_the_window_stays_hidden(self):
+        con, now = self._hidden()
+        self.assertEqual(agentleads.recheck_hidden(con, "b2", now + 10 * self.DAY), [])
+        self.assertEqual(agentleads._none(con), {10})
+
+    def test_agent_gone_then_back_in_the_data_is_planned_again(self):
+        con, now = self._hidden()
+        con.execute("DELETE FROM agents WHERE agent_id=10")
+        self.assertEqual(agentleads.recheck_hidden(con, "b2", now + self.DAY), [])      # CCP removed it: stays hidden, remembered as gone
+        con.execute("INSERT INTO agents VALUES(10,7,500,1,1,0,35,2)")
+        back = agentleads.recheck_hidden(con, "b3", now + 2 * self.DAY)
+        self.assertEqual([a for a, _ in back], [10])
+        self.assertEqual(agentleads._none(con), set())
+
+    def test_agent_moved_by_the_data_is_planned_again(self):
+        con, now = self._hidden()
+        con.execute("UPDATE agents SET location_id=501, system_id=2 WHERE agent_id=10")
+        self.assertEqual([a for a, _ in agentleads.recheck_hidden(con, "b2", now + self.DAY)], [10])
+
+    def test_old_hide_is_rechecked_after_a_patch_only(self):
+        con, now = self._hidden()
+        late = now + (agentleads.RECHECK_DAYS + 1) * self.DAY
+        self.assertEqual(agentleads.recheck_hidden(con, "b1", late), [])                 # same build: no patch, nothing to recheck
+        self.assertEqual([a for a, _ in agentleads.recheck_hidden(con, "b2", late)], [10])
+
+    def test_agents_hidden_before_the_record_existed_are_only_baselined(self):
+        con = _con()
+        con.execute("INSERT INTO meta VALUES('agentleads_none','[10]')")
+        self.assertEqual(agentleads.recheck_hidden(con, "b1", 1_000_000_000.0), [])
+        self.assertIn(10, agentleads._info(con))
+
+    def test_undo_puts_it_back(self):
+        con, _ = self._hidden()
+        self.assertEqual(agentleads.unhide(con, "Sakiseta"), 1)
+        self.assertEqual(agentleads._none(con), set())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -45,6 +45,90 @@ def _none(con):
         return set()
 
 
+INFO_KEY = "agentleads_none_info"                                      # {agent_id: {loc, present, build, day}} when and where a hidden agent was last seen in the game data
+RECHECK_DAYS = 60                                                       # a hidden agent whose data did not change is offered again after a patch this many days later
+
+
+def _info(con):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key=?", (INFO_KEY,)).fetchone()
+        return {int(k): v for k, v in json.loads(r[0]).items()} if r else {}
+    except Exception:                                                   # noqa: BLE001
+        return {}
+
+
+def _save_none(con, hidden, info):
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (NONE_KEY, json.dumps(sorted(hidden))))
+    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (INFO_KEY, json.dumps({str(k): v for k, v in sorted(info.items())})))
+
+
+def _snapshot(con, agent_id, build, now):
+    r = con.execute("SELECT location_id FROM agents WHERE agent_id=?", (int(agent_id),)).fetchone()
+    return {"loc": int(r[0]) if r and r[0] is not None else None, "present": bool(r), "build": build, "day": time.strftime("%Y-%m-%d", time.localtime(now))}
+
+
+def _build(con):
+    try:
+        r = con.execute("SELECT value FROM meta WHERE key='sde_build'").fetchone()
+        return r[0] if r else ""
+    except Exception:                                                   # noqa: BLE001
+        return ""
+
+
+def recheck_hidden(con, build=None, now=None):
+    """After every game-data reload (a patch): put a hidden agent BACK into the plan when the new data says something changed about it:
+    it is in the data again after being gone, it moved to another station, or the data is unchanged but the hide is older than RECHECK_DAYS
+    (the game may have restored it without the data changing; one dock-and-read step tells, and `noagents` hides it again). Agents hidden before
+    this record existed are only baselined (no change is guessed). -> [(agent_id, reason)] that are plannable again."""
+    now = time.time() if now is None else now
+    build = build or _build(con)
+    hidden, info = _none(con), _info(con)
+    back = []
+    for aid in sorted(hidden):
+        snap = _snapshot(con, aid, build, now)
+        old = info.get(aid)
+        if not old:
+            info[aid] = snap                                            # baseline only
+            continue
+        reason = ""
+        if snap["present"] and not old.get("present"):
+            reason = "it is in the game data again"
+        elif snap["present"] and old.get("loc") and snap["loc"] != old["loc"]:
+            reason = "the game data moved it to another station"
+        elif build and old.get("build") != build and snap["present"]:
+            try:
+                age = (now - time.mktime(time.strptime(old.get("day", ""), "%Y-%m-%d"))) / 86400.0
+            except ValueError:
+                age = 0.0
+            if age >= RECHECK_DAYS:
+                reason = f"hidden {int(age)} days ago; checking again after the patch"
+        if reason:
+            hidden.discard(aid)
+            info.pop(aid, None)
+            back.append((aid, reason))
+        else:
+            if not snap["present"]:
+                old = dict(old, present=False)
+            info[aid] = dict(old, build=old.get("build"))              # keep the build/day it was hidden under
+    _save_none(con, hidden, {k: v for k, v in info.items() if k in hidden})
+    con.commit()
+    return back
+
+
+def unhide(con, name):
+    """`noagents --undo`: plan the agent(s) called `name` again. -> number put back."""
+    hidden, info = _none(con), _info(con)
+    n = 0
+    for r in con.execute("SELECT agent_id FROM agent_names WHERE name LIKE ?", (f"%{name}%",)):
+        if int(r[0]) in hidden:
+            hidden.discard(int(r[0]))
+            info.pop(int(r[0]), None)
+            n += 1
+    _save_none(con, hidden, info)
+    con.commit()
+    return n
+
+
 def eligible(con, row, standing, hidden=None):
     """Can YOU see this agent? Not when you reported it hidden (`noagents`), when any of your standings with it, its corporation or its faction is below the level's minimum,
     or when the best of the three does not reach it. Agents you are not eligible for are never viewable in the game, so they are never a plan."""
@@ -75,7 +159,11 @@ def hide_here(con, p, name=""):
             if (names.get(r[0], "") or "").lower() not in known:
                 hidden.add(int(r[0]))
                 n += 1
-    con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (NONE_KEY, json.dumps(sorted(hidden))))
+    info, now, build = _info(con), time.time(), _build(con)
+    for aid in hidden:
+        if aid not in info:
+            info[aid] = _snapshot(con, aid, build, now)
+    _save_none(con, hidden, info)
     con.commit()
     return n
 

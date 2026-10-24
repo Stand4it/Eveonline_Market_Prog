@@ -77,6 +77,7 @@ def main(argv=None):
     ap.add_argument("--world", type=int, default=0, help="sellplan: also check the N biggest stacks in every region")
     ap.add_argument("--cash", type=float, default=0, help="day: extra ISK you expect to have (e.g. from selling stock)")
     ap.add_argument("--no-stock", action="store_true", help="day: leave out selling/listing the stock in your hangar")
+    ap.add_argument("--undo", action="store_true", help="noagents: plan the agent given with --item again")
     ap.add_argument("--item", default="", help="bestprice: item name or type id; ships: filter by ship name or class")
     ap.add_argument("--refresh", action="store_true", help="ships: read slots and class of new ships from the game (once per ship)")
     ap.add_argument("--qty", type=int, default=0, help="bestprice: quantity (default: what you hold here, else 1)")
@@ -672,8 +673,11 @@ def _run(a):
         print(_hreport())
         _hmark(con)                                              # these problems are now reported: the next step stays quiet until they change
     elif a.cmd == "noagents":
-        from .agentleads import hide_here
-        print(f"Hidden {hide_here(con, p, a.item or '')} agent(s) that are not viewable for you; they will not be planned again.")
+        from .agentleads import hide_here, unhide
+        if a.undo:
+            print(f"Put {unhide(con, a.item or '')} agent(s) back into the plan.")
+        else:
+            print(f"Hidden {hide_here(con, p, a.item or '')} agent(s) that are not viewable for you; a patch that moves or restores them puts them back in the plan.")
     elif a.cmd == "ships":
         from . import ships as _ships
         if a.refresh:
