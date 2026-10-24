@@ -1474,6 +1474,12 @@ def next_action(con, g, p, full=False, ahead=False):
         except Exception as _he:                                                                    # noqa: BLE001
             _hrec('nextstep', _he)
         out = finish_block(first)
+        try:                                                                                     # the game's notification feed (standings, expired offers, losses)
+            from .notices import notice as _gn
+            if _gn(con):
+                out += "\n\n" + _gn(con)
+        except Exception as _he:                                                                    # noqa: BLE001
+            _hrec('nextstep', _he)
         try:                                                                                     # CCP patch notes / news that touch ISK making, read daily by the hourly job
             from .patchnotes import notice as _pn
             if _pn():
