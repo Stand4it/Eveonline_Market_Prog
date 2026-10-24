@@ -81,3 +81,5 @@ Open agent offers (agent_offers.json):
 - Naki Vikkiras: 'Save The Children': courier 3 x Crates of Clothing from the
 - Iji Kiyura: 'Army Recruits': courier 5 x Group of Army Recruits from the
 - Totavuo Ahupittoh: 'Corporate Documents': courier 4 x Crates of Corporate Docum
+- Aratani Endagas: 'Lost That Bet (1 of 5)': courier 1 x Dolls, pick up at Tenn
+- Penaka Mogenainen: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
