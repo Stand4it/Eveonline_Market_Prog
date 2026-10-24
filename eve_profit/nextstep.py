@@ -78,6 +78,8 @@ def detour_gain(d, b):
 
 
 KEEP_NOTES = []                                                  # why stacks here were NOT offered for sale (shown in `next --plan`)
+STICK_EDGE = 1.5                                                 # a plan under way keeps going unless another pays 50% more (2026-10-24 ping-pong)
+REVISIT_EDGE = 1.5                                               # flying back into a system of your last 6 moves needs 50% more than going on
 
 
 def _next_action_core(con, g, p):
@@ -1297,7 +1299,7 @@ def next_action(con, g, p, full=False, ahead=False):
             _last = (_jj.loads(_r[0]) if _r else {}).get("label")
             if _last and cands and cands[0][1] != _last:
                 _i = next((i for i, c in enumerate(cands) if c[1] == _last), None)
-                if _i is not None and cands[0][0] < cands[_i][0] * 1.15 and cands[0][0] != float("inf"):
+                if _i is not None and cands[0][0] < cands[_i][0] * STICK_EDGE and cands[0][0] != float("inf"):   # was 1.15: plans switched every jump
                     cands.insert(0, cands.pop(_i))
             try:                                                 # ARRIVED at the agent you were sent to: accept it first (2 minutes) instead of re-ranking and flying away again
                 _lp = _jj.loads(_r[0]) if _r else {}
@@ -1370,12 +1372,18 @@ def next_action(con, g, p, full=False, ahead=False):
         from .livepos import reversal as _rev
         _FLY = _re.compile(r"STEP: FLY to ([^\n]+?)(?: - |$|\n)")
 
+        from .livepos import recent_systems as _recent
+        _been = _recent(con, p.current_system)
+
         def _flip(c):
             m = _FLY.search(c[2] or "")
-            return _rev(con, m.group(1).strip(), p.current_system) if m else 0
+            if not m:
+                return 0
+            tgt = m.group(1).strip()
+            return _rev(con, tgt, p.current_system) or (2 if tgt.lower() in _been else 0)   # back where you came from, or into any system of your last moves
         if cands and _flip(cands[0]):
             alt = next((i for i, c in enumerate(cands[1:], 1) if not _flip(c)), None)
-            if alt is not None:                                  # never bounce back: carry on one more step with the plan under way (and again if the bounce shows up again)
+            if alt is not None and cands[0][0] < REVISIT_EDGE * cands[alt][0]:   # a loop back only wins when it pays clearly (50%) more than going on
                 cands.insert(0, cands.pop(alt))
     except Exception as _he:                                            # noqa: BLE001
         _hrec('nextstep', _he)

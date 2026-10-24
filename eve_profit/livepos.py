@@ -128,6 +128,27 @@ def reversal(con, fly_target, here, now=None):
     return 1
 
 
+REVISIT_MOVES = 6
+REVISIT_HOURS = 3.0
+
+
+def recent_systems(con, here, now=None, moves=REVISIT_MOVES, hours=REVISIT_HOURS):
+    """Systems you passed through in your last `moves` moves (within `hours`), except where you are now. A plan that flies you back INTO one
+    of them is a loop (2026-10-24: Uedama > Sivala > ... > Kamio > Halaima > Huttaken > Halaima > Kamio > Ikao > Uedama for ~0 ISK)."""
+    import json
+    import time
+    try:
+        row = con.execute("SELECT value FROM meta WHERE key=?", (JUMPS_KEY,)).fetchone()
+        log = json.loads(row[0]) if row else []
+    except Exception:                                                   # noqa: BLE001
+        return set()
+    now = now or time.time()
+    log = [x for x in log if now - x[0] < hours * 3600][-moves:]
+    out = {str(x[1]).lower() for x in log} | {str(x[2]).lower() for x in log}
+    out.discard(str(here).lower())
+    return out
+
+
 def note_fly(con, here, target, now=None):
     """Remember the FLY step just given (here -> target) so the next call can tell a reversal."""
     import json
