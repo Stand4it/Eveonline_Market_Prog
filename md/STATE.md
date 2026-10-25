@@ -78,3 +78,5 @@ Open agent offers (agent_offers.json):
 - Aratani Endagas: 'Lost That Bet (2 of 5)': go to the set location in Yashunen
 - Penaka Mogenainen: 'A New Venture - Right People (2 of 5)': courier 1 x Group o
 - Itakairos Ohbesa: 'Onslaught': task to the silent mining operation in Ikao (0.
+- Kimuruola Sitsudan: 'What's in a Name - Change of Address (1 of 5)': task to the
+- Sigechiro Onzo: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
