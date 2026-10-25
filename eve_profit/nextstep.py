@@ -347,6 +347,49 @@ def trade_extras(con, g, p, o):
 
 
 _OFFERS_CACHE = {}
+_INCLUDE_BLOCKED = [False]
+
+
+def combat_ready(con, g, p):
+    """True when the ship you fly is combat-ready (combatprep finds no missing piece: hull, guns, ammo, tank)."""
+    if g is None or p is None:
+        return True
+    try:
+        from . import combatprep
+        return not combatprep.next_step(con, g, p, lambda *a, **k: "x")
+    except Exception:                                                   # noqa: BLE001
+        return False
+
+
+def agent_long_view(con, g, p, top=12):
+    """THE LONG VIEW for agent offers (owner 2026-10-25): every open offer by ISK/min from here, READY or what prep it still needs.
+    The prep (guns + tank, miners, salvager) is on the SHOPPING list and is bought when your route passes the cheapest place."""
+    _INCLUDE_BLOCKED[0] = True
+    _OFFERS_CACHE.clear()
+    try:
+        rows = _offers_rows_calc(con, g, p, __import__("pathlib").Path(__file__).resolve().parents[1] / "agent_offers.json")
+    finally:
+        _INCLUDE_BLOCKED[0] = False
+        _OFFERS_CACHE.clear()
+    if not rows:
+        return ""
+    try:
+        from . import tools as _tl
+        fitted = _tl.fitted_now(con)
+    except Exception:                                                   # noqa: BLE001
+        fitted = {}
+    ready = combat_ready(con, g, p)
+    L = ["AGENT OFFERS, best ISK per minute first (from where you are; prep is bought on the way where it is cheapest):"]
+    for rate, net, minutes, o, _tags in rows[:top]:
+        nt = o.get("needs_tool")
+        if nt == "gun":
+            need = "READY" if ready else "NEEDS a combat fit that passes the 99% rule (guns, tank, cap: see SHOPPING)"
+        elif nt and not fitted.get(nt):
+            need = f"NEEDS {nt} gear fitted (see SHOPPING)"
+        else:
+            need = "READY"
+        L.append(f"   {rate / 60:>8,.0f} ISK/min  {o['agent'].split(' (')[0]}: {o.get('mission', '')[:55]}  [{need}]")
+    return "\n".join(L)
 
 
 def offers_rows(con, g=None, p=None):
@@ -388,9 +431,12 @@ def _offers_rows_calc(con, g, p, f):
         return float(est), "est"
 
     rows = []
+    ready = combat_ready(con, g, p)
     for o in d["offers"]:
         if not o.get("available", True):
             continue
+        if o.get("needs_tool") == "gun" and not ready and not _INCLUDE_BLOCKED[0]:
+            continue                                                    # combat waits for a fit that passes the 99% rule (2026-10-21 ship loss); listed in the long view
         cash = (o.get("isk", 0) + o.get("bonus", 0)) * ((1 - tax) if o.get("taxed", True) else 1.0)
         loot, cost, tags = 0.0, 0.0, []
         for it in o.get("loot", []):
@@ -1365,6 +1411,12 @@ def next_action(con, g, p, full=False, ahead=False):
             long_view = (long_view + "\n\n" + _al) if (long_view and _al) else (long_view or _al)
         except Exception as _he:                                        # noqa: BLE001
             _hrec('nextstep', _he)
+        if ahead:                                                       # every open agent offer, ranked, with its prep (only for next --plan: it costs a few seconds)
+            try:
+                _ag = agent_long_view(con, g, p)
+                long_view = (long_view + "\n\n" + _ag) if (long_view and _ag) else (long_view or _ag)
+            except Exception as _he:                                    # noqa: BLE001
+                _hrec('nextstep', _he)
     except Exception as _he:                                            # noqa: BLE001
         _hrec('nextstep', _he)
     try:                                                         # NO PING-PONG: a first step that flies straight back to the system you just left must be clearly better than the best step that does not
