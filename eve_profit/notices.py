@@ -38,10 +38,55 @@ def _line(con, ntype, ts, text):
         m = re.match(r"\s*-\s*-\s*(\d+)\s*\n\s*-\s*\d+\s*\n\s*-\s*(-?[\d.e-]+)(?:\s*\n\s*-\s*-?[\d.]+){2}(?:\s*\n\s*-\s*(-?[\d.e-]+))?", text or "")
         if m:
             who = con.execute("SELECT name FROM agent_names WHERE agent_id=?", (int(m.group(1)),)).fetchone()
-            shown = abs(float(m.group(2))) * 10.0 * (-1 if ntype.endswith("Lost") else 1)   # the game shows 10x the raw change (Veirainen -0.0812 -> -0.812)
+            shown = float(m.group(2)) * 10.0                            # the game shows 10x the raw change; its SIGN is the truth: CCP types gains as
+            lab = "Standing increased" if shown > 0 else "Standing DECREASED"   # 'NPCStandingsLost' too (2026-10-25: two completed missions showed as losses)
             n_other = max((text or "").count("- - ") - 1, 0)
             extra += f": {who[0] if who else 'agent ' + m.group(1)} {shown:+.3f}" + (f" ({n_other} other standings affected)" if n_other else "")
     return f"   {ts[:16].replace('T', ' ')}  {lab}{extra}"
+
+
+def expire_offers(con):
+    """Mark recorded offers that the game says EXPIRED as gone (available=false), so `next` stops planning them. A notice matches an open,
+    not-accepted offer with the same cash reward whose pickup/drop-off system is one of the notice's systems (or that has none recorded),
+    recorded on or before that day. -> names of the offers closed."""
+    import os
+    import sys as _sys
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    _sys.path.insert(0, os.path.join(root, "scripts"))
+    from offers_lock import offers_lock
+    rows = con.execute("SELECT ts, text FROM notifications WHERE type='MissionOfferExpirationMsg'").fetchall()
+    if not rows:
+        return []
+    names = {r[0]: r[1] for r in con.execute("SELECT system_id, name FROM systems")}
+    path = os.path.join(root, "agent_offers.json")
+    closed = []
+    with offers_lock():
+        d = json.load(open(path, encoding="utf-8"))
+        for ts, text in rows:
+            reward = _num(text, "rewardQuantity")
+            if not reward:
+                continue
+            systems = {names.get(int(v)) for k in ("objectiveLocationSystemID", "objectiveDestinationSystemID", "dungeonSolarSystemID")
+                       for v in [_num(text, k)] if v} - {None}
+            day = (ts or "")[:10]
+            for o in d["offers"]:
+                if not o.get("available", True) or o.get("accepted") or int(o.get("isk", -1)) != int(reward):
+                    continue
+                osys = {o.get("agent_system"), o.get("to_system")} - {None, ""}
+                seen = re.search(r"Seen (\d{4}-\d{2}-\d{2})", o.get("note", "") or "")
+                if systems and osys and not (systems & osys):
+                    continue
+                if seen and seen.group(1) > day:
+                    continue                                            # a newer offer from the same agent: not this one
+                o["available"] = False
+                o["note"] = (o.get("note", "") + f" EXPIRED {day} (game notice).").strip()
+                closed.append(o["agent"].split(" (")[0])
+                break
+        if closed:
+            with open(path, "w", encoding="utf-8", newline="\n") as f:
+                json.dump(d, f, indent=1, ensure_ascii=False)
+                f.write("\n")
+    return closed
 
 
 def _seen(con):

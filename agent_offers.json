@@ -607,12 +607,12 @@
    "granted": [],
    "task_min": 15,
    "jumps": 1,
-   "available": true,
+   "available": false,
    "where": "Alenia V - Duvolle Laboratories Factory (agent); Vaere (objective)",
    "agent_system": "Alenia",
    "to_system": "Vaere",
    "career": "Security",
-   "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each. Route checked 2026-10-17: Alenia>Vaere 1 jump, Vaere>Tourier 2; NOT on the Alenia>Tourier route (that is 1 jump), detour +2 jumps."
+   "note": "Seen 2026-10-16. Objective is an observation ('look for signs'), combat not stated: read the objective after accepting and decline/ignore anything that needs a fight (99% rule). Jumps to Vaere estimated (2) until the route is known; part 1 of a 4-part chain, 33 LP each. Route checked 2026-10-17: Alenia>Vaere 1 jump, Vaere>Tourier 2; NOT on the Alenia>Tourier route (that is 1 jump), detour +2 jumps. EXPIRED 2026-10-23 (game notice)."
   },
   {
    "agent": "Ongunbjer Hetinold (Security, L1, Tourier III - Republic Security Services Assembly Plant)",
@@ -663,13 +663,13 @@
    "granted": [],
    "task_min": 10,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Irjunen II - Caldari Steel Warehouse (0.5)",
    "agent_system": "Irjunen",
    "to_system": "Irjunen",
    "career": "Distribution",
    "needs": "nothing special: 160 m3 of cargo fits the Incursus; no combat; both stations are in Irjunen (0.5, safe)",
-   "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (the pickup tick is already set), so: accept, undock, warp to Irjunen V, dock, deliver. 78,000 ISK + 48 LP for about 10 min if the bonus is made. Both ends are inside Irjunen, so the 1 h 18 min bonus clock is easy."
+   "note": "Seen 2026-10-17, standing 0.0. Pickup is at the agent's own station (the pickup tick is already set), so: accept, undock, warp to Irjunen V, dock, deliver. 78,000 ISK + 48 LP for about 10 min if the bonus is made. Both ends are inside Irjunen, so the 1 h 18 min bonus clock is easy. EXPIRED 2026-10-24 (game notice)."
   },
   {
    "agent": "Askalaisen Oni (Distribution, L1, Irjunen V - CBD Sell Division Retail Center)",
@@ -742,13 +742,13 @@
    "granted": [],
    "task_min": 30,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Uedama III - Moon 1 - Caldari Steel Warehouse (0.5)",
    "agent_system": "Uedama",
    "to_system": "Haatomo",
    "career": "Security",
    "needs": "a Security-division agent, but this objective is a pickup and bring-back, not a kill order. The Mediation Center is a mission site (normal ship restrictions): look at it on arrival and do not stay if hostile NPCs are there",
-   "note": "Seen 2026-10-17 23:02 while docked at Uedama III. Part 1 of 4. 98,000 ISK + 58 LP with the bonus, the best pay of the offers here. Same Haatomo trip as Marukaiken Mamareki's mission: take BOTH. Accept both here, fly to Haatomo, pick up the diplomat and the book, fly back."
+   "note": "Seen 2026-10-17 23:02 while docked at Uedama III. Part 1 of 4. 98,000 ISK + 58 LP with the bonus, the best pay of the offers here. Same Haatomo trip as Marukaiken Mamareki's mission: take BOTH. Accept both here, fly to Haatomo, pick up the diplomat and the book, fly back. EXPIRED 2026-10-24 (game notice)."
   },
   {
    "agent": "Takashi Shioken (Distribution, L1, Haatomo VI - Moon 1 - Caldari Provisions Warehouse)",
@@ -970,13 +970,13 @@
    "granted": [],
    "task_min": 12,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Sankkasen VII - Moon 6 - Expert Housing Production Plant (0.7)",
    "agent_system": "Sankkasen",
    "to_system": "Sankkasen",
    "career": "Distribution",
    "needs": "nothing special: pickup and drop-off are both in Sankkasen (0.7, safe), 0.1 m3, no combat",
-   "note": "Seen 2026-10-18 2:30 am, standing 0.0. Part 1 of 4. 73,000 ISK + 45 LP for about 12 minutes if the bonus is made, all inside one system: the best-paying non-combat offer seen so far per minute. Sankkasen also has Ieyodan Ahomon's drone mission (combat) and receives Alalomo Mainsaken's Army Recruits courier from Santola."
+   "note": "Seen 2026-10-18 2:30 am, standing 0.0. Part 1 of 4. 73,000 ISK + 45 LP for about 12 minutes if the bonus is made, all inside one system: the best-paying non-combat offer seen so far per minute. Sankkasen also has Ieyodan Ahomon's drone mission (combat) and receives Alalomo Mainsaken's Army Recruits courier from Santola. EXPIRED 2026-10-25 (game notice)."
   },
   {
    "agent": "Viken Antilen (Security, L1, Sankkasen VII - Moon 10 - Spacelane Patrol Assembly Plant)",
@@ -1480,7 +1480,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Juunigaishi",
    "career": "Distribution",
    "where": "Juunigaishi X - Moon 3 - Caldari Provisions Food Packaging (0.6)",
@@ -1493,7 +1493,7 @@
    "to_system": "Isikesu",
    "m3": 270.0,
    "needs": "a ship with 270 m3 of cargo (not a capsule); jump count Juunigaishi -> Isikesu is an estimate: confirm it",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as Porhila Huken."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as Porhila Huken. EXPIRED 2026-10-25 (game notice)."
   },
   {
    "taxed": false,

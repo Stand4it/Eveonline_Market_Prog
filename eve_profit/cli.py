@@ -271,6 +271,13 @@ def _run(a):
                 print(f"SHIP CHANGED: you fly {p.ship_name} now (hold {p.cargo_m3:,.0f} m3); the last sync said {_ship_before[0]}. Plans use this ship from now on.")
             p.save(a.profile)
             print("Profile updated:", a.profile)
+            try:                                                         # offers the game says EXPIRED leave the plan
+                from .notices import expire_offers as _exp
+                _gone = _exp(con)
+                if _gone:
+                    print(f"EXPIRED OFFERS removed from the plan ({len(_gone)}): {', '.join(_gone[:8])}{' ...' if len(_gone) > 8 else ''}")
+            except Exception:                                            # noqa: BLE001
+                pass
             try:                                                         # fresh wrecks in the system you are in (public killboard): a salvage lead
                 from .graph import Graph as _G
                 from .killleads import refresh as _kl
