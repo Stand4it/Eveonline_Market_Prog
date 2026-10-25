@@ -20,7 +20,6 @@ Open agent offers (agent_offers.json):
 - Ruotkaishi Karjiras: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
 - Yarjonoisen Koshamagae: 'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) fro
 - Ausmunen Karantala: 'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Isik
-- Kouyonen Kaimienen: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Abata Kavalala: 'Supplies For The Needy': courier 3 x Crates of Oxygen (210 
 - Ananam Besuda: 'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) from K
 - Ozomawa Jindaken: 'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Kaap
@@ -78,3 +77,4 @@ Open agent offers (agent_offers.json):
 - Totavuo Ahupittoh: 'Corporate Documents': courier 4 x Crates of Corporate Docum
 - Aratani Endagas: 'Lost That Bet (2 of 5)': go to the set location in Yashunen
 - Penaka Mogenainen: 'A New Venture - Right People (2 of 5)': courier 1 x Group o
+- Itakairos Ohbesa: 'Onslaught': task to the silent mining operation in Ikao (0.

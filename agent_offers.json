@@ -1697,7 +1697,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Anttiri",
    "career": "Distribution",
    "where": "Anttiri V - Moon 20 - Perkone Factory (0.7)",
@@ -1710,7 +1710,7 @@
    "to_system": "Isikesu",
    "m3": 320.0,
    "needs": "a ship with 320 m3 of cargo (not a capsule); jump count Anttiri -> Isikesu is an estimate: confirm it",
-   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 6 is also the drop-off of Ausmunen Karantala's coolant and of Renin Heleneto's recruits: one stop there delivers all three. Poukinen Ukilen's frozen food starts at Anttiri V Moon 14 (same system)."
+   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 6 is also the drop-off of Ausmunen Karantala's coolant and of Renin Heleneto's recruits: one stop there delivers all three. Poukinen Ukilen's frozen food starts at Anttiri V Moon 14 (same system). EXPIRED 2026-10-25 (game notice)."
   },
   {
    "taxed": false,
@@ -3161,6 +3161,27 @@
    "needs": "0.1 m3 of cargo; Tennen is 1 jump(s) from Yashunen (map DB route)",
    "note": "Seen 2026-10-24, standing 0.0. Round trip to Tennen; same pickup system as Aratani's. 39,000 ISK + 26 LP with the bonus. 2026-10-25: part 1 DONE, standing 0.2.",
    "lp": 18
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Juunigaishi",
+   "career": "Security",
+   "where": "Juunigaishi III - Spacelane Patrol Assembly Plant (0.6)",
+   "agent": "Itakairos Ohbesa (Security, L1, Juunigaishi III - Spacelane Patrol Assembly Plant (0.6))",
+   "mission": "'Onslaught': task to the silent mining operation in Ikao (0.6): make contact, then fight (rich L1 = a hard site). Pays 131,000 ISK + 144 LP; bonus 139,000 ISK within 4 h 16 min.",
+   "isk": 131000,
+   "bonus": 139000,
+   "task_min": 40,
+   "jumps": 1,
+   "to_system": "Ikao",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Ikao is 1 jump(s) from Juunigaishi (map DB route)",
+   "note": "Seen 2026-10-25, standing 0.0. 270,000 ISK + 144 LP with the bonus: the pay of a hard multi-wave combat site; NOT with the current fit (3.7 dps, capacitor out in 1:42).",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
