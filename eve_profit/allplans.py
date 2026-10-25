@@ -10,17 +10,28 @@ from .lookahead import act_rate
 MAX_ROWS = 25
 
 
+COMBAT_IDS = {"agent_l1_security", "agent_l2_security", "ratting", "combat_anomalies", "homefront_ops", "escalations", "merc_dens", "epic_other"}
+
+
 def rows(con, g, p, best_known, hull=None, owned=(), tools=None):
     """-> [{name, per_min, rate, state, ready, missing, kind}] best ISK/min first."""
     out = []
+    try:                                                                # combat activities are READY only with a combat-ready fit (2026-10-25: ratting showed READY with 3.7 dps)
+        from .nextstep import combat_ready
+        fit_ok = combat_ready(con, g, p)
+    except Exception:                                                   # noqa: BLE001
+        fit_ok = False
     for a in status(con, float(getattr(p, "wallet_isk", 0.0) or 0.0), hull, owned, tools):
         if a.get("blocked"):
             continue
         rate, src = act_rate(a)
         rate *= 1.0 - RISK_HAIRCUT.get(a.get("risk", "low"), 0.0)
         info = INFO_WEIGHT * voi(a, best_known) if a["state"] != "MODELED" else 0.0
-        out.append({"name": a["name"], "per_min": (rate + info) / 60.0, "rate": rate, "info": info, "state": a["state"], "src": src, "ready": a["unlocked"],
-                    "missing": a["missing"], "where": a.get("where"), "kind": "activity"})
+        ready, missing = a["unlocked"], list(a["missing"] or [])
+        if ready and a.get("id") in COMBAT_IDS and not fit_ok:
+            ready, missing = False, missing + ["a combat fit that passes the 99% rule (guns, tank, capacitor: see SHOPPING)"]
+        out.append({"name": a["name"], "per_min": (rate + info) / 60.0, "rate": rate, "info": info, "state": a["state"], "src": src, "ready": ready,
+                    "missing": missing, "where": a.get("where"), "kind": "activity"})
     try:                                                                # blocked AIR daily goals (ship / tool missing)
         from .shopping import blocked_goals
         for b in blocked_goals(con, g, p):
