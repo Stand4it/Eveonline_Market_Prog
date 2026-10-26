@@ -3244,6 +3244,27 @@
    "needs": "2000 m3 of cargo; Anttiri is 0 jump(s) from Anttiri (map DB route)",
    "note": "Seen 2026-10-26, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 66 LP with the bonus.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Urlen",
+   "career": "Security",
+   "where": "Urlen VII - Moon 6 - Hyasyoda Corporation Refinery (0.9)",
+   "agent": "Haro Honnamaiken (Security, L1, Urlen VII - Moon 6 - Hyasyoda Corporation Refinery (0.9))",
+   "mission": "'Escaped Spy': courier 1 x Prisoner: destroy the spy's ship at the terrorist outpost in Kisogo, loot him from the escape capsule container (1 m3) to Urlen VII - Moon 6 (the agent's station). Pays 33,000 ISK + 46 LP; bonus 38,000 ISK within 2 h.",
+   "isk": 33000,
+   "bonus": 38000,
+   "task_min": 25,
+   "jumps": 1,
+   "to_system": "Kisogo",
+   "m3": 1.0,
+   "needs": "1 m3 of cargo; Kisogo is 1 jump(s) from Urlen (map DB route)",
+   "note": "Seen 2026-10-26, standing 0.0. Combat: kill one fugitive ship (may be guarded at the outpost). 71,000 ISK + 46 LP with the bonus.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

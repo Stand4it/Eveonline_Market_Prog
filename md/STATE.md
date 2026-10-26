@@ -77,3 +77,4 @@ Open agent offers (agent_offers.json):
 - Kimuruola Sitsudan: 'What's in a Name - Change of Address (1 of 5)': task to the
 - Sigechiro Onzo: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
 - Nuulkata Junkka: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
+- Haro Honnamaiken: 'Escaped Spy': courier 1 x Prisoner: destroy the spy's ship 
