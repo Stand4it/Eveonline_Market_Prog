@@ -9,10 +9,6 @@ Open agent offers (agent_offers.json):
 - Arnelin Ygegnere: step 10 of 10 'Making Mountains of Molehills' (FINAL): acqui
 - Cassandra Ahfrim: 'Holographic Reenactment' (Visions of Greatness 1 of 8): rep
 - Marukaiken Mamareki: 'A New Venture - Right People (2 of 5)': courier 1 x Group o
-- Nani Hananeri: 'Regional Stability - Moving the Consul' (1 of 4): fetch 1 x
-- Ibeshi Keirsaa: 'The Heiress' (1 of 5): courier 1 x Miniature Slaver (0.0 m3
-- Torimanoi Vittoh: 'A Special Breed': courier 3 x Group of Kameiras (210 m3) fr
-- Aakalen Naniro: 'Asteroid Catastrophe': scan the mission site in Saila (0.9,
 - Porhila Huken: 'Move The Goods': courier 10 x Small Sealed Cargo Containers
 - Ohminen Saskora: 'Save The Children': courier 3 x Crates of Clothing (180 m3)
 - Poukinen Ukilen: 'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates
@@ -80,3 +76,4 @@ Open agent offers (agent_offers.json):
 - Itakairos Ohbesa: 'Onslaught': task to the silent mining operation in Ikao (0.
 - Kimuruola Sitsudan: 'What's in a Name - Change of Address (1 of 5)': task to the
 - Sigechiro Onzo: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
+- Nuulkata Junkka: 'Starting Simple': courier 20,000 x Banidine (mission ore) m

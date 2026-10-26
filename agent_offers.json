@@ -1388,13 +1388,13 @@
    "granted": [],
    "task_min": 12,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Motsu VIII - Moon 1 - Rapid Assembly Warehouse (0.9)",
    "agent_system": "Motsu",
    "to_system": "Motsu",
    "career": "Distribution",
    "needs": "nothing special: pickup (Motsu VII Moon 5) and drop-off (Motsu VIII Moon 1) are both in Motsu (0.9), 0.1 m3, no combat",
-   "note": "Seen 2026-10-18 ~6:15 pm, standing 0.0. Part 1 of 4. 61,000 ISK + 36 LP for about 12 minutes inside one 0.9 system (roughly 300k ISK/hr). Motsu III is also where Ikala Iijotsadan's courier (Oichiya) delivers (39k), and Motsu is a 0.9 system so it is safe. Same mission as Adomago Karjus's (Sankkasen), different agent."
+   "note": "Seen 2026-10-18 ~6:15 pm, standing 0.0. Part 1 of 4. 61,000 ISK + 36 LP for about 12 minutes inside one 0.9 system (roughly 300k ISK/hr). Motsu III is also where Ikala Iijotsadan's courier (Oichiya) delivers (39k), and Motsu is a 0.9 system so it is safe. Same mission as Adomago Karjus's (Sankkasen), different agent. EXPIRED 2026-10-25 (game notice)."
   },
   {
    "agent": "Yahutola Unen (Distribution, L1, Motsu VII - Moon 5 - Caldari Constructions Foundry)",
@@ -1420,7 +1420,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Saila",
    "career": "Distribution",
    "where": "Saila VII - Moon 15 - Echelon Entertainment Development Studio (0.9)",
@@ -1433,14 +1433,14 @@
    "to_system": "Isenairos",
    "m3": 0.0,
    "needs": "a ship (0 m3 cargo, no combat); Isenairos is 2 jumps from Saila (to confirm); the pickup is away from the agent, so it is a round trip",
-   "note": "Seen 2026-10-19, standing 0.0. Chain of 5. Ibeshi's pickup is Isenairos: pairs with Immonairos Iros's documents (Isenairos -> Saila) in the same trip."
+   "note": "Seen 2026-10-19, standing 0.0. Chain of 5. Ibeshi's pickup is Isenairos: pairs with Immonairos Iros's documents (Isenairos -> Saila) in the same trip. EXPIRED 2026-10-26 (game notice)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Saila",
    "career": "Distribution",
    "where": "Saila VII - Moon 15 - Echelon Entertainment Development Studio (0.9)",
@@ -1453,14 +1453,14 @@
    "to_system": "Saila",
    "m3": 210.0,
    "needs": "a ship with 210 m3 of cargo (a capsule cannot carry it); pickup is at the agent's station, drop in the same system",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as Ibeshi: accept both, deliver this one inside Saila."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as Ibeshi: accept both, deliver this one inside Saila. EXPIRED 2026-10-26 (game notice)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Saila",
    "career": "Mining",
    "where": "Saila VII - Moon 11 - Rapid Assembly Factory (0.9)",
@@ -1473,7 +1473,7 @@
    "to_system": "Saila",
    "m3": 1080.0,
    "needs": "mining lasers fitted + a ship with 1,080 m3 of ore hold (your Venture, far away at Dodixie; a capsule cannot); the site is a scanned mission site in Saila",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as the Saila distribution agents, so one visit reads and accepts all of them."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as the Saila distribution agents, so one visit reads and accepts all of them. EXPIRED 2026-10-26 (game notice)."
   },
   {
    "taxed": false,
@@ -3223,6 +3223,27 @@
    "m3": 60.0,
    "needs": "60 m3 of cargo; Isikesu is 1 jump(s) from Juunigaishi (map DB route)",
    "note": "Seen 2026-10-25, standing 0.0. Pickup at a deadspace outpost (red icon): may have guards, grab and warp out. 95,000 ISK + 53 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Anttiri",
+   "career": "Mining",
+   "where": "Anttiri V - Moon 18 - Poksu Mineral Group Mineral Reserve (0.7)",
+   "agent": "Nuulkata Junkka (Mining, L1, Anttiri V - Moon 18 - Poksu Mineral Group Mineral Reserve (0.7))",
+   "mission": "'Starting Simple': courier 20,000 x Banidine (mission ore) mined at the asteroid field in Anttiri (2000 m3) to the agent's station. Pays 49,000 ISK + 66 LP; bonus 44,000 ISK within 1 h 26 min.",
+   "isk": 49000,
+   "bonus": 44000,
+   "task_min": 35,
+   "jumps": 0,
+   "to_system": "Anttiri",
+   "m3": 2000.0,
+   "needs": "2000 m3 of cargo; Anttiri is 0 jump(s) from Anttiri (map DB route)",
+   "note": "Seen 2026-10-26, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 66 LP with the bonus.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,
