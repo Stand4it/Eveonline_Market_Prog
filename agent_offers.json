@@ -1500,7 +1500,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Juunigaishi",
    "career": "Distribution",
    "where": "Juunigaishi X - Moon 3 - Caldari Provisions Food Packaging (0.6)",
@@ -1513,7 +1513,7 @@
    "to_system": "Haatomo",
    "m3": 100.0,
    "needs": "a ship with 100 m3 of cargo (not a capsule); jump count Juunigaishi -> Haatomo is an estimate: confirm it",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as Epas Hopara."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as Epas Hopara. EXPIRED 2026-10-26 (game notice)."
   },
   {
    "taxed": false,
@@ -1522,7 +1522,7 @@
    "granted": [],
    "agent_system": "Isikesu",
    "where": "Isikesu I - Moon 3 - CBD Sell Division Warehouse (0.7)",
-   "available": true,
+   "available": false,
    "career": "Distribution",
    "agent": "Ohminen Saskora (Distribution, L1, Isikesu I - Moon 3 - CBD Sell Division Warehouse)",
    "mission": "'Save The Children': courier 3 x Crates of Clothing (180 m3) from Isikesu I Moon 3 to Isikesu IV - Moon 5 - Caldari Navy Logistic Support (0.7), same system. Pays 26,000 ISK + 30 LP; bonus 24,000 ISK within 54 min.",
@@ -1533,7 +1533,7 @@
    "to_system": "Isikesu",
    "m3": 180.0,
    "needs": "a ship with 180 m3 of cargo (not a capsule)",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1542,7 +1542,7 @@
    "granted": [],
    "agent_system": "Isikesu",
    "where": "Isikesu I - Moon 3 - CBD Sell Division Warehouse (0.7)",
-   "available": true,
+   "available": false,
    "career": "Distribution",
    "agent": "Poukinen Ukilen (Distribution, L1, Isikesu I - Moon 3 - CBD Sell Division Warehouse)",
    "mission": "'For the Troops - Food for Fun' (1 of 3): courier 1 x Crates of Frozen Food (40 m3) from Anttiri V - Moon 14 - Spacelane Patrol Assembly Plant (0.7) to Isikesu I Moon 3. Pays 24,000 ISK + 33 LP; bonus 23,000 ISK within 1 h 2 min.",
@@ -1553,7 +1553,7 @@
    "to_system": "Anttiri",
    "m3": 40.0,
    "needs": "a ship with 40 m3 of cargo; the pickup is at Anttiri (jump count Isikesu -> Anttiri is an estimate: confirm it)",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all. Part 1 of 3."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all. Part 1 of 3. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1562,7 +1562,7 @@
    "granted": [],
    "agent_system": "Isikesu",
    "where": "Isikesu I - Moon 3 - CBD Sell Division Warehouse (0.7)",
-   "available": true,
+   "available": false,
    "career": "Distribution",
    "agent": "Renin Heleneto (Distribution, L1, Isikesu I - Moon 3 - CBD Sell Division Warehouse)",
    "mission": "'Army Recruits': courier 5 x Group of Army Recruits (300 m3) from Isikesu I Moon 3 to Isikesu IV - Moon 6 - CBD Sell Division Warehouse (0.7), same system. Pays 25,000 ISK + 29 LP; bonus 26,000 ISK within 54 min.",
@@ -1573,7 +1573,7 @@
    "to_system": "Isikesu",
    "m3": 300.0,
    "needs": "a ship with 300 m3 of cargo (not a capsule; check the hold of the ship you fly)",
-   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all."
+   "note": "Seen 2026-10-19, standing 0.0. Same station as the other four Isikesu agents: one dock reads and accepts all. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1599,7 +1599,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikesu",
    "career": "Distribution",
    "where": "Isikesu IV - Moon 14 - Hyasyoda Corporation Mining Outpost (0.7)",
@@ -1612,7 +1612,7 @@
    "to_system": "Juunigaishi",
    "m3": 40.0,
    "needs": "a ship with 40 m3 of cargo; the pickup is at Juunigaishi VII (jump count Isikesu -> Juunigaishi is an estimate: confirm it)",
-   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 14 is also the drop-off of Epas Hopara's spiced wine (Juunigaishi -> Isikesu): one Juunigaishi trip can serve both. Part 1 of 3."
+   "note": "Seen 2026-10-20, standing 0.0. Isikesu IV Moon 14 is also the drop-off of Epas Hopara's spiced wine (Juunigaishi -> Isikesu): one Juunigaishi trip can serve both. Part 1 of 3. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1621,7 +1621,7 @@
    "granted": [],
    "agent_system": "Isikesu",
    "where": "Isikesu IV - Moon 10 - Sukuuvestaa Corporation Warehouse (0.7)",
-   "available": true,
+   "available": false,
    "career": "Distribution",
    "agent": "Yarjonoisen Koshamagae (Distribution, L1, Isikesu IV - Moon 10 - Sukuuvestaa Corporation Warehouse)",
    "mission": "'Arms Dealer': courier 3 x Crates of Small Arms (180 m3) from Isikesu IV Moon 10 to Isikesu I - Moon 1 - Spacelane Patrol Logistic Support (0.7), same system. Pays 33,000 ISK + 37 LP; bonus 34,000 ISK within 1 h 8 min.",
@@ -1632,7 +1632,7 @@
    "to_system": "Isikesu",
    "m3": 180.0,
    "needs": "a ship with 180 m3 of cargo (not a capsule)",
-   "note": "Seen 2026-10-20, standing 0.0. Same station as the other Isikesu IV Moon 10 agent: one dock reads both."
+   "note": "Seen 2026-10-20, standing 0.0. Same station as the other Isikesu IV Moon 10 agent: one dock reads both. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1660,7 +1660,7 @@
    "granted": [],
    "agent_system": "Isikesu",
    "where": "Isikesu IV - Moon 5 - Caldari Constructions Production Plant (0.7)",
-   "available": true,
+   "available": false,
    "career": "Distribution",
    "agent": "Ausmunen Karantala (Distribution, L1, Isikesu IV - Moon 5 - Caldari Constructions Production Plant)",
    "mission": "'Cool Cat': courier 3 x Crates of Coolant (240 m3) from Isikesu IV Moon 5 to Isikesu IV - Moon 6 - CBD Sell Division Warehouse (0.7), same system. Pays 24,000 ISK + 30 LP; bonus 27,000 ISK within 56 min.",
@@ -1671,7 +1671,7 @@
    "to_system": "Isikesu",
    "m3": 240.0,
    "needs": "a ship with 240 m3 of cargo (not a capsule)",
-   "note": "Seen 2026-10-20, standing 0.0. Same station as the other Isikesu IV Moon 5 agent: one dock reads both."
+   "note": "Seen 2026-10-20, standing 0.0. Same station as the other Isikesu IV Moon 5 agent: one dock reads both. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1814,7 +1814,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sirppala",
    "career": "Distribution",
    "where": "Sirppala IV - Moon 4 - Rapid Assembly Factory (0.9)",
@@ -1827,7 +1827,7 @@
    "to_system": "Kaaputenen",
    "m3": 210.0,
    "needs": "a ship with 210 m3 of cargo (not a capsule); jump count Sirppala -> Kaaputenen is an estimate: confirm it",
-   "note": "Seen 2026-10-20, standing 0.0."
+   "note": "Seen 2026-10-20, standing 0.0. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1912,7 +1912,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kaaputenen",
    "career": "Distribution",
    "where": "Kaaputenen VII - Moon 4 - Joint Harvesting Plantation (0.8)",
@@ -1925,14 +1925,14 @@
    "to_system": "Kaaputenen",
    "m3": 200.0,
    "needs": "a ship with 200 m3 of cargo (not a capsule)",
-   "note": "Seen 2026-10-20, standing 0.0. Kaaputenen VII Moon 4 is also the drop-off of Abata Kavalala's oxygen (from Sirppala), so one trip to Kaaputenen delivers that and starts this one."
+   "note": "Seen 2026-10-20, standing 0.0. Kaaputenen VII Moon 4 is also the drop-off of Abata Kavalala's oxygen (from Sirppala), so one trip to Kaaputenen delivers that and starts this one. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kaaputenen",
    "career": "Distribution",
    "where": "Kaaputenen V - Moon 16 - Caldari Provisions Plantation (0.8)",
@@ -1945,7 +1945,7 @@
    "to_system": "Inaro",
    "m3": 240.0,
    "needs": "a ship with 240 m3 of cargo (not a capsule); jump count Kaaputenen -> Inaro is an estimate: confirm it",
-   "note": "Seen 2026-10-20, standing 0.0. Inaro X Moon 4 is also the station of Turppo Futsen (Security): one dock there."
+   "note": "Seen 2026-10-20, standing 0.0. Inaro X Moon 4 is also the station of Turppo Futsen (Security): one dock there. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
@@ -1972,7 +1972,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sirseshin",
    "career": "Distribution",
    "where": "Sirseshin VI - Moon 1 - Mercantile Club Bureau (0.7)",
@@ -1985,7 +1985,7 @@
    "to_system": "Tuurainas",
    "m3": 0.0,
    "needs": "a ship (0 m3 of cargo, no combat); the pickup is at Tuurainas, so it is a round trip; jump count Sirseshin -> Tuurainas is an estimate: confirm it",
-   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5, the same chain type as Ibeshi Keirsaa's 'The Heiress' at Saila."
+   "note": "Seen 2026-10-20, standing 0.0. Part 1 of 5, the same chain type as Ibeshi Keirsaa's 'The Heiress' at Saila. EXPIRED 2026-10-27 (game notice)."
   },
   {
    "taxed": false,
