@@ -3265,6 +3265,27 @@
    "needs": "1 m3 of cargo; Kisogo is 1 jump(s) from Urlen (map DB route)",
    "note": "Seen 2026-10-26, standing 0.0. Combat: kill one fugitive ship (may be guarded at the outpost). 71,000 ISK + 46 LP with the bonus.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Perimeter",
+   "career": "Security",
+   "where": "Perimeter II - Moon 1 - Ducia Foundry Mineral Reserve",
+   "agent": "Mamdasan Hoghosh (Security, 2, Perimeter II - Moon 1 - Ducia Foundry Mineral Reserve)",
+   "mission": "'Freedom Must Not Prevail': task to Niyabainen (combat site, report back to agent). Pays 63,000 ISK + 108 LP; bonus 60,000 ISK within 94.",
+   "isk": 63000,
+   "bonus": 60000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Niyabainen",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
+   "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule)",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

@@ -67,3 +67,4 @@ Open agent offers (agent_offers.json):
 - Sigechiro Onzo: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
 - Nuulkata Junkka: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
 - Haro Honnamaiken: 'Escaped Spy': courier 1 x Prisoner: destroy the spy's ship 
+- Mamdasan Hoghosh: 'Freedom Must Not Prevail': task to Niyabainen (combat site,

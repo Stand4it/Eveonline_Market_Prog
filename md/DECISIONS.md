@@ -560,3 +560,4 @@
 - 2026-10-25 allplans.rows: combat activities (L1/L2 security, ratting, combat anomalies, homefront, escalations, merc dens, other epic arcs) show LATER with 'needs a combat fit that passes the 99% rule' while combatprep finds a missing piece (they showed READY with 3.7 dps). Confirmed (owner 2026-10-25): owned ships/modules cost nothing in prep; only missing pieces are charged (market price + time to fetch/buy, spread over 5 runs).
 - 2026-10-26 agent_offers.json: Nuulkata Junkka: needs_tool=mining
 - 2026-10-26 agent_offers.json: Haro Honnamaiken: needs_tool=gun
+- 2026-10-27 agent_offers.json: Mamdasan Hoghosh: needs_tool=gun
