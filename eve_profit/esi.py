@@ -189,8 +189,8 @@ def refresh_item(con, esi, region_ids, type_id):
             "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
             [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid, int(o["is_buy_order"]),
               o["price"], o["volume_remain"], o.get("min_volume", 1), o.get("issued", ""), now) for o in rows])
-        from .orders import bump as _bump
-        _bump()                                                         # cached order books are stale now
+        from .orders import refresh_type as _refresh_type
+        _refresh_type(con, type_id)                                     # only this item's cached books are stale
         try:
             from .remoterange import store as _store_range
             _store_range(con, rows)

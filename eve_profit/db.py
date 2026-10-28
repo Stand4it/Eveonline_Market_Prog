@@ -24,6 +24,7 @@ CREATE INDEX IF NOT EXISTS ix_ord_type ON orders(type_id, is_buy);
 CREATE INDEX IF NOT EXISTS ix_types_name ON types(name);
 CREATE INDEX IF NOT EXISTS ix_types_name_nc ON types(name COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS ix_ord_sys ON orders(system_id);
+CREATE INDEX IF NOT EXISTS ix_ord_tsbp ON orders(type_id, system_id, is_buy, price);
 CREATE TABLE IF NOT EXISTS inventory(
   type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
   PRIMARY KEY(type_id, system_id));

@@ -33,6 +33,47 @@ def bump():
     _VERSION[0] += 1
 
 
+def refresh_type(con, type_id):
+    """One item's orders were just re-downloaded (esi.refresh_item): reload that item in the cached books only, instead of dropping every
+    cached book (a `next` refreshed single items and then reloaded all books 33 times, 31 s, 2026-10-28)."""
+    if _CACHE["key"] != _cache_key(con) or not _CACHE["sys"]:
+        return
+    _MEMO["d"] = {}                                                     # results built on the old prices are stale
+    tid = int(type_id)
+    for s_, b_ in _CACHE["sys"].values():
+        s_.pop(tid, None)
+        b_.pop(tid, None)
+    ids = ",".join(str(int(x)) for x in _CACHE["sys"])
+    structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()
+    for r in con.execute(f"SELECT system_id,is_buy,price,volume_remain,min_volume,location_id FROM orders WHERE type_id=? AND system_id IN ({ids})", (tid,)):
+        price = r[2] * (1 - STRUCT_BID_HAIRCUT) if r[1] and r[5] in structs else r[2]
+        _CACHE["sys"][r[0]][1 if r[1] else 0].setdefault(tid, []).append((price, r[3], r[4]))
+    for s_, b_ in _CACHE["sys"].values():
+        if tid in s_:
+            s_[tid].sort()
+        if tid in b_:
+            b_[tid].sort(reverse=True)
+
+
+_MEMO = {"key": None, "d": {}}
+
+
+def run_memo(con, name, key, fn):
+    """fn() once per run for the same (name, key) while the order books are unchanged (same cache key as load_books). `next` asked for the same
+    prep chains, shopping list and ship prices 2-14 times (about 150 s of 308, 2026-10-28). A copy is returned so callers may change it.
+    Off under unittest: tests reuse connections and mock the inputs."""
+    import copy
+    import sys
+    if "unittest" in sys.modules:
+        return fn()
+    k = _cache_key(con)
+    if _MEMO["key"] != k:
+        _MEMO["key"], _MEMO["d"] = k, {}
+    if (name, key) not in _MEMO["d"]:
+        _MEMO["d"][(name, key)] = fn()
+    return copy.deepcopy(_MEMO["d"][(name, key)])
+
+
 def _load_systems(con, systems):
     """Read the books of `systems` from the DB -> {system: (sells{type:[...]}, buys{type:[...]})}, sorted."""
     structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()

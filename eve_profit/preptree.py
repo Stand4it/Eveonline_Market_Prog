@@ -377,6 +377,12 @@ def _haul_gain(con, g, p, dest):
 
 
 def chains(con, g, p, best_hr, haul=True):
+    """Cached for the run (orders.run_memo): `next` asks for this several times."""
+    from .orders import run_memo
+    return run_memo(con, "eve_profit/preptree.py:chains", (id(p), getattr(p, 'current_system', ''), getattr(p, 'ship_name', ''), id(g), best_hr, haul), lambda: _chains_calc(con, g, p, best_hr, haul))
+
+
+def _chains_calc(con, g, p, best_hr, haul=True):
     """-> [{group, goals, prep: [nodes], cash, minutes, gain, chain_min, steps}] best chain ISK/min first."""
     best_min = float(best_hr or 0.0) / 60.0
     ctx = Ctx(con, g, p, best_min)

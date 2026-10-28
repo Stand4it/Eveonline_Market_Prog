@@ -20,6 +20,12 @@ def _extras():
 
 
 def wishes(con, p, g=None):
+    """Cached for the run (orders.run_memo): `next` asks for this several times."""
+    from .orders import run_memo
+    return run_memo(con, "eve_profit/shopping.py:wishes", (id(p), getattr(p, 'current_system', ''), getattr(p, 'ship_name', ''), id(g)), lambda: _wishes_calc(con, p, g))
+
+
+def _wishes_calc(con, p, g=None):
     """-> [{item, qty, why}] still missing, in the order they are needed."""
     from . import acquire, combatprep
     out = []

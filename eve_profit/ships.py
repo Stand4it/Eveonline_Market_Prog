@@ -74,6 +74,12 @@ def refresh(con, esi, log=print, limit=500):
 
 
 def _prices(con, g, p, max_jumps=14):
+    """Cached for the run (orders.run_memo): `next` asks for this several times."""
+    from .orders import run_memo
+    return run_memo(con, "eve_profit/ships.py:_prices", (id(p), getattr(p, 'current_system', ''), getattr(p, 'ship_name', ''), id(g), max_jumps), lambda: __prices_calc(con, g, p, max_jumps))
+
+
+def __prices_calc(con, g, p, max_jumps=14):
     """{ship name: (price, jumps, system)}: the cheapest safe sell order in reach, a jump counted at the value of your time (same rule as acquire.sources), all in ONE query."""
     from .acquire import JUMP_VALUE_ISK, SAFE_SEC
     try:
@@ -123,6 +129,12 @@ def report(con, g, p, text=""):
 
 
 def upgrade(con, g, p, wallet=None):
+    """Cached for the run (orders.run_memo): `next` asks for this several times."""
+    from .orders import run_memo
+    return run_memo(con, "eve_profit/ships.py:upgrade", (id(p), getattr(p, 'current_system', ''), getattr(p, 'ship_name', ''), id(g), wallet), lambda: _upgrade_calc(con, g, p, wallet))
+
+
+def _upgrade_calc(con, g, p, wallet=None):
     """-> {item, qty, why} for the hull you can fly that carries more tools at once than your best one, at the lowest ISK per extra tool, or None."""
     cat = catalog(con)
     if not cat:
