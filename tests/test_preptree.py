@@ -86,12 +86,32 @@ class PrepTreeTests(unittest.TestCase):
         goals = {"ice_mining": {"tool": None, "skills": [("Ice Harvesting", 1)], "hull": [], "items": [],
                                 "goals": [{"name": "Ice", "isk": 600000.0, "minutes": 60.0, "modeled": False}]}}
         q = {"ice harvesting": 0}
-        with mock.patch.object(preptree, "goals", return_value=goals), mock.patch.object(preptree, "_training", return_value=(24.0, {
+        with mock.patch.object(preptree, "goals", return_value=goals), mock.patch.object(preptree, "_training", return_value=(24.0, [], {
                 "how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": "QUEUE", "step": "STEP: QUEUE"})), \
                 mock.patch("eve_profit.catalog.skill_levels", return_value=q):
             c = preptree.chains(con, g, p, 0.0, haul=False)[0]
         self.assertAlmostEqual(c["rank_min"], c["chain_min"] / 2.0)       # 24 h of training halves the rank
         self.assertEqual(c["steps"][0]["item"], "skills")
+
+    def test_missing_book_is_bought_before_the_queue_step(self):
+        """owner 2026-10-28: Planetology needs Remote Sensing; neither book owned -> both are buy steps and the queue step comes last."""
+        con, g, p = self._world(100000.0)
+        goals = {"pi": {"tool": None, "skills": [("Planetology", 1)], "hull": [], "items": [],
+                        "goals": [{"name": "PI", "isk": 600000.0, "minutes": 60.0, "modeled": False}]}}
+        node = {"how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": "QUEUE",
+                "step": "STEP: QUEUE\n   Character sheet > Skills"}
+        bought = []
+        def fake_source(ctx, it, q):
+            bought.append(it)
+            return {"how": "buy", "item": it, "qty": q, "cash": 1.0, "minutes": 1.0, "cost": 1.0, "children": [], "step": f"STEP: BUY {it}"}
+        with mock.patch.object(preptree, "goals", return_value=goals), \
+                mock.patch.object(preptree, "_training", return_value=(1.0, ["Remote Sensing", "Planetology"], node)), \
+                mock.patch.object(preptree, "source", side_effect=fake_source), \
+                mock.patch("eve_profit.catalog.skill_levels", return_value={}):
+            c = preptree._chains_calc(con, g, p, 0.0, haul=False)[0]
+        self.assertEqual(sorted(bought), ["Planetology", "Remote Sensing"])
+        self.assertEqual(c["steps"][-1]["item"], "skills")
+        self.assertIn("FIRST inject the books", c["steps"][-1]["step"])
 
 
 if __name__ == "__main__":

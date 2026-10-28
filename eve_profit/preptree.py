@@ -398,8 +398,12 @@ def _chains_calc(con, g, p, best_hr, haul=True):
             if levels is None:
                 from .catalog import skill_levels
                 levels = skill_levels(con)
-            need += [(s, 1) for s, _l in spec["skills"] if s.lower() not in levels]     # a skill you have never injected: its book is bought first
-            train_h, train_node = _training(con, spec["skills"])
+            train_h, plan_skills, train_node = _training(con, spec["skills"])
+            books = [s for s in dict.fromkeys([s for s, _l in spec["skills"]] + plan_skills) if s.lower() not in levels]
+            need += [(s, 1) for s in books]                             # a skill you have never injected (prerequisites too): its book is bought first
+            if books and train_node:
+                train_node["books"] = books
+                train_node["step"] = train_node["step"].replace("\n   Character sheet", f"\n   FIRST inject the books you just bought ({', '.join(books)}): hangar > right-click each book > Inject Skill.\n   Then Character sheet", 1)
         nodes = [source(ctx, it, q) for it, q in need]
         if spec["hull"]:
             hulls = [n for n in (source(ctx, h, 1) for h in spec["hull"]) if n]
@@ -416,7 +420,9 @@ def _chains_calc(con, g, p, best_hr, haul=True):
                 out.append({"group": grp, "goals": items, "prep": [], "chain_min": 0.0, "rank_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0, "gain": 0.0,
                             "train_h": train_h, "unknown": [], "no_fit": True})
                 continue                                                # no fit of combat_modules.json passes this level on the hull you fly
-        if train_node:
+        if train_node and train_node.get("books"):                      # owner 2026-10-28: a book you do not own is bought (where cheapest, on your route) and injected BEFORE the queue step
+            nodes.append(train_node)
+        elif train_node:
             nodes.insert(0, train_node)                                 # training runs in the background: queue it first, then buy while it trains
         steps = [s for n in nodes for s in leaves(n)]
         if not steps and tool:                                          # every item owned: what is left is fitting / showing the fit (no cash, a few minutes)
@@ -448,13 +454,15 @@ def _training(con, skills):
         from .trainplan import plan_training
         res = plan_training(con, goals=[(s, lv, "prep") for s, lv in skills])
         mins = sum(x["minutes"] for x in res["steps"])
+        plan_skills = [x["skill"] for x in res["steps"]]
         names = ", ".join(f"{x['skill']} {x['level']}" for x in res["steps"][:6]) or ", ".join(f"{s} {lv}" for s, lv in skills)
     except Exception as _he:                                            # noqa: BLE001
         _hrec('preptree', _he)
         mins, names = 0.0, ", ".join(f"{s} {lv}" for s, lv in skills)
+        plan_skills = []
     h = mins / 60.0
     txt = f"QUEUE SKILLS {names} (training ~{h:,.1f} h in the background; buy the rest while it trains)"
-    return h, {"how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": txt,
+    return h, plan_skills, {"how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": txt,
                "step": f"STEP: {txt}\n   Character sheet > Skills > right-click each > Train now (or add to the queue). Then  python -m eve_profit next"}
 
 
