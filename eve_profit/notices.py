@@ -85,13 +85,21 @@ def expire_offers(con):
                 break
         import datetime as _dt                                          # game notices (22 of them, 2026-10-28) show an unaccepted offer lives 7 days
         cutoff = (_dt.date.today() - _dt.timedelta(days=OFFER_DAYS)).isoformat()   # from when it was offered; Seen is on or after that, so this is safe
+        today, stamped = _dt.date.today().isoformat(), False
         for o in d["offers"]:
-            seen = re.search(r"Seen (\d{4}-\d{2}-\d{2})", o.get("note", "") or "")
-            if o.get("available", True) and not o.get("accepted") and seen and seen.group(1) <= cutoff:
+            if not o.get("available", True) or o.get("accepted"):
+                continue
+            dates = re.findall(r"\d{4}-\d{2}-\d{2}", o.get("note", "") or "")   # the newest date the note mentions = the last time the offer was seen
+            if not dates:                                               # no date at all: start its 7 days now, or it never ages out (owner 2026-10-28)
+                o["note"] = (o.get("note", "") + f" Seen {today}.").strip()
+                stamped = True
+                continue
+            seen = max(dates)
+            if seen <= cutoff:
                 o["available"] = False
-                o["note"] = (o.get("note", "") + f" EXPIRED (seen {seen.group(1)}, offers last {OFFER_DAYS} days).").strip()
+                o["note"] = (o.get("note", "") + f" EXPIRED (seen {seen}, offers last {OFFER_DAYS} days).").strip()
                 closed.append(o["agent"].split(" (")[0])
-        if closed:
+        if closed or stamped:
             with open(path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(d, f, indent=1, ensure_ascii=False)
                 f.write("\n")

@@ -202,11 +202,11 @@
    ],
    "task_min": 25,
    "jumps": 0,
-   "available": true,
+   "available": false,
    "where": "Rotonos (this system)",
    "timer_name": "Agent L1 step 4 Soldier of Fortune friend in need",
    "agent_system": "Rotonos",
-   "note": "standing 2.12. Seen again 2026-10-16: the reward is a book (1 x 'Remote Armor Repair...', probably the skill book), not the repairer; the bonus is 97,000 ISK. The mission location (Rotonos system) is 11 jumps from where the user is now."
+   "note": "standing 2.12. Seen again 2026-10-16: the reward is a book (1 x 'Remote Armor Repair...', probably the skill book), not the repairer; the bonus is 97,000 ISK. The mission location (Rotonos system) is 11 jumps from where the user is now. EXPIRED (seen 2026-10-16, offers last 7 days)."
   },
   {
    "agent": "Ormelace Vaille (Enforcer)",
@@ -533,14 +533,14 @@
    "jumps": 0,
    "m3": 2500,
    "one_way": true,
-   "available": true,
+   "available": false,
    "agent_system": "Rotonos",
    "to_system": "Rotonos",
    "where": "Rotonos IV - Moon 2 - Center for Advanced Studies (agent's station)",
    "career": "Industrialist",
    "needs": "a Navitas: check the price first (python -m eve_profit buy --item \"Navitas\" --qty 1); the reward amounts are not entered yet",
    "timer_name": "Agent L1 step 10 Industrialist Navitas",
-   "note": "Seen again 2026-10-16: reward 1 x Nereus + bonus 175,000 ISK, standing 5.04; the drop-off Rotonos IV is 11 jumps from where the user is now (the offer's jumps field counts from Rotonos). Nereus valued at about 750,000 ISK (the market price the planner saw), not 2,000,000."
+   "note": "Seen again 2026-10-16: reward 1 x Nereus + bonus 175,000 ISK, standing 5.04; the drop-off Rotonos IV is 11 jumps from where the user is now (the offer's jumps field counts from Rotonos). Nereus valued at about 750,000 ISK (the market price the planner saw), not 2,000,000. EXPIRED (seen 2026-10-16, offers last 7 days)."
   },
   {
    "agent": "Cassandra Ahfrim (Security, AIR - Epic Arc Visions of Greatness)",
@@ -553,13 +553,13 @@
    "granted": [],
    "task_min": 25,
    "jumps": 2,
-   "available": true,
+   "available": false,
    "where": "Manifest V - AIR Laboratories Trade Center (agent); Kita-Aino V (report to)",
    "agent_system": "Manifest",
    "to_system": "Kita-Aino",
    "career": "Epic arc",
    "timer_name": "Agent L1 epic Visions of Greatness ch1",
-   "note": "2026-10-21: offer read remotely from Kirras; 17 jumps away, so only worth it when a trade route goes that way."
+   "note": "2026-10-21: offer read remotely from Kirras; 17 jumps away, so only worth it when a trade route goes that way. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "agent": "Avrue Auz (Event - Distribution, L1, Lirsautton I CreoDron Factory)",
@@ -2154,7 +2154,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
@@ -2167,7 +2167,7 @@
    "to_system": "Veisto",
    "m3": 320.0,
    "needs": "a MINING LASER (you own none): buy 2 x Civilian Miner in Sobaseki (~73 ISK each, 1 jump; Miner I 10,000 in Jita/Kakakela, Miner II 513,000 in Jita) and fit them on the Catalyst in place of 2 guns; 320 m3 fits the 450 m3 hold",
-   "note": "2026-10-21: part 1 (Miniature Slaver from Sarekuwa III, 22,000 + 22,000 bonus + 26 LP) DONE, standing 0.1. Part 2 = 20,600 ISK + 14 LP with the bonus; tight 30-min bonus. Accepted 2026-10-21; bonus window 29 min left at accept. 2026-10-21: part 2 (Hard Currency to Sobaseki) DONE, standing 0.2. Part 3 offered (not accepted yet): 151,000 ISK + 92 LP with the bonus.",
+   "note": "2026-10-21: part 1 (Miniature Slaver from Sarekuwa III, 22,000 + 22,000 bonus + 26 LP) DONE, standing 0.1. Part 2 = 20,600 ISK + 14 LP with the bonus; tight 30-min bonus. Accepted 2026-10-21; bonus window 29 min left at accept. 2026-10-21: part 2 (Hard Currency to Sobaseki) DONE, standing 0.2. Part 3 offered (not accepted yet): 151,000 ISK + 92 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "accepted": false,
    "expires": "",
    "lp": 92,
@@ -3284,7 +3284,7 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule)",
+   "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule) Seen 2026-10-28.",
    "needs_tool": "gun"
   }
  ],
