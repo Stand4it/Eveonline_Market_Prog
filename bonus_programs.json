@@ -107,13 +107,15 @@
    "reward_isk": 0,
    "reward_guess": true,
    "safe": false,
-   "note": "CORRECTED 2026-10-13 from the challenge text: 'Receive 150 items from Item Traders' (250 pts) at NPC Item Trader sites in Blood Raider (KFIE-Z, Anila, Sosala, Ahtila), Order of Tetrimon (Ibani, Kamela, Sakenta, Shera) and Triglavian (Raravoss, Vale, Otela, Gammel) systems; extra items do not count for other challenges. NOT normal market sales; locations/security not checked, so not routed."
+   "note": "CORRECTED 2026-10-13 from the challenge text: 'Receive 150 items from Item Traders' (250 pts) at NPC Item Trader sites in Blood Raider (KFIE-Z, Anila, Sosala, Ahtila), Order of Tetrimon (Ibani, Kamela, Sakenta, Shera) and Triglavian (Raravoss, Vale, Otela, Gammel) systems; extra items do not count for other challenges. NOT normal market sales; locations/security not checked, so not routed. ENDS 3 Nov 2026 (patch notes 2026-10-27.1); reward track extended to 1,500 points (Leshak SKINs, Trinary Complex SKINR pattern, 50,000 SP, Blood Raider Ship Crate). Items traded on the market do NOT count (seen 2026-10-28), so no market routing for it.",
+   "ends": "2026-11-03"
   },
   {
    "name": "Crimson Harvest: Tetrimon/Pochven kills, node hacks, Criterion of Fitness",
    "kind": "event_goal",
    "safe": false,
-   "note": "Needs Pochven/null-sec PvE or PvP. Not routed (stay safe, new character)."
+   "note": "Needs Pochven/null-sec PvE or PvP. Not routed (stay safe, new character). ENDS 3 Nov 2026 (patch notes 2026-10-27.1); reward track extended to 1,500 points (Leshak SKINs, Trinary Complex SKINR pattern, 50,000 SP, Blood Raider Ship Crate). Items traded on the market do NOT count (seen 2026-10-28), so no market routing for it.",
+   "ends": "2026-11-03"
   },
   {
    "name": "AIR reward bundle: Mine 30,000 units of Scordite",
