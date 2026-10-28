@@ -1,12 +1,12 @@
 {
- "_help": "Epic Arcs list from the Agency (Agents & Missions > Epic Arcs), seen 2026-10-16 from where the user stood (jumps are NOT from Rotonos). 9 arcs; 3 available.",
+ "_help": "Epic Arcs list from the Agency (Agents & Missions > Epic Arcs), seen 2026-10-16 from where the user stood (jumps are NOT from Rotonos). 9 arcs; 3 available. Re-seen 2026-10-28 from Tunttaras: Fractured Legacy 4 jumps, Blood-Stained Stars 13, Visions of Greatness 14 (jumps are from where the user stood).",
  "arcs": [
   {
    "arc": "Visions of Greatness",
    "faction": "Association for Interdisciplinary Research",
    "start_system": "Manifest",
    "sec": 1.0,
-   "jumps": 8,
+   "jumps": 14,
    "available": true
   },
   {
@@ -14,7 +14,7 @@
    "faction": "Servant Sisters of EVE",
    "start_system": "Arnon",
    "sec": 0.8,
-   "jumps": 9,
+   "jumps": 13,
    "available": true
   },
   {
@@ -22,8 +22,16 @@
    "faction": "ORE",
    "start_system": "Kisogo",
    "sec": 0.9,
-   "jumps": 12,
-   "available": true
+   "jumps": 4,
+   "available": true,
+   "agent": "Elias Peltonnen (ORE Technologies)",
+   "chapters": [
+    "1 The Missing Pilot",
+    "2 Pioneering Spirit",
+    "3 Shattered Catalyst"
+   ],
+   "progress": "0 of 3",
+   "seen": "2026-10-28 from Tunttaras"
   },
   {
    "arc": "Syndication",

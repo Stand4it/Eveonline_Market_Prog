@@ -372,12 +372,32 @@
    "offer_agent": "Cassandra Ahfrim"
   },
   {
+   "id": "epic_fractured",
+   "name": "Epic Arc: Fractured Legacy (ORE, 3 chapters)",
+   "area": "agents",
+   "match": [
+    "fractured legacy",
+    "missing pilot",
+    "pioneering spirit",
+    "shattered catalyst"
+   ],
+   "prior": [
+    500000,
+    3000000
+   ],
+   "minutes": 40,
+   "risk": "low",
+   "requires": {},
+   "how": "Talk to Elias Peltonnen (ORE Technologies) in Kisogo (0.9, 4 jumps from Tunttaras, seen 2026-10-28). Chapters: 1 The Missing Pilot, 2 Pioneering Spirit, 3 Shattered Catalyst; 0 of 3 done. Whether it needs combat is not known yet: read chapter 1's offer before flying a fit there (screenshot it). One-time, time each chapter as its own run.",
+   "where": "Kisogo",
+   "offer_agent": "Elias Peltonnen"
+  },
+  {
    "id": "epic_other",
-   "name": "Other epic arcs (Blood-Stained Stars 8j, Fractured Legacy 17j, Syndication)",
+   "name": "Other epic arcs (Blood-Stained Stars, Syndication)",
    "area": "agents",
    "match": [
     "blood-stained",
-    "fractured legacy",
     "syndication"
    ],
    "prior": [
