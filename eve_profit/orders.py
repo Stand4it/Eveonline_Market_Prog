@@ -10,6 +10,25 @@ def set_structure_haircut(profile):
     existing `price * (1 - sales_tax)` math nets (1 - tax - structure_tax)."""
     global STRUCT_BID_HAIRCUT
     STRUCT_BID_HAIRCUT = profile.structure_sales_tax / max(1e-9, 1 - profile.sales_tax)
+    _TAX[0] = float(profile.sales_tax)
+
+
+_TAX = [0.045]                              # your sales tax (set from the profile above); default = base 7.5% with Accounting IV
+
+
+def _station_uplift(today=None):
+    """{station id: bid multiplier} for stations with a reduced sales tax today (station_tax.json): a bid there nets
+    price x (1 - tax x factor), so it is raised by (1 - tax x factor) / (1 - tax) for the usual price x (1 - tax) math."""
+    import datetime
+    import json
+    import os
+    try:
+        d = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "station_tax.json"), encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    today, t = today or datetime.date.today().isoformat(), _TAX[0]
+    return {int(k): (1 - t * float(v.get("factor", 1))) / max(1e-9, 1 - t) for k, v in d.get("stations", {}).items()
+            if v.get("from", "") <= today <= v.get("until", "9999")}
 
 
 _CACHE = {"key": None, "sys": {}}          # per-system books for this run: `next` asked for them 156 times (274 of 417 s)
@@ -22,7 +41,7 @@ def _cache_key(con):
         dv = con.execute("PRAGMA data_version").fetchone()[0]
     except Exception:                                                   # noqa: BLE001
         dv = None
-    return (id(con), _VERSION[0], dv, STRUCT_BID_HAIRCUT)
+    return (id(con), _VERSION[0], dv, STRUCT_BID_HAIRCUT, _TAX[0])
 
 
 _VERSION = [0]
@@ -45,8 +64,11 @@ def refresh_type(con, type_id):
         b_.pop(tid, None)
     ids = ",".join(str(int(x)) for x in _CACHE["sys"])
     structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()
+    up = _station_uplift()
     for r in con.execute(f"SELECT system_id,is_buy,price,volume_remain,min_volume,location_id FROM orders WHERE type_id=? AND system_id IN ({ids})", (tid,)):
         price = r[2] * (1 - STRUCT_BID_HAIRCUT) if r[1] and r[5] in structs else r[2]
+        if r[1] and r[5] in up:
+            price *= up[r[5]]
         _CACHE["sys"][r[0]][1 if r[1] else 0].setdefault(tid, []).append((price, r[3], r[4]))
     for s_, b_ in _CACHE["sys"].values():
         if tid in s_:
@@ -77,6 +99,7 @@ def run_memo(con, name, key, fn):
 def _load_systems(con, systems):
     """Read the books of `systems` from the DB -> {system: (sells{type:[...]}, buys{type:[...]})}, sorted."""
     structs = {r[0] for r in con.execute("SELECT structure_id FROM structures")} if STRUCT_BID_HAIRCUT else set()
+    up = _station_uplift()
     out = {s: ({}, {}) for s in systems}
     ids = ",".join(str(int(s)) for s in systems) or "0"
     for r in con.execute(
@@ -85,6 +108,8 @@ def _load_systems(con, systems):
         price = r["price"]
         if r["is_buy"] and r["location_id"] in structs:
             price *= 1 - STRUCT_BID_HAIRCUT
+        if r["is_buy"] and r["location_id"] in up:
+            price *= up[r["location_id"]]                               # a station with a reduced sales tax
         out[r["system_id"]][1 if r["is_buy"] else 0].setdefault(r["type_id"], []).append(
             (price, r["volume_remain"], r["min_volume"]))
     for s_, b_ in out.values():

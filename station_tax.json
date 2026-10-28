@@ -1,0 +1,7 @@
+{
+ "why": "Stations with a reduced sales tax / broker fee (CCP news 'Fractured Skies in Focus', screenshots 2026-10-28). factor = share of the normal tax you pay there (0.5 = half). orders.py raises the bids in that station so the usual price x (1 - tax) math nets price x (1 - tax x factor). Active from 'from' to 'until' (inclusive). 'from' is a guess (Fractured Skies launch): if the sell window in that station already shows the lower tax, set 'from' to today.",
+ "stations": {
+  "60008494": {"name": "Amarr VIII (Oris) - Emperor Family Academy", "factor": 0.5, "from": "2026-11-10", "until": "2027-05-09",
+               "note": "Deaconry of Economic Oversight: 50% off taxes and broker fees for six months (Cradle of War campaign result)."}
+ }
+}
