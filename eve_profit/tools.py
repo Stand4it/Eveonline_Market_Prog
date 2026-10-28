@@ -12,6 +12,8 @@ TOOLS = {
 }
 TOOLS["gun"] = {"label": "a gun with ammo", "words": ["railgun", "blaster", "autocannon", "artillery", "pulse laser", "beam laser", "heavy pulse", "heavy beam"],
                 "buy": [("150mm Carbide Railgun I", 2)], "uses": {"high": 1, "turret": 1}}   # combat activities need it; not in PRIORITY: fit_plan never plans guns for mining/scanning hulls
+TOOLS["ice"] = {"label": "ice harvesters (mining barge)", "words": ["ice harvester"], "buy": [("Ice Harvester I", 2)], "uses": {"high": 2, "turret": 2}}
+TOOLS["gas"] = {"label": "gas cloud scoops", "words": ["gas cloud"], "buy": [("Gas Cloud Scoop I", 2)], "uses": {"high": 2, "turret": 2}}   # 2026-10-28: ice and gas
 PRIORITY = ["scanning", "salvaging", "mining"]          # when slots are short, in this order (cheapest to fit and useful on every trip first)
 
 

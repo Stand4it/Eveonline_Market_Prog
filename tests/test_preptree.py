@@ -73,13 +73,25 @@ class PrepTreeTests(unittest.TestCase):
 
     def test_chain_rate_counts_prep_cash_and_minutes(self):
         con, g, p = self._world(100000.0)
-        goals = {"gun": [{"name": "x", "isk": 600000.0, "minutes": 60.0, "modeled": True}]}
+        goals = {"gun": {"tool": "gun", "skills": [], "hull": [], "items": [], "goals": [{"name": "x", "isk": 600000.0, "minutes": 60.0, "modeled": True}]}}
         with mock.patch.object(preptree, "goals", return_value=goals), mock.patch.object(preptree, "_combat_items", return_value=[("Widget", 1)]), \
                 mock.patch("eve_profit.skills.have", return_value={}):
             c = preptree.chains(con, g, p, 0.0, haul=False)[0]
         self.assertAlmostEqual(c["cash"], 100000.0)
         self.assertLess(c["chain_min"], 10000.0)                           # (600k - 100k) / (60 + prep minutes)
         self.assertGreater(c["chain_min"], 7000.0)
+
+    def test_skill_training_ranks_a_chain_lower_but_queueing_is_its_first_step(self):
+        con, g, p = self._world(100000.0)
+        goals = {"ice_mining": {"tool": None, "skills": [("Ice Harvesting", 1)], "hull": [], "items": [],
+                                "goals": [{"name": "Ice", "isk": 600000.0, "minutes": 60.0, "modeled": False}]}}
+        q = {"ice harvesting": 0}
+        with mock.patch.object(preptree, "goals", return_value=goals), mock.patch.object(preptree, "_training", return_value=(24.0, {
+                "how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": "QUEUE", "step": "STEP: QUEUE"})), \
+                mock.patch("eve_profit.catalog.skill_levels", return_value=q):
+            c = preptree.chains(con, g, p, 0.0, haul=False)[0]
+        self.assertAlmostEqual(c["rank_min"], c["chain_min"] / 2.0)       # 24 h of training halves the rank
+        self.assertEqual(c["steps"][0]["item"], "skills")
 
 
 if __name__ == "__main__":

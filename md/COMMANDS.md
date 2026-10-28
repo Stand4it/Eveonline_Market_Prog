@@ -274,7 +274,7 @@ STOPSYNC  -  stop the timer, then sync with the game (both, in the right order)
 SYNCSTOP  -  same as stopsync (stop first, then sync)
    example: python -m eve_profit syncstop
 
-PREPTREE  -  (no description yet)
+PREPTREE  -  every blocked goal with the cheapest prep chain (buy / build / mine), ranked by chain ISK/min
    example: python -m eve_profit preptree
 
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.

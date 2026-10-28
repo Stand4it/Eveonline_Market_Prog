@@ -10,7 +10,8 @@ from .lookahead import act_rate
 MAX_ROWS = 25
 
 
-COMBAT_IDS = {"agent_l1_security", "agent_l2_security", "ratting", "combat_anomalies", "homefront_ops", "escalations", "merc_dens", "epic_other"}
+COMBAT_IDS = {"agent_l1_security", "agent_l2_security", "ratting", "combat_anomalies", "homefront_ops", "escalations", "merc_dens", "epic_other",
+              "agent_l3_security", "agent_l4_security", "abyssal_t0", "faction_warfare"}
 
 
 def rows(con, g, p, best_known, hull=None, owned=(), tools=None):

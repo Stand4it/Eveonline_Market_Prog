@@ -21,10 +21,11 @@ BUILD_MIN = 4.0               # start the job once the materials are in the hang
 REFINE_MIN = 3.0
 SELL_MIN = 2.0
 DEFAULT_YIELD_M3_S = 1.33     # two Miner I (40 m3 / 60 s each) when the profile has no measured yield (a guess until timed)
-ACTIVITY_MIN = 60.0           # an open-ended activity (ratting, anomalies) counts one hour of work once the prep is done
+ACTIVITY_MIN = 600.0          # an open-ended activity counts 10 hours of work: the hull, gear and skills are reused, so their cost is spread over them
 BATCHES = (1, 2, 5, 10)
 MAX_DEPTH = 3
-TIE = 0.95                    # a chain within 5% of the best step counts as a tie (its few prep minutes); a tie whose first step is HERE wins (owner rule)
+PLAY_H = 24.0                 # a chain that waits for skill training ranks at chain x 24 / (24 + training hours)
+TIE = 0.95                   # a chain within 5% of the best step counts as a tie (its few prep minutes); a tie whose first step is HERE wins (owner rule)
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -246,8 +247,14 @@ def _tool_items(con, tool):
         return []
 
 
+def _spec(out, key, tool=None):
+    return out.setdefault(key, {"tool": tool, "skills": [], "hull": [], "items": [], "goals": []})
+
+
 def goals(con, g, p, best_min):
-    """Blocked goals by prep group -> {group: [{name, isk, minutes, modeled}]}; unmodeled ones are valued at best_min ISK/min."""
+    """Blocked goals by prep group -> {key: {tool, skills [(name, level)], hull [names], items [(item, qty)], goals [{name, isk, minutes, modeled}]}}.
+    Goals that only lack a tool share the tool's group (one combat fit opens every combat goal); a goal that also lacks skills, a hull or extra items
+    (analyzers ...) gets a group of its own. Unmodeled goals are valued at best_min ISK/min."""
     out = {}
     try:
         from .nextstep import _INCLUDE_BLOCKED, _OFFERS_CACHE, _offers_rows_calc, combat_ready
@@ -268,26 +275,46 @@ def goals(con, g, p, best_min):
                 continue
             mins = max(float(minutes), 1.0)
             per = max(float(net) / mins, best_min) if not o.get("timed") else float(net) / mins   # combat time is a guess until timed: best ISK/min
-            out.setdefault(nt, []).append({"name": f"{o['agent'].split(' (')[0]}: {o.get('mission', '')[:40]}", "isk": per * mins, "minutes": mins,
-                                           "modeled": bool(o.get("timed"))})
+            _spec(out, nt, nt)["goals"].append({"name": f"{o['agent'].split(' (')[0]}: {o.get('mission', '')[:40]}", "isk": per * mins, "minutes": mins,
+                                                "modeled": bool(o.get("timed"))})
     except Exception as _he:                                            # noqa: BLE001
         _hrec('preptree', _he)
     try:
+        from . import combatprep
+        from . import tools as _tl
+        from .acquire import held
         from .allplans import COMBAT_IDS
-        from .catalog import MODELED_RUNS, status
+        from .catalog import MODELED_RUNS, skill_levels, status
         from .lookahead import act_rate
-        for a in status(con, float(getattr(p, "wallet_isk", 0.0) or 0.0)):
-            grp = "gun" if a.get("id") in COMBAT_IDS else a.get("needs_tool")
-            if not grp or a.get("blocked"):
-                continue
-            if grp == "gun" and "gun" not in out and _combat_items(con, g, p) == []:
-                continue
+        from .nextstep import combat_ready
+        owned = [n for n, _s in combatprep.state(con, p)["ships"]]
+        hull = getattr(p, "ship_name", "") or ""
+        tools = {"fitted": _tl.fitted_now(con), "held": _tl.held_anywhere(con)}
+        levels = skill_levels(con)
+        ready = combat_ready(con, g, p)
+        for a in status(con, float(getattr(p, "wallet_isk", 0.0) or 0.0), hull, owned, tools):
+            if a.get("blocked") or not a.get("prior") or not a["prior"][1]:
+                continue                                                # out of scope / no ISK (paragon, pvp goals ...)
+            tool = "gun" if a.get("id") in COMBAT_IDS else a.get("needs_tool")
+            skills = [(k, v) for k, v in a.get("requires", {}).items() if levels.get(k.lower(), 0) < v]
+            items = [(it, q - held(con, it)) for it, q in a.get("prep_items", []) if held(con, it) < q]
+            nh = a.get("needs_hull") or []
+            hull_missing = [] if not nh or tool == "gun" or any(w.lower() in (hull + " " + " ".join(owned)).lower() for w in nh) else nh
+            tool_open = bool(tool) and ((tool == "gun" and not ready) or (tool != "gun" and not tools["fitted"].get(tool)))
+            if not (skills or items or hull_missing or tool_open):
+                continue                                                # doable now: it is on the plan list already
             modeled = a.get("runs", 0) >= MODELED_RUNS
             per = act_rate(a)[0] / 60.0 if modeled else best_min
-            out.setdefault(grp, []).append({"name": a["name"], "isk": per * ACTIVITY_MIN, "minutes": ACTIVITY_MIN, "modeled": modeled})
+            goal = {"name": a["name"], "isk": per * ACTIVITY_MIN, "minutes": ACTIVITY_MIN, "modeled": modeled}
+            if skills or items or hull_missing:
+                s = _spec(out, a["id"], tool if tool_open else None)
+                s.update(skills=skills, hull=hull_missing, items=items)
+                s["goals"].append(goal)
+            else:
+                _spec(out, tool, tool)["goals"].append(goal)
     except Exception as _he:                                            # noqa: BLE001
         _hrec('preptree', _he)
-    return out
+    return {k: v for k, v in out.items() if v["goals"]}
 
 
 def _do_step(con, g, p, grp):
@@ -325,32 +352,77 @@ def chains(con, g, p, best_hr, haul=True):
     ctx = Ctx(con, g, p, best_min)
     gs = goals(con, g, p, best_min)
     out = []
-    for grp, items in gs.items():
-        need = _combat_items(con, g, p) if grp == "gun" else _tool_items(con, grp)
+    levels = None
+    for grp, spec in gs.items():
+        items = spec["goals"]
+        tool = spec["tool"]
+        need = (_combat_items(con, g, p) if tool == "gun" else _tool_items(con, tool) if tool else []) + list(spec["items"])
+        train_h, train_node = 0.0, None
+        if spec["skills"]:
+            if levels is None:
+                from .catalog import skill_levels
+                levels = skill_levels(con)
+            need += [(s, 1) for s, _l in spec["skills"] if s.lower() not in levels]     # a skill you have never injected: its book is bought first
+            train_h, train_node = _training(con, spec["skills"])
         nodes = [source(ctx, it, q) for it, q in need]
+        if spec["hull"]:
+            hulls = [n for n in (source(ctx, h, 1) for h in spec["hull"]) if n]
+            nodes.append(min(hulls, key=lambda n: n["cost"]) if hulls else None)
+            need.append((spec["hull"][0], 1))
         if any(n is None for n in nodes):
             missing = [it for (it, _q), n in zip(need, nodes) if n is None]
-            out.append({"group": grp, "goals": items, "prep": [], "unknown": missing, "chain_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0, "gain": 0.0})
+            out.append({"group": grp, "goals": items, "prep": [], "unknown": missing, "chain_min": 0.0, "rank_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0,
+                        "gain": 0.0, "train_h": train_h})
             continue
+        if train_node:
+            nodes.insert(0, train_node)                                 # training runs in the background: queue it first, then buy while it trains
         steps = [s for n in nodes for s in leaves(n)]
-        if not steps:                                                   # every item owned: what is left is fitting / showing the fit (no cash, a few minutes)
-            do = _do_step(con, g, p, grp)
+        if not steps and tool:                                          # every item owned: what is left is fitting / showing the fit (no cash, a few minutes)
+            do = _do_step(con, g, p, tool)
             if do:
                 nodes, steps = [do], [do]
-        cash =sum(n["cash"] for n in nodes) - sum(s.get("surplus", 0.0) for s in steps)
+        cash = sum(n["cash"] for n in nodes) - sum(s.get("surplus", 0.0) for s in steps)
         minutes = sum(n["minutes"] for n in nodes)
         first_dest = next((s.get("where") for s in steps if s.get("where")), None)
         gain = _haul_gain(con, g, p, first_dest) if haul else 0.0
         pay = sum(x["isk"] for x in items)
         work = sum(x["minutes"] for x in items)
         chain_min = (pay - cash + gain) / max(work + minutes, 1.0)
-        out.append({"group": grp, "goals": sorted(items, key=lambda x: -x["isk"] / x["minutes"]), "prep": nodes, "cash": cash, "minutes": minutes, "gain": gain,
-                    "pay": pay, "work": work, "chain_min": chain_min, "prep_per_min": (cash - gain) / max(work, 1.0), "steps": steps, "unknown": []})
-    out.sort(key=lambda c: -c["chain_min"])
+        out.append({"group": grp, "tool": tool, "goals": sorted(items, key=lambda x: -x["isk"] / x["minutes"]), "prep": nodes, "cash": cash, "minutes": minutes,
+                    "gain": gain, "pay": pay, "work": work, "chain_min": chain_min, "train_h": train_h,
+                    "rank_min": chain_min * PLAY_H / (PLAY_H + train_h),          # waiting for training: the chain pays later, so it ranks lower
+                    "prep_per_min": (cash - gain) / max(work, 1.0), "steps": steps, "unknown": []})
+    out.sort(key=lambda c: -_score(c))
     return out
 
 
+def _training(con, skills):
+    """(hours of training incl. prerequisites, a 'do' node that queues it) for [(skill, level)] (trainplan, your attributes)."""
+    try:
+        from .trainplan import plan_training
+        res = plan_training(con, goals=[(s, lv, "prep") for s, lv in skills])
+        mins = sum(x["minutes"] for x in res["steps"])
+        names = ", ".join(f"{x['skill']} {x['level']}" for x in res["steps"][:6]) or ", ".join(f"{s} {lv}" for s, lv in skills)
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('preptree', _he)
+        mins, names = 0.0, ", ".join(f"{s} {lv}" for s, lv in skills)
+    h = mins / 60.0
+    txt = f"QUEUE SKILLS {names} (training ~{h:,.1f} h in the background; buy the rest while it trains)"
+    return h, {"how": "do", "item": "skills", "qty": 1, "cash": 0.0, "minutes": 1.0, "cost": 0.0, "children": [], "text": txt,
+               "step": f"STEP: {txt}\n   Character sheet > Skills > right-click each > Train now (or add to the queue). Then  python -m eve_profit next"}
+
+
 LABEL = {"gun": "COMBAT (a fit passing the 99% rule)", "mining": "MINING (mining lasers)", "salvaging": "SALVAGING (a salvager)", "scanning": "SCANNING (probe launcher + probes)"}
+
+
+def _label(c):
+    return LABEL.get(c["group"]) or (c["goals"][0]["name"] if c.get("goals") else c["group"])
+
+
+def _score(c):
+    """ISK/min a chain is ranked by: queueing skills costs nothing and blocks nothing, so that step counts the chain without the training wait."""
+    s0 = c["steps"][0] if c.get("steps") else {}
+    return c["chain_min"] if s0.get("item") == "skills" else c.get("rank_min", c["chain_min"])
 
 
 def _tree_lines(node, ind="      "):
@@ -371,16 +443,19 @@ def lines(con, g, p, best_hr, haul=True):
     best_min = float(best_hr or 0.0) / 60.0
     L = [f"PREP CHAINS (blocked goals + the cheapest way to get able to do them; time valued at {best_min:,.0f} ISK/min, the best on the list now):"]
     for c in cs:
-        L.append(f"   {LABEL.get(c['group'], c['group'])}: {len(c['goals'])} goal(s)")
+        L.append(f"   {_label(c)}: {len(c['goals'])} goal(s)")
         if c["unknown"]:
             L.append("      no price known for: " + ", ".join(c["unknown"]) + "  (run  python -m eve_profit scan)")
             continue
         s0 = c["steps"][0] if c["steps"] else {}
         here = s0.get("how") in ("do", "build") or s0.get("jumps", 1) == 0
-        verdict = ("BEATS the best step now: its first step joins next" if c["chain_min"] > best_min else
-                   "TIES the best step and its first step is HERE: it joins next" if here and c["chain_min"] >= best_min * TIE else "below the best step now: waits")
+        sc = _score(c)
+        verdict = ("BEATS the best step now: its first step joins next" if sc > best_min else
+                   "TIES the best step and its first step is HERE: it joins next" if here and sc >= best_min * TIE else "below the best step now: waits")
         L.append(f"      chain {c['chain_min']:,.0f} ISK/min = (goals pay {c['pay']:,.0f} - prep cash {c['cash']:,.0f} + trades on the way {c['gain']:,.0f}) / "
                  f"({c['work']:,.0f} + {c['minutes']:,.0f} prep min)  -> {verdict}")
+        if c.get("train_h"):
+            L.append(f"      skills train ~{c['train_h']:,.1f} h first: ranked at {c['rank_min']:,.0f} ISK/min for the wait")
         L.append(f"      prep costs {c['prep_per_min']:,.0f} ISK per goal-minute")
         for x in c["goals"][:5]:
             L.append(f"      goal  {x['isk'] / x['minutes']:>8,.0f} ISK/min  {x['name']}" + ("" if x["modeled"] else "  (not modeled: valued at the best ISK/min)"))
@@ -400,10 +475,10 @@ def first_step(con, g, p, chain, hop_to):
     s = chain["steps"][0]
     if s["how"] == "buy":
         from .acquire import first_action
-        way = {"mode": "buy", "buy": s["src"], "item": s["item"], "qty": s["qty"], "build": None, "lines": [f"prep for {LABEL.get(chain['group'], chain['group'])}"]}
+        way = {"mode": "buy", "buy": s["src"], "item": s["item"], "qty": s["qty"], "build": None, "lines": [f"prep for {_label(chain)}"]}
         return first_action(con, g, p, way, hop_to)
     if s["how"] == "mine":
-        return f"STEP: {s['text']}\n   (prep for {LABEL.get(chain['group'], chain['group'])}; then  python -m eve_profit next)"
+        return f"STEP: {s['text']}\n   (prep for {_label(chain)}; then  python -m eve_profit next)"
     if s["how"] == "do":
         return s["step"]
     if s["how"] == "build":
@@ -424,12 +499,13 @@ def candidates(con, g, p, best_known, hop_to):
         here = s0 is not None and (s0["how"] in ("do", "build") or s0.get("jumps", 1) == 0)
         if not s0 or s0["cash"] > wallet * 0.5:
             continue
-        if not (c["chain_min"] * 60.0 > best_known or (here and c["chain_min"] * 60.0 >= best_known * TIE)):
+        sc = _score(c) * 60.0
+        if not (sc > best_known or (here and sc >= best_known * TIE)):
             continue                                                    # unmodeled goals equal the best rate, so a chain whose first step is HERE ties and wins
         txt = first_step(con, g, p, c, hop_to)
         if txt.startswith("STEP:"):
-            return [(max(c["chain_min"] * 60.0, best_known * 1.0001 if here else 0.0), f"prep: {c['steps'][0]['item']}", txt,
-                     f"prep for {LABEL.get(c['group'], c['group'])}: the whole chain makes {c['chain_min']:,.0f} ISK/min, more than the best step now")]
+            return [(max(sc, best_known * 1.0001 if here else 0.0), f"prep: {c['steps'][0]['item']}", txt,
+                     f"prep for {_label(c)}: the whole chain makes {c['chain_min']:,.0f} ISK/min, more than the best step now")]
     return []
 
 
