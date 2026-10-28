@@ -50,11 +50,11 @@ def prestep(con, g, p, text):
             r = g.route(g.id_of(here), g.id_of(site["system"]), 60, p.avoid_yellow)
             hop = g.name[r.path[1]] if len(r.path) > 1 else site["system"]
             return "\n".join([f"STEP: FLY to {hop}",
-                              f"   DO ONLY THIS: fly to {hop} and stop there. Then run  python -m eve_profit next  (it plans again from there).",
+                              f"   DO ONLY THIS: fly to {hop} and stop there..",
                               f"   LATER: mine {site['best_ore'] or 'ore'} at {site['system']} ({r.jumps} jumps from here, {site['belts']} belts)"])
         if getattr(p, "current_location_id", 0):                       # docked in the mining system
             return "\n".join([f"STEP: UNDOCK and warp to an asteroid belt in {here} (about 2 minutes)",
-                              "   DO ONLY THIS: undock, open the Overview, find an Asteroid Belt, right-click > Warp to Within 0 m. Then run  python -m eve_profit next."])
+                              "   DO ONLY THIS: undock, open the Overview, find an Asteroid Belt, right-click > Warp to Within 0 m.."])
     except Exception:                                                   # noqa: BLE001
         pass
     return text

@@ -4,7 +4,7 @@ from .health import record as _hrec
 from .along import plan_along
 from .planner import plan
 
-AFTER = "Then run:  python -m eve_profit now"
+AFTER = "Then run:  python -m eve_profit now"      # no longer printed (owner 2026-10-28: the hourly refresh + next's live item refresh make now redundant); kept so old text splits still work
 
 
 def _better_places(con, g, p, min_extra=50_000.0, rate=None):
@@ -68,7 +68,6 @@ def _detour_step(con, g, p, where, sells, d, b):
             L += _rdesc(d["name"], ro)
     except Exception as _he:                                                   # noqa: BLE001
         _hrec('nextstep', _he)
-    L.append(AFTER)
     return "\n".join(L)
 
 
@@ -213,7 +212,6 @@ def _next_action_core(con, g, p):
         if big["net"] >= 5_000_000:
             L.append(f"   BIG ONE: before selling {big['name']}, compare other markets:  python -m eve_profit bestprice --item \"{big['name']}\"")
         L.append("   In game: Market > item > Sell > pick the HIGHEST buy order at your station.")
-        L.append(AFTER)
         return "\n".join(x for x in L if x != "")
     listers = [d for d in here if d["advice"] == "LIST"]
     if listers:
@@ -229,7 +227,6 @@ def _next_action_core(con, g, p):
         if slots is not None:
             L.append(f"   uses 1 of your ~{slots} market order slots")
         L.append("   In game: right-click the item in your hangar > Sell this item > choose 'Create sell order'.")
-        L.append(AFTER)
         return "\n".join(L)
     opps = plan(con, p, 30, False)
     if opps:
@@ -239,7 +236,7 @@ def _next_action_core(con, g, p):
             o = next((x for x in (fresh(con, g, p, y) for y in opps[:3] if y.kind == "trade") if x), o)
             ts = trade_step(con, g, p, o)
             if ts:
-                return ts + "\n" + AFTER
+                return ts
         if o.kind == "liquidate" and getattr(o, "waypoints", None):          # stock to sell elsewhere: ONE action = the next jump; the sale comes up when you are there
             hop = g.name[o.waypoints[0]]
             load = ""
@@ -251,8 +248,8 @@ def _next_action_core(con, g, p):
                         load = f"load {mm.group(1)} into your ship, then "
             except Exception as _he:                                    # noqa: BLE001
                 _hrec('nextstep', _he)
-            return (f"STEP: FLY to {hop}\n   DO ONLY THIS: {load}fly to {hop} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
-                    f"   LATER: {o.description}: about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr; confirm the buy-order price in the game before you sell)\n" + AFTER)
+            return (f"STEP: FLY to {hop}\n   DO ONLY THIS: {load}fly to {hop} and stop there.\n"
+                    f"   LATER: {o.description}: about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr; confirm the buy-order price in the game before you sell)")
         L = [f"STEP: {o.kind.upper()} (nothing left to sell here; best of everything ranked by ISK/hr)",
              f"   {o.description}",
              f"   profit about {o.net_isk:,.0f} ISK in {o.hours * 60:.0f} min ({o.isk_per_hour:,.0f} ISK/hr)"]
@@ -261,7 +258,6 @@ def _next_action_core(con, g, p):
         elif o.kind == "liquidate":
             L.append("   (`check` does not work on stock you own: confirm the buy-order price in the game before you sell.)")
         L.append("   then route:                  python -m eve_profit go --pick 1 --send")
-        L.append(AFTER)
         return "\n".join(L)
     try:
         from .pricefresh import advice, status_line
@@ -737,7 +733,7 @@ def next_action_all(con, g, p):
     return text
 
 
-DONE = "When done:  python -m eve_profit stop   (agent missions: wait 2 minutes first)   then   python -m eve_profit sync   then   python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"
+DONE = "When done:  python -m eve_profit stopsync (or just stop when the step says no sync is needed)   then   python -m eve_profit next"
 
 
 def _unit_price(con, item, est):
@@ -768,7 +764,7 @@ def _hop_step(g, p, con_=None):
                 return ps
         except Exception as _he:                                               # noqa: BLE001
             _hrec('nextstep', _he)
-        return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there. Then run  python -m eve_profit next  (it plans again from there).\n"
+        return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there..\n"
                 f"   LATER: {why} ({left} jumps to {system})" + ((": " + " | ".join(lines)) if lines else ""))
     return hop_to
 
@@ -864,6 +860,21 @@ def _timer(name, con=None):
     return f'   Time it:  python -m eve_profit start --activity "{name}"'
 
 
+NO_SYNC = ("FLY", "DOCK", "UNDOCK", "BOARD", "READ", "SHOW ME", "LOOK AROUND", "OPEN")
+
+
+def needs_sync(step):
+    """owner 2026-10-28: each step ends with ONE command: stopsync when the step changes what sync reads (wallet, assets, skills, standings,
+    missions, orders, fittings), plain stop when it does not. next reads your location and ship live, so moving / docking / boarding and
+    screens or reading need no sync. Unknown kinds sync (safe side)."""
+    import re
+    m = re.match(r"\s*STEP:\s*(.+)", step or "")
+    head = m.group(1).upper() if m else ""
+    if re.search(r"DO ONLY THIS: (load|put) ", step or ""):                 # a FLY step that first moves cargo changes the assets
+        return True
+    return not any(head.startswith(k) for k in NO_SYNC)
+
+
 def finish_block(step):
     """The ONE step followed by its commands in the order you type them: start the timer, do it, done (if the step has one), stop, sync, next.
     The step's own 'When it is done run ...' lines and its Time it / Timer line are folded into that list so nothing appears twice."""
@@ -896,9 +907,11 @@ def finish_block(step):
     is_sell = step.lstrip().upper().startswith("STEP: SELL NOW")
     stop_txt = ("Stop the timer (also marks the step done):  python -m eve_profit stop" if needs_done else
                 "Stop the timer (also takes the sold items out of your stock):  python -m eve_profit stop" if is_sell else "Stop the timer:  python -m eve_profit stop")
-    out += [f"   {n}. {stop_txt}   (agent missions: wait 2 minutes first)",
-            f"   {n + 1}. Update from the game:  python -m eve_profit sync      (stop + sync in one go:  python -m eve_profit stopsync)",
-            f"   {n + 2}. Next step:  python -m eve_profit next      (or  python -m eve_profit now  = sync + fresh prices + next)"]
+    if needs_sync(step):
+        out += [f"   {n}. {stop_txt.replace('Stop the timer', 'Stop the timer + update from the game').replace('eve_profit stop', 'eve_profit stopsync')}   (agent missions: wait 2 minutes first)"]
+    else:
+        out += [f"   {n}. {stop_txt}   (no sync needed: this step changes nothing sync reads)"]
+    out += [f"   {n + 1}. Next step:  python -m eve_profit next"]
     return "\n".join(out)
 
 
