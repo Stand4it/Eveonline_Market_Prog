@@ -1,20 +1,69 @@
 {
- "why": "Estimated numbers per module for small (frigate / destroyer) combat fits, used by combatcheck.py to find the cheapest fit that passes the 99% rule. Turret dps is with ordinary ammo and no skills; the check scales it by your measured DPS. cap = GJ per second the module uses while running; recharge_mult multiplies the capacitor recharge time (lower is faster). Replace a guess with what the fitting window shows.",
+ "why": "Estimated numbers per module for small (frigate / destroyer) combat fits, used by combatcheck.py to find the cheapest fit that passes the 99% rule. Turret dps is with ordinary ammo and no skills; the check scales it by your measured DPS. cap = GJ per second the module uses while running; recharge_mult multiplies the capacitor recharge time (lower is faster). Replace a guess with what the fitting window shows. Hull cap numbers include your skills (read from the fitting window). Blaster/railgun cap values are still guesses: correct them from the fitting window's capacitor delta after fitting.",
  "hulls": {
-  "default": {"cap_gj": 400.0, "recharge_s": 200.0, "prop_cap_s": 0.9},
-  "Catalyst": {"cap_gj": 450.0, "recharge_s": 210.0, "prop_cap_s": 0.9}
+  "default": {
+   "cap_gj": 400.0,
+   "recharge_s": 200.0,
+   "prop_cap_s": 0.9
+  },
+  "Catalyst": {
+   "cap_gj": 560.0,
+   "recharge_s": 297.0,
+   "prop_cap_s": 1.0,
+   "seen": "fitting window 2026-10-28: 560 GJ / 4m57s, delta -12.4 GJ/s (-262.4%) with 8 Civilian Gatling + afterburner, depletes in 35 s"
+  }
  },
  "modules": {
-  "Civilian Gatling Railgun": {"slot": "turret", "dps": 2.3, "cap": 0.25},
-  "150mm Railgun I": {"slot": "turret", "dps": 7.0, "cap": 0.24},
-  "Light Electron Blaster I": {"slot": "turret", "dps": 9.0, "cap": 0.33},
-  "Light Ion Blaster I": {"slot": "turret", "dps": 11.0, "cap": 0.4},
-  "Light Neutron Blaster I": {"slot": "turret", "dps": 13.0, "cap": 0.45},
-  "Magnetic Field Stabilizer I": {"slot": "low", "dps_mult": 1.10},
-  "200mm Steel Plates I": {"slot": "low", "ehp_add": 600.0},
-  "Damage Control I": {"slot": "low", "ehp_mult": 1.12},
-  "Small Armor Repairer I": {"slot": "low", "tank_add": 8.0, "cap": 6.67},
-  "Capacitor Power Relay I": {"slot": "low", "recharge_mult": 0.80},
-  "Cap Recharger I": {"slot": "mid", "recharge_mult": 0.85}
+  "Civilian Gatling Railgun": {
+   "slot": "turret",
+   "dps": 2.3,
+   "cap": 2.0,
+   "cap_seen": "measured 2026-10-28: (12.4 + 4.7 peak recharge - 1.0 afterburner) / 8 guns"
+  },
+  "150mm Railgun I": {
+   "slot": "turret",
+   "dps": 7.0,
+   "cap": 0.4
+  },
+  "Light Electron Blaster I": {
+   "slot": "turret",
+   "dps": 9.0,
+   "cap": 0.55
+  },
+  "Light Ion Blaster I": {
+   "slot": "turret",
+   "dps": 11.0,
+   "cap": 0.65
+  },
+  "Light Neutron Blaster I": {
+   "slot": "turret",
+   "dps": 13.0,
+   "cap": 0.75
+  },
+  "Magnetic Field Stabilizer I": {
+   "slot": "low",
+   "dps_mult": 1.1
+  },
+  "200mm Steel Plates I": {
+   "slot": "low",
+   "ehp_add": 600.0
+  },
+  "Damage Control I": {
+   "slot": "low",
+   "ehp_mult": 1.12
+  },
+  "Small Armor Repairer I": {
+   "slot": "low",
+   "tank_add": 8.0,
+   "cap": 6.67
+  },
+  "Capacitor Power Relay I": {
+   "slot": "low",
+   "recharge_mult": 0.8
+  },
+  "Cap Recharger I": {
+   "slot": "mid",
+   "recharge_mult": 0.85
+  }
  }
 }

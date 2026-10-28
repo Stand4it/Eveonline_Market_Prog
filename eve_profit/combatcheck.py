@@ -201,8 +201,8 @@ def best_fit(con, g, p, req):
             c_gun = pr(gun, n)
             if c_gun is None:
                 continue
-            for combo in ((lo + mi) for lo in itertools.combinations_with_replacement(low, lows)
-                          for mi in itertools.combinations_with_replacement(mid, mids)):
+            for fill, combo in ((f, lo + mi) for f in (True, False) for lo in itertools.combinations_with_replacement(low, lows)
+                                for mi in itertools.combinations_with_replacement(mid, mids)):
                 counts = {m: combo.count(m) for m in set(combo) if m is not None}
                 cost, items, ok = c_gun, [(gun, n, c_gun)], True
                 for m, q in counts.items():
@@ -216,7 +216,7 @@ def best_fit(con, g, p, req):
                     continue
                 dps = float(mods[gun]["dps"]) * n * k
                 use = float(mods[gun].get("cap", 0.0)) * n + float(hc.get("prop_cap_s", 0.0))
-                spare = turrets - n                                      # the other turret slots take guns you already own (free)
+                spare = turrets - n if fill else 0                       # the other turret slots take guns you already own (free) - or stay empty: guns cost capacitor
                 for og in sorted((x for x in guns if x != gun and owned_n(x)), key=lambda x: -float(mods[x]["dps"])):
                     u = min(spare, owned_n(og))
                     if u > 0:
