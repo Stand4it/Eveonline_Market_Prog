@@ -1,0 +1,14 @@
+{
+ "why": "Estimated numbers per module for small (frigate / destroyer) combat fits, used by combatcheck.py to find the cheapest fit that passes the 99% rule. Turret dps is with ordinary ammo and no skills; the check scales it by your measured DPS. Replace a guess with what the fitting window shows.",
+ "modules": {
+  "Civilian Gatling Railgun": {"slot": "turret", "dps": 2.3},
+  "150mm Railgun I": {"slot": "turret", "dps": 7.0},
+  "Light Electron Blaster I": {"slot": "turret", "dps": 9.0},
+  "Light Ion Blaster I": {"slot": "turret", "dps": 11.0},
+  "Light Neutron Blaster I": {"slot": "turret", "dps": 13.0},
+  "Magnetic Field Stabilizer I": {"slot": "low", "dps_mult": 1.10},
+  "200mm Steel Plates I": {"slot": "low", "ehp_add": 600.0},
+  "Damage Control I": {"slot": "low", "ehp_mult": 1.12},
+  "Small Armor Repairer I": {"slot": "low", "tank_add": 8.0}
+ }
+}

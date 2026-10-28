@@ -350,13 +350,14 @@ _OFFERS_CACHE = {}
 _INCLUDE_BLOCKED = [False]
 
 
-def combat_ready(con, g, p):
-    """True when the ship you fly is combat-ready (combatprep finds no missing piece: hull, guns, ammo, tank)."""
+def combat_ready(con, g, p, level=1):
+    """True when the ship you fly is combat-ready (combatprep finds no missing piece: hull, guns, ammo, tank) AND the DPS / EHP you showed pass
+    `level` by the 99% rule (combatcheck; 2026-10-28: a 4.6 DPS fit counted as ready before)."""
     if g is None or p is None:
         return True
     try:
-        from . import combatprep
-        return not combatprep.next_step(con, g, p, lambda *a, **k: "x")
+        from . import combatcheck, combatprep
+        return not combatprep.next_step(con, g, p, lambda *a, **k: "x") and combatcheck.ready(con, g, p, level)
     except Exception:                                                   # noqa: BLE001
         return False
 
@@ -378,12 +379,16 @@ def agent_long_view(con, g, p, top=12):
         fitted = _tl.fitted_now(con)
     except Exception:                                                   # noqa: BLE001
         fitted = {}
-    ready = combat_ready(con, g, p)
+    _rd = {}
     L = ["AGENT OFFERS, best ISK per minute first (from where you are; prep is bought on the way where it is cheapest):"]
     for rate, net, minutes, o, _tags in rows[:top]:
         nt = o.get("needs_tool")
         if nt == "gun":
-            need = "READY" if ready else "NEEDS a combat fit that passes the 99% rule (guns, tank, cap: see SHOPPING)"
+            from .combatcheck import level_of
+            lv = level_of(offer=o)
+            if lv not in _rd:
+                _rd[lv] = combat_ready(con, g, p, lv)
+            need = "READY" if _rd[lv] else f"NEEDS a fit that passes level {lv} by the 99% rule (python -m eve_profit combatcheck)"
         elif nt and not fitted.get(nt):
             need = f"NEEDS {nt} gear fitted (see SHOPPING)"
         else:
@@ -431,11 +436,18 @@ def _offers_rows_calc(con, g, p, f):
         return float(est), "est"
 
     rows = []
-    ready = combat_ready(con, g, p)
+    _ready = {}
+
+    def ready_for(o):                                                   # the fit must pass THIS offer's level (a level 2 mission needs more than a level 1)
+        from .combatcheck import level_of
+        lv = level_of(offer=o)
+        if lv not in _ready:
+            _ready[lv] = combat_ready(con, g, p, lv)
+        return _ready[lv]
     for o in d["offers"]:
         if not o.get("available", True):
             continue
-        if o.get("needs_tool") == "gun" and not ready and not _INCLUDE_BLOCKED[0]:
+        if o.get("needs_tool") == "gun" and not _INCLUDE_BLOCKED[0] and not ready_for(o):
             continue                                                    # combat waits for a fit that passes the 99% rule (2026-10-21 ship loss); listed in the long view
         cash = (o.get("isk", 0) + o.get("bonus", 0)) * ((1 - tax) if o.get("taxed", True) else 1.0)
         loot, cost, tags = 0.0, 0.0, []

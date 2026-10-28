@@ -274,4 +274,7 @@ SYNCSTOP  -  same as stopsync (stop first, then sync)
 PREPTREE  -  every blocked goal with the cheapest prep chain (buy / build / mine), ranked by chain ISK/min
    example: python -m eve_profit preptree
 
+COMBATCHECK  -  your fit vs mission levels 1-4 and ratting by the 99% rule; the cheapest fit that passes
+   example: python -m eve_profit combatcheck
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.

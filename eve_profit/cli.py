@@ -53,7 +53,7 @@ def print(*args, sep=" ", **kw):                                          # noqa
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "health", "stopsync", "syncstop", "preptree"])
+    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "health", "stopsync", "syncstop", "preptree", "combatcheck"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -567,7 +567,12 @@ def _run(a):
             if a.value:
                 p.fit_value_isk = a.value
         p.save(a.profile)
-        print(f"Saved combat numbers for {ship}: {a.dps:,.0f} DPS, {a.ehp:,.0f} EHP, {a.tank:,.0f} tank/s. "
+        try:                                                     # the numbers came from the fitting window: the SHOW ME step is done for this hull
+            from .combatprep import mark_fit_seen, state
+            mark_fit_seen(con, state(con, p)["hull"] if ship == p.ship_name or ship.lower() in (p.ship_name or "").lower() else ship)
+        except Exception:                                        # noqa: BLE001
+            pass
+        print(f"Saved combat numbers for {ship}:{a.dps:,.0f} DPS, {a.ehp:,.0f} EHP, {a.tank:,.0f} tank/s. "
               f"Combat is now ranked against everything else by ISK/hr (only where the win margin is high).")
     elif a.cmd == "now":
         _now(a)
@@ -709,6 +714,10 @@ def _run(a):
     elif a.cmd == "models":
         from .catalog import models_report
         print(models_report(con, p.wallet_isk))
+    elif a.cmd == "combatcheck":
+        from .graph import Graph
+        from .combatcheck import report as combat_report
+        print(combat_report(con, Graph(con), p))
     elif a.cmd == "preptree":
         from .graph import Graph
         from .preptree import lines as prep_lines

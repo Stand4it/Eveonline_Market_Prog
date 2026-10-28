@@ -247,8 +247,36 @@ def _tool_items(con, tool):
         return []
 
 
-def _spec(out, key, tool=None):
-    return out.setdefault(key, {"tool": tool, "skills": [], "hull": [], "items": [], "goals": []})
+def _spec(out, key, tool=None, level=None):
+    return out.setdefault(key, {"tool": tool, "level": level, "skills": [], "hull": [], "items": [], "goals": []})
+
+
+def _key(tool, level):
+    """Group key: combat goals group by mission level (every level needs its own fit), the other tools by tool."""
+    return f"gun:{level}" if tool == "gun" else tool
+
+
+_READY = {}
+
+
+def _ready(con, g, p, level):
+    k = (id(con), repr(p), level)
+    if k not in _READY:
+        from .nextstep import combat_ready
+        _READY[k] = combat_ready(con, g, p, level)
+    return _READY[k]
+
+
+def _gun_items(con, g, p, level):
+    """The combat kit still missing (hull, guns, ammo, tank) plus the modules of the cheapest fit that passes `level` (combatcheck)."""
+    out = list(_combat_items(con, g, p))
+    try:
+        from .combatcheck import missing_items
+        have = {n.lower() for n, _q in out}
+        out += [(n, q) for n, q in missing_items(con, g, p, level or 1) if n.lower() not in have]
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('preptree', _he)
+    return out
 
 
 def goals(con, g, p, best_min):
@@ -266,16 +294,17 @@ def goals(con, g, p, best_min):
         finally:
             _INCLUDE_BLOCKED[0] = False
             _OFFERS_CACHE.clear()
-        ready = combat_ready(con, g, p)
         from . import tools as _tl
+        from .combatcheck import level_of
         fitted = _tl.fitted_now(con)
         for rate, net, minutes, o, _t in rows:
             nt = o.get("needs_tool")
-            if not nt or (nt == "gun" and ready) or (nt != "gun" and fitted.get(nt)):
+            lv = level_of(offer=o)
+            if not nt or (nt == "gun" and _ready(con, g, p, lv)) or (nt != "gun" and fitted.get(nt)):
                 continue
             mins = max(float(minutes), 1.0)
             per = max(float(net) / mins, best_min) if not o.get("timed") else float(net) / mins   # combat time is a guess until timed: best ISK/min
-            _spec(out, nt, nt)["goals"].append({"name": f"{o['agent'].split(' (')[0]}: {o.get('mission', '')[:40]}", "isk": per * mins, "minutes": mins,
+            _spec(out, _key(nt, lv), nt, lv)["goals"].append({"name": f"{o['agent'].split(' (')[0]}: {o.get('mission', '')[:40]}", "isk": per * mins, "minutes": mins,
                                                 "modeled": bool(o.get("timed"))})
     except Exception as _he:                                            # noqa: BLE001
         _hrec('preptree', _he)
@@ -291,7 +320,7 @@ def goals(con, g, p, best_min):
         hull = getattr(p, "ship_name", "") or ""
         tools = {"fitted": _tl.fitted_now(con), "held": _tl.held_anywhere(con)}
         levels = skill_levels(con)
-        ready = combat_ready(con, g, p)
+        from .combatcheck import level_of
         for a in status(con, float(getattr(p, "wallet_isk", 0.0) or 0.0), hull, owned, tools):
             if a.get("blocked") or not a.get("prior") or not a["prior"][1]:
                 continue                                                # out of scope / no ISK (paragon, pvp goals ...)
@@ -300,18 +329,19 @@ def goals(con, g, p, best_min):
             items = [(it, q - held(con, it)) for it, q in a.get("prep_items", []) if held(con, it) < q]
             nh = a.get("needs_hull") or []
             hull_missing = [] if not nh or tool == "gun" or any(w.lower() in (hull + " " + " ".join(owned)).lower() for w in nh) else nh
-            tool_open = bool(tool) and ((tool == "gun" and not ready) or (tool != "gun" and not tools["fitted"].get(tool)))
+            lv = level_of(a.get("id")) if tool == "gun" else None
+            tool_open = bool(tool) and ((tool == "gun" and not _ready(con, g, p, lv)) or (tool != "gun" and not tools["fitted"].get(tool)))
             if not (skills or items or hull_missing or tool_open):
                 continue                                                # doable now: it is on the plan list already
             modeled = a.get("runs", 0) >= MODELED_RUNS
             per = act_rate(a)[0] / 60.0 if modeled else best_min
             goal = {"name": a["name"], "isk": per * ACTIVITY_MIN, "minutes": ACTIVITY_MIN, "modeled": modeled}
             if skills or items or hull_missing:
-                s = _spec(out, a["id"], tool if tool_open else None)
+                s = _spec(out, a["id"], tool if tool_open else None, lv)
                 s.update(skills=skills, hull=hull_missing, items=items)
                 s["goals"].append(goal)
             else:
-                _spec(out, tool, tool)["goals"].append(goal)
+                _spec(out, _key(tool, lv), tool, lv)["goals"].append(goal)
     except Exception as _he:                                            # noqa: BLE001
         _hrec('preptree', _he)
     return {k: v for k, v in out.items() if v["goals"]}
@@ -356,7 +386,7 @@ def chains(con, g, p, best_hr, haul=True):
     for grp, spec in gs.items():
         items = spec["goals"]
         tool = spec["tool"]
-        need = (_combat_items(con, g, p) if tool == "gun" else _tool_items(con, tool) if tool else []) + list(spec["items"])
+        need = (_gun_items(con, g, p, spec.get("level")) if tool == "gun" else _tool_items(con, tool) if tool else []) + list(spec["items"])
         train_h, train_node = 0.0, None
         if spec["skills"]:
             if levels is None:
@@ -374,6 +404,12 @@ def chains(con, g, p, best_hr, haul=True):
             out.append({"group": grp, "goals": items, "prep": [], "unknown": missing, "chain_min": 0.0, "rank_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0,
                         "gain": 0.0, "train_h": train_h})
             continue
+        if tool == "gun" and not spec["skills"] and not spec["hull"]:
+            from .combatcheck import reachable
+            if not reachable(con, g, p, spec.get("level") or 1):
+                out.append({"group": grp, "goals": items, "prep": [], "chain_min": 0.0, "rank_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0, "gain": 0.0,
+                            "train_h": train_h, "unknown": [], "no_fit": True})
+                continue                                                # no fit of combat_modules.json passes this level on the hull you fly
         if train_node:
             nodes.insert(0, train_node)                                 # training runs in the background: queue it first, then buy while it trains
         steps = [s for n in nodes for s in leaves(n)]
@@ -381,6 +417,10 @@ def chains(con, g, p, best_hr, haul=True):
             do = _do_step(con, g, p, tool)
             if do:
                 nodes, steps = [do], [do]
+            elif tool == "gun" and not _ready(con, g, p, spec.get("level")):
+                out.append({"group": grp, "goals": items, "prep": [], "chain_min": 0.0, "rank_min": 0.0, "steps": [], "cash": 0.0, "minutes": 0.0, "gain": 0.0,
+                            "train_h": train_h, "unknown": [], "no_fit": True})
+                continue                                                # no fit of combat_modules.json passes this level on the hull you fly
         cash = sum(n["cash"] for n in nodes) - sum(s.get("surplus", 0.0) for s in steps)
         minutes = sum(n["minutes"] for n in nodes)
         first_dest = next((s.get("where") for s in steps if s.get("where")), None)
@@ -416,6 +456,9 @@ LABEL = {"gun": "COMBAT (a fit passing the 99% rule)", "mining": "MINING (mining
 
 
 def _label(c):
+    if str(c["group"]).startswith("gun:"):
+        lv = c["group"].split(":", 1)[1]
+        return f"COMBAT {'belt ratting / anomalies' if lv == 'ratting' else 'level ' + lv} (a fit passing the 99% rule: python -m eve_profit combatcheck)"
     return LABEL.get(c["group"]) or (c["goals"][0]["name"] if c.get("goals") else c["group"])
 
 
@@ -446,6 +489,9 @@ def lines(con, g, p, best_hr, haul=True):
         L.append(f"   {_label(c)}: {len(c['goals'])} goal(s)")
         if c["unknown"]:
             L.append("      no price known for: " + ", ".join(c["unknown"]) + "  (run  python -m eve_profit scan)")
+            continue
+        if c.get("no_fit"):
+            L.append("      no fit for the hull you fly passes this level: it needs a bigger ship or more skills (python -m eve_profit combatcheck)")
             continue
         s0 = c["steps"][0] if c["steps"] else {}
         here = s0.get("how") in ("do", "build") or s0.get("jumps", 1) == 0
