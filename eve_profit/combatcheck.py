@@ -11,6 +11,7 @@ from .health import record as _hrec
 
 _FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "combat_modules.json")
 P_MAX = 0.01                  # the 99% rule
+K_MIN, K_MAX = 0.7, 1.6       # skills + hull bonus can scale the table's turret DPS this far (a destroyer's 10%/level hybrid bonus and gunnery skills)
 LEVEL1 = {"name": "Level 1 security mission", "enemy_ehp": 5000.0, "threat_dps": 25.0, "waves_per_hour": 6.0, "session_hours": 1.0, "p_loss_per_hour": 0.0002, "min_dps": 40.0}
 RATTING = "High-sec belt ratting (frigate)"
 
@@ -137,6 +138,7 @@ def best_fit(con, g, p, req):
         return None
     est = _fitted_turret_dps(con, mods)
     k = dps0 / est if est > 0 else 1.0                                  # your skills and hull bonus relative to the table
+    k = min(max(k, K_MIN), K_MAX)                                       # the fitted list lags an hour (ESI): 23 DPS from 8 guns read against 2 guns gave x5
     guns = [n for n, d in mods.items() if d.get("slot") == "turret"]
     low = [n for n, d in mods.items() if d.get("slot") == "low"]
     price = {}
@@ -145,6 +147,17 @@ def best_fit(con, g, p, req):
         if (item, qty) not in price:
             price[(item, qty)] = _price(con, g, p, item, qty)
         return price[(item, qty)]
+
+    from .acquire import held
+    owned = {}
+
+    def owned_n(item):
+        if item not in owned:
+            try:
+                owned[item] = held(con, item) if con is not None else 0
+            except Exception:                                           # noqa: BLE001
+                owned[item] = 0
+        return owned[item]
 
     best = None
     for gun in guns:
@@ -165,6 +178,13 @@ def best_fit(con, g, p, req):
                 if not ok:
                     continue
                 dps = float(mods[gun]["dps"]) * n * k
+                spare = turrets - n                                      # the other turret slots take guns you already own (free)
+                for og in sorted((x for x in guns if x != gun and owned_n(x)), key=lambda x: -float(mods[x]["dps"])):
+                    use = min(spare, owned_n(og))
+                    if use > 0:
+                        dps += float(mods[og]["dps"]) * use * k
+                        items.append((og, use, 0.0))
+                        spare -= use
                 ehp, tank = ehp0, tank0
                 for m, q in counts.items():
                     d = mods[m]
