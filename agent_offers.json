@@ -720,13 +720,13 @@
    "granted": [],
    "task_min": 8,
    "jumps": 1,
-   "available": true,
+   "available": false,
    "where": "Uedama III - Moon 1 - Caldari Steel Warehouse (0.5)",
    "agent_system": "Uedama",
    "to_system": "Ikao",
    "career": "Distribution",
    "needs": "nothing special (0.1 m3, no combat). The pickup is at Haatomo VI Moon 3; the drop-off is back here at the agent's station, so it is one round trip to Haatomo, shared with the Tanatsu Alomoinen mission",
-   "note": "Seen 2026-10-17 23:02 while docked at Uedama III. Part 1 of a 5-part chain. Do it TOGETHER with Tanatsu Alomoinen's 'Interstellar Railroad' (also Haatomo, back here): 172,000 ISK + 101 LP for one round trip if both bonuses are made. The jump count Uedama -> Haatomo is not entered: the round trip decides whether the 1 h 8 min clock is safe. 2026-10-21: part 1 DONE, standing 0.2. Part 2 offered: 51,000 ISK + 30 LP with the bonus; round trip Uedama>Ikao>Uedama.",
+   "note": "Seen 2026-10-17 23:02 while docked at Uedama III. Part 1 of a 5-part chain. Do it TOGETHER with Tanatsu Alomoinen's 'Interstellar Railroad' (also Haatomo, back here): 172,000 ISK + 101 LP for one round trip if both bonuses are made. The jump count Uedama -> Haatomo is not entered: the round trip decides whether the 1 h 8 min clock is safe. 2026-10-21: part 1 DONE, standing 0.2. Part 2 offered: 51,000 ISK + 30 LP with the bonus; round trip Uedama>Ikao>Uedama. EXPIRED (seen 2026-10-17, offers last 7 days).",
    "lp": 30,
    "m3": 40.0,
    "accepted": false
@@ -2014,7 +2014,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Funtanainen",
    "career": "Distribution",
    "where": "Funtanainen VIII - Caldari Navy Assembly Plant (0.9)",
@@ -2027,14 +2027,14 @@
    "to_system": "Hageken",
    "m3": 100.0,
    "needs": "a ship with 100 m3 of cargo (the Catalyst has 450); the pickup is here, the drop-off is at Hageken (0.6): one way; jump count Funtanainen -> Hageken is an estimate: confirm it",
-   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked in the window (the goods are given at accept). 33,000 ISK + 20 LP with the bonus, low pay: only worth it on a trip toward Hageken."
+   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked in the window (the goods are given at accept). 33,000 ISK + 20 LP with the bonus, low pay: only worth it on a trip toward Hageken. EXPIRED 2026-10-28 (game notice)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikemi",
    "career": "Distribution",
    "where": "Isikemi VII - Moon 3 - Pend Insurance Depository (0.8)",
@@ -2047,14 +2047,14 @@
    "to_system": "Hageken",
    "m3": 160.0,
    "needs": "a ship with 160 m3 of cargo (the Catalyst has 450); one way to Hageken (0.6); jump count Isikemi -> Hageken is an estimate: confirm it",
-   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked (goods given at accept). 36,000 ISK + 21 LP with the bonus; pairs with Outaka's Hageken drop (Funtanainen VIII) on the same trip."
+   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked (goods given at accept). 36,000 ISK + 21 LP with the bonus; pairs with Outaka's Hageken drop (Funtanainen VIII) on the same trip. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikemi",
    "career": "Distribution",
    "where": "Isikemi VII - Moon 3 - Pend Insurance Depository (0.8)",
@@ -2067,14 +2067,14 @@
    "to_system": "Hageken",
    "m3": 180.0,
    "needs": "a ship with 180 m3 of cargo (the Catalyst has 450); one way to Hageken (0.6); jump count Isikemi -> Hageken is an estimate: confirm it",
-   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked. 33,000 ISK + 20 LP with the bonus; same agent station and Hageken drop as Peselien's: together 340 m3 fits the Catalyst's 450."
+   "note": "Seen 2026-10-21, standing 0.0. Pickup mark already checked. 33,000 ISK + 20 LP with the bonus; same agent station and Hageken drop as Peselien's: together 340 m3 fits the Catalyst's 450. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikemi",
    "career": "Security",
    "where": "Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse (0.8)",
@@ -2087,14 +2087,14 @@
    "to_system": "Isikemi",
    "m3": 0.0,
    "needs": "a ship (the Catalyst); in-system site in Isikemi (0.8), no hauling; the text says if anything pokes back, run (possible NPC aggro: stay ready to warp out)",
-   "note": "Seen 2026-10-21, standing 0.0. 97,000 ISK + 58 LP with the bonus for an in-system scout: strong. Same station system as Peselien/Xarasier (Isikemi VII, other moon)."
+   "note": "Seen 2026-10-21, standing 0.0. 97,000 ISK + 58 LP with the bonus for an in-system scout: strong. Same station system as Peselien/Xarasier (Isikemi VII, other moon). EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikemi",
    "career": "Distribution",
    "where": "Isikemi VII - Moon 2 - Sukuuvestaa Corporation Warehouse (0.8)",
@@ -2107,14 +2107,14 @@
    "to_system": "Isikemi",
    "m3": 300.0,
    "needs": "a ship with 300 m3 of cargo (the Catalyst has 450); drop-off is in the same system (Isikemi I station, 0 jumps)",
-   "note": "Seen 2026-10-21, standing 0.0. 55,000 ISK + 34 LP with the bonus, no gate jumps: very good per minute. Same station as Halulen's scout offer."
+   "note": "Seen 2026-10-21, standing 0.0. 55,000 ISK + 34 LP with the bonus, no gate jumps: very good per minute. Same station as Halulen's scout offer. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isikemi",
    "career": "Distribution",
    "where": "Isikemi II - Moon 1 (0.8)",
@@ -2127,14 +2127,14 @@
    "to_system": "Uosusuokko",
    "m3": 180.0,
    "needs": "a ship with 180 m3 of cargo (the Catalyst has 450); Uosusuokko is 1 jump from Isikemi (route from the map DB)",
-   "note": "Seen 2026-10-21, standing 0.0. 43,000 ISK + 26 LP with the bonus for a 1-jump courier."
+   "note": "Seen 2026-10-21, standing 0.0. 43,000 ISK + 26 LP with the bonus for a 1-jump courier. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
@@ -2147,7 +2147,7 @@
    "to_system": "Uosusuokko",
    "m3": 70.0,
    "needs": "70 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Part 1 of 5. Round trip Veisto>Uosusuokko>Veisto. 69,000 ISK + 42 LP with the bonus."
+   "note": "Seen 2026-10-21, standing 0.0. Part 1 of 5. Round trip Veisto>Uosusuokko>Veisto. 69,000 ISK + 42 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -2178,7 +2178,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8)",
@@ -2191,14 +2191,14 @@
    "to_system": "Sobaseki",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. In-system scout, same mission as Halulen Heinulaila's; 88,000 ISK + 54 LP with the bonus: strong. If anything shoots, warp out (text: 'if anything pokes back, just run')."
+   "note": "Seen 2026-10-21, standing 0.0. In-system scout, same mission as Halulen Heinulaila's; 88,000 ISK + 54 LP with the bonus: strong. If anything shoots, warp out (text: 'if anything pokes back, just run'). EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Security",
    "where": "Veisto V - Moon 15 - Sukuuvestaa Corporation Factory (0.8)",
@@ -2211,7 +2211,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. L1 combat, in-system, site has ship restrictions (frigate/destroyer: the Catalyst fits). 123,000 ISK + 80 LP with the bonus: best L1 offer seen today.",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat, in-system, site has ship restrictions (frigate/destroyer: the Catalyst fits). 123,000 ISK + 80 LP with the bonus: best L1 offer seen today. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2219,7 +2219,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Moon 4 - Propel Dynamics Factory (0.8)",
@@ -2232,7 +2232,7 @@
    "to_system": "Veisto",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips in the Catalyst (450 m3). 77,000 ISK + 50 LP with the bonus. Tip: right-click Mercium in the mission > Add to Overview.",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips in the Catalyst (450 m3). 77,000 ISK + 50 LP with the bonus. Tip: right-click Mercium in the mission > Add to Overview. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2240,7 +2240,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Caldari Steel Factory (0.8)",
@@ -2253,7 +2253,7 @@
    "to_system": "Veisto",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst (450 m3). 97,000 ISK + 55 LP with the bonus. Counts toward the AIR daily goal 'Mine 2000 units of Ore' if mission ore counts (check).",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst (450 m3). 97,000 ISK + 55 LP with the bonus. Counts toward the AIR daily goal 'Mine 2000 units of Ore' if mission ore counts (check). EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2261,7 +2261,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki VII - Caldari Navy Logistic Support (0.8)",
@@ -2274,7 +2274,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. L1 combat: the belt's drones all come to the silo when it is attacked: pull and kill the guards first. 96,000 ISK + 56 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat: the belt's drones all come to the silo when it is attacked: pull and kill the guards first. 96,000 ISK + 56 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2282,7 +2282,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Mining",
    "where": "Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve (0.8)",
@@ -2295,7 +2295,7 @@
    "to_system": "Sobaseki",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 85,000 ISK + 55 LP with the bonus. Same mission as Oitko Shiomiken's in Veisto.",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 85,000 ISK + 55 LP with the bonus. Same mission as Oitko Shiomiken's in Veisto. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2303,7 +2303,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Mining",
    "where": "Sobaseki VI - Minedrill Mineral Reserve (0.8)",
@@ -2316,7 +2316,7 @@
    "to_system": "Sobaseki",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 55 LP with the bonus; same mission as Vasala Akochi's (also Sobaseki): each agent has its own site.",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 55 LP with the bonus; same mission as Vasala Akochi's (also Sobaseki): each agent has its own site. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2324,7 +2324,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isanamo",
    "career": "Distribution",
    "where": "Isanamo VII - Moon 1 - Nurtura Warehouse (0.6)",
@@ -2337,14 +2337,14 @@
    "to_system": "Isikano",
    "m3": 300.0,
    "needs": "300 m3 of cargo; Isikano is 1 jump(s) from Isanamo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 47,000 ISK + 30 LP with the bonus; fits the Catalyst (300 of 450 m3)."
+   "note": "Seen 2026-10-21, standing 0.0. 47,000 ISK + 30 LP with the bonus; fits the Catalyst (300 of 450 m3). EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Isanamo",
    "career": "Mining",
    "where": "Isanamo XIV - Moon 21 - Rapid Assembly Factory (0.6)",
@@ -2357,7 +2357,7 @@
    "to_system": "Isanamo",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Isanamo is 0 jump(s) from Isanamo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 132,000 ISK + 69 LP with the bonus: the best-paying Banidine offer so far (0.6 system: a bit riskier).",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 132,000 ISK + 69 LP with the bonus: the best-paying Banidine offer so far (0.6 system: a bit riskier). EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2365,7 +2365,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kirras",
    "career": "Security",
    "where": "Kirras IX - House of Records Information Center (0.8)",
@@ -2378,7 +2378,7 @@
    "to_system": "Kirras",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kirras is 0 jump(s) from Kirras (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. L1 combat in-system, Sansha frigates. 62,000 ISK + 38 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat in-system, Sansha frigates. 62,000 ISK + 38 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2386,7 +2386,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Iidoken",
    "career": "Distribution",
    "where": "Iidoken VI - Moon 8 - Ytiri Storage (0.8)",
@@ -2399,14 +2399,14 @@
    "to_system": "Sarekuwa",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Sarekuwa is 1 jump(s) from Iidoken (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Round trip. 42,000 ISK + 27 LP with the bonus."
+   "note": "Seen 2026-10-21, standing 0.0. Round trip. 42,000 ISK + 27 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Iidoken",
    "career": "Distribution",
    "where": "Iidoken VI - Moon 8 - Ytiri Storage (0.8)",
@@ -2419,14 +2419,14 @@
    "to_system": "Jouvulen",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Jouvulen is 3 jump(s) from Iidoken (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Round trip; same chain as Sigoshioka Uona's. 59,000 ISK + 37 LP with the bonus."
+   "note": "Seen 2026-10-21, standing 0.0. Round trip; same chain as Sigoshioka Uona's. 59,000 ISK + 37 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Iidoken",
    "career": "Distribution",
    "where": "Iidoken III - Caldari Constructions Warehouse (0.8)",
@@ -2439,14 +2439,14 @@
    "to_system": "Tsuguwa",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Tsuguwa is 1 jump(s) from Iidoken (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Reward is 1 x Device (item, value unknown) + 24,000 ISK bonus + 26 LP. Round trip."
+   "note": "Seen 2026-10-21, standing 0.0. Reward is 1 x Device (item, value unknown) + 24,000 ISK bonus + 26 LP. Round trip. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kamio",
    "career": "Mining",
    "where": "Kamio VI - Moon 7 - Sukuuvestaa Corporation Production Plant (0.7)",
@@ -2459,7 +2459,7 @@
    "to_system": "Kamio",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Kamio is 0 jump(s) from Kamio (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips in the Catalyst. 92,000 ISK + 55 LP with the bonus. Mining also counts toward the AIR daily goal 'Mine 2000 units of Ore' (check).",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips in the Catalyst. 92,000 ISK + 55 LP with the bonus. Mining also counts toward the AIR daily goal 'Mine 2000 units of Ore' (check). EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2467,7 +2467,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Security",
    "where": "Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6)",
@@ -2480,7 +2480,7 @@
    "to_system": "Uedama",
    "m3": 1.0,
    "needs": "1 m3 of cargo; Uedama is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Round trip to a site in Uedama (0.5, a known gank system: carry nothing valuable). 76,000 ISK + 53 LP with the bonus. Same chain as Tanatsu Alomoinen's."
+   "note": "Seen 2026-10-21, standing 0.0. Round trip to a site in Uedama (0.5, a known gank system: carry nothing valuable). 76,000 ISK + 53 LP with the bonus. Same chain as Tanatsu Alomoinen's. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -2507,7 +2507,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Mining",
    "where": "Haatomo VI - Moon 12 - Core Complexion Inc. Factory (0.6)",
@@ -2520,7 +2520,7 @@
    "to_system": "Haatomo",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 105,000 ISK + 63 LP with the bonus; counts toward the daily goal Mine 2000 ore.",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 105,000 ISK + 63 LP with the bonus; counts toward the daily goal Mine 2000 ore. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2528,7 +2528,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Mining",
    "where": "Haatomo VII - Moon 6 - Rapid Assembly Factory (0.6)",
@@ -2541,7 +2541,7 @@
    "to_system": "Haatomo",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Haatomo is 0 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips. 119,000 ISK + 74 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. 2,000 m3 = 5 trips. 119,000 ISK + 74 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2572,7 +2572,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Security",
    "where": "Haatomo VII - Moon 3 - Caldari Constructions Warehouse (0.6)",
@@ -2585,7 +2585,7 @@
    "to_system": "Suroken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. L1 combat (kill everything): needs guns. 109,000 ISK + 59 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. L1 combat (kill everything): needs guns. 109,000 ISK + 59 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2613,7 +2613,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Distribution",
    "where": "Haatomo VI - Moon 6 - Zainou Biotech Production (0.6)",
@@ -2626,14 +2626,14 @@
    "to_system": "Suroken",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21 after 'Breakdown' was done. Round trip to Suroken (1 jump), the same system as Aragas Ohmamon's combat site. 65,000 ISK + 35 LP with the bonus."
+   "note": "Seen 2026-10-21 after 'Breakdown' was done. Round trip to Suroken (1 jump), the same system as Aragas Ohmamon's combat site. 65,000 ISK + 35 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Security",
    "where": "Haatomo VI - Moon 3 - Caldari Navy Assembly Plant (0.6)",
@@ -2646,7 +2646,7 @@
    "to_system": "Suroken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus.",
+   "note": "Seen 2026-10-21. L1 combat, one target in Suroken (1 jump): needs guns. 79,000 ISK + 46 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2654,7 +2654,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hatakani",
    "career": "Mining",
    "where": "Hatakani VI - Moon 5 - Hyasyoda Corporation Refinery (0.9)",
@@ -2667,7 +2667,7 @@
    "to_system": "Hatakani",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 68,000 ISK + 38 LP with the bonus; 0.9 system, safe.",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 68,000 ISK + 38 LP with the bonus; 0.9 system, safe. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2675,7 +2675,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hatakani",
    "career": "Distribution",
    "where": "Hatakani VI - Moon 13 - CBD Sell Division Retail Center (0.9)",
@@ -2688,14 +2688,14 @@
    "to_system": "Yashunen",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Yashunen is 1 jump(s) from Hatakani (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. Round trip. 42,000 ISK + 27 LP with the bonus; same chain as Marukaiken Mamareki's."
+   "note": "Seen 2026-10-21, standing 0.0. Round trip. 42,000 ISK + 27 LP with the bonus; same chain as Marukaiken Mamareki's. EXPIRED (seen 2026-10-21, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hatakani",
    "career": "Mining",
    "where": "Hatakani VII - Moon 20 - Rapid Assembly Factory (0.9)",
@@ -2708,7 +2708,7 @@
    "to_system": "Hatakani",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 69,000 ISK + 44 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 69,000 ISK + 44 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2716,7 +2716,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hatakani",
    "career": "Mining",
    "where": "Hatakani VII - Moon 18 - Sukuuvestaa Corporation Production Plant (0.9)",
@@ -2729,7 +2729,7 @@
    "to_system": "Hatakani",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Hatakani is 0 jump(s) from Hatakani (map DB route)",
-   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 74,000 ISK + 43 LP with the bonus.",
+   "note": "Seen 2026-10-21, standing 0.0. 1,080 m3 = 3 trips. 74,000 ISK + 43 LP with the bonus. EXPIRED (seen 2026-10-21, offers last 7 days).",
    "needs_tool": "mining"
   },
   {

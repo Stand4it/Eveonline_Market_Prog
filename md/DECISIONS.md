@@ -561,3 +561,4 @@
 - 2026-10-26 agent_offers.json: Nuulkata Junkka: needs_tool=mining
 - 2026-10-26 agent_offers.json: Haro Honnamaiken: needs_tool=gun
 - 2026-10-27 agent_offers.json: Mamdasan Hoghosh: needs_tool=gun
+- 2026-10-28 2026-10-28 Offers expire 7 days after Seen (22 game notices confirm); expire_offers closes them by age too.

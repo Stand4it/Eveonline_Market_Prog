@@ -45,6 +45,9 @@ def _line(con, ntype, ts, text):
     return f"   {ts[:16].replace('T', ' ')}  {lab}{extra}"
 
 
+OFFER_DAYS = 7
+
+
 def expire_offers(con):
     """Mark recorded offers that the game says EXPIRED as gone (available=false), so `next` stops planning them. A notice matches an open,
     not-accepted offer with the same cash reward whose pickup/drop-off system is one of the notice's systems (or that has none recorded),
@@ -55,8 +58,6 @@ def expire_offers(con):
     _sys.path.insert(0, os.path.join(root, "scripts"))
     from offers_lock import offers_lock
     rows = con.execute("SELECT ts, text FROM notifications WHERE type='MissionOfferExpirationMsg'").fetchall()
-    if not rows:
-        return []
     names = {r[0]: r[1] for r in con.execute("SELECT system_id, name FROM systems")}
     path = os.path.join(root, "agent_offers.json")
     closed = []
@@ -82,6 +83,14 @@ def expire_offers(con):
                 o["note"] = (o.get("note", "") + f" EXPIRED {day} (game notice).").strip()
                 closed.append(o["agent"].split(" (")[0])
                 break
+        import datetime as _dt                                          # game notices (22 of them, 2026-10-28) show an unaccepted offer lives 7 days
+        cutoff = (_dt.date.today() - _dt.timedelta(days=OFFER_DAYS)).isoformat()   # from when it was offered; Seen is on or after that, so this is safe
+        for o in d["offers"]:
+            seen = re.search(r"Seen (\d{4}-\d{2}-\d{2})", o.get("note", "") or "")
+            if o.get("available", True) and not o.get("accepted") and seen and seen.group(1) <= cutoff:
+                o["available"] = False
+                o["note"] = (o.get("note", "") + f" EXPIRED (seen {seen.group(1)}, offers last {OFFER_DAYS} days).").strip()
+                closed.append(o["agent"].split(" (")[0])
         if closed:
             with open(path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(d, f, indent=1, ensure_ascii=False)
