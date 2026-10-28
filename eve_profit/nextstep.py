@@ -1336,6 +1336,9 @@ def next_action(con, g, p, full=False, ahead=False):
             cands.extend(_agl(con, g, p, best_known, _hop))                  # every agent in the game data near you, unknown mission modeled like any untimed activity
             from .shopping import candidates as _shop
             cands.extend(_shop(con, g, p, best_known, _hop))                 # a wished ship / module / ammo when THIS is the cheapest place to buy it (buy vs build)
+            from .preptree import candidates as _prep
+            _have = {c[1].split(": ", 1)[-1].lower() for c in cands if c[1].startswith("shopping: ")}
+            cands.extend(c for c in _prep(con, g, p, best_known, _hop) if c[1].split(": ", 1)[-1].lower() not in _have)   # a blocked goal's prep chain that beats the best step
         except Exception as _he:                                        # noqa: BLE001
             _hrec('nextstep', _he)
         cands.sort(key=lambda c: -c[0])
@@ -1409,6 +1412,13 @@ def next_action(con, g, p, full=False, ahead=False):
             from .allplans import lines as _all_lines
             _al = _all_lines(con, g, p, cands, p.ship_name or "", [n for n, _s in __import__("eve_profit.combatprep", fromlist=["x"]).state(con, p)["ships"]], _tools)
             long_view = (long_view + "\n\n" + _al) if (long_view and _al) else (long_view or _al)
+        except Exception as _he:                                        # noqa: BLE001
+            _hrec('nextstep', _he)
+        try:                                                     # blocked goals with their cheapest prep chain (buy / build / mine), by chain ISK/min
+            from .preptree import lines as _prep_lines
+            _bk = min(max((c[0] for c in cands if c[0] != float("inf")), default=0.0), 5_000_000.0)
+            _pl = _prep_lines(con, g, p, _bk, haul=ahead)
+            long_view = (long_view + "\n\n" + _pl) if (long_view and _pl) else (long_view or _pl)
         except Exception as _he:                                        # noqa: BLE001
             _hrec('nextstep', _he)
         if ahead:                                                       # every open agent offer, ranked, with its prep (only for next --plan: it costs a few seconds)

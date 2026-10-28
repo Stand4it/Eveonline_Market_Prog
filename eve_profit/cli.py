@@ -53,7 +53,7 @@ def print(*args, sep=" ", **kw):                                          # noqa
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="eve_profit")
-    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "health", "stopsync", "syncstop"])
+    ap.add_argument("cmd", type=str.lower, choices=["init", "mock", "sde", "scan", "plan", "watch", "profile", "login", "sync", "log", "go", "universe", "esimap", "fleet", "skills", "diag", "explain", "check", "stock", "along", "fit", "zkill", "next", "keep", "bpbuy", "update", "bestprice", "sellplan", "day", "now", "chars", "combatfit", "journey", "compare", "start", "stop", "trainplan", "activities", "status", "pause", "resume", "docs", "fixlast", "agents", "buy", "careers", "models", "history", "settle", "done", "hours", "alerts", "esiroutes", "freelance", "grabs", "jobs", "fitstock", "ships", "noagents", "health", "stopsync", "syncstop", "preptree"])
     ap.add_argument("--db", default=default_db_path())
     ap.add_argument("--profile", default="profile.json")
     ap.add_argument("--live", action="store_true", help="use real ESI market data")
@@ -709,6 +709,11 @@ def _run(a):
     elif a.cmd == "models":
         from .catalog import models_report
         print(models_report(con, p.wallet_isk))
+    elif a.cmd == "preptree":
+        from .graph import Graph
+        from .preptree import lines as prep_lines
+        _r = con.execute("SELECT value FROM meta WHERE key='best_rate'").fetchone()          # the best ISK/hr the last `next` saw
+        print(prep_lines(con, Graph(con), p, float(_r[0]) if _r else 0.0) or "No blocked goals: nothing needs prep.")
     elif a.cmd == "careers":
         import json as _json
         from pathlib import Path as _P

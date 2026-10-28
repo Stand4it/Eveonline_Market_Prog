@@ -562,3 +562,4 @@
 - 2026-10-26 agent_offers.json: Haro Honnamaiken: needs_tool=gun
 - 2026-10-27 agent_offers.json: Mamdasan Hoghosh: needs_tool=gun
 - 2026-10-28 2026-10-28 Offers expire 7 days after Seen (22 game notices confirm); expire_offers closes them by age too.
+- 2026-10-28 2026-10-28 Prep tree: every blocked goal (combat, tool-gated) is grouped by shared prep; each missing item sourced cheapest of held/buy/build(blueprint bought or owned, batch rest sold)/mine+refine, recursively; chain ISK/min = (pay - prep cash + haul gain)/(goal + prep min); unmodeled goals = best ISK/min; a tie whose first step is here wins.
