@@ -46,6 +46,27 @@ class CombatCheckTests(unittest.TestCase):
             owned = cc.best_fit(None, None, p, L1)
         self.assertLessEqual(owned["cost"], bf["cost"])                  # owning the dear gun makes the passing fit cheaper
 
+    def test_capacitor_stable_or_runs_dry(self):
+        self.assertEqual(cc.cap_effect(400, 200, 3.0, 100), (1.0, None))     # 3 GJ/s under the 5 GJ/s recharge
+        share, empty = cc.cap_effect(400, 200, 20.0, 300)
+        self.assertLess(empty, 300)
+        self.assertLess(share, 1.0)
+        self.assertEqual(cc.cap_effect(400, 200, 20.0, 10)[0], 1.0)            # a short wave ends before the capacitor is empty
+
+    def test_cap_hungry_repairers_lose_to_a_cap_module_when_cap_is_small(self):
+        mods = {"Gun": {"slot": "turret", "dps": 30.0, "cap": 0.0},
+                "Rep": {"slot": "low", "tank_add": 60.0, "cap": 5.0}, "Relay": {"slot": "low", "recharge_mult": 0.2}}
+        p = SimpleNamespace(combat_dps=20.0, ship_ehp=20000.0, ship_tank_dps=0.0, ship_name="Cat", ships={})
+        prices = {"Gun": 1000.0, "Rep": 1000.0, "Relay": 1000.0}
+        with mock.patch.object(cc, "modules", return_value=mods), mock.patch.object(cc, "_hull_slots", return_value=("Cat", {"turret": 2, "low": 2})), \
+                mock.patch.object(cc, "_fitted_turret_dps", return_value=20.0), \
+                mock.patch.object(cc, "hull_cap", return_value={"cap_gj": 100.0, "recharge_s": 200.0, "prop_cap_s": 0.0}), \
+                mock.patch.object(cc, "_price", side_effect=lambda con, g, p_, it, q: prices[it] * q):
+            bf = cc.best_fit(None, None, p, dict(L1, threat_dps=80.0))
+        names = [n for n, _q, _c in bf["items"]]
+        self.assertIn("Relay", names)                                          # the repairer only helps with the cap module next to it
+        self.assertTrue(bf["passes"])
+
 
 if __name__ == "__main__":
     unittest.main()

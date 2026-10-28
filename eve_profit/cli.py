@@ -87,6 +87,7 @@ def main(argv=None):
     ap.add_argument("--ehp", type=float, default=0, help="combatfit: effective HP from Pyfa")
     ap.add_argument("--tank", type=float, default=0, help="combatfit: sustained repair per second from Pyfa")
     ap.add_argument("--value", type=float, default=0, help="combatfit: ship + fit value in ISK (what you lose if it dies)")
+    ap.add_argument("--cap", type=float, default=0, help="combatfit: capacitor size in GJ from the fitting window")
     ap.add_argument("--char", default="", help="separate character: own login, profile and database (e.g. --char fresh)")
     ap.add_argument("--detour", type=int, default=2, help="journey: how many jumps off the route to look for goods and buyers")
     ap.add_argument("--max-age", type=int, default=15, help="--live: skip regions downloaded less than this many minutes ago")
@@ -561,6 +562,8 @@ def _run(a):
                              "   Read the numbers off Pyfa (DPS, effective HP, sustained tank) for the fit you fly.")
         ship = a.ship or p.ship_name
         st = {"combat_dps": a.dps, "ship_ehp": a.ehp, "ship_tank_dps": a.tank, "ship_value_isk": a.value}
+        if a.cap:
+            st["cap_gj"] = a.cap
         p.ships[ship] = {**p.ships.get(ship, {}), **st}
         if ship == p.ship_name:
             p.combat_dps, p.ship_ehp, p.ship_tank_dps = a.dps, a.ehp, a.tank

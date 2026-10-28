@@ -2,7 +2,10 @@
 the ship in a one-hour session must be 1% or less). For a level the fit fails it says the DPS and EHP that would pass, and the CHEAPEST fit
 from the modules in combat_modules.json (owned ones free) that passes: guns in the turret slots, damage / plate / damage control / repairer
 in the low slots. Module numbers are estimates scaled to your measured DPS (skills); after fitting, show the fitting window and
-`combatfit` replaces the estimate with the real numbers."""
+`combatfit` replaces the estimate with the real numbers.
+CAPACITOR (owner 2026-10-28): guns and repairers use capacitor. When a fit uses more than the capacitor recharges, it runs dry part way through
+a wave and the guns and repairers then only run as often as the recharge allows, so the fit is judged on those lower numbers. A cap module
+(Capacitor Power Relay low, Cap Recharger mid) is only bought when the cheapest passing fit needs one."""
 import itertools
 import json
 import os
@@ -16,12 +19,42 @@ LEVEL1 = {"name": "Level 1 security mission", "enemy_ehp": 5000.0, "threat_dps":
 RATTING = "High-sec belt ratting (frigate)"
 
 
-def modules():
+def _table():
     try:
         with open(_FILE, encoding="utf-8") as f:
-            return json.load(f)["modules"]
-    except (OSError, ValueError, KeyError):
+            return json.load(f)
+    except (OSError, ValueError):
         return {}
+
+
+def modules():
+    return _table().get("modules", {})
+
+
+def hull_cap(p, hull=""):
+    """{cap_gj, recharge_s, prop_cap_s} for the hull: the table's estimate, with the capacitor size from `combatfit --cap` when you gave it."""
+    hulls = _table().get("hulls", {})
+    name = (hull or getattr(p, "ship_name", "") or "").lower()
+    d = dict(hulls.get("default") or {"cap_gj": 400.0, "recharge_s": 200.0, "prop_cap_s": 0.9})
+    for h, v in hulls.items():
+        if h != "default" and h.lower() in name:
+            d.update(v)
+    for h, st in (getattr(p, "ships", {}) or {}).items():
+        if h and h.lower() in name and st.get("cap_gj"):
+            d["cap_gj"] = float(st["cap_gj"])
+    return d
+
+
+def cap_effect(cap_gj, recharge_s, use, ttk):
+    """(share of the time guns and repairers can run over one wave of ttk seconds, seconds until the capacitor is empty or None when stable).
+    Peak recharge is 2.5 x size / recharge time; while it drains the recharge averages about 60% of that, once empty about 80% of it."""
+    peak = 2.5 * cap_gj / max(recharge_s, 1.0)
+    if use <= peak or use <= 0:
+        return 1.0, None
+    empty = cap_gj / max(use - 0.6 * peak, 1e-9)
+    if ttk <= empty:
+        return 1.0, empty
+    return (empty + (ttk - empty) * min(1.0, 0.8 * peak / use)) / ttk, empty
 
 
 def requirements(con):
@@ -140,7 +173,10 @@ def best_fit(con, g, p, req):
     k = dps0 / est if est > 0 else 1.0                                  # your skills and hull bonus relative to the table
     k = min(max(k, K_MIN), K_MAX)                                       # the fitted list lags an hour (ESI): 23 DPS from 8 guns read against 2 guns gave x5
     guns = [n for n, d in mods.items() if d.get("slot") == "turret"]
-    low = [n for n, d in mods.items() if d.get("slot") == "low"]
+    low = [n for n, d in mods.items() if d.get("slot") == "low"] + [None]     # None = leave the slot empty
+    mid = [n for n, d in mods.items() if d.get("slot") == "mid"] + [None]
+    mids = max(0, int(sl.get("mid", 0) or 0) - 1)                       # one mid slot keeps the afterburner
+    hc = hull_cap(p, _n)
     price = {}
 
     def pr(item, qty):
@@ -165,8 +201,9 @@ def best_fit(con, g, p, req):
             c_gun = pr(gun, n)
             if c_gun is None:
                 continue
-            for combo in itertools.combinations_with_replacement(low, lows):
-                counts = {m: combo.count(m) for m in set(combo)}
+            for combo in ((lo + mi) for lo in itertools.combinations_with_replacement(low, lows)
+                          for mi in itertools.combinations_with_replacement(mid, mids)):
+                counts = {m: combo.count(m) for m in set(combo) if m is not None}
                 cost, items, ok = c_gun, [(gun, n, c_gun)], True
                 for m, q in counts.items():
                     c = pr(m, q)
@@ -178,27 +215,36 @@ def best_fit(con, g, p, req):
                 if not ok:
                     continue
                 dps = float(mods[gun]["dps"]) * n * k
+                use = float(mods[gun].get("cap", 0.0)) * n + float(hc.get("prop_cap_s", 0.0))
                 spare = turrets - n                                      # the other turret slots take guns you already own (free)
                 for og in sorted((x for x in guns if x != gun and owned_n(x)), key=lambda x: -float(mods[x]["dps"])):
-                    use = min(spare, owned_n(og))
-                    if use > 0:
-                        dps += float(mods[og]["dps"]) * use * k
-                        items.append((og, use, 0.0))
-                        spare -= use
-                ehp, tank = ehp0, tank0
+                    u = min(spare, owned_n(og))
+                    if u > 0:
+                        dps += float(mods[og]["dps"]) * u * k
+                        use += float(mods[og].get("cap", 0.0)) * u
+                        items.append((og, u, 0.0))
+                        spare -= u
+                ehp, rep_, rmult = ehp0, 0.0, 1.0
                 for m, q in counts.items():
                     d = mods[m]
+                    use += float(d.get("cap", 0.0)) * q
                     for i in range(q):                                   # stacking: each further copy counts less
                         f = 0.87 ** (i * i)
                         dps *= 1 + (float(d.get("dps_mult", 1.0)) - 1) * f
                         ehp *= 1 + (float(d.get("ehp_mult", 1.0)) - 1) * f
                         ehp += float(d.get("ehp_add", 0.0))
-                        tank += float(d.get("tank_add", 0.0))
-                pl = p_lose(req, dps, ehp, tank)
-                ok_ = passes(req, dps, ehp, tank)
+                        rep_ += float(d.get("tank_add", 0.0))
+                        rmult *= 1 + (float(d.get("recharge_mult", 1.0)) - 1) * f
+                share, empty = 1.0, None                                 # capacitor: runs dry part way through a wave -> guns and repairers slow down
+                for _ in range(2):
+                    share, empty = cap_effect(hc["cap_gj"], hc["recharge_s"] * rmult, use, req["enemy_ehp"] / max(dps * share, 1e-9))
+                dps_e, tank = dps * share, tank0 + rep_ * share
+                pl = p_lose(req, dps_e, ehp, tank)
+                ok_ = passes(req, dps_e, ehp, tank)
                 key = (0 if ok_ else 1, cost if ok_ else pl, cost)
                 if best is None or key < best["key"]:
-                    best = {"key": key, "passes": ok_, "cost": cost, "items": items, "dps": dps, "ehp": ehp, "tank": tank, "p": pl}
+                    best = {"key": key, "passes": ok_, "cost": cost, "items": items, "dps": dps_e, "ehp": ehp, "tank": tank, "p": pl,
+                            "cap_use": use, "cap_regen": 2.5 * hc["cap_gj"] / (hc["recharge_s"] * rmult), "cap_empty": empty, "cap_share": share}
     return best
 
 
@@ -235,6 +281,15 @@ def ready(con, g, p, level=1):
     return bool(req) and passes(req, dps, ehp, tank)
 
 
+def _cap_text(bf):
+    if bf.get("cap_empty") is None:
+        return f"capacitor: uses {bf['cap_use']:.1f} GJ/s, recharges up to {bf['cap_regen']:.1f} -> stable"
+    if bf["cap_share"] >= 0.999:
+        return f"capacitor: uses {bf['cap_use']:.1f} GJ/s vs {bf['cap_regen']:.1f} recharge; lasts ~{bf['cap_empty']:.0f}s, longer than a wave -> fine (refills between waves)"
+    return (f"capacitor: uses {bf['cap_use']:.1f} GJ/s vs {bf['cap_regen']:.1f} recharge; empty after ~{bf['cap_empty']:.0f}s, "
+            f"then guns and repairers run {100 * bf['cap_share']:.0f}% of the time (the numbers above include this)")
+
+
 def report(con, g, p):
     """Text for `python -m eve_profit combatcheck`."""
     dps, ehp, tank = numbers(p)
@@ -263,7 +318,8 @@ def report(con, g, p):
             L.append(f"         cheapest fit that passes (~{bf['cost']:,.0f} ISK to buy; owned modules free): "
                      + ", ".join(f"{q} x {n}" + (" (owned)" if c == 0 else f" ~{c:,.0f}") for n, q, c in bf["items"]))
             L.append(f"         estimate: {bf['dps']:,.0f} DPS, {bf['ehp']:,.0f} EHP, {bf['tank']:,.0f}/s -> win {100 * (1 - bf['p']):.2f}%  (show me the fit after fitting it)")
+            L.append("         " + _cap_text(bf))
         elif bf:
             L.append(f"         no fit from combat_modules.json passes on this hull (best: win {100 * (1 - bf['p']):.1f}%): it needs a bigger ship or more skills")
-    L.append("   Capacitor is not modeled: if the fitting window says the capacitor runs dry in under a minute, the guns stop; send it and I will check.")
+    L.append("   Capacitor (estimate): fits above are judged on what they can keep running. After fitting, the fitting window shows 'stable' or how long it lasts; send it.")
     return "\n".join(L)
