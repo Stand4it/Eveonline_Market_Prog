@@ -233,9 +233,10 @@ def report(con, g, p):
             L.append(f"   PASS  {name}: win {100 * (1 - pl):.2f}%")
             continue
         nd, ne = needed(req, dps, ehp, tank)
-        why = [f"needs {max(nd, float(req.get('min_dps', 0) or 0)):,.0f} DPS at your EHP" if nd else "no DPS alone is enough at your EHP"]
+        why = [f"with no other change it needs {max(nd, float(req.get('min_dps', 0) or 0)):,.0f} DPS" if nd else "no DPS alone is enough at your EHP and repair"]
         if ne:
             why.append(f"or {ne:,.0f} EHP at your DPS")
+        why.append("(a repairer lowers the DPS needed: see the fit below)")
         L.append(f"   FAIL  {name}: win {100 * (1 - pl):.1f}%; " + " ".join(why))
         bf = best_fit(con, g, p, req)
         if bf and bf["passes"]:
