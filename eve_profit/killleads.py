@@ -64,6 +64,34 @@ def chance(diffs, ship_type, level):
     return None if d is None else d + SALVAGE_PER_LEVEL * level
 
 
+CLEARED = os.path.join(ROOT, "data", "salvage_cleared.json")
+UNKNOWN_SPOT = "unknown spot (look in Overview: Wrecks, or warp around)"
+
+
+def _load_cleared():
+    try:
+        return json.load(open(CLEARED, encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"go_hist": {}, "cleared": {}}
+
+
+def _update_cleared(con, st):
+    """owner 2026-10-29: 'I did all of them where I am at now'. A timed salvage run in a system clears the spot its step sent you to:
+    wrecks there from kills before the run ended no longer count (the rest of the system still does)."""
+    for sysname, hist in st["go_hist"].items():
+        done = st["cleared"].setdefault(sysname, {})
+        since = max(done.values(), default=0)
+        try:
+            runs = con.execute("SELECT ts FROM activity_log WHERE activity LIKE ? AND ts>? ORDER BY ts", (f"Salvage The Wrecks At {sysname}%", since)).fetchall()
+        except Exception:                                               # noqa: BLE001
+            runs = []
+        for (end,) in runs:
+            spot = next((sp for t, sp in reversed(hist) if t <= end), None)
+            if spot:
+                done[spot] = max(done.get(spot, 0), end)
+    return st
+
+
 def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
     """-> list of leads written to data/kill_leads.json (sync: max_jumps=0 = only the system you are in, always checked)."""
     now = now or time.time()
@@ -87,7 +115,9 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
     except (OSError, ValueError):
         diffs = {}
     lvl = _salvaging(con)
+    clr = _update_cleared(con, _load_cleared())
     for _j, _k, sid in cand:
+        done = clr["cleared"].get(g.name[sid], {})
         try:
             kills = _get(f"https://zkillboard.com/api/kills/systemID/{sid}/pastSeconds/{int(WRECK_H * 3600)}/")
         except Exception:                                               # noqa: BLE001
@@ -108,6 +138,9 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
                 continue
             r = con.execute("SELECT name FROM types WHERE type_id=?", (st,)).fetchone()
             nm = r[0] if r else str(st)
+            w = _where(con, z.get("locationID")) or UNKNOWN_SPOT
+            if t <= done.get(w, 0):
+                continue                                                # you already salvaged that spot after this kill
             c = chance(diffs, st, lvl)
             if c is not None and c <= 0:
                 refused[nm] = refused.get(nm, 0) + 1                    # the game would say you lack the skill: not counted, not sent
@@ -117,14 +150,17 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             loot += float(z.get("droppedValue") or 0)
             tag = f"{nm} ({c:.0f}%)" if c is not None else f"{nm} (chance unknown: try it)"
             ships[tag] = ships.get(tag, 0) + 1
-            w = _where(con, z.get("locationID")) or "unknown spot (look in Overview: Wrecks, or warp around)"
             near[w] = near.get(w, 0) + 1
         if not wrecks:
             continue
         what = ", ".join(f"{n} x {s}" for s, n in sorted(ships.items(), key=lambda x: -x[1])[:5])
         spots = sorted(near.items(), key=lambda x: -x[1])
         where = "; ".join(f"{n} near {w}" for w, n in spots)
-        go = spots[0][0]
+        go = next((w for w, _n in spots if w != UNKNOWN_SPOT), spots[0][0])
+        hist = clr["go_hist"].setdefault(g.name[sid], [])
+        if not hist or hist[-1][1] != go:
+            hist.append([now, go])
+        del hist[:-20]
         dest = (f" Set destination: python scripts/set_dest.py \"{go}\" (autopilot warps you there), or" if con.execute("SELECT 1 FROM stations WHERE name=?", (go,)).fetchone() else "")
         skip = ("; NOT counted (your Salvaging " + str(lvl) + " is too low, the game refuses them): " + ", ".join(f"{n} x {s}" for s, n in refused.items())) if refused else ""
         leads.append({"id": f"kills-{sid}-{int(newest)}", "system": g.name[sid], "activity": "salvaging", "needs": "salvager",
@@ -133,6 +169,7 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
                               f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where}. GO:{dest} right-click space (or Overview) > {go} > Warp to Within 0 m, then Overview: Wrecks. SKIP every 'Wreck of: Capsule' (Type: Mysterious Capsule Wreck, needs Salvaging 5: the game says 'too difficult'); salvage only wrecks named after the ships listed. If the game still refuses, stopsync with nothing gained: your timed run then sets the real rate"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"refreshed": now, "leads": old + leads}, open(OUT, "w", encoding="utf-8"), indent=1)
+    json.dump(clr, open(CLEARED, "w", encoding="utf-8"), indent=1)
     return old + leads
 
 

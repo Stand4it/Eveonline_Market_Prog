@@ -58,5 +58,14 @@ class SalvageChanceTests(unittest.TestCase):
         self.assertIsNone(killleads.chance(diffs, 1, 3))
 
 
+
+class ClearedSpotTests(unittest.TestCase):
+    def test_a_salvage_run_clears_the_spot_its_step_named(self):
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        con.execute("INSERT INTO activity_log(activity,isk,hours,ts) VALUES('Salvage The Wrecks At Jita DO ONLY THIS',0,0.2,2000)")
+        st = killleads._update_cleared(con, {"go_hist": {"Jita": [[1000, "Gate A"], [2500, "Gate B"]]}, "cleared": {}})
+        self.assertEqual(st["cleared"]["Jita"], {"Gate A": 2000})
+
+
 if __name__ == "__main__":
     unittest.main()

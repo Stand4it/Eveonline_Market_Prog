@@ -595,3 +595,4 @@
 - killleads.py drops wrecks at or below 0% (the game refuses those), tags each hull with its chance, and lists unknown hulls as "try". Each lead has a GO line: warp to the busiest spot at 0, plus `scripts/set_dest.py "<station>"` (ESI destination) when that spot is a station.
 - At Salvaging 3 the model says the Jita 4-4 T1 wrecks are 35-45%, so the refusal there is not explained by skill; the owner's exact error text is needed.
 - Solved (owner screenshot 21:52): the refused wrecks at Jita 4-4 were "Wreck of: Capsule" (Mysterious Capsule Wreck, difficulty -20 = Salvaging 5). The salvage step now says to skip them.
+- A timed salvage run clears the spot its step named (data/salvage_cleared.json: go_hist + cleared per system). Wrecks from kills at that spot before the run ended stop counting. The GO spot never picks "unknown spot" when a named one exists.
