@@ -17,3 +17,6 @@ Open agent offers (agent_offers.json):
 - Mamdasan Hoghosh: 'Freedom Must Not Prevail': task to Niyabainen (combat site,
 - Santera Nami: 'Incriminating Evidence': courier Crates of Viral Agent (400
 - Ashataalen Kaitsiras: 'Incriminating Evidence': courier Crates of Viral Agent (400
+- Kodamailen Oijari: 'Equipped For The Job': courier 5 x Crates of Transmitters (
+- Ozanami Suroma: 'Wee Bug Problem': courier 7 x Crates of OP Insecticide (420
+- Elaruka Ikra: 'Troublemakers': courier 5 x Crates of Holoreels (250 m3) to

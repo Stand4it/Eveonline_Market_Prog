@@ -580,3 +580,4 @@
 ## 2026-10-29: salvage leads count ships only and say where
 - Owner saw "12 wrecks at Ikuchi" that were 12 Mobile Depots (deployables), and the step did not say where in the system to go.
 - killleads.py now counts only victims in the Ship category (6), and names zKillboard's nearest celestial for each wreck ("WHERE: 1 near Stargate (Niyabainen)").
+- 2026-10-29 agent_offers.json: Elaruka Ikra (Hirtamon, Distribution 2) 'Troublemakers' 250 m3 to Outuni (3 jumps), 36,000 + 44,000 bonus (58 min) + 66 LP.
