@@ -3286,6 +3286,26 @@
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
    "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule) Seen 2026-10-28.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Ikuchi",
+   "career": "Distribution",
+   "where": "Ikuchi VI - Moon 6 - Ytiri Storage (0.9)",
+   "agent": "Santera Nami (Distribution, L1, Ikuchi VI - Moon 6 - Ytiri Storage (0.9))",
+   "mission": "'Incriminating Evidence': courier Crates of Viral Agent (400 m3) to Eskunen XI - Moon 1 - Caldari Constructions Production Plant (0.6). Pays 48,000 ISK + 70 LP; bonus 46,000 ISK within 1 h.",
+   "isk": 48000,
+   "bonus": 46000,
+   "task_min": 8,
+   "jumps": 4,
+   "to_system": "Eskunen",
+   "m3": 400.0,
+   "needs": "400 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
+   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3); the drop-off is 0.6 space."
   }
  ],
  "min_per_jump": 3.0,
