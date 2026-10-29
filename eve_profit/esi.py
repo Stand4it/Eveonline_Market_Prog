@@ -122,14 +122,18 @@ def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0
             print(f"  region {rid}: already fresh ({age:.0f} min old), skipped", flush=True)
             continue
         rows = esi.region_orders(rid, max_pages, log=lambda m: print(m, flush=True))
-        if con.isolation_level is None:                                 # autocommit scan: the region swap is still one short transaction
-            con.execute("BEGIN IMMEDIATE")
-        con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
-        con.executemany(
-            "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-            [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid,
-              int(o["is_buy_order"]), o["price"], o["volume_remain"], o.get("min_volume", 1),
-              o.get("issued", ""), now) for o in rows])
+        vals = [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid, int(o["is_buy_order"]), o["price"], o["volume_remain"],
+                 o.get("min_volume", 1), o.get("issued", ""), now) for o in rows]
+        if con.isolation_level is None:                                 # autocommit scan (owner 2026-10-29: The Forge's swap held the lock > 2 min and `next` failed):
+            con.execute("CREATE TEMP TABLE IF NOT EXISTS orders_stage AS SELECT * FROM orders WHERE 0")
+            con.execute("DELETE FROM orders_stage")                     # stage the rows in the temp database first (no lock on the main file)
+            con.executemany("INSERT INTO orders_stage VALUES(?,?,?,?,?,?,?,?,?,?,?)", vals)
+            con.execute("BEGIN IMMEDIATE")                              # then the swap itself is one short copy
+            con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
+            con.execute("INSERT OR REPLACE INTO orders SELECT * FROM orders_stage")
+        else:
+            con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
+            con.executemany("INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", vals)
         from .orders import bump as _bump
         _bump()                                                         # cached order books are stale now
         try:

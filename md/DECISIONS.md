@@ -600,3 +600,7 @@
 
 ## 2026-10-29: owned Civilian Miners count as mining lasers
 - `next` wanted to buy a Miner I although a Miner II is fitted and 7 Civilian Miners are in cargo. tools.held_anywhere counted only the buy-list item. For mining it now counts any module with "miner" or "mining laser" in its name (not upgrades). Other tools still count only their buy item, because an Expanded Probe Launcher does not fit a frigate.
+
+## 2026-10-29: region swap staged in a temp table
+- Health showed "database is locked" in `next` at 12:12, during the 11:58 hourly scan (23 min). The Forge's DELETE plus executemany inside BEGIN IMMEDIATE held the write lock longer than the 120 s busy timeout, on the iSCSI E: drive.
+- refresh_orders (autocommit scan) now stages rows in TEMP orders_stage, then swaps with one DELETE + INSERT...SELECT. 200k rows took 0.9 s on a test DB.
