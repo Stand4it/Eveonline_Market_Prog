@@ -581,3 +581,4 @@
 - Owner saw "12 wrecks at Ikuchi" that were 12 Mobile Depots (deployables), and the step did not say where in the system to go.
 - killleads.py now counts only victims in the Ship category (6), and names zKillboard's nearest celestial for each wreck ("WHERE: 1 near Stargate (Niyabainen)").
 - 2026-10-29 agent_offers.json: Elaruka Ikra (Hirtamon, Distribution 2) 'Troublemakers' 250 m3 to Outuni (3 jumps), 36,000 + 44,000 bonus (58 min) + 66 LP.
+- 2026-10-29 agent_offers.json: Ihoura Tahken (Hirtamon, Distribution 1) 'For the Troops - Food for Fun (1 of 3)' 40 m3 to Ansila (1 jumps), 20,000 + 27,000 bonus (62 min) + 23 LP.

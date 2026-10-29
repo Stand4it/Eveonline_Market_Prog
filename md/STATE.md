@@ -20,3 +20,5 @@ Open agent offers (agent_offers.json):
 - Kodamailen Oijari: 'Equipped For The Job': courier 5 x Crates of Transmitters (
 - Ozanami Suroma: 'Wee Bug Problem': courier 7 x Crates of OP Insecticide (420
 - Elaruka Ikra: 'Troublemakers': courier 5 x Crates of Holoreels (250 m3) to
+- Ake Sainen: 'Salve for Sis': courier 1 x Secure Coded Package (120 m3) t
+- Ihoura Tahken: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
