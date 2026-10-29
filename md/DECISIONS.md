@@ -588,3 +588,9 @@
 ## 2026-10-29: killboard wreck leads switched off
 - At Jita 4-4 and the gate the salvager refused every killboard wreck ("no skills or salvager"), although Salvaging is 3 and a Salvager I is fitted. The cause is not known yet.
 - An untimed salvage lead is modeled at the best ISK/hr, so it kept winning. `scripts/salvage_block.py on|off` writes or removes data/salvage_block.json; while it exists, leads.py skips the zKillboard leads. Leads the owner reports still count.
+
+## 2026-10-29: salvage chance per wreck, and a GO line
+- Owner: only recommend wrecks I can salvage; if unsure, list them and I will try (a failed try is a stopsync with nothing gained, which sets the real rate).
+- Game data: each wreck has an access difficulty (T1 frigate/destroyer 30, cruiser/BC/hauler 20, battleship+ 10, T2/T3/faction -10). The chance per cycle is that plus 5% x Salvaging level with a Salvager I. scripts/build_wreck_map.py writes data/wreck_difficulty.json from the SDE zip.
+- killleads.py drops wrecks at or below 0% (the game refuses those), tags each hull with its chance, and lists unknown hulls as "try". Each lead has a GO line: warp to the busiest spot at 0, plus `scripts/set_dest.py "<station>"` (ESI destination) when that spot is a station.
+- At Salvaging 3 the model says the Jita 4-4 T1 wrecks are 35-45%, so the refusal there is not explained by skill; the owner's exact error text is needed.

@@ -16,6 +16,8 @@ WRECK_H = 2.0
 MAX_SYSTEMS = 5
 MAX_JUMPS = 4
 CAPSULES = {670, 33328}                                                 # pods leave nothing worth salvaging
+SALVAGE_PER_LEVEL = 5.0                                                 # Salvager I: 5% x Salvaging level (scripts/build_wreck_map.py)
+DIFF_FILE = os.path.join(ROOT, "data", "wreck_difficulty.json")
 SHIP_CATEGORY = 6                                                       # owner 2026-10-29: Mobile Depots etc. are not ship wrecks; only ships count
 _WHERE = {}
 
@@ -48,6 +50,20 @@ def _get(url, timeout=10):
         return json.load(r)
 
 
+def _salvaging(con):
+    try:
+        r = con.execute("SELECT level FROM character_skills WHERE skill_id=25863").fetchone()
+        return int(r[0]) if r else 0
+    except Exception:                                                   # noqa: BLE001
+        return 0
+
+
+def chance(diffs, ship_type, level):
+    """owner 2026-10-29: % chance per salvager cycle for this ship's wreck at your Salvaging level; <= 0 = the game refuses ('not enough skill'); None = unknown hull."""
+    d = diffs.get(str(ship_type))
+    return None if d is None else d + SALVAGE_PER_LEVEL * level
+
+
 def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
     """-> list of leads written to data/kill_leads.json (sync: max_jumps=0 = only the system you are in, always checked)."""
     now = now or time.time()
@@ -66,12 +82,17 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
     except Exception:                                                   # noqa: BLE001
         old = []
     leads = []
+    try:
+        diffs = json.load(open(DIFF_FILE, encoding="utf-8"))
+    except (OSError, ValueError):
+        diffs = {}
+    lvl = _salvaging(con)
     for _j, _k, sid in cand:
         try:
             kills = _get(f"https://zkillboard.com/api/kills/systemID/{sid}/pastSeconds/{int(WRECK_H * 3600)}/")
         except Exception:                                               # noqa: BLE001
             continue
-        wrecks, newest, loot, ships, near = 0, 0.0, 0.0, {}, {}
+        wrecks, newest, loot, ships, near, refused = 0, 0.0, 0.0, {}, {}, {}
         for k in (kills or [])[:30]:
             z = k.get("zkb", {})
             try:
@@ -85,22 +106,31 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             t = time.mktime(time.strptime(km["killmail_time"], "%Y-%m-%dT%H:%M:%SZ")) - time.timezone
             if now - t > WRECK_H * 3600:
                 continue
+            r = con.execute("SELECT name FROM types WHERE type_id=?", (st,)).fetchone()
+            nm = r[0] if r else str(st)
+            c = chance(diffs, st, lvl)
+            if c is not None and c <= 0:
+                refused[nm] = refused.get(nm, 0) + 1                    # the game would say you lack the skill: not counted, not sent
+                continue
             wrecks += 1
             newest = max(newest, t)
             loot += float(z.get("droppedValue") or 0)
-            r = con.execute("SELECT name FROM types WHERE type_id=?", (st,)).fetchone()
-            nm = r[0] if r else str(st)
-            ships[nm] = ships.get(nm, 0) + 1
+            tag = f"{nm} ({c:.0f}%)" if c is not None else f"{nm} (chance unknown: try it)"
+            ships[tag] = ships.get(tag, 0) + 1
             w = _where(con, z.get("locationID")) or "unknown spot (look in Overview: Wrecks, or warp around)"
             near[w] = near.get(w, 0) + 1
         if not wrecks:
             continue
         what = ", ".join(f"{n} x {s}" for s, n in sorted(ships.items(), key=lambda x: -x[1])[:5])
-        where = "; ".join(f"{n} near {w}" for w, n in sorted(near.items(), key=lambda x: -x[1]))
+        spots = sorted(near.items(), key=lambda x: -x[1])
+        where = "; ".join(f"{n} near {w}" for w, n in spots)
+        go = spots[0][0]
+        dest = (f" Set destination: python scripts/set_dest.py \"{go}\" (autopilot warps you there), or" if con.execute("SELECT 1 FROM stations WHERE name=?", (go,)).fetchone() else "")
+        skip = ("; NOT counted (your Salvaging " + str(lvl) + " is too low, the game refuses them): " + ", ".join(f"{n} x {s}" for s, n in refused.items())) if refused else ""
         leads.append({"id": f"kills-{sid}-{int(newest)}", "system": g.name[sid], "activity": "salvaging", "needs": "salvager",
-                      "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard", "where": where,
-                      "what": f"{wrecks} player-ship wreck(s) from the last {WRECK_H:.0f} h ({what}); salvage only (looting another pilot's wreck flags you); "
-                              f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where} (People & Places or right-click space > warp to that spot at 0, then Overview: Wrecks)"})
+                      "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard", "where": where, "go": go,
+                      "what": f"{wrecks} wreck(s) you can salvage (chance per cycle at Salvaging {lvl}) from the last {WRECK_H:.0f} h ({what}){skip}; salvage only (looting another pilot's wreck flags you); "
+                              f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where}. GO:{dest} right-click space (or Overview) > {go} > Warp to Within 0 m, then Overview: Wrecks. If the game still refuses, stopsync with nothing gained: your timed run then sets the real rate"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"refreshed": now, "leads": old + leads}, open(OUT, "w", encoding="utf-8"), indent=1)
     return old + leads

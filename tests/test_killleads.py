@@ -49,5 +49,14 @@ class SalvageBlockTests(unittest.TestCase):
             self.assertEqual(leads.blocked(), "refused")
 
 
+
+class SalvageChanceTests(unittest.TestCase):
+    def test_chance_is_difficulty_plus_five_per_level(self):
+        diffs = {"603": 30.0, "29990": -10.0}
+        self.assertEqual(killleads.chance(diffs, 603, 3), 45.0)
+        self.assertEqual(killleads.chance(diffs, 29990, 2), 0.0)            # the game refuses: T2/T3 wrecks need Salvaging 3
+        self.assertIsNone(killleads.chance(diffs, 1, 3))
+
+
 if __name__ == "__main__":
     unittest.main()
