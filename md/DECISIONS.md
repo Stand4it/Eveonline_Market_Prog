@@ -584,3 +584,7 @@
 - 2026-10-29 agent_offers.json: Ihoura Tahken (Hirtamon, Distribution 1) 'For the Troops - Food for Fun (1 of 3)' 40 m3 to Ansila (1 jumps), 20,000 + 27,000 bonus (62 min) + 23 LP.
 - 2026-10-29 agent_offers.json: Natsisainen Kepanova (Hirtamon, Distribution 1) 'Army Recruits' 300 m3 to Hykkota (2 jumps), 24,000 + 20,000 bonus (54 min) + 21 LP.
 - 2026-10-29 agent_offers.json: Inikko Samanuni (New Caldari, Security 1) 'Cargo Delivery' 60 m3 to Alikara (1 jumps), 36,000 + 39,000 bonus (94 min) + 36 LP.
+
+## 2026-10-29: killboard wreck leads switched off
+- At Jita 4-4 and the gate the salvager refused every killboard wreck ("no skills or salvager"), although Salvaging is 3 and a Salvager I is fitted. The cause is not known yet.
+- An untimed salvage lead is modeled at the best ISK/hr, so it kept winning. `scripts/salvage_block.py on|off` writes or removes data/salvage_block.json; while it exists, leads.py skips the zKillboard leads. Leads the owner reports still count.

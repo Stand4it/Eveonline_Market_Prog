@@ -38,5 +38,16 @@ class KillLeadTests(unittest.TestCase):
         self.assertIn("near Stargate (Away)", leads[0]["what"])
 
 
+
+class SalvageBlockTests(unittest.TestCase):
+    def test_block_file_turns_killboard_leads_off(self):
+        from eve_profit import leads
+        f = os.path.join(tempfile.mkdtemp(), "b.json")
+        with mock.patch.object(leads, "BLOCK", f):
+            self.assertIsNone(leads.blocked())
+            open(f, "w", encoding="utf-8").write('{"reason": "refused"}')
+            self.assertEqual(leads.blocked(), "refused")
+
+
 if __name__ == "__main__":
     unittest.main()

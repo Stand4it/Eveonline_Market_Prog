@@ -12,6 +12,16 @@ JUMP_MIN = 3.0
 
 
 _AUTO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kill_leads.json")
+BLOCK = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "salvage_block.json")
+
+
+def blocked():
+    """owner 2026-10-29: the salvager refused the Jita killboard wrecks ('no skills or salvager'). While data/salvage_block.json exists the
+    killboard wreck leads stay off the plan (scripts/salvage_block.py on|off); leads you report yourself still count."""
+    try:
+        return json.load(open(BLOCK, encoding="utf-8")).get("reason") or "blocked"
+    except (OSError, ValueError):
+        return None
 
 
 def load():
@@ -50,7 +60,10 @@ def candidates(con, g, p, best_known, hop_to, now=None):
     now = now or time.time()
     acts = {a["id"]: a for a in status(con, getattr(p, "wallet_isk", 0.0))}
     out = []
+    stop_auto = blocked()
     for ld in load():
+        if stop_auto and ld.get("auto") == "zkillboard":
+            continue
         act = acts.get(ld.get("activity"))
         if not act or not act["unlocked"] or now > ld["seen"] + ld.get("life_h", 2) * 3600:
             continue
