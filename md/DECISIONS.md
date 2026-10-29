@@ -594,3 +594,4 @@
 - Game data: each wreck has an access difficulty (T1 frigate/destroyer 30, cruiser/BC/hauler 20, battleship+ 10, T2/T3/faction -10). The chance per cycle is that plus 5% x Salvaging level with a Salvager I. scripts/build_wreck_map.py writes data/wreck_difficulty.json from the SDE zip.
 - killleads.py drops wrecks at or below 0% (the game refuses those), tags each hull with its chance, and lists unknown hulls as "try". Each lead has a GO line: warp to the busiest spot at 0, plus `scripts/set_dest.py "<station>"` (ESI destination) when that spot is a station.
 - At Salvaging 3 the model says the Jita 4-4 T1 wrecks are 35-45%, so the refusal there is not explained by skill; the owner's exact error text is needed.
+- Solved (owner screenshot 21:52): the refused wrecks at Jita 4-4 were "Wreck of: Capsule" (Mysterious Capsule Wreck, difficulty -20 = Salvaging 5). The salvage step now says to skip them.

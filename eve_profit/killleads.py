@@ -130,7 +130,7 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
         leads.append({"id": f"kills-{sid}-{int(newest)}", "system": g.name[sid], "activity": "salvaging", "needs": "salvager",
                       "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard", "where": where, "go": go,
                       "what": f"{wrecks} wreck(s) you can salvage (chance per cycle at Salvaging {lvl}) from the last {WRECK_H:.0f} h ({what}){skip}; salvage only (looting another pilot's wreck flags you); "
-                              f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where}. GO:{dest} right-click space (or Overview) > {go} > Warp to Within 0 m, then Overview: Wrecks. If the game still refuses, stopsync with nothing gained: your timed run then sets the real rate"})
+                              f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where}. GO:{dest} right-click space (or Overview) > {go} > Warp to Within 0 m, then Overview: Wrecks. SKIP every 'Wreck of: Capsule' (Type: Mysterious Capsule Wreck, needs Salvaging 5: the game says 'too difficult'); salvage only wrecks named after the ships listed. If the game still refuses, stopsync with nothing gained: your timed run then sets the real rate"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"refreshed": now, "leads": old + leads}, open(OUT, "w", encoding="utf-8"), indent=1)
     return old + leads
