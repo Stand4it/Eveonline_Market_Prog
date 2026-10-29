@@ -346,7 +346,13 @@ def _run(a):
             _, cid = sso.get_token(a.client_id)
             from .loot import snapshot
             snap = snapshot(con) if resync() else None
-            print(start(con, a.activity, cid, snap=snap, wallet=p.wallet_isk))
+            try:
+                print(start(con, a.activity, cid, snap=snap, wallet=p.wallet_isk))
+            except sqlite3.OperationalError as ex:
+                if "locked" not in str(ex):
+                    raise
+                raise SystemExit("TIMER NOT STARTED: the database is busy (most likely the hourly market scan is writing). "
+                                 "Do the step anyway and run the same start command again in a minute.")
         else:
             esi = ESI()
             esi.token, _ = sso.get_token(a.client_id)
@@ -958,6 +964,8 @@ def _run(a):
                       f"(first page can take up to ~30 s; Ctrl+C to stop)...", flush=True)
                 from .esi import refresh_orders
                 import time as _tm
+                con.commit()
+                con.isolation_level = None      # owner 2026-10-29: autocommit, so the slow network parts (contracts, LP, zKill, types) never hold the write lock; start/stop/next ran into 'database is locked' during the 40+ min hourly scan
                 t_scan = _tm.time()
                 print("Fetched orders:", refresh_orders(con, esi, regions, a.max_pages, a.max_age, a.budget))
                 from .contracts import refresh_contracts

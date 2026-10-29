@@ -122,6 +122,8 @@ def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0
             print(f"  region {rid}: already fresh ({age:.0f} min old), skipped", flush=True)
             continue
         rows = esi.region_orders(rid, max_pages, log=lambda m: print(m, flush=True))
+        if con.isolation_level is None:                                 # autocommit scan: the region swap is still one short transaction
+            con.execute("BEGIN IMMEDIATE")
         con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
         con.executemany(
             "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
