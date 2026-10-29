@@ -23,3 +23,4 @@ Open agent offers (agent_offers.json):
 - Ake Sainen: 'Salve for Sis': courier 1 x Secure Coded Package (120 m3) t
 - Ihoura Tahken: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
 - Natsisainen Kepanova: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
+- Inikko Samanuni: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil, RETRI

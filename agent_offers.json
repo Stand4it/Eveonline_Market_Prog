@@ -3446,6 +3446,26 @@
    "m3": 300.0,
    "needs": "300 m3 of cargo; Hykkota is 2 jump(s) from Hirtamon (map DB route)",
    "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-29."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "New Caldari",
+   "career": "Security",
+   "where": "New Caldari Prime - Moon 1 - Poksu Mineral Group Mineral Reserve",
+   "agent": "Inikko Samanuni (Security, 1, New Caldari Prime - Moon 1 - Poksu Mineral Group Mineral Reserve)",
+   "mission": "'Cargo Delivery': courier 1 x Crates of Synthetic Oil, RETRIEVE from a warehouse at an outpost (deadspace site, may have rats) in Alikara, bring back to the agent (60 m3) to Alikara (mission site). Pays 36,000 ISK + 36 LP; bonus 39,000 ISK within 94 min.",
+   "isk": 36000,
+   "bonus": 39000,
+   "task_min": 20,
+   "jumps": 1,
+   "to_system": "Alikara",
+   "m3": 60.0,
+   "needs": "60 m3 of cargo; Alikara is 1 jump(s) from New Caldari (map DB route)",
+   "note": "Security L1: combat site, 99% rule applies; round trip New Caldari > Alikara (1 jump) > back Seen 2026-10-29."
   }
  ],
  "min_per_jump": 3.0,
