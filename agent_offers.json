@@ -2737,7 +2737,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hatakani",
    "career": "Security",
    "where": "Hatakani VII - Moon 20 - Rapid Assembly Factory (0.9)",
@@ -2750,7 +2750,7 @@
    "to_system": "Yashunen",
    "m3": 20.0,
    "needs": "20 m3 of cargo; Yashunen is 1 jump(s) from Hatakani (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. L1 combat (Guristas escort in groups: pull one group at a time). 132,000 ISK + 80 LP with the bonus; long bonus window.",
+   "note": "Seen 2026-10-22, standing 0.0. L1 combat (Guristas escort in groups: pull one group at a time). 132,000 ISK + 80 LP with the bonus; long bonus window. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2758,7 +2758,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Haatomo",
    "career": "Security",
    "where": "Haatomo III - Moon 1 - Propel Dynamics Factory (0.6)",
@@ -2771,7 +2771,7 @@
    "to_system": "Suroken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Haatomo (map DB route)",
-   "note": "Seen 2026-10-22 after Worlds Collide failed. Combat; you are in a capsule: needs a combat ship + fit first. 189,000 ISK + 115 LP with the bonus.",
+   "note": "Seen 2026-10-22 after Worlds Collide failed. Combat; you are in a capsule: needs a combat ship + fit first. 189,000 ISK + 115 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2779,7 +2779,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon IV - Moon 2 - Minedrill Mining Outpost (0.8)",
@@ -2792,14 +2792,14 @@
    "to_system": "Kusomonmon",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 103,000 ISK + 54 LP with the bonus: best of the Kusomonmon Banidine offers."
+   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 103,000 ISK + 54 LP with the bonus: best of the Kusomonmon Banidine offers. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon IV - Moon 4 - Hyasyoda Corporation Mining Outpost (0.8)",
@@ -2812,14 +2812,14 @@
    "to_system": "Kusomonmon",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 79,000 ISK + 50 LP with the bonus (50 LP = the daily goal)."
+   "note": "Seen 2026-10-22, standing 0.0. 79,000 ISK + 50 LP with the bonus (50 LP = the daily goal). EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Security",
    "where": "Kusomonmon VI - Moon 23 - Corporate Police Force Testing Facilities (0.8)",
@@ -2832,7 +2832,7 @@
    "to_system": "Kusomonmon",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. One target (a recon frigate): the easiest combat offer seen; still needs guns + a small tank. 122,000 ISK + 73 LP with the bonus.",
+   "note": "Seen 2026-10-22, standing 0.0. One target (a recon frigate): the easiest combat offer seen; still needs guns + a small tank. 122,000 ISK + 73 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2840,7 +2840,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon VI - Moon 6 - Caldari Provisions Plantation (0.8)",
@@ -2853,14 +2853,14 @@
    "to_system": "Kusomonmon",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 83,000 ISK + 54 LP with the bonus."
+   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 83,000 ISK + 54 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Security",
    "where": "Kusomonmon VI - Moon 23 - Corporate Police Force Testing Facilities (0.8)",
@@ -2873,14 +2873,14 @@
    "to_system": "Kusomonmon",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 219,000 ISK + 133 LP with the bonus. Combat vs 4 groups: needs a tanked fit that passes the 99% rule (the Catalyst was lost to a similar site)."
+   "note": "Seen 2026-10-22, standing 0.0. 219,000 ISK + 133 LP with the bonus. Combat vs 4 groups: needs a tanked fit that passes the 99% rule (the Catalyst was lost to a similar site). EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon VI - Moon 24 - Hyasyoda Corporation Mining Outpost (0.8)",
@@ -2893,7 +2893,7 @@
    "to_system": "Kusomonmon",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 93,000 ISK + 54 LP with the bonus.",
+   "note": "Seen 2026-10-22, standing 0.0. 2,000 m3 = 5 trips. 93,000 ISK + 54 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -2901,7 +2901,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter VI - Ytiri Storage (0.9)",
@@ -2914,14 +2914,14 @@
    "to_system": "Maurasi",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. No combat: warp to the bookmark, open the container, take the records. SPECIAL ship restrictions: check the link before undocking. 80,000 ISK + 47 LP with the bonus."
+   "note": "Seen 2026-10-22, standing 0.0. No combat: warp to the bookmark, open the container, take the records. SPECIAL ship restrictions: check the link before undocking. 80,000 ISK + 47 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter VI - Ytiri Storage (0.9)",
@@ -2934,14 +2934,14 @@
    "to_system": "Niyabainen",
    "m3": 60.0,
    "needs": "60 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. Pickup at a deadspace outpost (red icon): may have guards. 57,000 ISK + 36 LP with the bonus."
+   "note": "Seen 2026-10-22, standing 0.0. Pickup at a deadspace outpost (red icon): may have guards. 57,000 ISK + 36 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
@@ -2954,7 +2954,7 @@
    "to_system": "Maurasi",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. Combat vs a structure (+ possible guards): needs guns. 92,000 ISK + 58 LP with the bonus.",
+   "note": "Seen 2026-10-22, standing 0.0. Combat vs a structure (+ possible guards): needs guns. 92,000 ISK + 58 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2962,7 +2962,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
@@ -2975,7 +2975,7 @@
    "to_system": "Urlen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Urlen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. Combat (Gallente attackers), 1 of 5 chain: needs guns. 84,000 ISK + 51 LP with the bonus.",
+   "note": "Seen 2026-10-22, standing 0.0. Combat (Gallente attackers), 1 of 5 chain: needs guns. 84,000 ISK + 51 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -2983,7 +2983,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon V - Moon 14 - Deep Core Mining Inc. Mining Outpost (0.8)",
@@ -2996,7 +2996,7 @@
    "to_system": "Kusomonmon",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 1,080 m3 = 3 trips. 68,000 ISK + 43 LP with the bonus. (re-added: lost in a parallel save)",
+   "note": "Seen 2026-10-22, standing 0.0. 1,080 m3 = 3 trips. 68,000 ISK + 43 LP with the bonus. (re-added: lost in a parallel save) EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3004,7 +3004,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kusomonmon",
    "career": "Mining",
    "where": "Kusomonmon IV - Moon 6 - Minedrill Mining Outpost (0.8)",
@@ -3017,7 +3017,7 @@
    "to_system": "Kusomonmon",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Kusomonmon is 0 jump(s) from Kusomonmon (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. 1,080 m3 = 3 trips. 79,000 ISK + 43 LP with the bonus. (re-added: lost in a parallel save)",
+   "note": "Seen 2026-10-22, standing 0.0. 1,080 m3 = 3 trips. 79,000 ISK + 43 LP with the bonus. (re-added: lost in a parallel save) EXPIRED (seen 2026-10-22, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3025,7 +3025,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 15 - Ytiri Storage (0.9)",
@@ -3038,14 +3038,14 @@
    "to_system": "Ansila",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Ansila is 1 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. Round trip to Ansila. 48,000 ISK + 26 LP with the bonus."
+   "note": "Seen 2026-10-22, standing 0.0. Round trip to Ansila. 48,000 ISK + 26 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9)",
@@ -3058,14 +3058,14 @@
    "to_system": "Hykkota",
    "m3": 70.0,
    "needs": "70 m3 of cargo; Hykkota is 2 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. Round trip to Hykkota. 60,000 ISK + 36 LP with the bonus."
+   "note": "Seen 2026-10-22, standing 0.0. Round trip to Hykkota. 60,000 ISK + 36 LP with the bonus. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 6 - Ytiri Storage (0.9)",
@@ -3078,7 +3078,7 @@
    "to_system": "Eskunen",
    "m3": 180.0,
    "needs": "180 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen 2026-10-22, standing 0.0. One-way courier to Eskunen (0.6). 32,000 ISK + 21 LP with the bonus: low pay."
+   "note": "Seen 2026-10-22, standing 0.0. One-way courier to Eskunen (0.6). 32,000 ISK + 21 LP with the bonus: low pay. EXPIRED (seen 2026-10-22, offers last 7 days)."
   },
   {
    "taxed": false,
