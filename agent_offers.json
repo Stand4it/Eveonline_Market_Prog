@@ -3345,7 +3345,7 @@
    "to_system": "Shera",
    "m3": 300.0,
    "needs": "300 m3 of cargo; Shera is 47 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 92,000 ISK + 64 LP with the bonus."
+   "note": "Seen, 92,000 ISK + 64 LP with the bonus. Seen 2026-10-29."
   },
   {
    "taxed": false,
@@ -3365,7 +3365,7 @@
    "to_system": "Aokannitoh",
    "m3": 420.0,
    "needs": "420 m3 of cargo; Aokannitoh is 1 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 47,000 ISK + 32 LP with the bonus."
+   "note": "Seen, 47,000 ISK + 32 LP with the bonus. Seen 2026-10-29."
   },
   {
    "taxed": false,
@@ -3385,7 +3385,7 @@
    "to_system": "Outuni",
    "m3": 250.0,
    "needs": "250 m3 of cargo; Outuni is 3 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 80,000 ISK + 66 LP with the bonus."
+   "note": "Seen, 80,000 ISK + 66 LP with the bonus. Seen 2026-10-29."
   },
   {
    "taxed": false,
@@ -3405,7 +3405,7 @@
    "to_system": "Eskunen",
    "m3": 120.0,
    "needs": "120 m3 of cargo; Eskunen is 4 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 34,000 ISK + 19 LP with the bonus."
+   "note": "Seen, 34,000 ISK + 19 LP with the bonus. Seen 2026-10-29."
   },
   {
    "taxed": false,
@@ -3425,7 +3425,27 @@
    "to_system": "Ansila",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Ansila is 1 jump(s) from Hirtamon (map DB route)",
-   "note": "round trip: fly to Ansila (1 jump), load, return to the agent; chain 1 of 3"
+   "note": "round trip: fly to Ansila (1 jump), load, return to the agent; chain 1 of 3 Seen 2026-10-29."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Hirtamon",
+   "career": "Distribution",
+   "where": "Hirtamon VII - Moon 6 - Zainou Biotech Production",
+   "agent": "Natsisainen Kepanova (Distribution, 1, Hirtamon VII - Moon 6 - Zainou Biotech Production)",
+   "mission": "'Army Recruits': courier 5 x Group of Army Recruits (300 m3) to Hykkota IV - Moon 7 - Expert Housing Production Plant. Pays 24,000 ISK + 21 LP; bonus 20,000 ISK within 54 min.",
+   "isk": 24000,
+   "bonus": 20000,
+   "task_min": 8,
+   "jumps": 2,
+   "to_system": "Hykkota",
+   "m3": 300.0,
+   "needs": "300 m3 of cargo; Hykkota is 2 jump(s) from Hirtamon (map DB route)",
+   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-29."
   }
  ],
  "min_per_jump": 3.0,

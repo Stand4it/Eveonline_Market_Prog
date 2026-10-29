@@ -22,3 +22,4 @@ Open agent offers (agent_offers.json):
 - Elaruka Ikra: 'Troublemakers': courier 5 x Crates of Holoreels (250 m3) to
 - Ake Sainen: 'Salve for Sis': courier 1 x Secure Coded Package (120 m3) t
 - Ihoura Tahken: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
+- Natsisainen Kepanova: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
