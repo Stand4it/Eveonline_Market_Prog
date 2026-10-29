@@ -78,7 +78,7 @@ def trade_step(con, g, p, o):
     except Exception:                                                   # noqa: BLE001
         pass
     return "\n".join([f"STEP: FLY to {g.name[hop]}",
-                      f"   DO ONLY THIS: fly to {g.name[hop]} and stop there..",
+                      f"   DO ONLY THIS: fly to {g.name[hop]} and stop there.",
                       f"   LATER: {units:,} x {name}: " + "; ".join(f"buy {q:,} at {ask:,.0f} each" for ask, q in sorted(by_price.items())) + f" at {st_buy} in {g.name[a]} ({left} jumps from here)"])
 
 

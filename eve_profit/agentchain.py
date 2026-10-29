@@ -70,7 +70,7 @@ def _buy_or_fly(con, g, p, nm, qty, price, sid, loc, jumps, why):
     hop = g.name[r.path[1]] if r and len(r.path) > 1 else g.name[sid]
     return (f"STEP: FLY to {hop}\n"
             f"   WHY: to buy {qty:,} x {nm} in {g.name[sid]} ({jumps} jumps, ~{price:,.0f} ISK each at {where}): {why}\n"
-            f"   DO ONLY THIS: fly to {hop} and stop there..")
+            f"   DO ONLY THIS: fly to {hop} and stop there.")
 
 
 def gear_step(con, g, p, o):
@@ -172,7 +172,7 @@ def stage_text(con, g, p, o, rate_note=""):
             r = g.route(g.id_of(here), g.id_of(dest), 60, p.avoid_yellow)
             hop = g.name[r.path[1]] if len(r.path) > 1 else dest
             return "\n".join([f"STEP: FLY to {hop}",
-                              f"   DO ONLY THIS: fly to {hop} and stop there..",
+                              f"   DO ONLY THIS: fly to {hop} and stop there.",
                               f"   LATER: {agent}'s mission continues at {dest} ({r.jumps} jumps from here)"])
         except Exception:                                               # noqa: BLE001
             pass

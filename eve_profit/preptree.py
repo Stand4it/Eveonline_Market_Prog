@@ -546,6 +546,26 @@ def first_step(con, g, p, chain, hop_to):
     return ""
 
 
+def _here_prep(con, g, p, cs, wallet, hop_to):
+    """owner 2026-10-29: a prep step that can be done WHERE YOU ARE costs no travel, and travel is the expensive part. So any chain's buy whose
+    cheapest place (price + jumps, acquire.sources) is this system, or a free skill queue, is scheduled now, whatever the chain's rank.
+    -> (label, step text, note) or None. Cash per buy stays under half the wallet."""
+    spent = 0.0
+    for c in cs:
+        if c.get("no_fit") or c.get("unknown") or c.get("chain_min", 0.0) <= 0:
+            continue
+        for s in c["steps"]:
+            here_buy = s["how"] == "buy" and s.get("jumps", 1) == 0 and spent + s["cash"] <= wallet * 0.5
+            queue = s["how"] == "do" and s.get("item") == "skills" and not s.get("books")
+            if not (here_buy or queue):
+                continue
+            txt = first_step(con, g, p, dict(c, steps=[s]), hop_to)
+            if txt.startswith("STEP:"):
+                return (f"prep: {s['item']}", txt, f"prep for {_label(c)} done HERE: no travel, so it costs only {s['cash']:,.0f} ISK"
+                        + ("" if s["how"] == "buy" else " and a minute"))
+    return None
+
+
 def candidates(con, g, p, best_known, hop_to):
     """-> [(ISK/hr, label, step text, note)]: the first step of the best chain when the chain beats the best step now and the cash fits the wallet."""
     try:
@@ -554,6 +574,9 @@ def candidates(con, g, p, best_known, hop_to):
         _hrec('preptree', _he)
         return []
     wallet = float(getattr(p, "wallet_isk", 0.0) or 0.0)
+    here_step = _here_prep(con, g, p, cs, wallet, hop_to)
+    if here_step:
+        return [(best_known * 1.0001 if best_known else 1.0,) + here_step]
     for c in cs:
         s0 = c["steps"][0] if c["steps"] else None
         here = s0 is not None and (s0["how"] in ("do", "build") or s0.get("jumps", 1) == 0)

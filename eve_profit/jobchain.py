@@ -66,7 +66,7 @@ def candidate(con, g, p):
                           "   When it is accepted run:  python -m eve_profit done"])
     elif target and target[1] > 0:
         text = "\n".join([f"STEP: FLY to {target[0]}",
-                          f"   DO ONLY THIS: load {row['units']:,} x {row['what']} into your ship if it is not loaded yet, then fly to {target[0]} and stop there..",
+                          f"   DO ONLY THIS: load {row['units']:,} x {row['what']} into your ship if it is not loaded yet, then fly to {target[0]} and stop there.",
                           f"   LATER: deliver at {target[2]} ({target[1]} jumps from here): {j['name']}"])
     else:
         text = "\n".join([f"STEP: DELIVER {row['units']:,} x {row['what']} for the freelance job (about 3 minutes)",

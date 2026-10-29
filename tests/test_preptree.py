@@ -113,6 +113,19 @@ class PrepTreeTests(unittest.TestCase):
         self.assertEqual(c["steps"][-1]["item"], "skills")
         self.assertIn("FIRST inject the books", c["steps"][-1]["step"])
 
+    def test_a_prep_buy_here_is_scheduled_even_when_its_chain_ranks_low(self):
+        """owner 2026-10-29: no travel = nearly free: a buy whose cheapest place is this system comes first, whatever the chain's rank."""
+        chain = {"group": "scanning", "goals": [], "chain_min": 10.0, "rank_min": 10.0, "cash": 18000.0, "unknown": [],
+                 "steps": [{"how": "buy", "item": "Core Probe Launcher I", "qty": 1, "cash": 18000.0, "jumps": 0, "src": {}}]}
+        con, g, p = self._world(1000000.0)
+        with mock.patch.object(preptree, "chains", return_value=[chain]),                 mock.patch.object(preptree, "first_step", return_value="STEP: BUY 1 x Core Probe Launcher I here"):
+            out = preptree.candidates(con, g, p, 5000000.0, None)
+        self.assertEqual(out[0][1], "prep: Core Probe Launcher I")
+        self.assertGreater(out[0][0], 5000000.0)
+        far = dict(chain, steps=[dict(chain["steps"][0], jumps=3)])
+        with mock.patch.object(preptree, "chains", return_value=[far]),                 mock.patch.object(preptree, "first_step", return_value="STEP: FLY"):
+            self.assertEqual(preptree.candidates(con, g, p, 5000000.0, None), [])
+
 
 if __name__ == "__main__":
     unittest.main()

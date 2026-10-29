@@ -764,7 +764,7 @@ def _hop_step(g, p, con_=None):
                 return ps
         except Exception as _he:                                               # noqa: BLE001
             _hrec('nextstep', _he)
-        return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there..\n"
+        return (f"STEP: FLY to {nm}\n   DO ONLY THIS: fly to {nm} and stop there.\n"
                 f"   LATER: {why} ({left} jumps to {system})" + ((": " + " | ".join(lines)) if lines else ""))
     return hop_to
 
