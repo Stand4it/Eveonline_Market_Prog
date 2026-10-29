@@ -16,6 +16,30 @@ WRECK_H = 2.0
 MAX_SYSTEMS = 5
 MAX_JUMPS = 4
 CAPSULES = {670, 33328}                                                 # pods leave nothing worth salvaging
+SHIP_CATEGORY = 6                                                       # owner 2026-10-29: Mobile Depots etc. are not ship wrecks; only ships count
+_WHERE = {}
+
+
+def _where(con, loc_id):
+    """zKillboard's nearest celestial for a kill -> 'Stargate (Tunttaras)', 'Ikuchi IV - Moon 2' ... ('' when unknown)."""
+    if not loc_id:
+        return ""
+    if loc_id in _WHERE:
+        return _WHERE[loc_id]
+    nm = ""
+    r = con.execute("SELECT name FROM stations WHERE station_id=?", (loc_id,)).fetchone()
+    if r:
+        nm = r[0]
+    else:
+        kinds = ["stargates"] if 50000000 <= loc_id < 60000000 else ["planets", "moons", "asteroid_belts", "stars"] if 40000000 <= loc_id < 50000000 else []
+        for kind in kinds:
+            try:
+                nm = _get(f"https://esi.evetech.net/latest/universe/{kind}/{loc_id}/").get("name", "")
+                break
+            except Exception:                                           # noqa: BLE001
+                continue
+    _WHERE[loc_id] = nm
+    return nm
 
 
 def _get(url, timeout=10):
@@ -47,7 +71,7 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             kills = _get(f"https://zkillboard.com/api/kills/systemID/{sid}/pastSeconds/{int(WRECK_H * 3600)}/")
         except Exception:                                               # noqa: BLE001
             continue
-        wrecks, newest, loot, ships = 0, 0.0, 0.0, {}
+        wrecks, newest, loot, ships, near = 0, 0.0, 0.0, {}, {}
         for k in (kills or [])[:30]:
             z = k.get("zkb", {})
             try:
@@ -55,7 +79,8 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             except Exception:                                           # noqa: BLE001
                 continue
             st = km.get("victim", {}).get("ship_type_id")
-            if st in CAPSULES:
+            cat = con.execute("SELECT category_id FROM types WHERE type_id=?", (st,)).fetchone()
+            if st in CAPSULES or (cat and cat[0] is not None and cat[0] != SHIP_CATEGORY):
                 continue
             t = time.mktime(time.strptime(km["killmail_time"], "%Y-%m-%dT%H:%M:%SZ")) - time.timezone
             if now - t > WRECK_H * 3600:
@@ -66,13 +91,16 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             r = con.execute("SELECT name FROM types WHERE type_id=?", (st,)).fetchone()
             nm = r[0] if r else str(st)
             ships[nm] = ships.get(nm, 0) + 1
+            w = _where(con, z.get("locationID")) or "unknown spot (look in Overview: Wrecks, or warp around)"
+            near[w] = near.get(w, 0) + 1
         if not wrecks:
             continue
         what = ", ".join(f"{n} x {s}" for s, n in sorted(ships.items(), key=lambda x: -x[1])[:5])
+        where = "; ".join(f"{n} near {w}" for w, n in sorted(near.items(), key=lambda x: -x[1]))
         leads.append({"id": f"kills-{sid}-{int(newest)}", "system": g.name[sid], "activity": "salvaging", "needs": "salvager",
-                      "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard",
+                      "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard", "where": where,
                       "what": f"{wrecks} player-ship wreck(s) from the last {WRECK_H:.0f} h ({what}); salvage only (looting another pilot's wreck flags you); "
-                              f"dropped loot ~{loot:,.0f} ISK is NOT counted"})
+                              f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where} (People & Places or right-click space > warp to that spot at 0, then Overview: Wrecks)"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"refreshed": now, "leads": old + leads}, open(OUT, "w", encoding="utf-8"), indent=1)
     return old + leads

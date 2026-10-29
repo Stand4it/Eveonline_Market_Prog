@@ -576,3 +576,7 @@
 - 2026-10-29 (owner): the 52 PLEX in the PLEX vault (global market ~4.8M bid, ~249M ISK) are KEPT for playing time (Omega). Never count PLEX as spendable capital or suggest selling it.
 - 2026-10-29 (owner): a prep step that can be done WHERE YOU ARE is scheduled now, whatever its chain ranks (no travel = nearly free; travel is the expensive part). preptree._here_prep: any chain's buy whose cheapest place (price + jumps, acquire.sources) is this system (cash per buy under half the wallet), or a free skill queue with no books missing, becomes the next step, ranked just above the best step. Checked in Ikuchi: no prep item is sold there (blasters, repairer, probe launcher, analyzers are cheapest in Jita, 1 jump; Planetology/Remote Sensing in Aokannitoh, 2 jumps), so it fires on arrival in Jita. Also fixed 'stop there..' double periods.
 - 2026-10-29 agent_offers.json: Ashataalen Kaitsiras (Tunttaras, Distribution L1) 'Incriminating Evidence' 400 m3 to Hitanishio (2 jumps), 46,000 + 41,000 bonus (1 h) + 77 LP.
+
+## 2026-10-29: salvage leads count ships only and say where
+- Owner saw "12 wrecks at Ikuchi" that were 12 Mobile Depots (deployables), and the step did not say where in the system to go.
+- killleads.py now counts only victims in the Ship category (6), and names zKillboard's nearest celestial for each wreck ("WHERE: 1 near Stargate (Niyabainen)").
