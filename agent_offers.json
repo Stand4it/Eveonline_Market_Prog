@@ -3306,6 +3306,26 @@
    "m3": 400.0,
    "needs": "400 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
    "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3); the drop-off is 0.6 space."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Tunttaras",
+   "career": "Distribution",
+   "where": "Tunttaras IX - Moon 11 - Ytiri Storage (0.9)",
+   "agent": "Ashataalen Kaitsiras (Distribution, L1, Tunttaras IX - Moon 11 - Ytiri Storage (0.9))",
+   "mission": "'Incriminating Evidence': courier Crates of Viral Agent (400 m3) to Hitanishio VI - Moon 6 - School of Applied Knowledge (0.9). Pays 46,000 ISK + 77 LP; bonus 41,000 ISK within 1 h.",
+   "isk": 46000,
+   "bonus": 41000,
+   "task_min": 8,
+   "jumps": 2,
+   "to_system": "Hitanishio",
+   "m3": 400.0,
+   "needs": "400 m3 of cargo; Hitanishio is 2 jump(s) from Tunttaras (map DB route)",
+   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3, fits the Catalyst's 450 m3); all 0.9 space."
   }
  ],
  "min_per_jump": 3.0,
