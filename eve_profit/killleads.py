@@ -13,6 +13,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "kill_leads.json")
 UA = "eve_profit (personal EVE Online helper; contact via the EVE character Stand4it Dahl)"
 WRECK_H = 2.0
+BUSY_KILLS, BUSY_H = 20, 0.25                                           # owner 2026-10-29: Jita gate and 4-4 were picked clean; in a system with 20+ kills/hour
+                                                                        # other salvagers take wrecks within minutes, so only the last 15 min of kills count there
 MAX_SYSTEMS = 5
 MAX_JUMPS = 4
 CAPSULES = {670, 33328}                                                 # pods leave nothing worth salvaging
@@ -122,6 +124,7 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             kills = _get(f"https://zkillboard.com/api/kills/systemID/{sid}/pastSeconds/{int(WRECK_H * 3600)}/")
         except Exception:                                               # noqa: BLE001
             continue
+        life = BUSY_H if hot.get(sid, 0) >= BUSY_KILLS else WRECK_H
         wrecks, newest, loot, ships, near, refused = 0, 0.0, 0.0, {}, {}, {}
         for k in (kills or [])[:30]:
             z = k.get("zkb", {})
@@ -134,7 +137,7 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
             if st in CAPSULES or (cat and cat[0] is not None and cat[0] != SHIP_CATEGORY):
                 continue
             t = time.mktime(time.strptime(km["killmail_time"], "%Y-%m-%dT%H:%M:%SZ")) - time.timezone
-            if now - t > WRECK_H * 3600:
+            if now - t > life * 3600:
                 continue
             r = con.execute("SELECT name FROM types WHERE type_id=?", (st,)).fetchone()
             nm = r[0] if r else str(st)
@@ -164,8 +167,8 @@ def refresh(con, g, p, now=None, max_systems=MAX_SYSTEMS, max_jumps=MAX_JUMPS):
         dest = (f" Set destination: python scripts/set_dest.py \"{go}\" (autopilot warps you there), or" if con.execute("SELECT 1 FROM stations WHERE name=?", (go,)).fetchone() else "")
         skip = ("; NOT counted (your Salvaging " + str(lvl) + " is too low, the game refuses them): " + ", ".join(f"{n} x {s}" for s, n in refused.items())) if refused else ""
         leads.append({"id": f"kills-{sid}-{int(newest)}", "system": g.name[sid], "activity": "salvaging", "needs": "salvager",
-                      "seen": int(newest), "life_h": WRECK_H, "count": wrecks, "auto": "zkillboard", "where": where, "go": go,
-                      "what": f"{wrecks} wreck(s) you can salvage (chance per cycle at Salvaging {lvl}) from the last {WRECK_H:.0f} h ({what}){skip}; salvage only (looting another pilot's wreck flags you); "
+                      "seen": int(newest), "life_h": life, "count": wrecks, "auto": "zkillboard", "where": where, "go": go,
+                      "what": f"{wrecks} wreck(s) you can salvage (chance per cycle at Salvaging {lvl}) from the last {life * 60:.0f} min ({what}){skip}; salvage only (looting another pilot's wreck flags you); "
                               f"dropped loot ~{loot:,.0f} ISK is NOT counted. WHERE: {where}. GO:{dest} right-click space (or Overview) > {go} > Warp to Within 0 m, then Overview: Wrecks. SKIP every 'Wreck of: Capsule' (Type: Mysterious Capsule Wreck, needs Salvaging 5: the game says 'too difficult'); salvage only wrecks named after the ships listed. If the game still refuses, stopsync with nothing gained: your timed run then sets the real rate"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"refreshed": now, "leads": old + leads}, open(OUT, "w", encoding="utf-8"), indent=1)

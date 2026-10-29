@@ -596,3 +596,4 @@
 - At Salvaging 3 the model says the Jita 4-4 T1 wrecks are 35-45%, so the refusal there is not explained by skill; the owner's exact error text is needed.
 - Solved (owner screenshot 21:52): the refused wrecks at Jita 4-4 were "Wreck of: Capsule" (Mysterious Capsule Wreck, difficulty -20 = Salvaging 5). The salvage step now says to skip them.
 - A timed salvage run clears the spot its step named (data/salvage_cleared.json: go_hist + cleared per system). Wrecks from kills at that spot before the run ended stop counting. The GO spot never picks "unknown spot" when a named one exists.
+- Busy systems (20+ ship kills/hour, e.g. Jita at 66): only kills from the last 15 min count. The Ikuchi gate and 4-4 had been picked clean by other salvagers.
