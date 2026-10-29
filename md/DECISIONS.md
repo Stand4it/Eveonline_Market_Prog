@@ -597,3 +597,6 @@
 - Solved (owner screenshot 21:52): the refused wrecks at Jita 4-4 were "Wreck of: Capsule" (Mysterious Capsule Wreck, difficulty -20 = Salvaging 5). The salvage step now says to skip them.
 - A timed salvage run clears the spot its step named (data/salvage_cleared.json: go_hist + cleared per system). Wrecks from kills at that spot before the run ended stop counting. The GO spot never picks "unknown spot" when a named one exists.
 - Busy systems (20+ ship kills/hour, e.g. Jita at 66): only kills from the last 15 min count. The Ikuchi gate and 4-4 had been picked clean by other salvagers.
+
+## 2026-10-29: owned Civilian Miners count as mining lasers
+- `next` wanted to buy a Miner I although a Miner II is fitted and 7 Civilian Miners are in cargo. tools.held_anywhere counted only the buy-list item. For mining it now counts any module with "miner" or "mining laser" in its name (not upgrades). Other tools still count only their buy item, because an Expanded Probe Launcher does not fit a frigate.

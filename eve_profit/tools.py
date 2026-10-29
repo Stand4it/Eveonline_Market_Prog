@@ -33,13 +33,17 @@ def fitted_now(con):
 
 
 def held_anywhere(con):
-    """{tool: units of its modules you hold anywhere (hangars, parked ships)} counted by the first item of each tool's buy list."""
+    """{tool: units of its modules you hold anywhere (hangars, parked ships)}: any MODULE whose name has one of the tool's words
+    (owner 2026-10-29: 7 Civilian Miners in cargo, yet the plan bought a Miner I because only the buy-list item was counted)."""
     out = {}
     for t, d in TOOLS.items():
-        item = d["buy"][0][0]
         try:
-            r = con.execute("SELECT COALESCE(SUM(i.quantity),0) FROM inventory i JOIN types t ON t.type_id=i.type_id WHERE t.name=? COLLATE NOCASE", (item,)).fetchone()
-            out[t] = int(r[0] or 0)
+            rows = con.execute("SELECT t.name, SUM(i.quantity) FROM inventory i JOIN types t ON t.type_id=i.type_id "
+                               "WHERE t.category_id=7 GROUP BY t.name").fetchall()
+            if t == "mining":                                           # any laser mines; an Expanded Probe Launcher does NOT fit a frigate, so other tools keep their buy item
+                out[t] = sum(int(q or 0) for n, q in rows if any(w in (n or "").lower() for w in d["words"]) and "upgrade" not in (n or "").lower())
+            else:
+                out[t] = sum(int(q or 0) for n, q in rows if (n or "").lower() == d["buy"][0][0].lower())
         except Exception:                                               # noqa: BLE001
             out[t] = 0
     return out
