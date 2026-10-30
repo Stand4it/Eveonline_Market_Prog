@@ -277,4 +277,7 @@ PREPTREE  -  every blocked goal with the cheapest prep chain (buy / build / mine
 COMBATCHECK  -  your fit vs mission levels 1-4 and ratting by the 99% rule; the cheapest fit that passes
    example: python -m eve_profit combatcheck
 
+FITS  -  killboard fits for a hull (default: yours): fits that rarely die to NPCs, modules to avoid, what it wins with (--item HULL)
+   example: python -m eve_profit fits --item Catalyst
+
 Scripts: python scripts/agent_steps.py [next|list|done|skip|back|reset]  - Level 1 agent checklist.

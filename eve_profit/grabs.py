@@ -18,9 +18,15 @@ def _incursions(con):
     return fetch(con, ESI(timeout=20))
 
 
+def _fits(con):
+    from .fitdb import grab
+    return grab(con)
+
+
 # id, label, start hours between runs, fastest, slowest, function
 GRABS = [("freelance", "Freelance Jobs (ESI, public; about 4,500 jobs worldwide, a pull takes ~2 min)", 6.0, 1.0, 48.0, _freelance),
-         ("incursions", "Incursions (ESI, public; a handful of Sansha incursions)", 1.0, 1.0, 12.0, _incursions)]
+         ("incursions", "Incursions (ESI, public; a handful of Sansha incursions)", 1.0, 1.0, 12.0, _incursions),
+         ("fits", "Killboard fits (EVE Ref daily killmail dump, ~2 MB a day: fits that win and lose, every hull)", 24.0, 24.0, 24.0, _fits)]
 
 
 def _ts(con, gid):

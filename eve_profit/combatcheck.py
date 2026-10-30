@@ -159,6 +159,32 @@ def _fitted_turret_dps(con, mods):
     return sum(float(mods[n]["dps"]) * int(q or 1) for n, q in rows if n in mods and mods[n].get("slot") == "turret")
 
 
+def _killboard(con, hull_name):
+    """owner 2026-10-30: (can(module name) -> your skills fit it, risk(module name) -> killboard factor >= 1 for the hull you fly; fitdb.py).
+    No skills synced or no killmails read: everything allowed, every factor 1."""
+    try:
+        from . import fitdb, skills
+        have = skills.have(con)
+        hull = fitdb.type_id(con, hull_name) if hull_name else None
+        rk = fitdb.module_risk(con, hull) if hull else {}
+    except Exception as _he:                                            # noqa: BLE001
+        _hrec('combatcheck', _he)
+        return (lambda n: True), (lambda n: 1.0)
+    ids = {}
+
+    def tid(n):
+        if n not in ids:
+            try:
+                ids[n] = fitdb.type_id(con, n)
+            except Exception:                                           # noqa: BLE001
+                ids[n] = None
+        return ids[n]
+
+    def can(n):
+        return not have or tid(n) is None or fitdb.usable(con, tid(n), have)[0]
+    return can, (lambda n: rk.get(tid(n), 1.0))
+
+
 def best_fit(con, g, p, req):
     """The cheapest fit that passes `req` -> {cost, items [(name, qty, isk)], dps, ehp, tank, p} or the best-odds fit with passes=False, or None."""
     mods = modules()
@@ -172,9 +198,10 @@ def best_fit(con, g, p, req):
     est = _fitted_turret_dps(con, mods)
     k = dps0 / est if est > 0 else 1.0                                  # your skills and hull bonus relative to the table
     k = min(max(k, K_MIN), K_MAX)                                       # the fitted list lags an hour (ESI): 23 DPS from 8 guns read against 2 guns gave x5
-    guns = [n for n, d in mods.items() if d.get("slot") == "turret"]
-    low = [n for n, d in mods.items() if d.get("slot") == "low"] + [None]     # None = leave the slot empty
-    mid = [n for n, d in mods.items() if d.get("slot") == "mid"] + [None]
+    can, risk = _killboard(con, _n)
+    guns = [n for n, d in mods.items() if d.get("slot") == "turret" and can(n)]
+    low = [n for n, d in mods.items() if d.get("slot") == "low" and can(n)] + [None]     # None = leave the slot empty
+    mid = [n for n, d in mods.items() if d.get("slot") == "mid" and can(n)] + [None]
     mids = max(0, int(sl.get("mid", 0) or 0) - 1)                       # one mid slot keeps the afterburner
     hc = hull_cap(p, _n)
     price = {}
@@ -241,9 +268,13 @@ def best_fit(con, g, p, req):
                 dps_e, tank = dps * share, tank0 + rep_ * share
                 pl = p_lose(req, dps_e, ehp, tank)
                 ok_ = passes(req, dps_e, ehp, tank)
-                key = (0 if ok_ else 1, cost if ok_ else pl, cost)
+                kb = 1.0
+                for m_, q_, _c in items:
+                    kb *= risk(m_)
+                kb = min(kb, 2.0)
+                key = (0 if ok_ else 1, cost * kb if ok_ else pl, cost)          # killboard: modules that die to NPCs on this hull more than average weigh as dearer
                 if best is None or key < best["key"]:
-                    best = {"key": key, "passes": ok_, "cost": cost, "items": items, "dps": dps_e, "ehp": ehp, "tank": tank, "p": pl,
+                    best = {"key": key, "passes": ok_, "cost": cost, "items": items, "kb": kb, "dps": dps_e, "ehp": ehp, "tank": tank, "p": pl,
                             "cap_use": use, "cap_regen": 2.5 * hc["cap_gj"] / (hc["recharge_s"] * rmult), "cap_empty": empty, "cap_share": share}
     return best
 
