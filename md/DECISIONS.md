@@ -616,3 +616,4 @@
 - 2026-10-30 agent_offers.json: Eralikken Tila (Sobaseki, Security L2) 'Customs Interdiction (1 of 2)' 0 m3 to Vellaine (4 jumps), 119,000 + 124,000 bonus (2 h 4 min) + 164 LP.
 - 2026-10-30 agent_offers.json: Okuro Petsiken (Sobaseki, Mining L1) 'Mercium Experiments' 1080 m3 to Sobaseki (0 jumps), 41,000 + 42,000 bonus (1 h 16 min) + 50 LP.
 - 2026-10-31 agent_offers.json: Jukosoni Kauniki (Sobaseki, Security L1) 'The Score' 0 m3 to Sobaseki (0 jumps), 105,000 + 98,000 bonus (3 h 36 min) + 95 LP.
+- 2026-10-31 2026-10-31: Jeka Vantoh 'Building Blocks' not recorded: pickup Piak sits in a 13-system high-sec pocket reachable only through low-sec (map DB).
