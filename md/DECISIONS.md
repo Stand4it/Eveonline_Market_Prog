@@ -610,3 +610,4 @@
 - 2026-10-30 agent_offers.json: Naki Vikkiras (Ikuchi, Distribution L1) 'A Humble Gift' 320 m3 to Eskunen (4 jumps), 19,000 + 17,000 bonus (56 min) + 21 LP.
 - 2026-10-30 agent_offers.json: Hakadura Otora (Sarekuwa, Distribution, L2 L1) 'Stress Reliever' 200 m3 to Ajanen (5 jumps), 34,000 + 49,000 bonus (56 min) + 65 LP.
 - 2026-10-30 agent_offers.json: Veinepas Yarai (Veisto, Security L2) 'Foreign Investment' 0 m3 to Iidoken (1 jumps), 96,000 + 89,000 bonus (1 h 36 min) + 127 LP.
+- 2026-10-30 agent_offers.json: Oitko Shiomiken (Veisto, Mining L1) 'Starting Simple' 2000 m3 to Veisto (0 jumps), 65,000 + 57,000 bonus (1 h 26 min) + 57 LP.

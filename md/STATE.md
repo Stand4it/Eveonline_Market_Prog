@@ -28,3 +28,5 @@ Open agent offers (agent_offers.json):
 - Hakadura Otora: 'Stress Reliever': courier 5 x Crates of Tobacco (200 m3) to
 - Tashudan Shizomi: 'Soft Drink Wars': task to Sobaseki (0.8), mission site; bri
 - Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P
+- Airata Mion: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
+- Oitko Shiomiken: 'Starting Simple': courier 20,000 x Banidine, mined at the b
