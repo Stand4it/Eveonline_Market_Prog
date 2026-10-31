@@ -24,7 +24,24 @@ DEFAULT_SALVAGE = [("Tripped Power Circuit", 0.4, 1.0), ("Charred Micro Circuit"
                    ("Armor Plates", 0.3, 1.0), ("Smashed Trigger Unit", 0.2, 1.0)]
 
 
+def _seeded(con):
+    """True when every default row is already there and filled: then nothing is written (every command calls seed_defaults, and a write
+    waited up to 2 min for the hourly scan's lock, 2026-10-31)."""
+    try:
+        have = {r[0]: r[1:] for r in con.execute("SELECT name,enemy_ehp,threat_dps,agent_level,lp_per_hour,min_standing FROM activities")}
+        salv = {r[0] for r in con.execute("SELECT type_name FROM salvage_items")}
+    except Exception:                                                   # noqa: BLE001
+        return False
+    for d in DEFAULT_ACTIVITIES:
+        h = have.get(d[0])
+        if h is None or (h[0] == 0 and h[1] == 0) or (d[12] and h[2] == 0 and h[3] == 0 and h[4] == 0):
+            return False
+    return all(x[0] in salv for x in DEFAULT_SALVAGE)
+
+
 def seed_defaults(con):
+    if _seeded(con):
+        return
     con.executemany("INSERT OR IGNORE INTO activities(name,kind,min_sec,max_sec,isk_per_hour,"
                     "wrecks_per_hour,p_loss_per_hour,min_dps,session_hours,enemy_ehp,threat_dps,"
                     "waves_per_hour,agent_level,lp_per_hour,min_standing) "

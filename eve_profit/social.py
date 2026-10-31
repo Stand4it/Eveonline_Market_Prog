@@ -49,8 +49,9 @@ def candidate(con, value_isk):
 def mark_shown(con, text):
     """Remember WHICH goal is on screen (and forget it when another kind of step is shown), so `done` marks the right thing."""
     try:
-        con.execute("DELETE FROM meta WHERE key IN (?,?)", (SHOWN, "wanted_shown"))
-        con.commit()
+        if con.execute("SELECT 1 FROM meta WHERE key IN (?,?)", (SHOWN, "wanted_shown")).fetchone():   # write only when there is something to forget
+            con.execute("DELETE FROM meta WHERE key IN (?,?)", (SHOWN, "wanted_shown"))
+            con.commit()
     except Exception as _he:                                                   # noqa: BLE001
         _hrec('social', _he)
     first = (text or "").split("\n", 1)[0]

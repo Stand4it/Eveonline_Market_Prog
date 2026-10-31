@@ -22,13 +22,24 @@ def _station_uplift(today=None):
     import datetime
     import json
     import os
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "station_tax.json")
+    today, t = today or datetime.date.today().isoformat(), _TAX[0]
     try:
-        d = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "station_tax.json"), encoding="utf-8"))
+        key = (os.path.getmtime(path), today, t)
+    except OSError:
+        return {}
+    if _UPLIFT.get("key") == key:                                       # 0.8 s a read, 9 reads per next (2026-10-31)
+        return _UPLIFT["v"]
+    try:
+        d = json.load(open(path, encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-    today, t = today or datetime.date.today().isoformat(), _TAX[0]
-    return {int(k): (1 - t * float(v.get("factor", 1))) / max(1e-9, 1 - t) for k, v in d.get("stations", {}).items()
+    _UPLIFT["key"], _UPLIFT["v"] = key, {int(k): (1 - t * float(v.get("factor", 1))) / max(1e-9, 1 - t) for k, v in d.get("stations", {}).items()
             if v.get("from", "") <= today <= v.get("until", "9999")}
+    return _UPLIFT["v"]
+
+
+_UPLIFT = {}
 
 
 _CACHE = {"key": None, "sys": {}}          # per-system books for this run: `next` asked for them 156 times (274 of 417 s)

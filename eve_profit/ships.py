@@ -84,8 +84,10 @@ def __prices_calc(con, g, p, max_jumps=14):
     from .acquire import JUMP_VALUE_ISK, SAFE_SEC
     try:
         reach = g.reach(g.id_of(p.current_system), max_jumps, p.avoid_yellow)
-        rows = con.execute("SELECT t.name, o.system_id, MIN(o.price) FROM orders o JOIN types t ON t.type_id=o.type_id "
-                           "WHERE t.category_id=6 AND o.is_buy=0 AND o.volume_remain>=1 GROUP BY t.name, o.system_id").fetchall()
+        rows = con.execute("SELECT t.name, x.system_id, x.price FROM (SELECT o.type_id, o.system_id, MIN(o.price) AS price FROM orders o "
+                           "WHERE o.type_id IN (SELECT type_id FROM types WHERE category_id=6) AND o.is_buy=0 AND o.volume_remain>=1 "
+                           "GROUP BY o.type_id, o.system_id) x JOIN types t ON t.type_id=x.type_id").fetchall()   # ships first, then their orders
+                                                                # by index: 0.4 s (the join walked all ~1M orders: 312 s, 2026-10-31)
     except Exception:                                                   # noqa: BLE001
         return {}
     best = {}

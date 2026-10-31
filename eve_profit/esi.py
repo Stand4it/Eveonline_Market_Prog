@@ -107,6 +107,44 @@ def region_age_min(con, rid):
     return None if t is None else (time.time() - t) / 60.0
 
 
+CHUNK = 20000                                                           # orders written per transaction by an autocommit scan
+
+
+def _chunks(con, sql, seq):
+    for i in range(0, len(seq), CHUNK):
+        con.execute("BEGIN IMMEDIATE")
+        con.executemany(sql, seq[i:i + CHUNK])
+        con.execute("COMMIT")
+
+
+def _swap_region(con, rid, vals, rows, now):
+    """Replace one region's orders by a diff: new orders inserted, changed ones updated, vanished ones deleted, and fetched_at moved to
+    `now` for all (every row is 'seen now', as before). The Forge: ~35 s instead of ~2.5 min of rewriting every row and index entry.
+    New rows go in before old ones go out, so a reader meanwhile never sees a region without orders."""
+    from .remoterange import store as _store_range
+    old = {r[0]: (r[1], r[2], r[3]) for r in con.execute("SELECT order_id, price, volume_remain, min_volume FROM orders WHERE region_id=?", (rid,))}
+    new_ids = {v[0] for v in vals}
+    _chunks(con, "INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", [v for v in vals if v[0] not in old])
+    _chunks(con, "UPDATE orders SET price=?, volume_remain=?, min_volume=?, issued=?, fetched_at=? WHERE order_id=?",
+            [(v[6], v[7], v[8], v[9], v[10], v[0]) for v in vals if v[0] in old and old[v[0]] != (v[6], v[7], v[8])])
+    while True:                                                         # the unchanged rest: only the timestamp
+        con.execute("BEGIN IMMEDIATE")
+        k = con.execute("UPDATE orders SET fetched_at=? WHERE order_id IN (SELECT order_id FROM orders WHERE region_id=? AND fetched_at<? "
+                        "LIMIT ?)", (now, rid, now, CHUNK)).rowcount
+        con.execute("COMMIT")
+        if k < CHUNK:
+            break
+    _chunks(con, "DELETE FROM orders WHERE order_id=?", [(i,) for i in old if i not in new_ids])
+    buys = [o for o in rows if o.get("is_buy_order") and o["order_id"] not in old]
+    for i in range(0, len(buys), CHUNK):                                # a NEW buy order's range (an order keeps its range)
+        con.execute("BEGIN IMMEDIATE")
+        try:
+            _store_range(con, buys[i:i + CHUNK])
+        except Exception:                                               # noqa: BLE001
+            pass
+        con.execute("COMMIT")
+
+
 def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0):
     """Replace order book for the given regions + update kill counts + missing types.
     max_age (minutes): skip regions downloaded more recently than that. Each region is saved as soon as it
@@ -124,24 +162,20 @@ def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0
         rows = esi.region_orders(rid, max_pages, log=lambda m: print(m, flush=True))
         vals = [(o["order_id"], o["type_id"], o["location_id"], o["system_id"], rid, int(o["is_buy_order"]), o["price"], o["volume_remain"],
                  o.get("min_volume", 1), o.get("issued", ""), now) for o in rows]
-        if con.isolation_level is None:                                 # autocommit scan (owner 2026-10-29: The Forge's swap held the lock > 2 min and `next` failed):
-            con.execute("CREATE TEMP TABLE IF NOT EXISTS orders_stage AS SELECT * FROM orders WHERE 0")
-            con.execute("DELETE FROM orders_stage")                     # stage the rows in the temp database first (no lock on the main file)
-            con.executemany("INSERT INTO orders_stage VALUES(?,?,?,?,?,?,?,?,?,?,?)", vals)
-            con.execute("BEGIN IMMEDIATE")                              # then the swap itself is one short copy
-            con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
-            con.execute("INSERT OR REPLACE INTO orders SELECT * FROM orders_stage")
+        from .orders import bump as _bump
+        from .remoterange import store as _store_range
+        if con.isolation_level is None:                                 # autocommit scan: write only what changed, one short chunk at a time
+            _swap_region(con, rid, vals, rows, now)                     # (the full rewrite of The Forge held the lock > 15 min on the USB
+            _bump(con)                                                  #  drive E: and every write of a `next` waited, 2026-10-31)
         else:
             con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
             con.executemany("INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", vals)
-        from .orders import bump as _bump
-        _bump(con)                                                      # cached order books are stale now
-        try:
-            from .remoterange import store as _store_range
-            _store_range(con, rows)                                     # a buy order's range: how far away a seller may be
-        except Exception:                                               # noqa: BLE001
-            pass
-        con.commit()
+            _bump(con)                                                  # cached order books are stale now
+            try:
+                _store_range(con, rows)                                 # a buy order's range: how far away a seller may be
+            except Exception:                                           # noqa: BLE001
+                pass
+            con.commit()
         n += len(rows)
     con.execute("DELETE FROM system_kills")
     con.executemany("INSERT INTO system_kills VALUES(?,?,?,?)",

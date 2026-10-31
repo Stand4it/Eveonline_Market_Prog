@@ -25,6 +25,7 @@ CREATE INDEX IF NOT EXISTS ix_types_name ON types(name);
 CREATE INDEX IF NOT EXISTS ix_types_name_nc ON types(name COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS ix_ord_sys ON orders(system_id);
 CREATE INDEX IF NOT EXISTS ix_ord_tsbp ON orders(type_id, system_id, is_buy, price);
+CREATE INDEX IF NOT EXISTS ix_ord_region ON orders(region_id);
 CREATE TABLE IF NOT EXISTS inventory(
   type_id INTEGER NOT NULL, system_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
   PRIMARY KEY(type_id, system_id));
@@ -131,6 +132,8 @@ def connect(path: str) -> sqlite3.Connection:
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA busy_timeout=120000")
     con.execute("PRAGMA journal_mode=WAL")
+    con.execute("PRAGMA synchronous=NORMAL")                            # safe in WAL mode, fewer syncs on the USB drive
+    con.execute("PRAGMA cache_size=-262144")                            # up to 256 MB of pages: the orders indexes stay in memory
     con.executescript(SCHEMA)
     for tbl, col, ddl in (("stations", "corporation_id", "INTEGER"),
                           ("types", "capacity", "REAL NOT NULL DEFAULT 0"),
