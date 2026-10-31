@@ -3466,6 +3466,26 @@
    "m3": 60.0,
    "needs": "60 m3 of cargo; Alikara is 1 jump(s) from New Caldari (map DB route)",
    "note": "Security L1: combat site, 99% rule applies; round trip New Caldari > Alikara (1 jump) > back Seen 2026-10-29."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Ikuchi",
+   "career": "Distribution",
+   "where": "Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9)",
+   "agent": "Fehela Zassalou (Distribution, L1, Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9))",
+   "mission": "'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (320 m3) to Eskunen VI - Caldari Constructions Warehouse (0.6). Pays 21,000 ISK + 21 LP; bonus 23,000 ISK within 56 min.",
+   "isk": 21000,
+   "bonus": 23000,
+   "task_min": 8,
+   "jumps": 4,
+   "to_system": "Eskunen",
+   "m3": 320.0,
+   "needs": "320 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
+   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-30."
   }
  ],
  "min_per_jump": 3.0,
