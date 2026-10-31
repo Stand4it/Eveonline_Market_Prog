@@ -3545,7 +3545,7 @@
    "to_system": "Ajanen",
    "m3": 200.0,
    "needs": "200 m3 of cargo; Ajanen is 5 jump(s) from Sarekuwa (map DB route)",
-   "note": "Level 2 agent. 65 LP alone finishes the AIR daily goal 'Earn 50 LP'."
+   "note": "Level 2 agent. 65 LP alone finishes the AIR daily goal 'Earn 50 LP'. Seen 2026-10-30."
   },
   {
    "taxed": false,
@@ -3565,7 +3565,7 @@
    "to_system": "Sobaseki",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sobaseki is 1 jump(s) from Veisto (map DB route)",
-   "note": "COMBAT: kill Quince Nemirda in Sobaseki, loot the formula, return to agent. Site has special ship restrictions.",
+   "note": "COMBAT: kill Quince Nemirda in Sobaseki, loot the formula, return to agent. Site has special ship restrictions. Seen 2026-10-30.",
    "needs_tool": "gun"
   },
   {
@@ -3586,7 +3586,7 @@
    "to_system": "Iidoken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Iidoken is 1 jump(s) from Veisto (map DB route)",
-   "note": "COMBAT L2: destroy the Federation Navy guards and their headquarters in Iidoken.",
+   "note": "COMBAT L2: destroy the Federation Navy guards and their headquarters in Iidoken. Seen 2026-10-30.",
    "needs_tool": "gun"
   },
   {
@@ -3607,7 +3607,7 @@
    "to_system": "Veisto",
    "m3": 6000.0,
    "needs": "6000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: mine 10,000 Mercium (6,000 m3) in Veisto; ~14 hold trips at 450 m3: the bonus time is out of reach with one Miner II.",
+   "note": "MINING L2: mine 10,000 Mercium (6,000 m3) in Veisto; ~14 hold trips at 450 m3: the bonus time is out of reach with one Miner II. Seen 2026-10-30.",
    "needs_tool": "mining"
   },
   {
@@ -3615,7 +3615,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Caldari Steel Factory (0.8)",
@@ -3628,7 +3628,7 @@
    "to_system": "Veisto",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L1: mine 20,000 Banidine (2,000 m3) at the bookmarked field in Veisto; ~5 hold trips at 450 m3.",
+   "note": "MINING L1: mine 20,000 Banidine (2,000 m3) at the bookmarked field in Veisto; ~5 hold trips at 450 m3. EXPIRED 2026-10-28 (game notice).",
    "needs_tool": "mining"
   },
   {
@@ -3649,7 +3649,7 @@
    "to_system": "Hageken",
    "m3": 1800.0,
    "needs": "1800 m3 of cargo; Hageken is 5 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: mine 18,000 Banidine (1,800 m3) in Hageken, haul back to Veisto; ~4 round trips at 450 m3 unless the ore is jetcanned/hauled; pirates mentioned (may be rats at the site).",
+   "note": "MINING L2: mine 18,000 Banidine (1,800 m3) in Hageken, haul back to Veisto; ~4 round trips at 450 m3 unless the ore is jetcanned/hauled; pirates mentioned (may be rats at the site). Seen 2026-10-30.",
    "needs_tool": "mining"
   },
   {
@@ -3670,7 +3670,7 @@
    "to_system": "Uosusuokko",
    "m3": 200.0,
    "needs": "200 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
-   "note": "Seen, 48,000 ISK + 24 LP with the bonus."
+   "note": "Seen, 48,000 ISK + 24 LP with the bonus. Seen 2026-10-30."
   },
   {
    "taxed": false,
@@ -3690,7 +3690,7 @@
    "to_system": "Uosusuokko",
    "m3": 210.0,
    "needs": "210 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
-   "note": "Same drop-off system as Onavirpio's Miracle Drug (Uosusuokko VII): both fit together (410 m3 of 450)."
+   "note": "Same drop-off system as Onavirpio's Miracle Drug (Uosusuokko VII): both fit together (410 m3 of 450). Seen 2026-10-30."
   },
   {
    "taxed": false,
@@ -3710,7 +3710,7 @@
    "to_system": "Veisto",
    "m3": 6000.0,
    "needs": "6000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: 10,000 Mercium (6,000 m3) in Veisto, ~14 hold trips at 450 m3; bonus out of reach with one Miner II. Same mission as Airata Mion's.",
+   "note": "MINING L2: 10,000 Mercium (6,000 m3) in Veisto, ~14 hold trips at 450 m3; bonus out of reach with one Miner II. Same mission as Airata Mion's. Seen 2026-10-30.",
    "needs_tool": "mining"
   },
   {
@@ -3731,8 +3731,70 @@
    "to_system": "Veisto",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L1: 20,000 Banidine (2,000 m3) in Veisto, ~5 hold trips at 450 m3.",
+   "note": "MINING L1: 20,000 Banidine (2,000 m3) in Veisto, ~5 hold trips at 450 m3. Seen 2026-10-30.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Distribution",
+   "where": "Sobaseki IX - Moon 9 - Caldari Provisions Food Packaging (0.8)",
+   "agent": "Gotibera Kanamola (Distribution, L2, Sobaseki IX - Moon 9 - Caldari Provisions Food Packaging (0.8))",
+   "mission": "'Move The Goods': courier 20 x Small Sealed Cargo Containers (200 m3) to Akiainavas III - School of Applied Knowledge (0.7). Pays 45,000 ISK + 64 LP; bonus 41,000 ISK within 48 min.",
+   "isk": 45000,
+   "bonus": 41000,
+   "task_min": 8,
+   "jumps": 3,
+   "to_system": "Akiainavas",
+   "m3": 200.0,
+   "needs": "200 m3 of cargo; Akiainavas is 3 jump(s) from Sobaseki (map DB route)",
+   "note": "Seen, 86,000 ISK + 64 LP with the bonus."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Mining",
+   "where": "Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve (0.8)",
+   "agent": "Vasala Akochi (Mining, L1, Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve (0.8))",
+   "mission": "'Asteroid Catastrophe': courier 3,600 x Augumene, mined at the crash site in Sobaseki (1080 m3) to Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve (0.8). Pays 42,000 ISK + 49 LP; bonus 43,000 ISK within 1 h 14 min.",
+   "isk": 42000,
+   "bonus": 43000,
+   "task_min": 40,
+   "jumps": 0,
+   "to_system": "Sobaseki",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
+   "note": "MINING L1: 3,600 Augumene (1,080 m3) at the crash site in Sobaseki, ~3 hold trips at 450 m3.",
+   "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Security",
+   "where": "Sobaseki XI - Moon 1 - Home Guard Assembly Plant (0.8)",
+   "agent": "Eralikken Tila (Security, L2, Sobaseki XI - Moon 1 - Home Guard Assembly Plant (0.8))",
+   "mission": "'Customs Interdiction (1 of 2)': task to Vellaine (0.6), mission site; bring 1 x Smuggler DNA back to Sobaseki. Pays 119,000 ISK + 164 LP; bonus 124,000 ISK within 2 h 4 min.",
+   "isk": 119000,
+   "bonus": 124000,
+   "task_min": 35,
+   "jumps": 4,
+   "to_system": "Vellaine",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Vellaine is 4 jump(s) from Sobaseki (map DB route)",
+   "note": "COMBAT L2 chain 1 of 2: disable the smuggler ship in Vellaine, bring back the Smuggler DNA.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

@@ -29,9 +29,11 @@ Open agent offers (agent_offers.json):
 - Tashudan Shizomi: 'Soft Drink Wars': task to Sobaseki (0.8), mission site; bri
 - Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P
 - Airata Mion: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
-- Oitko Shiomiken: 'Starting Simple': courier 20,000 x Banidine, mined at the b
 - Aoken Pieppatoh: 'Claimjumpers': courier 18,000 x Banidine, mined at the book
 - Onavirpio Asorela: 'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) to Uos
 - Veinalen Elonko: 'A Special Breed': courier 3 x Group of Kameiras (210 m3) to
 - Ke Kakuruka: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
 - Ootoh Litiura: 'Bountiful Banidine': courier 20,000 x Banidine, mined at th
+- Gotibera Kanamola: 'Move The Goods': courier 20 x Small Sealed Cargo Containers
+- Vasala Akochi: 'Asteroid Catastrophe': courier 3,600 x Augumene, mined at t
+- Eralikken Tila: 'Customs Interdiction (1 of 2)': task to Vellaine (0.6), mis
