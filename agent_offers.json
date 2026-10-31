@@ -3486,6 +3486,26 @@
    "m3": 320.0,
    "needs": "320 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
    "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-30."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Ikuchi",
+   "career": "Distribution",
+   "where": "Ikuchi VI - Moon 15 - Ytiri Storage (0.9)",
+   "agent": "Samivesti Iivonas (Distribution, L1, Ikuchi VI - Moon 15 - Ytiri Storage (0.9))",
+   "mission": "'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirtamon VII - Moon 6 - Zainou Biotech Production, bring back to Ikuchi) (1 m3) to Hirtamon VII - Moon 6 - Zainou Biotech Production (0.9). Pays 28,000 ISK + 24 LP; bonus 20,000 ISK within 1 h 4 min.",
+   "isk": 28000,
+   "bonus": 20000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Hirtamon",
+   "m3": 1.0,
+   "needs": "1 m3 of cargo; Hirtamon is 1 jump(s) from Ikuchi (map DB route)",
+   "note": "ROUND TRIP: pickup Hirtamon, drop-off back at Ikuchi (agent station). Chain 1 of 5 (same chain as Aratani's Lost That Bet)."
   }
  ],
  "min_per_jump": 3.0,

@@ -23,3 +23,4 @@ Open agent offers (agent_offers.json):
 - Natsisainen Kepanova: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
 - Inikko Samanuni: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil, RETRI
 - Fehela Zassalou: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
+- Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
