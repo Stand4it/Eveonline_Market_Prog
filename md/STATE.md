@@ -26,3 +26,5 @@ Open agent offers (agent_offers.json):
 - Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
 - Naki Vikkiras: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Hakadura Otora: 'Stress Reliever': courier 5 x Crates of Tobacco (200 m3) to
+- Tashudan Shizomi: 'Soft Drink Wars': task to Sobaseki (0.8), mission site; bri
+- Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P

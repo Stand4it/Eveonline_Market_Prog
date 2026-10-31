@@ -1,5 +1,5 @@
 """Add an agent offer from a screenshot in one call; jumps come from the map DB.
-python scripts/add_offer.py --agent "Mumine Dalamoure" --career Distribution --system Isikemi
+python scripts/add_offer.py [--needs-tool gun] --agent "Mumine Dalamoure" --career Distribution --system Isikemi
     --where "Isikemi II - Moon 1 (0.8)" --mission "Save The Children" --cargo "clothing"
     --to Uosusuokko --to-station "Uosusuokko VII (0.7)" --m3 180 --isk 22000 --bonus 21000
     --bonus-time "54 min" --lp 26 [--task-min 8] [--taxed] [--note "..."] [--no-finish]
@@ -26,6 +26,7 @@ a.add_argument("--lp", type=int, default=0)
 a.add_argument("--task-min", type=int, default=8)
 a.add_argument("--level", default="L1")
 a.add_argument("--taxed", action="store_true")
+a.add_argument("--needs-tool", default="", help="gun = combat (waits for a fit passing the 99%% rule), mining, salvaging, scanning")
 a.add_argument("--note", default="")
 a.add_argument("--no-finish", action="store_true")
 o = a.parse_args()
@@ -48,6 +49,8 @@ offer = {
     "needs": f"{o.m3:g} m3 of cargo; {o.to} is {jumps} jump(s) from {o.system} (map DB route)",
     "note": o.note or f"Seen, {o.isk + o.bonus:,} ISK + {o.lp} LP with the bonus.",
 }
+if o.needs_tool:
+    offer["needs_tool"] = o.needs_tool
 from offers_lock import offers_lock  # noqa: E402
 p = os.path.join(ROOT, "agent_offers.json")
 with offers_lock():                                                     # one writer at a time (parallel saves lost offers)
