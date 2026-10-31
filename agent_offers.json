@@ -3814,7 +3814,7 @@
    "to_system": "Funtanainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Funtanainen is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L2: destroy the murderer and his guards in Funtanainen.",
+   "note": "COMBAT L2: destroy the murderer and his guards in Funtanainen. Seen 2026-10-30.",
    "needs_tool": "gun"
   },
   {
@@ -3835,7 +3835,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L1: destroy the spy's ship in Veisto, take the Prisoner from the cargo container, return.",
+   "note": "COMBAT L1: destroy the spy's ship in Veisto, take the Prisoner from the cargo container, return. Seen 2026-10-30.",
    "needs_tool": "gun"
   },
   {
@@ -3843,7 +3843,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Mining",
    "where": "Sobaseki VI - Minedrill Mineral Reserve (0.8)",
@@ -3856,8 +3856,29 @@
    "to_system": "Sobaseki",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "MINING L1: 1,800 Mercium (1,080 m3) in Sobaseki, ~3 hold trips at 450 m3.",
+   "note": "MINING L1: 1,800 Mercium (1,080 m3) in Sobaseki, ~3 hold trips at 450 m3. EXPIRED 2026-10-28 (game notice).",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Security",
+   "where": "Sobaseki VII - Caldari Navy Logistic Support (0.8)",
+   "agent": "Jukosoni Kauniki (Security, L1, Sobaseki VII - Caldari Navy Logistic Support (0.8))",
+   "mission": "'The Score': task to Sobaseki (0.8), mission site (Guristas patrol around a ghost ship). Pays 105,000 ISK + 95 LP; bonus 98,000 ISK within 3 h 36 min.",
+   "isk": 105000,
+   "bonus": 98000,
+   "task_min": 30,
+   "jumps": 0,
+   "to_system": "Sobaseki",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
+   "note": "COMBAT L1: destroy all ships at the encounter in Sobaseki, main target near the ghost ship (Guristas: kinetic/thermal).",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

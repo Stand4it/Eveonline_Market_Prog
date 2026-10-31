@@ -38,4 +38,4 @@ Open agent offers (agent_offers.json):
 - Eralikken Tila: 'Customs Interdiction (1 of 2)': task to Vellaine (0.6), mis
 - Kasata Mavila: 'Murderer Brought To Justice': task to Funtanainen (0.9), mi
 - Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
-- Okuro Petsiken: 'Mercium Experiments': courier 1,800 x Mercium, mined in Sob
+- Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
