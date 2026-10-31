@@ -24,3 +24,4 @@ Open agent offers (agent_offers.json):
 - Inikko Samanuni: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil, RETRI
 - Fehela Zassalou: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
+- Naki Vikkiras: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
