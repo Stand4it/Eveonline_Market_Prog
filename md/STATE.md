@@ -40,3 +40,4 @@ Open agent offers (agent_offers.json):
 - Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
 - Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
 - Nashokoda Pekumatken: 'The Guristas Spies': task to New Caldari Prime - Moon 1 - C
+- Aivuken Kirvira: 'The Drone Infestation': task to Niyabainen deadspace belt (
