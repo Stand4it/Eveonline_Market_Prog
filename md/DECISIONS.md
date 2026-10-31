@@ -612,3 +612,4 @@
 - 2026-10-30 agent_offers.json: Veinepas Yarai (Veisto, Security L2) 'Foreign Investment' 0 m3 to Iidoken (1 jumps), 96,000 + 89,000 bonus (1 h 36 min) + 127 LP.
 - 2026-10-30 agent_offers.json: Oitko Shiomiken (Veisto, Mining L1) 'Starting Simple' 2000 m3 to Veisto (0 jumps), 65,000 + 57,000 bonus (1 h 26 min) + 57 LP.
 - 2026-10-30 agent_offers.json: Veinalen Elonko (Veisto, Distribution L1) 'A Special Breed' 210 m3 to Uosusuokko (4 jumps), 33,000 + 27,000 bonus (1 h 10 min) + 31 LP.
+- 2026-10-30 agent_offers.json: Ootoh Litiura (Veisto, Mining L1) 'Bountiful Banidine' 2000 m3 to Veisto (0 jumps), 47,000 + 50,000 bonus (1 h 22 min) + 55 LP.
