@@ -34,29 +34,56 @@ def _station_uplift(today=None):
 _CACHE = {"key": None, "sys": {}}          # per-system books for this run: `next` asked for them 156 times (274 of 417 s)
 
 
-def _cache_key(con):
-    """Changes whenever the orders could have changed: every writer of the orders table calls `bump()` (esi.py, structures.py), and a commit
-    from another connection moves data_version. Other writes (meta, timers) keep the cache."""
+def _rev(con):
+    """The orders revision: a counter in meta that every writer of the orders table moves (bump(con)), in this process or another."""
     try:
-        dv = con.execute("PRAGMA data_version").fetchone()[0]
+        r = con.execute("SELECT value FROM meta WHERE key='orders_rev'").fetchone()
+        return r[0] if r else None
     except Exception:                                                   # noqa: BLE001
-        dv = None
-    return (id(con), _VERSION[0], dv, STRUCT_BID_HAIRCUT, _TAX[0])
+        return None
+
+
+def _cache_key(con):
+    """Changes whenever the orders could have changed: every writer of the orders table calls `bump(con)` (esi.py, structures.py), which
+    moves meta orders_rev for other processes too. Other writes keep the cache: PRAGMA data_version was used before, but a sync running
+    beside `next` commits assets/wallet/meta all the time and every commit threw the books and memo away (next > 5 min, 2026-10-31)."""
+    return (id(con), _VERSION[0], "frozen" if _FROZEN[0] else _rev(con), STRUCT_BID_HAIRCUT, _TAX[0])
 
 
 _VERSION = [0]
+_FROZEN = [False]
 
 
-def bump():
-    """Call after writing to the orders table: the cached books are stale."""
+def freeze():
+    """This run plans from the books it loads first: orders other processes write meanwhile (a live scan beside `next` saved region after
+    region and every save threw the books and memo away: next took 24 min, 2026-10-31) are seen on the next run. Writes in this process
+    (bump, refresh_type) still count."""
+    _FROZEN[0] = True
+
+
+def _move_rev(con):
+    try:
+        con.execute("INSERT INTO meta(key,value) VALUES('orders_rev','1') "
+                    "ON CONFLICT(key) DO UPDATE SET value=CAST(value AS INTEGER)+1")
+    except Exception:                                                   # noqa: BLE001
+        pass
+
+
+def bump(con=None):
+    """Call after writing to the orders table: the cached books are stale (here, and with con, in every other process too)."""
     _VERSION[0] += 1
+    if con is not None:
+        _move_rev(con)
 
 
 def refresh_type(con, type_id):
     """One item's orders were just re-downloaded (esi.refresh_item): reload that item in the cached books only, instead of dropping every
     cached book (a `next` refreshed single items and then reloaded all books 33 times, 31 s, 2026-10-28)."""
-    if _CACHE["key"] != _cache_key(con) or not _CACHE["sys"]:
+    current = _CACHE["key"] == _cache_key(con)
+    _move_rev(con)                                                      # other processes: these orders changed
+    if not current or not _CACHE["sys"]:
         return
+    _CACHE["key"] = _MEMO["key"] = _cache_key(con)                      # this process: only this item is reloaded below
     _MEMO["d"] = {}                                                     # results built on the old prices are stale
     tid = int(type_id)
     for s_, b_ in _CACHE["sys"].values():

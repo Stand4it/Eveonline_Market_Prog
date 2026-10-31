@@ -17,6 +17,37 @@ P_MAX = 0.01                  # the 99% rule
 K_MIN, K_MAX = 0.7, 1.6       # skills + hull bonus can scale the table's turret DPS this far (a destroyer's 10%/level hybrid bonus and gunnery skills)
 LEVEL1 = {"name": "Level 1 security mission", "enemy_ehp": 5000.0, "threat_dps": 25.0, "waves_per_hour": 6.0, "session_hours": 1.0, "p_loss_per_hour": 0.0002, "min_dps": 40.0}
 RATTING = "High-sec belt ratting (frigate)"
+RESULTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "combat_results.json")
+
+
+def results():
+    """Real fights you reported (scripts/combat_result.py): [{date, level, mission, dps, ehp, tank, won}]."""
+    try:
+        with open(RESULTS, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+def calibrate(level, req, res=None):
+    """A real win beats the guessed numbers (owner 2026-10-31: an L1 cleared with 18.5 DPS / 4,149 EHP that the model gave ~0%).
+    With wins and no losses at this level: the weakest winning fit sets min_dps, and the threat is lowered until that fit passes the
+    99% rule. Any loss at this level keeps the guessed numbers."""
+    rs = [r for r in (results() if res is None else res) if str(r.get("level")) == str(level)]
+    wins = [r for r in rs if r.get("won")]
+    if not wins or any(not r.get("won") for r in rs):
+        return req
+    req = dict(req)
+    w = min(wins, key=lambda r: (r["dps"], r["ehp"]))
+    req["min_dps"] = min(float(req.get("min_dps", 0) or 0), w["dps"])
+    lo, hi = 0.0, float(req["threat_dps"])                              # the highest threat at which the winning fit still passes
+    if p_lose(req, w["dps"], w["ehp"], w.get("tank", 0)) > P_MAX:
+        for _ in range(60):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if p_lose(dict(req, threat_dps=mid), w["dps"], w["ehp"], w.get("tank", 0)) <= P_MAX else (lo, mid)
+        req["threat_dps"] = lo
+    req["calibrated"] = f"{len(wins)} real win(s)"
+    return req
 
 
 def _table():
@@ -69,7 +100,7 @@ def requirements(con):
                 out["ratting"] = d
     except Exception as _he:                                            # noqa: BLE001
         _hrec('combatcheck', _he)
-    return out
+    return {k: calibrate(k, v) for k, v in out.items()}
 
 
 def level_of(goal_id=None, offer=None):

@@ -590,6 +590,8 @@ def _run(a):
         print(compare(a.db if not a.char else default_db_path(), "profile.json"))
     elif a.cmd == "next":
         from .graph import Graph
+        from .orders import freeze as _freeze_books
+        _freeze_books()                                                 # one consistent price snapshot for this plan (a scan beside it made next 24 min)
         from .nextstep import next_action
         from .style import task_block
         try:

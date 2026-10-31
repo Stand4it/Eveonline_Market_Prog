@@ -135,7 +135,7 @@ def refresh_orders(con, esi, region_ids, max_pages=None, max_age=0, budget_min=0
             con.execute("DELETE FROM orders WHERE region_id=?", (rid,))
             con.executemany("INSERT OR REPLACE INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?)", vals)
         from .orders import bump as _bump
-        _bump()                                                         # cached order books are stale now
+        _bump(con)                                                      # cached order books are stale now
         try:
             from .remoterange import store as _store_range
             _store_range(con, rows)                                     # a buy order's range: how far away a seller may be

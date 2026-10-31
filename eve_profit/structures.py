@@ -61,7 +61,7 @@ def refresh_structures(con, esi, wanted_systems, extra_ids=(), info_cap=INFO_CAP
               o["price"], o["volume_remain"], o.get("min_volume", 1), o.get("issued", ""), now)
              for o in rows])
         from .orders import bump as _bump
-        _bump()                                                         # cached order books are stale now
+        _bump(con)                                                      # cached order books are stale now
         con.execute("UPDATE structures SET orders_at=? WHERE structure_id=?", (now, sid))
         fetched += 1
         rows_n += len(rows)

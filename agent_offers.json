@@ -3885,7 +3885,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "New Caldari",
    "career": "Security",
    "where": "New Caldari Prime - Moon 1 - CEP Bureau (0.9)",
@@ -3898,8 +3898,10 @@
    "to_system": "New Caldari",
    "m3": 0.0,
    "needs": "0 m3 of cargo; New Caldari is 0 jump(s) from New Caldari (map DB route)",
-   "note": "Seen, 99,000 ISK + 45 LP with the bonus. Seen 2026-10-31.",
-   "needs_tool": "gun"
+   "note": "Seen, 99,000 ISK + 45 LP with the bonus. Seen 2026-10-31. accepted 2026-10-31 by owner (outside 99% rule, for modelling); bonus window 1 h 57 min COMPLETED 2026-10-31 16:17 with bonus: 99,000 ISK + 45 LP; standing 1.6 -> 1.9",
+   "needs_tool": "gun",
+   "accepted": "2026-10-31",
+   "expires": "2026-11-07 16:04"
   },
   {
    "taxed": false,
@@ -3940,7 +3942,28 @@
    "to_system": "Josameto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Josameto is 1 jump(s) from New Caldari (map DB route)",
-   "note": "destroy the infested laboratory",
+   "note": "destroy the infested laboratory Seen 2026-10-31.",
+   "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "New Caldari",
+   "career": "Security",
+   "where": "New Caldari Prime - Moon 1 - CEP Bureau (0.9)",
+   "agent": "Nashokoda Pekumatken (Security, L1, New Caldari Prime - Moon 1 - CEP Bureau (0.9))",
+   "mission": "'What's in a Name - Change of Address (1 of 5)': task to Malkalen embassy (0.9). Pays 53,000 ISK + 51 LP; bonus 43,000 ISK within 2 h 14 min.",
+   "isk": 53000,
+   "bonus": 43000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Malkalen",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Malkalen is 1 jump(s) from New Caldari (map DB route)",
+   "note": "patrol outside embassy, engage hostiles; part 1 of 5 chain",
    "needs_tool": "gun"
   }
  ],
