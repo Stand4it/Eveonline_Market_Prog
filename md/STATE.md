@@ -30,3 +30,6 @@ Open agent offers (agent_offers.json):
 - Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P
 - Airata Mion: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
 - Oitko Shiomiken: 'Starting Simple': courier 20,000 x Banidine, mined at the b
+- Aoken Pieppatoh: 'Claimjumpers': courier 18,000 x Banidine, mined at the book
+- Onavirpio Asorela: 'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) to Uos
+- Veinalen Elonko: 'A Special Breed': courier 3 x Group of Kameiras (210 m3) to
