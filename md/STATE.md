@@ -25,3 +25,4 @@ Open agent offers (agent_offers.json):
 - Fehela Zassalou: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
 - Naki Vikkiras: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
+- Hakadura Otora: 'Stress Reliever': courier 5 x Crates of Tobacco (200 m3) to

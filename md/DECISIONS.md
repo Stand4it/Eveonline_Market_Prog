@@ -608,3 +608,4 @@
 - 2026-10-30 agent_offers.json: Fehela Zassalou (Ikuchi, Distribution L1) 'A Humble Gift' 320 m3 to Eskunen (4 jumps), 21,000 + 23,000 bonus (56 min) + 21 LP.
 - 2026-10-30 agent_offers.json: Samivesti Iivonas (Ikuchi, Distribution L1) 'Lost That Bet (1 of 5)' 1 m3 to Hirtamon (1 jumps), 28,000 + 20,000 bonus (1 h 4 min) + 24 LP.
 - 2026-10-30 agent_offers.json: Naki Vikkiras (Ikuchi, Distribution L1) 'A Humble Gift' 320 m3 to Eskunen (4 jumps), 19,000 + 17,000 bonus (56 min) + 21 LP.
+- 2026-10-30 agent_offers.json: Hakadura Otora (Sarekuwa, Distribution, L2 L1) 'Stress Reliever' 200 m3 to Ajanen (5 jumps), 34,000 + 49,000 bonus (56 min) + 65 LP.
