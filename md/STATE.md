@@ -35,5 +35,7 @@ Open agent offers (agent_offers.json):
 - Ke Kakuruka: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
 - Ootoh Litiura: 'Bountiful Banidine': courier 20,000 x Banidine, mined at th
 - Gotibera Kanamola: 'Move The Goods': courier 20 x Small Sealed Cargo Containers
-- Vasala Akochi: 'Asteroid Catastrophe': courier 3,600 x Augumene, mined at t
 - Eralikken Tila: 'Customs Interdiction (1 of 2)': task to Vellaine (0.6), mis
+- Kasata Mavila: 'Murderer Brought To Justice': task to Funtanainen (0.9), mi
+- Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
+- Okuro Petsiken: 'Mercium Experiments': courier 1,800 x Mercium, mined in Sob

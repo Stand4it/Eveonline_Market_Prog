@@ -614,3 +614,4 @@
 - 2026-10-30 agent_offers.json: Veinalen Elonko (Veisto, Distribution L1) 'A Special Breed' 210 m3 to Uosusuokko (4 jumps), 33,000 + 27,000 bonus (1 h 10 min) + 31 LP.
 - 2026-10-30 agent_offers.json: Ootoh Litiura (Veisto, Mining L1) 'Bountiful Banidine' 2000 m3 to Veisto (0 jumps), 47,000 + 50,000 bonus (1 h 22 min) + 55 LP.
 - 2026-10-30 agent_offers.json: Eralikken Tila (Sobaseki, Security L2) 'Customs Interdiction (1 of 2)' 0 m3 to Vellaine (4 jumps), 119,000 + 124,000 bonus (2 h 4 min) + 164 LP.
+- 2026-10-30 agent_offers.json: Okuro Petsiken (Sobaseki, Mining L1) 'Mercium Experiments' 1080 m3 to Sobaseki (0 jumps), 41,000 + 42,000 bonus (1 h 16 min) + 50 LP.
