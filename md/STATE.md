@@ -41,3 +41,4 @@ Open agent offers (agent_offers.json):
 - Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
 - Nashokoda Pekumatken: 'The Guristas Spies': task to New Caldari Prime - Moon 1 - C
 - Aivuken Kirvira: 'The Drone Infestation': task to Niyabainen deadspace belt (
+- Kara Takin: 'Furrier Fiasco': task to Josameto infested laboratory (0.6)

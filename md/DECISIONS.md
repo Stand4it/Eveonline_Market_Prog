@@ -618,3 +618,4 @@
 - 2026-10-31 agent_offers.json: Jukosoni Kauniki (Sobaseki, Security L1) 'The Score' 0 m3 to Sobaseki (0 jumps), 105,000 + 98,000 bonus (3 h 36 min) + 95 LP.
 - 2026-10-31 2026-10-31: Jeka Vantoh 'Building Blocks' not recorded: pickup Piak sits in a 13-system high-sec pocket reachable only through low-sec (map DB).
 - 2026-10-31 agent_offers.json: Aivuken Kirvira (New Caldari, Security L1) 'The Drone Infestation' 0 m3 to Niyabainen (1 jumps), 46,000 + 52,000 bonus (2 h 8 min) + 48 LP.
+- 2026-10-31 agent_offers.json: Kara Takin (New Caldari, Security L1) 'Furrier Fiasco' 0 m3 to Josameto (1 jumps), 52,000 + 58,000 bonus (2 h 24 min) + 55 LP.

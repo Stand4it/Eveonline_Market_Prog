@@ -3921,6 +3921,27 @@
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from New Caldari (map DB route)",
    "note": "destroy Drone Silo; drones aggro on silo attack Seen 2026-10-31.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "New Caldari",
+   "career": "Security",
+   "where": "New Caldari II (Matias) - Kaalakiota Factory (0.9)",
+   "agent": "Kara Takin (Security, L1, New Caldari II (Matias) - Kaalakiota Factory (0.9))",
+   "mission": "'Furrier Fiasco': task to Josameto infested laboratory (0.6). Pays 52,000 ISK + 55 LP; bonus 58,000 ISK within 2 h 24 min.",
+   "isk": 52000,
+   "bonus": 58000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Josameto",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Josameto is 1 jump(s) from New Caldari (map DB route)",
+   "note": "destroy the infested laboratory",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
