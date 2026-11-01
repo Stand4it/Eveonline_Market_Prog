@@ -4007,6 +4007,27 @@
    "needs": "2250 m3 of cargo; Perimeter is 0 jump(s) from Perimeter (map DB route)",
    "note": "Mine 7,500 Augumene (2,250 m3) at the site in Perimeter, bring it back. Needs a mining laser and an ore hold or cargo of about 2,250 m3 (several trips in a Venture). Agent standing 1.6. Seen 2026-11-01.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Perimeter",
+   "career": "Security",
+   "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
+   "agent": "Ano Pruya (Security, L2, Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9))",
+   "mission": "'Smuggler Interception': task to Niyabainen (0.9) convoy site. Pays 73,000 ISK + 125 LP; bonus 93,000 ISK within 1 h 50 min.",
+   "isk": 73000,
+   "bonus": 93000,
+   "task_min": 20,
+   "jumps": 1,
+   "to_system": "Niyabainen",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
+   "note": "L2: destroy the convoy (medium escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
