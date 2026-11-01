@@ -42,3 +42,5 @@ Open agent offers (agent_offers.json):
 - Ano Pruya: 'Smuggler Interception': task to Niyabainen (0.9) convoy sit
 - Kirtikko Aaraken: 'Worlds Collide': task to Maurasi (0.9) deadspace complex. P
 - Okamainen Niuranto: 'Eliminate the Pirate Campers': task to Maurasi (0.9) hidden
+- Ogyura Unao: 'The Score': task to Niyabainen (0.9) Guristas encounter. Pa
+- Tuga Nato: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
