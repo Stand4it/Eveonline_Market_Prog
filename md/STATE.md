@@ -5,11 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 425 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Aratani Endagas: 'Lost That Bet (2 of 5)': go to the set location in Yashunen
-- Penaka Mogenainen: 'A New Venture - Right People (2 of 5)': courier 1 x Group o
-- Itakairos Ohbesa: 'Onslaught': task to the silent mining operation in Ikao (0.
-- Kimuruola Sitsudan: 'What's in a Name - Change of Address (1 of 5)': task to the
-- Sigechiro Onzo: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil from t
 - Nuulkata Junkka: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
 - Haro Honnamaiken: 'Escaped Spy': courier 1 x Prisoner: destroy the spy's ship 
 - Mamdasan Hoghosh: 'Freedom Must Not Prevail': task to Niyabainen (combat site,
@@ -42,3 +37,4 @@ Open agent offers (agent_offers.json):
 - Aivuken Kirvira: 'The Drone Infestation': task to Niyabainen deadspace belt (
 - Kara Takin: 'Furrier Fiasco': task to Josameto infested laboratory (0.6)
 - Nashokoda Pekumatken: 'What's in a Name - Change of Address (1 of 5)': task to Mal
+- Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si

@@ -3125,7 +3125,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Yashunen",
    "career": "Distribution",
    "where": "Yashunen V - Moon 1 - Sukuuvestaa Corporation Warehouse (0.9)",
@@ -3138,7 +3138,7 @@
    "to_system": "Yashunen",
    "m3": 1.0,
    "needs": "1 m3 of cargo; Tennen is 1 jump(s) from Yashunen (map DB route)",
-   "note": "Seen 2026-10-24, standing 0.0. Round trip to Tennen; same pickup system as Penaka's. 38,000 ISK + 24 LP with the bonus. 2026-10-25: part 1 DONE (no bonus: owner traded soil for ~43k on the way), standing 0.1.",
+   "note": "Seen 2026-10-24, standing 0.0. Round trip to Tennen; same pickup system as Penaka's. 38,000 ISK + 24 LP with the bonus. 2026-10-25: part 1 DONE (no bonus: owner traded soil for ~43k on the way), standing 0.1. EXPIRED 2026-11-01 (game notice).",
    "lp": 12
   },
   {
@@ -3146,7 +3146,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Yashunen",
    "career": "Distribution",
    "where": "Yashunen V - Moon 1 - Sukuuvestaa Corporation Warehouse (0.9)",
@@ -3159,7 +3159,7 @@
    "to_system": "Hatakani",
    "m3": 40.0,
    "needs": "0.1 m3 of cargo; Tennen is 1 jump(s) from Yashunen (map DB route)",
-   "note": "Seen 2026-10-24, standing 0.0. Round trip to Tennen; same pickup system as Aratani's. 39,000 ISK + 26 LP with the bonus. 2026-10-25: part 1 DONE, standing 0.2.",
+   "note": "Seen 2026-10-24, standing 0.0. Round trip to Tennen; same pickup system as Aratani's. 39,000 ISK + 26 LP with the bonus. 2026-10-25: part 1 DONE, standing 0.2. EXPIRED 2026-11-01 (game notice).",
    "lp": 18
   },
   {
@@ -3167,7 +3167,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Juunigaishi",
    "career": "Security",
    "where": "Juunigaishi III - Spacelane Patrol Assembly Plant (0.6)",
@@ -3180,7 +3180,7 @@
    "to_system": "Ikao",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Ikao is 1 jump(s) from Juunigaishi (map DB route)",
-   "note": "Seen 2026-10-25, standing 0.0. 270,000 ISK + 144 LP with the bonus: the pay of a hard multi-wave combat site; NOT with the current fit (3.7 dps, capacitor out in 1:42).",
+   "note": "Seen 2026-10-25, standing 0.0. 270,000 ISK + 144 LP with the bonus: the pay of a hard multi-wave combat site; NOT with the current fit (3.7 dps, capacitor out in 1:42). EXPIRED (seen 2026-10-25, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3188,7 +3188,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Juunigaishi",
    "career": "Security",
    "where": "Juunigaishi XII - Moon 16 - Caldari Navy Assembly Plant (0.6)",
@@ -3201,7 +3201,7 @@
    "to_system": "Suroken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Suroken is 1 jump(s) from Juunigaishi (map DB route)",
-   "note": "Seen 2026-10-25, standing 0.0. Combat (same mission as Tuga Nato's): needs guns. 116,000 ISK + 75 LP with the bonus.",
+   "note": "Seen 2026-10-25, standing 0.0. Combat (same mission as Tuga Nato's): needs guns. 116,000 ISK + 75 LP with the bonus. EXPIRED (seen 2026-10-25, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3209,7 +3209,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Juunigaishi",
    "career": "Security",
    "where": "Juunigaishi XII - Moon 16 - Caldari Navy Assembly Plant (0.6)",
@@ -3222,7 +3222,7 @@
    "to_system": "Isikesu",
    "m3": 60.0,
    "needs": "60 m3 of cargo; Isikesu is 1 jump(s) from Juunigaishi (map DB route)",
-   "note": "Seen 2026-10-25, standing 0.0. Pickup at a deadspace outpost (red icon): may have guards, grab and warp out. 95,000 ISK + 53 LP with the bonus."
+   "note": "Seen 2026-10-25, standing 0.0. Pickup at a deadspace outpost (red icon): may have guards, grab and warp out. 95,000 ISK + 53 LP with the bonus. EXPIRED (seen 2026-10-25, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -3963,7 +3963,28 @@
    "to_system": "Malkalen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Malkalen is 1 jump(s) from New Caldari (map DB route)",
-   "note": "patrol outside embassy, engage hostiles; part 1 of 5 chain",
+   "note": "patrol outside embassy, engage hostiles; part 1 of 5 chain Seen 2026-10-31.",
+   "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Iyen-Oursta",
+   "career": "Security",
+   "where": "Iyen-Oursta III - Roden Shipyards Factory (0.8)",
+   "agent": "Podineilles Galoriel (Security, L1, Iyen-Oursta III - Roden Shipyards Factory (0.8))",
+   "mission": "'Freedom and Commerce': task to Faurent (0.5) slaver ship site. Pays 175,000 ISK + 170 LP; bonus 156,000 ISK within 6 h.",
+   "isk": 175000,
+   "bonus": 156000,
+   "task_min": 12,
+   "jumps": 1,
+   "to_system": "Faurent",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Faurent is 1 jump(s) from Iyen-Oursta (map DB route)",
+   "note": "destroy the Slaver Ship, bring 6 x Freed Slaves (6 m3) back to the agent. Site has ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01.",
    "needs_tool": "gun"
   }
  ],
