@@ -41,3 +41,4 @@ Open agent offers (agent_offers.json):
 - Otuvas Ylitoh: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
 - Ano Pruya: 'Smuggler Interception': task to Niyabainen (0.9) convoy sit
 - Kirtikko Aaraken: 'Worlds Collide': task to Maurasi (0.9) deadspace complex. P
+- Okamainen Niuranto: 'Eliminate the Pirate Campers': task to Maurasi (0.9) hidden

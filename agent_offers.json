@@ -4049,6 +4049,27 @@
    "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
    "note": "L1: rescue 20 x Ship's Crew (40 m3) from the spawn container in room 3; gates unlocked, rooms 1-2 can be skipped. Only frigates and destroyers may use the first gate (Catalyst OK). Agent standing 1.6. Seen 2026-11-01.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Perimeter",
+   "career": "Security",
+   "where": "Perimeter VI - Ytiri Storage (0.9)",
+   "agent": "Okamainen Niuranto (Security, L1, Perimeter VI - Ytiri Storage (0.9))",
+   "mission": "'Eliminate the Pirate Campers': task to Maurasi (0.9) hidden stargate bookmark. Pays 31,000 ISK + 32 LP; bonus 36,000 ISK within 1 h 24 min.",
+   "isk": 31000,
+   "bonus": 36000,
+   "task_min": 10,
+   "jumps": 1,
+   "to_system": "Maurasi",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
+   "note": "L1: kill the Sansha ships camping the hidden stargate. Same station and same system (Maurasi) as Kirtikko Aaraken's Worlds Collide: do both in one trip. Agent standing 1.6. Seen 2026-11-01.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
