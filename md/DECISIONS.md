@@ -624,3 +624,4 @@
 - 2026-11-01 agent_offers.json: Podineilles Galoriel (Iyen-Oursta, Security L1) 'Freedom and Commerce' 0 m3 to Faurent (1 jumps), 175,000 + 156,000 bonus (6 h) + 170 LP.
 - 2026-11-01 agent_offers.json: Otuvas Ylitoh (Perimeter, Mining L2) 'Down and Dirty' 2250 m3 to Perimeter (0 jumps), 85,000 + 95,000 bonus (1 h 26 min) + 150 LP.
 - 2026-11-01 agent_offers.json: Ano Pruya (Perimeter, Security L2) 'Smuggler Interception' 0 m3 to Niyabainen (1 jumps), 73,000 + 93,000 bonus (1 h 50 min) + 125 LP.
+- 2026-11-01 agent_offers.json: Kirtikko Aaraken (Perimeter, Security L1) 'Worlds Collide' 0 m3 to Maurasi (1 jumps), 115,000 + 157,000 bonus (6 h) + 136 LP.

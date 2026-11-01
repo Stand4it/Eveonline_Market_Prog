@@ -40,3 +40,4 @@ Open agent offers (agent_offers.json):
 - Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si
 - Otuvas Ylitoh: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
 - Ano Pruya: 'Smuggler Interception': task to Niyabainen (0.9) convoy sit
+- Kirtikko Aaraken: 'Worlds Collide': task to Maurasi (0.9) deadspace complex. P

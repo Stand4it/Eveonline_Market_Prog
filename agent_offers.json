@@ -4028,6 +4028,27 @@
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
    "note": "L2: destroy the convoy (medium escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Perimeter",
+   "career": "Security",
+   "where": "Perimeter VI - Ytiri Storage (0.9)",
+   "agent": "Kirtikko Aaraken (Security, L1, Perimeter VI - Ytiri Storage (0.9))",
+   "mission": "'Worlds Collide': task to Maurasi (0.9) deadspace complex. Pays 115,000 ISK + 136 LP; bonus 157,000 ISK within 6 h.",
+   "isk": 115000,
+   "bonus": 157000,
+   "task_min": 15,
+   "jumps": 1,
+   "to_system": "Maurasi",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
+   "note": "L1: rescue 20 x Ship's Crew (40 m3) from the spawn container in room 3; gates unlocked, rooms 1-2 can be skipped. Only frigates and destroyers may use the first gate (Catalyst OK). Agent standing 1.6. Seen 2026-11-01.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
