@@ -38,3 +38,4 @@ Open agent offers (agent_offers.json):
 - Kara Takin: 'Furrier Fiasco': task to Josameto infested laboratory (0.6)
 - Nashokoda Pekumatken: 'What's in a Name - Change of Address (1 of 5)': task to Mal
 - Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si
+- Otuvas Ylitoh: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis

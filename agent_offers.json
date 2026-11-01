@@ -3986,6 +3986,27 @@
    "needs": "0 m3 of cargo; Faurent is 1 jump(s) from Iyen-Oursta (map DB route)",
    "note": "destroy the Slaver Ship, bring 6 x Freed Slaves (6 m3) back to the agent. Site has ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Perimeter",
+   "career": "Mining",
+   "where": "Perimeter VII - Poksu Mineral Group Mineral Reserve (0.9)",
+   "agent": "Otuvas Ylitoh (Mining, L2, Perimeter VII - Poksu Mineral Group Mineral Reserve (0.9))",
+   "mission": "'Down and Dirty': courier 7,500 x Augumene, mined at the mission site (2250 m3) to Perimeter VII - Poksu Mineral Group Mineral Reserve (0.9). Pays 85,000 ISK + 150 LP; bonus 95,000 ISK within 1 h 26 min.",
+   "isk": 85000,
+   "bonus": 95000,
+   "task_min": 60,
+   "jumps": 0,
+   "to_system": "Perimeter",
+   "m3": 2250.0,
+   "needs": "2250 m3 of cargo; Perimeter is 0 jump(s) from Perimeter (map DB route)",
+   "note": "Mine 7,500 Augumene (2,250 m3) at the site in Perimeter, bring it back. Needs a mining laser and an ore hold or cargo of about 2,250 m3 (several trips in a Venture). Agent standing 1.6. Seen 2026-11-01.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,
