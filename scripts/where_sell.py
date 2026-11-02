@@ -3,6 +3,7 @@ every buyer that pays more than the best price you can sell to from where you ar
    gained = (its price - price here) x the units it takes (up to what you have), after sales tax
    time   = the jumps to a system from which you can sell to it (its own range counts) x your ISK/min (best option in your plan, from the last `next`)
    NET    = gained - time.   NET < 0 -> sell HERE.   NET >= 0 -> sell THERE.
+Two lists: BY JUMPS (closest first) and BY PROFIT (most ISK gained first). --top applies to each; the VERDICT goes by best NET.
 python scripts/where_sell.py "'Arbalest' Rocket Launcher I" [qty] [--to NEXT_DESTINATION] [--from SYSTEM] [--top 25] [--cached]
 (qty defaults to what you hold here; with --to only the extra jumps toward where you go next count, else there and back)"""
 import dataclasses
@@ -118,13 +119,23 @@ for x in rows:
     time_cost = x["trip"] * per_jump
     out.append(dict(x, units=units, gained=gained, time=time_cost, net=gained - time_cost))
 out.sort(key=lambda o: -o["net"])
-print(f"   every buyer that PAYS MORE than here ({len(out)} orders), best net first.  NET = extra ISK after tax - ISK your time would have made;  NET < 0 -> sell here, NET >= 0 -> sell there:")
-print(f"      {'price':>12} {'units':>6} {'jumps':>5} {'trip min':>8} {'gained':>12} {'time cost':>11} {'NET':>13}  buyer (sell from)")
-for o in out[:int(opt("--top", 25))]:
-    tag = "" if o["sec"] >= 0.45 else ("LOW " if o["sec"] > 0 else "NULL ")
-    frm = "" if o["from"] == o["sys"] else f" (sell from {o['from']}, range {o['rng']})"
-    print(f"      {o['price']:>12,.2f} {o['units']:>6,} {o['j']:>5} {o['trip'] * MIN_PER_JUMP:>8.0f} {o['gained']:>12,.0f} {o['time']:>11,.0f} {o['net']:>+13,.0f}  "
-          f"{tag}{o['sys']} ({o['sec']:.1f}){frm}{' via lowsec' if o['low'] else ''}{'   <- SELL THERE' if o['net'] >= 0 else ''}")
+top = int(opt("--top", 25))
+
+
+def show(title, key):
+    """One list of the buyers that pay more than here, sorted by `key`."""
+    print(f"   {title}")
+    print(f"      {'price':>12} {'units':>6} {'jumps':>5} {'trip min':>8} {'gained':>12} {'time cost':>11} {'NET':>13}  buyer (sell from)")
+    for o in sorted(out, key=key)[:top]:
+        tag = "" if o["sec"] >= 0.45 else ("LOW " if o["sec"] > 0 else "NULL ")
+        frm = "" if o["from"] == o["sys"] else f" (sell from {o['from']}, range {o['rng']})"
+        print(f"      {o['price']:>12,.2f} {o['units']:>6,} {o['j']:>5} {o['trip'] * MIN_PER_JUMP:>8.0f} {o['gained']:>12,.0f} {o['time']:>11,.0f} {o['net']:>+13,.0f}  "
+              f"{tag}{o['sys']} ({o['sec']:.1f}){frm}{' via lowsec' if o['low'] else ''}{'   <- SELL THERE' if o['net'] >= 0 else ''}")
+
+
+print(f"   {len(out)} orders PAY MORE than here.  GAINED = extra ISK after tax;  NET = gained - ISK your time would have made;  NET < 0 -> sell here, NET >= 0 -> sell there.")
+show(f"BY JUMPS: {'fewest extra jumps' if dest else 'closest'} first, then most gained:", lambda o: (o["trip"], o["j"], -o["gained"]))
+show("BY PROFIT: most ISK gained first, then fewest jumps:", lambda o: (-o["gained"], o["trip"], o["j"]))
 win = [o for o in out if o["net"] >= 0]
 if win:
     b = win[0]

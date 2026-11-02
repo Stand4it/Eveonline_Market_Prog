@@ -3250,7 +3250,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Urlen",
    "career": "Security",
    "where": "Urlen VII - Moon 6 - Hyasyoda Corporation Refinery (0.9)",
@@ -3263,7 +3263,7 @@
    "to_system": "Kisogo",
    "m3": 1.0,
    "needs": "1 m3 of cargo; Kisogo is 1 jump(s) from Urlen (map DB route)",
-   "note": "Seen 2026-10-26, standing 0.0. Combat: kill one fugitive ship (may be guarded at the outpost). 71,000 ISK + 46 LP with the bonus.",
+   "note": "Seen 2026-10-26, standing 0.0. Combat: kill one fugitive ship (may be guarded at the outpost). 71,000 ISK + 46 LP with the bonus. EXPIRED (seen 2026-10-26, offers last 7 days).",
    "needs_tool": "gun"
   },
   {

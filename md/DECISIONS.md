@@ -630,3 +630,4 @@
 - 2026-11-01 agent_offers.json: Kai Etashanko (Maurasi, Security L1) 'Drone Detritus' 0 m3 to Itamo (1 jumps), 121,000 + 121,000 bonus (4 h 32 min) + 109 LP.
 - 2026-11-01 agent_offers.json: Haattiekko Oshukata (Muvolailen, Security L2) 'Recon (1 of 3)' 0 m3 to Muvolailen (0 jumps), 415,000 + 345,000 bonus (6 h) + 553 LP.
 - 2026-11-01 agent_offers.json: Antaken Kamola (Muvolailen, Distribution L1) 'Rancorous Researcher (1 of 5)' 0.1 m3 to Annaro (1 jumps), 0 + 25,000 bonus (58 min) + 30 LP.
+- 2026-11-02 2026-11-02 where_sell.py and where_buy.py (owner): each prints two lists, BY JUMPS (closest first) and BY PROFIT / BY SAVINGS (most ISK first; BY PRICE when nothing is sold here). --top applies to each; the VERDICT still goes by best NET.

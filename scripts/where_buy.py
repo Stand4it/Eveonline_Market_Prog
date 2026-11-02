@@ -1,6 +1,7 @@
 """Where is it cheapest to get, ALL THINGS COUNTED? Reads the item's sell orders live from EVERY region of the universe (ESI, ~65 public calls),
 measures the jumps from where you are, and ranks every seller by TOTAL COST = price x qty + the trip priced at your time (the ISK/min of the
 top earning option in your plan, saved by the last `next`). The trip is there and back to your ship, or only the extra jumps with --to.
+Two lists: BY JUMPS (closest first) and BY SAVINGS (most total ISK saved first). --top applies to each; the VERDICT goes by best NET.
 python scripts/where_buy.py "Small Armor Repairer I" [qty] [--to NEXT_DESTINATION] [--from SYSTEM] [--top 15] [--cached]   (--cached: no live fetch)"""
 import dataclasses
 import os
@@ -104,12 +105,25 @@ for s, pr, v, loc in rows:
     out.append({"sys": g.name[s], "sec": g.sec.get(s, 0.0), "price": pr, "units": units, "j": j, "trip": trip, "low": low,
                 "saved": saved, "time": time_cost, "net": saved - time_cost})
 out.sort(key=lambda o: -o["net"])
-print(f"   every seller CHEAPER than here ({len(out)} orders), best net first.  NET = saved - ISK your time would have made;  NET < 0 -> buy here, NET >= 0 -> buy there:")
-print(f"      {'price':>9} {'units':>9} {'jumps':>5} {'trip min':>8} {'saved':>11} {'time cost':>11} {'NET':>12}  where")
-for o in out[:int(opt("--top", 25))]:
-    tag = "" if o["sec"] >= 0.45 else ("LOW " if o["sec"] > 0 else "NULL ")
-    print(f"      {o['price']:>9,.2f} {o['units']:>9,} {o['j']:>5} {o['trip'] * MIN_PER_JUMP:>8.0f} {o['saved']:>11,.0f} {o['time']:>11,.0f} {o['net']:>+12,.0f}  "
-          f"{tag}{o['sys']} ({o['sec']:.1f}){' via lowsec' if o['low'] else ''}{'   <- BUY THERE' if o['net'] >= 0 else ''}")
+top = int(opt("--top", 25))
+
+
+def show(title, key):
+    """One list of the sellers cheaper than here, sorted by `key`."""
+    print(f"   {title}")
+    print(f"      {'price':>9} {'units':>9} {'jumps':>5} {'trip min':>8} {'saved':>11} {'time cost':>11} {'NET':>12}  where")
+    for o in sorted(out, key=key)[:top]:
+        tag = "" if o["sec"] >= 0.45 else ("LOW " if o["sec"] > 0 else "NULL ")
+        print(f"      {o['price']:>9,.2f} {o['units']:>9,} {o['j']:>5} {o['trip'] * MIN_PER_JUMP:>8.0f} {o['saved']:>11,.0f} {o['time']:>11,.0f} {o['net']:>+12,.0f}  "
+              f"{tag}{o['sys']} ({o['sec']:.1f}){' via lowsec' if o['low'] else ''}{'   <- BUY THERE' if o['net'] >= 0 else ''}")
+
+
+print(f"   {len(out)} orders {'are CHEAPER than here' if here_each is not None else 'for sale elsewhere'}.  SAVED = total ISK saved on the units it has;  NET = saved - ISK your time would have made;  NET < 0 -> buy here, NET >= 0 -> buy there.")
+show(f"BY JUMPS: {'fewest extra jumps' if dest else 'closest'} first, then most saved:", lambda o: (o["trip"], o["j"], -o["saved"], o["price"]))
+if here_each is not None:
+    show("BY SAVINGS: most total ISK saved first, then fewest jumps:", lambda o: (-o["saved"], o["trip"], o["j"]))
+else:
+    show("BY PRICE (nothing here to save against): cheapest first, then fewest jumps:", lambda o: (o["price"], o["trip"], o["j"]))
 win = [o for o in out if o["net"] >= 0]
 if here_each is None and not out:
     sys.exit(f"nobody sells {name} anywhere reachable")
