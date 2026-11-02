@@ -48,4 +48,4 @@ for ln in text.splitlines():
     else:
         done.append(invoverlay.mark_opened(con, item, qty).replace("(opened/used)", "(sold)"))
 print("\n".join(done) or "No transaction rows found: in the game select the rows in Wallet > Market Transactions, Ctrl+C, then run this again."
-      + f"\nThe clipboard holds: {text.strip()[:60]!r}  (copying this command after the rows replaces them: press the Up arrow to rerun it instead)" * (not done))
+      + f"\nThe clipboard holds {len(text.splitlines())} line(s) with no dated row: the game's Ctrl+C did not reach it, or something was copied after it." * (not done))
