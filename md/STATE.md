@@ -49,3 +49,4 @@ Open agent offers (agent_offers.json):
 - Iivinonen Konkinen: 'Corporate Documents': courier 4 x Crates of Corporate Docum
 - Antaken Kamola: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
 - Haattiekko Oshukata: 'Recon (2 of 3)': task to Muvolailen (0.7) locked accelerati
+- Oinorolen Ocho: 'Eliminate the Pirate Campers': task to Paara (0.8) hidden s

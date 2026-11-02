@@ -4274,6 +4274,27 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
    "note": "L2 chain step 2 of 3: fly to the gate locked by the mining corporation, report back. Mercenaries may be present: check before flying a valuable ship. Agent standing 2.4. Seen 2026-11-02."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Muvolailen",
+   "career": "Security",
+   "where": "Muvolailen X - Moon 16 - Sukuuvestaa Corporation Warehouse (0.7)",
+   "agent": "Oinorolen Ocho (Security, L2, Muvolailen X - Moon 16 - Sukuuvestaa Corporation Warehouse (0.7))",
+   "mission": "'Eliminate the Pirate Campers': task to Paara (0.8) hidden stargate bookmark. Pays 113,000 ISK + 173 LP; bonus 111,000 ISK within 1 h 52 min.",
+   "isk": 113000,
+   "bonus": 111000,
+   "task_min": 20,
+   "jumps": 1,
+   "to_system": "Paara",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Paara is 1 jump(s) from Muvolailen (map DB route)",
+   "note": "L2: kills required (Guristas ships at the hidden stargate). Fails the L2 99% rule. Agent standing 1.6. Seen 2026-11-02.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
