@@ -44,3 +44,6 @@ Open agent offers (agent_offers.json):
 - Ogyura Unao: 'The Score': task to Niyabainen (0.9) Guristas encounter. Pa
 - Tuga Nato: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
 - Kai Etashanko: 'Drone Detritus': task to Itamo (0.7) abandoned drone hive. 
+- Osunen Karjiras: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
+- Kintura Massiken: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
+- Haattiekko Oshukata: 'Recon (1 of 3)': task to Muvolailen (0.7) deadspace. Pays 4
