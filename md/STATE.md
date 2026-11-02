@@ -45,7 +45,7 @@ Open agent offers (agent_offers.json):
 - Kai Etashanko: 'Drone Detritus': task to Itamo (0.7) abandoned drone hive. 
 - Osunen Karjiras: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
 - Kintura Massiken: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
-- Haattiekko Oshukata: 'Recon (1 of 3)': task to Muvolailen (0.7) deadspace. Pays 4
 - Coroutte Amenouve: 'Athran Exigency (1 of 5)': task to Paara (0.8) abandoned mi
 - Iivinonen Konkinen: 'Corporate Documents': courier 4 x Crates of Corporate Docum
 - Antaken Kamola: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
+- Haattiekko Oshukata: 'Recon (2 of 3)': task to Muvolailen (0.7) locked accelerati

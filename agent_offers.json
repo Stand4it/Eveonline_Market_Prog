@@ -4180,7 +4180,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Security",
    "where": "Muvolailen IX - Moon 11 - Spacelane Patrol Assembly Plant (0.7)",
@@ -4193,7 +4193,7 @@
    "to_system": "Muvolailen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
-   "note": "L2 chain step 1 of 3: scout only, kills not required. Guides say blitz in a fast ship: fly to the gate, take it, warp out on reaching pocket 2. Hostile cruisers present: fly a shuttle, not the Catalyst (fails the L2 99% rule). Enemy faction not shown on the offer. Agent standing 1.6. Seen 2026-11-01. Accepted 2026-11-02. First try in the Catalyst (34 DPS, 4,149 EHP): no hits landed, hull down to 73%, retreated. Guides: 4 waves up to battlecruisers; mission completes on landing in pocket 2, so do not fight."
+   "note": "L2 chain step 1 of 3: scout only, kills not required. Guides say blitz in a fast ship: fly to the gate, take it, warp out on reaching pocket 2. Hostile cruisers present: fly a shuttle, not the Catalyst (fails the L2 99% rule). Enemy faction not shown on the offer. Agent standing 1.6. Seen 2026-11-01. Accepted 2026-11-02. First try in the Catalyst (34 DPS, 4,149 EHP): no hits landed, hull down to 73%, retreated. Guides: 4 waves up to battlecruisers; mission completes on landing in pocket 2, so do not fight. Second try 2026-11-02 in the Catalyst, gate run: ship destroyed. Do not retry in a combat ship; shuttle only. COMPLETED 2026-11-02 despite losing the Catalyst on the second run: paid 415,000 + 345,000 bonus + 553 LP, less 83,600 corp tax (11%) = 676,400 ISK. Insurance 188,344. Standing to 2.4."
   },
   {
    "taxed": false,
@@ -4254,6 +4254,26 @@
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Annaro is 1 jump(s) from Muvolailen (map DB route)",
    "note": "L1 chain step 1 of 5: pick up the chip at Annaro I, bring it back to the agent. Base reward is 1 x Device (item, value not counted), no ISK; bonus 25,000 ISK. Agent standing 1.6. Seen 2026-11-01."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Muvolailen",
+   "career": "Security",
+   "where": "Muvolailen IX - Moon 11 - Spacelane Patrol Assembly Plant (0.7)",
+   "agent": "Haattiekko Oshukata (Security, L2, Muvolailen IX - Moon 11 - Spacelane Patrol Assembly Plant (0.7))",
+   "mission": "'Recon (2 of 3)': task to Muvolailen (0.7) locked acceleration gate. Pays 100,000 ISK + 134 LP; bonus 95,000 ISK within 1 h 26 min.",
+   "isk": 100000,
+   "bonus": 95000,
+   "task_min": 15,
+   "jumps": 0,
+   "to_system": "Muvolailen",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
+   "note": "L2 chain step 2 of 3: fly to the gate locked by the mining corporation, report back. Mercenaries may be present: check before flying a valuable ship. Agent standing 2.4. Seen 2026-11-02."
   }
  ],
  "min_per_jump": 3.0,
