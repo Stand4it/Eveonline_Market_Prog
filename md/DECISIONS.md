@@ -627,3 +627,4 @@
 - 2026-11-01 agent_offers.json: Kirtikko Aaraken (Perimeter, Security L1) 'Worlds Collide' 0 m3 to Maurasi (1 jumps), 115,000 + 157,000 bonus (6 h) + 136 LP.
 - 2026-11-01 agent_offers.json: Okamainen Niuranto (Perimeter, Security L1) 'Eliminate the Pirate Campers' 0 m3 to Maurasi (1 jumps), 31,000 + 36,000 bonus (1 h 24 min) + 32 LP.
 - 2026-11-01 agent_offers.json: Tuga Nato (Perimeter, Security L1) 'Interstellar Railroad (1 of 4)' 1 m3 to Maurasi (1 jumps), 33,000 + 28,000 bonus (1 h 32 min) + 35 LP.
+- 2026-11-01 agent_offers.json: Kai Etashanko (Maurasi, Security L1) 'Drone Detritus' 0 m3 to Itamo (1 jumps), 121,000 + 121,000 bonus (4 h 32 min) + 109 LP.

@@ -5,7 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 425 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Nuulkata Junkka: 'Starting Simple': courier 20,000 x Banidine (mission ore) m
 - Haro Honnamaiken: 'Escaped Spy': courier 1 x Prisoner: destroy the spy's ship 
 - Mamdasan Hoghosh: 'Freedom Must Not Prevail': task to Niyabainen (combat site,
 - Santera Nami: 'Incriminating Evidence': courier Crates of Viral Agent (400
@@ -44,3 +43,4 @@ Open agent offers (agent_offers.json):
 - Okamainen Niuranto: 'Eliminate the Pirate Campers': task to Maurasi (0.9) hidden
 - Ogyura Unao: 'The Score': task to Niyabainen (0.9) Guristas encounter. Pa
 - Tuga Nato: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
+- Kai Etashanko: 'Drone Detritus': task to Itamo (0.7) abandoned drone hive. 

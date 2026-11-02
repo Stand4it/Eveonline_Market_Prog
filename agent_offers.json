@@ -3229,7 +3229,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Anttiri",
    "career": "Mining",
    "where": "Anttiri V - Moon 18 - Poksu Mineral Group Mineral Reserve (0.7)",
@@ -3242,7 +3242,7 @@
    "to_system": "Anttiri",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Anttiri is 0 jump(s) from Anttiri (map DB route)",
-   "note": "Seen 2026-10-26, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 66 LP with the bonus.",
+   "note": "Seen 2026-10-26, standing 0.0. 2,000 m3 = 5 trips in the Catalyst. 93,000 ISK + 66 LP with the bonus. EXPIRED 2026-11-01 (game notice).",
    "needs_tool": "mining"
   },
   {
@@ -4111,6 +4111,27 @@
    "m3": 1.0,
    "needs": "1 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
    "note": "L1 storyline-chain step 1 of 4: approach the Mediation Center in Maurasi, pick up the diplomat, bring him back. No combat stated. Same system as the two Perimeter VI Maurasi missions. Agent standing 1.6. Seen 2026-11-01."
+  },
+  {
+   "taxed": false,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Maurasi",
+   "career": "Security",
+   "where": "Maurasi VIII - Moon 14 - Caldari Business Tribunal (0.9)",
+   "agent": "Kai Etashanko (Security, L1, Maurasi VIII - Moon 14 - Caldari Business Tribunal (0.9))",
+   "mission": "'Drone Detritus': task to Itamo (0.7) abandoned drone hive. Pays 121,000 ISK + 109 LP; bonus 121,000 ISK within 4 h 32 min.",
+   "isk": 121000,
+   "bonus": 121000,
+   "task_min": 15,
+   "jumps": 1,
+   "to_system": "Itamo",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Itamo is 1 jump(s) from Maurasi (map DB route)",
+   "note": "L1: kill rogue drones, bring 1 x Rogue Drone A.I. Core back. Special ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,
