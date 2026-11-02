@@ -47,4 +47,5 @@ for ln in text.splitlines():
         done.append(acquire.confirm(con, item, qty))
     else:
         done.append(invoverlay.mark_opened(con, item, qty).replace("(opened/used)", "(sold)"))
-print("\n".join(done) or "No transaction rows found: in the game select the rows in Wallet > Market Transactions, Ctrl+C, then run this again.")
+print("\n".join(done) or "No transaction rows found: in the game select the rows in Wallet > Market Transactions, Ctrl+C, then run this again."
+      + f"\nThe clipboard holds: {text.strip()[:60]!r}  (copying this command after the rows replaces them: press the Up arrow to rerun it instead)" * (not done))
