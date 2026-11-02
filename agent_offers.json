@@ -4193,7 +4193,7 @@
    "to_system": "Muvolailen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
-   "note": "L2 chain step 1 of 3: scout only, kills not required. Guides say blitz in a fast ship: fly to the gate, take it, warp out on reaching pocket 2. Hostile cruisers present: fly a shuttle, not the Catalyst (fails the L2 99% rule). Enemy faction not shown on the offer. Agent standing 1.6. Seen 2026-11-01."
+   "note": "L2 chain step 1 of 3: scout only, kills not required. Guides say blitz in a fast ship: fly to the gate, take it, warp out on reaching pocket 2. Hostile cruisers present: fly a shuttle, not the Catalyst (fails the L2 99% rule). Enemy faction not shown on the offer. Agent standing 1.6. Seen 2026-11-01. Accepted 2026-11-02. First try in the Catalyst (34 DPS, 4,149 EHP): no hits landed, hull down to 73%, retreated. Guides: 4 waves up to battlecruisers; mission completes on landing in pocket 2, so do not fight."
   },
   {
    "taxed": false,
