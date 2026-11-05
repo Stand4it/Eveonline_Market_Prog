@@ -3292,7 +3292,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 6 - Ytiri Storage (0.9)",
@@ -3305,14 +3305,14 @@
    "to_system": "Eskunen",
    "m3": 400.0,
    "needs": "400 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3); the drop-off is 0.6 space."
+   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3); the drop-off is 0.6 space. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Tunttaras",
    "career": "Distribution",
    "where": "Tunttaras IX - Moon 11 - Ytiri Storage (0.9)",
@@ -3325,14 +3325,14 @@
    "to_system": "Hitanishio",
    "m3": 400.0,
    "needs": "400 m3 of cargo; Hitanishio is 2 jump(s) from Tunttaras (map DB route)",
-   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3, fits the Catalyst's 450 m3); all 0.9 space."
+   "note": "Seen 2026-10-29. Level 2 agent, effective standing 1.6. One-way courier, 5 x Crates of Viral Agent (400 m3, fits the Catalyst's 450 m3); all 0.9 space. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VI - Moon 6 - Ytiri Storage",
@@ -3345,14 +3345,14 @@
    "to_system": "Shera",
    "m3": 300.0,
    "needs": "300 m3 of cargo; Shera is 47 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 92,000 ISK + 64 LP with the bonus. Seen 2026-10-29."
+   "note": "Seen, 92,000 ISK + 64 LP with the bonus. Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VI - Moon 6 - Ytiri Storage",
@@ -3365,14 +3365,14 @@
    "to_system": "Aokannitoh",
    "m3": 420.0,
    "needs": "420 m3 of cargo; Aokannitoh is 1 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 47,000 ISK + 32 LP with the bonus. Seen 2026-10-29."
+   "note": "Seen, 47,000 ISK + 32 LP with the bonus. Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VII - Moon 5 - Zainou Biotech Production",
@@ -3385,14 +3385,14 @@
    "to_system": "Outuni",
    "m3": 250.0,
    "needs": "250 m3 of cargo; Outuni is 3 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 80,000 ISK + 66 LP with the bonus. Seen 2026-10-29."
+   "note": "Seen, 80,000 ISK + 66 LP with the bonus. Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VII - Moon 2 - Echelon Entertainment Development Studio",
@@ -3405,14 +3405,14 @@
    "to_system": "Eskunen",
    "m3": 120.0,
    "needs": "120 m3 of cargo; Eskunen is 4 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 34,000 ISK + 19 LP with the bonus. Seen 2026-10-29."
+   "note": "Seen, 34,000 ISK + 19 LP with the bonus. Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VII - Moon 6 - Zainou Biotech Production",
@@ -3425,14 +3425,14 @@
    "to_system": "Ansila",
    "m3": 40.0,
    "needs": "40 m3 of cargo; Ansila is 1 jump(s) from Hirtamon (map DB route)",
-   "note": "round trip: fly to Ansila (1 jump), load, return to the agent; chain 1 of 3 Seen 2026-10-29."
+   "note": "round trip: fly to Ansila (1 jump), load, return to the agent; chain 1 of 3 Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Hirtamon",
    "career": "Distribution",
    "where": "Hirtamon VII - Moon 6 - Zainou Biotech Production",
@@ -3445,14 +3445,14 @@
    "to_system": "Hykkota",
    "m3": 300.0,
    "needs": "300 m3 of cargo; Hykkota is 2 jump(s) from Hirtamon (map DB route)",
-   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-29."
+   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "New Caldari",
    "career": "Security",
    "where": "New Caldari Prime - Moon 1 - Poksu Mineral Group Mineral Reserve",
@@ -3465,7 +3465,7 @@
    "to_system": "Alikara",
    "m3": 60.0,
    "needs": "60 m3 of cargo; Alikara is 1 jump(s) from New Caldari (map DB route)",
-   "note": "Security L1: combat site, 99% rule applies; round trip New Caldari > Alikara (1 jump) > back Seen 2026-10-29."
+   "note": "Security L1: combat site, 99% rule applies; round trip New Caldari > Alikara (1 jump) > back Seen 2026-10-29. EXPIRED (seen 2026-10-29, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -3512,7 +3512,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 6 - Ytiri Storage (0.9)",
@@ -3525,7 +3525,7 @@
    "to_system": "Eskunen",
    "m3": 320.0,
    "needs": "320 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen, 36,000 ISK + 21 LP with the bonus. Seen 2026-10-30."
+   "note": "Seen, 36,000 ISK + 21 LP with the bonus. Seen 2026-10-30. EXPIRED 2026-11-05 (game notice)."
   },
   {
    "taxed": false,
@@ -3908,7 +3908,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "New Caldari",
    "career": "Security",
    "where": "New Caldari V (Oniseru) - Moon 2 - House of Records Archives (0.9)",
@@ -3921,7 +3921,7 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from New Caldari (map DB route)",
-   "note": "destroy Drone Silo; drones aggro on silo attack Seen 2026-10-31.",
+   "note": "destroy Drone Silo; drones aggro on silo attack Seen 2026-10-31. EXPIRED 2026-11-05 (game notice).",
    "needs_tool": "gun"
   },
   {
@@ -4336,6 +4336,48 @@
    "m3": 20.0,
    "needs": "20 m3 of cargo; Kamokor is 1 jump(s) from Kakakela (map DB route)",
    "note": "L1: destroy the convoy (small escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-04.",
+   "needs_tool": "gun"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kakakela",
+   "career": "Security",
+   "where": "Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9)",
+   "agent": "Kukka Huo (Security, L1, Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9))",
+   "mission": "'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) distress call site. Pays 33,000 ISK + 40 LP; bonus 29,000 ISK within 1 h 44 min.",
+   "isk": 33000,
+   "bonus": 29000,
+   "task_min": 10,
+   "jumps": 1,
+   "to_system": "Todaki",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Todaki is 1 jump(s) from Kakakela (map DB route)",
+   "note": "L1 chain step 1 of 5: eliminate all hostiles. Agent standing 0.0. Seen 2026-11-05.",
+   "needs_tool": "gun"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kakakela",
+   "career": "Security",
+   "where": "Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9)",
+   "agent": "Okasa Kookkalen (Security, L1, Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9))",
+   "mission": "'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hideout. Pays 54,000 ISK + 60 LP; bonus 43,000 ISK within 2 h 36 min.",
+   "isk": 54000,
+   "bonus": 43000,
+   "task_min": 15,
+   "jumps": 1,
+   "to_system": "Airkio",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
+   "note": "L1: destroy the Guristas habitation module, site heavily guarded per the offer. Structure needs extra DPS time. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-05.",
    "needs_tool": "gun"
   }
  ],

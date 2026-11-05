@@ -5,18 +5,8 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 425 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Santera Nami: 'Incriminating Evidence': courier Crates of Viral Agent (400
-- Ashataalen Kaitsiras: 'Incriminating Evidence': courier Crates of Viral Agent (400
-- Kodamailen Oijari: 'Equipped For The Job': courier 5 x Crates of Transmitters (
-- Ozanami Suroma: 'Wee Bug Problem': courier 7 x Crates of OP Insecticide (420
-- Elaruka Ikra: 'Troublemakers': courier 5 x Crates of Holoreels (250 m3) to
-- Ake Sainen: 'Salve for Sis': courier 1 x Secure Coded Package (120 m3) t
-- Ihoura Tahken: 'For the Troops - Food for Fun (1 of 3)': courier 1 x Crates
-- Natsisainen Kepanova: 'Army Recruits': courier 5 x Group of Army Recruits (300 m3)
-- Inikko Samanuni: 'Cargo Delivery': courier 1 x Crates of Synthetic Oil, RETRI
 - Fehela Zassalou: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
-- Naki Vikkiras: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
 - Hakadura Otora: 'Stress Reliever': courier 5 x Crates of Tobacco (200 m3) to
 - Tashudan Shizomi: 'Soft Drink Wars': task to Sobaseki (0.8), mission site; bri
 - Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P
@@ -31,7 +21,6 @@ Open agent offers (agent_offers.json):
 - Kasata Mavila: 'Murderer Brought To Justice': task to Funtanainen (0.9), mi
 - Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
 - Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
-- Aivuken Kirvira: 'The Drone Infestation': task to Niyabainen deadspace belt (
 - Kara Takin: 'Furrier Fiasco': task to Josameto infested laboratory (0.6)
 - Nashokoda Pekumatken: 'What's in a Name - Change of Address (1 of 5)': task to Mal
 - Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si
@@ -51,3 +40,5 @@ Open agent offers (agent_offers.json):
 - Oinorolen Ocho: 'Eliminate the Pirate Campers': task to Paara (0.8) hidden s
 - Matoh Aketiya: 'Gone Berserk': task to Kakakela (0.9) rendezvous point. Pay
 - Kazara Kankiainen: 'Smuggler Interception': courier 10 x Militants (20 m3) to K
+- Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d
+- Okasa Kookkalen: 'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hid
