@@ -1121,6 +1121,7 @@ class StyleTests(unittest.TestCase):
         import eve_profit.style as st
         st._ON = None
         os.environ["EVE_COLOR"] = "1"
+        os.environ.pop("NO_COLOR", None)                                        # a shell that sets NO_COLOR would otherwise win
         lines = st.task_block(self.TEXT).split("\n")
         Y = "\x1b[1;93;40m"
         self.assertIn(Y, lines[0])                                              # headline
