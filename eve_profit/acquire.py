@@ -98,8 +98,8 @@ def held(con, item):
     return n
 
 
-def confirm(con, item, qty):
-    """`stop` on the buy step: remember the purchase until ESI shows it. -> text."""
+def confirm(con, item, qty, run=None):
+    """`stop` on the buy step: remember the purchase until ESI shows it. -> text. `run` (the timer's start time): a `stop` retried for the same run counts once."""
     try:                                                                # purchases ADD up (5 then 1 = 6); one name per item whatever its spelling;
         m = _one(con, "SELECT value FROM meta WHERE key=?", (KEY,))     # the same purchase confirmed twice (done, then stop) counts once
         st = json.loads(m[0]) if m else {}
@@ -109,7 +109,7 @@ def confirm(con, item, qty):
         old = st.pop(old_k) if old_k else None
         now = time.time()
         if old and now - old["t"] <= MAX_AGE_S:
-            if old.get("last") == int(qty) and now - old.get("last_t", 0) < 10 * 60:
+            if (run is not None and old.get("run") == run) or (old.get("last") == int(qty) and now - old.get("last_t", 0) < 10 * 60):
                 st[item] = old                                          # a repeat of the last confirmation: not a new purchase
                 con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (KEY, json.dumps(st)))
                 con.commit()
@@ -117,7 +117,7 @@ def confirm(con, item, qty):
             total = int(old["qty"]) + int(qty)
         else:
             total = int(qty)
-        st[item] = {"qty": total, "t": now, "last": int(qty), "last_t": now}
+        st[item] = {"qty": total, "t": now, "last": int(qty), "last_t": now, "run": run}
         con.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (KEY, json.dumps(st)))
         con.commit()
     except Exception:                                                   # noqa: BLE001

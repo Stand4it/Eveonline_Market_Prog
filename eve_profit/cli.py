@@ -412,7 +412,8 @@ def _run(a):
                     from .acquire import confirm as _acq
                     _m = _re.match(r"acquire ([\d,]+) x (.+)$", act.strip(), _re.I)
                     if _m:
-                        print(_acq(con, _m.group(2).strip().title() if _m.group(2).islower() else _m.group(2).strip(), int(_m.group(1).replace(",", ""))))
+                        print(_acq(con, _m.group(2).strip().title() if _m.group(2).islower() else _m.group(2).strip(), int(_m.group(1).replace(",", "")),
+                                   run=_json.loads(row[0]).get("t")))
                 if act.startswith(("show a screen", "update the model", "air social goal", "agent ", "job ")):         # these steps end with `done`: stop does it first
                     from .dailygoals import chain_done
                     print(chain_done(con, True if a.changed else (False if a.same else None), bought_ok=False))
