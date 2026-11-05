@@ -59,7 +59,13 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
         raise ValueError("no session running: start one with  start --activity \"NAME\"")
     s = json.loads(row[0])
     now = now or time.time()
-    entries = esi.paged(f"/characters/{s['char']}/wallet/journal/")
+    try:
+        entries = esi.paged(f"/characters/{s['char']}/wallet/journal/")
+    except RuntimeError as e:                                    # ESI down (504s): keep the run open, say how to finish it with the right time
+        worked = max((now - s["t"]) / 60.0 - s.get("paused_min", 0.0), 1.0)
+        raise SystemExit(f"Could not read your wallet journal ({e}).\nThe run '{s['activity']}' is STILL OPEN; nothing was logged or lost. "
+                         f"When ESI is back, run:\n   python -m eve_profit stop --minutes {worked:.0f}\n"
+                         f"(--minutes keeps the {worked:.0f} min you worked so far, so the wait does not count.)") from None
     isk, by = summarize_journal(entries, s["t"], now, sales=any(w in s["activity"].lower() for w in SALE_WORDS))
     isk += extra_isk
     total_paused = paused_min + s.get("paused_min", 0.0) + ((now - s["pause_t"]) / 60.0 if s.get("pause_t") else 0.0)   # pauses made with `pause`/`resume` + --paused

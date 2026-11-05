@@ -12,6 +12,17 @@ class FakeESI:
 
 
 class SessionTests(unittest.TestCase):
+    def test_esi_down_at_stop_keeps_the_run_open_and_says_the_minutes(self):
+        class DownESI:
+            def paged(self, path, **kw):
+                raise RuntimeError("ESI failed: journal page 2")
+        con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
+        start(con, "Level 1 security mission", 42, now=1_800_000_000)
+        with self.assertRaises(SystemExit) as cm:
+            stop(con, DownESI(), now=1_800_000_000 + 1800)
+        self.assertIn("stop --minutes 30", str(cm.exception))
+        self.assertIsNotNone(con.execute("SELECT value FROM meta WHERE key='session'").fetchone())   # still open
+
     def test_only_payouts_inside_the_window_count_and_the_log_gets_a_row(self):
         con = db.connect(os.path.join(tempfile.mkdtemp(), "t.db"))
         t0 = 1_800_000_000
