@@ -21,7 +21,6 @@ Open agent offers (agent_offers.json):
 - Kasata Mavila: 'Murderer Brought To Justice': task to Funtanainen (0.9), mi
 - Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
 - Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
-- Kara Takin: 'Furrier Fiasco': task to Josameto infested laboratory (0.6)
 - Nashokoda Pekumatken: 'What's in a Name - Change of Address (1 of 5)': task to Mal
 - Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si
 - Otuvas Ylitoh: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
@@ -42,3 +41,4 @@ Open agent offers (agent_offers.json):
 - Kazara Kankiainen: 'Smuggler Interception': courier 10 x Militants (20 m3) to K
 - Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d
 - Okasa Kookkalen: 'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hid
+- Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39

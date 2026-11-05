@@ -3929,7 +3929,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "New Caldari",
    "career": "Security",
    "where": "New Caldari II (Matias) - Kaalakiota Factory (0.9)",
@@ -3942,7 +3942,7 @@
    "to_system": "Josameto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Josameto is 1 jump(s) from New Caldari (map DB route)",
-   "note": "destroy the infested laboratory Seen 2026-10-31.",
+   "note": "destroy the infested laboratory Seen 2026-10-31. EXPIRED 2026-11-05 (game notice).",
    "needs_tool": "gun"
   },
   {
@@ -4379,6 +4379,26 @@
    "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
    "note": "L1: destroy the Guristas habitation module, site heavily guarded per the offer. Structure needs extra DPS time. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-05.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kakakela",
+   "career": "Enforcer",
+   "where": "Kakakela VI - Moon 5 - Lai Dai Corporation Factory",
+   "agent": "Umunmaa Korakela (Enforcer, 1, Kakakela VI - Moon 5 - Lai Dai Corporation Factory)",
+   "mission": "'The Drone Infestation': task to deadspace (Airkio). Pays 39,000 ISK + 48 LP; bonus 34,000 ISK within 2h8m.",
+   "isk": 39000,
+   "bonus": 34000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Airkio",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
+   "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns."
   }
  ],
  "min_per_jump": 3.0,
