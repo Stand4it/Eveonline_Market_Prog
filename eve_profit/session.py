@@ -60,7 +60,8 @@ def stop(con, esi, extra_isk=0.0, now=None, paused_min=0.0, ship=None, loot=None
     s = json.loads(row[0])
     now = now or time.time()
     try:
-        entries = esi.paged(f"/characters/{s['char']}/wallet/journal/")
+        older = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(s["t"] - 3600))       # pages are newest first: stop once one reaches before the run
+        entries = esi.paged(f"/characters/{s['char']}/wallet/journal/", enough=lambda rows: any(r.get("date", "") < older for r in rows))
     except RuntimeError as e:                                    # ESI down (504s): keep the run open, say how to finish it with the right time
         worked = max((now - s["t"]) / 60.0 - s.get("paused_min", 0.0), 1.0)
         raise SystemExit(f"Could not read your wallet journal ({e}).\nThe run '{s['activity']}' is STILL OPEN; nothing was logged or lost. "

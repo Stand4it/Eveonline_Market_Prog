@@ -89,11 +89,14 @@ class ESI:
     def type_info(self, type_id):
         return self.get(f"/universe/types/{type_id}/")[0]
 
-    def paged(self, path, **params):
+    def paged(self, path, enough=None, **params):
+        """Every page; with enough(page_rows) -> True it stops early (the journal is newest first: no need for pages older than a run)."""
         out, page, pages = [], 1, 1
         while page <= pages:
             data, pages = self.get(path, page=page, **params)
             out.extend(data)
+            if enough and enough(data):
+                break
             page += 1
         return out
 

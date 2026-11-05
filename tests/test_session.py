@@ -659,7 +659,7 @@ class WalletDeltaTests(unittest.TestCase):
         from eve_profit.session import INCOME_TYPES, start, stop, summarize_journal
 
         class E:
-            def paged(self, path):
+            def paged(self, path, **kw):
                 return [{"date": "2026-10-10T04:14:00Z", "ref_type": "market_transaction", "amount": 393377.0},
                         {"date": "2026-10-10T04:14:00Z", "ref_type": "market_transaction", "amount": -5000.0}]
         self.assertNotIn("market_transaction", INCOME_TYPES)                  # only selling runs count sales
