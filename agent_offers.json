@@ -4399,6 +4399,26 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
    "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Kakakela",
+   "career": "Enforcer",
+   "where": "Kakakela VI - Moon 15 - Caldari Navy Assembly Plant",
+   "agent": "Kiken Yuatakkeimo (Enforcer, 1, Kakakela VI - Moon 15 - Caldari Navy Assembly Plant)",
+   "mission": "'Undue Attention - Poking Around (1 of 3)': task to deadspace (Kakakela). Pays 33,000 ISK + 47 LP; bonus 40,000 ISK within 2h2m.",
+   "isk": 33000,
+   "bonus": 40000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Kakakela",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Kakakela is 0 jump(s) from Kakakela (map DB route)",
+   "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3."
   }
  ],
  "min_per_jump": 3.0,

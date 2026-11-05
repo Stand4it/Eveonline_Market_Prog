@@ -42,3 +42,4 @@ Open agent offers (agent_offers.json):
 - Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d
 - Okasa Kookkalen: 'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hid
 - Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39
+- Kiken Yuatakkeimo: 'Undue Attention - Poking Around (1 of 3)': task to deadspac
