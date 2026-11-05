@@ -635,3 +635,4 @@
 - 2026-11-02 agent_offers.json: Haattiekko Oshukata (Muvolailen, Security L2) 'Recon (2 of 3)' 0 m3 to Muvolailen (0 jumps), 100,000 + 95,000 bonus (1 h 26 min) + 134 LP.
 - 2026-11-02 2026-11-02 wallet_paste.py: the no-rows message must not echo the clipboard (it can hold personal data or passwords); it reports only the line count.
 - 2026-11-02 agent_offers.json: Oinorolen Ocho (Muvolailen, Security L2) 'Eliminate the Pirate Campers' 0 m3 to Paara (1 jumps), 113,000 + 111,000 bonus (1 h 52 min) + 173 LP.
+- 2026-11-04 2026-11-04 IRIS (Jita VI, Paragon Fulfillment Center) 'Paragon Requests: Ships for Tips': deliver 1 packaged Retriever (3,750 m3) for 4,000 EverMarks (Omega-marked reward), no ISK. Retriever ~36.95M in Jita (last scan) vs wallet 17.95M: about 9,200 ISK per EM, EM not sellable per the offer's note on Paragon items. Skipped.

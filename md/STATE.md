@@ -5,7 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 425 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Mamdasan Hoghosh: 'Freedom Must Not Prevail': task to Niyabainen (combat site,
 - Santera Nami: 'Incriminating Evidence': courier Crates of Viral Agent (400
 - Ashataalen Kaitsiras: 'Incriminating Evidence': courier Crates of Viral Agent (400
 - Kodamailen Oijari: 'Equipped For The Job': courier 5 x Crates of Transmitters (

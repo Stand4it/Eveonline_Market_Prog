@@ -3271,7 +3271,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Ducia Foundry Mineral Reserve",
@@ -3284,7 +3284,7 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule) Seen 2026-10-28.",
+   "note": "L2 combat: destroy Freedom Fighters; needs combat fit (99% rule) Seen 2026-10-28. EXPIRED 2026-11-03 (game notice).",
    "needs_tool": "gun"
   },
   {
