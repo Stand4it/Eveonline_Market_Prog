@@ -266,7 +266,11 @@ def _run(a):
             esi.token, cid = sso.get_token(a.client_id)
             _ship_before = (p.ship_name, p.ship_type_id)
             _sys_before = p.current_system
-            res_ = sync_character(con, esi, cid, p)
+            try:
+                res_ = sync_character(con, esi, cid, p)
+            except RuntimeError as ex:                                      # ESI down (503/504): a clear message, not a traceback
+                raise SystemExit(f"SYNC NOT DONE: {ex}. CCP's server is not answering for your character right now; your saved data "
+                                 "(wallet, ship, hangar) is unchanged and the plan still works from it. Try  sync  again in 10-15 minutes.") from None
             print(res_)
             if (p.ship_name, p.ship_type_id) != _ship_before and _ship_before[0]:
                 print(f"SHIP CHANGED: you fly {p.ship_name} now (hold {p.cargo_m3:,.0f} m3); the last sync said {_ship_before[0]}. Plans use this ship from now on.")
