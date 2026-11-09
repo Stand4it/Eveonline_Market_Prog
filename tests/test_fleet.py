@@ -349,6 +349,8 @@ class NextStepTests(unittest.TestCase):
         con.execute("DELETE FROM inventory")
         p = Profile(max_jumps=3, cargo_m3=5000, wallet_isk=1e9, min_profit_isk=1, current_location_id=60000001, secs_per_jump=45.0)
         con.execute("DELETE FROM orders WHERE order_id>=9800")
+        from eve_profit.airclaim import mark
+        mark(con)                                                            # the AIR claim step (urgent near its reset date) would outrank the trade
         txt = next_action(con, g, p, ahead=True)                             # --plan shows the whole chain
         self.assertIn("STEP: FLY to", txt)                                   # a trade starts with the flight to where you buy
         self.assertIn("LATER:", txt)                                         # the buy details are a later step: in the plan only
