@@ -3472,7 +3472,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 15 - Imperial Armaments Warehouse (0.9)",
@@ -3485,14 +3485,14 @@
    "to_system": "Eskunen",
    "m3": 320.0,
    "needs": "320 m3 of cargo; Eskunen is 4 jump(s) from Ikuchi (map DB route)",
-   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-30."
+   "note": "Seen, 44,000 ISK + 21 LP with the bonus. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Ikuchi",
    "career": "Distribution",
    "where": "Ikuchi VI - Moon 15 - Ytiri Storage (0.9)",
@@ -3505,7 +3505,7 @@
    "to_system": "Hirtamon",
    "m3": 1.0,
    "needs": "1 m3 of cargo; Hirtamon is 1 jump(s) from Ikuchi (map DB route)",
-   "note": "ROUND TRIP: pickup Hirtamon, drop-off back at Ikuchi (agent station). Chain 1 of 5 (same chain as Aratani's Lost That Bet). Seen 2026-10-30."
+   "note": "ROUND TRIP: pickup Hirtamon, drop-off back at Ikuchi (agent station). Chain 1 of 5 (same chain as Aratani's Lost That Bet). Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -3532,7 +3532,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sarekuwa",
    "career": "Distribution, L2",
    "where": "Sarekuwa III - Moon 8 - Caldari Navy Assembly Plant (0.9)",
@@ -3545,14 +3545,14 @@
    "to_system": "Ajanen",
    "m3": 200.0,
    "needs": "200 m3 of cargo; Ajanen is 5 jump(s) from Sarekuwa (map DB route)",
-   "note": "Level 2 agent. 65 LP alone finishes the AIR daily goal 'Earn 50 LP'. Seen 2026-10-30."
+   "note": "Level 2 agent. 65 LP alone finishes the AIR daily goal 'Earn 50 LP'. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Security",
    "where": "Veisto V - Moon 15 - Sukuuvestaa Corporation Factory (0.8)",
@@ -3565,7 +3565,7 @@
    "to_system": "Sobaseki",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sobaseki is 1 jump(s) from Veisto (map DB route)",
-   "note": "COMBAT: kill Quince Nemirda in Sobaseki, loot the formula, return to agent. Site has special ship restrictions. Seen 2026-10-30.",
+   "note": "COMBAT: kill Quince Nemirda in Sobaseki, loot the formula, return to agent. Site has special ship restrictions. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3573,7 +3573,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Security",
    "where": "Veisto V - Moon 15 - Sukuuvestaa Corporation Factory (0.8)",
@@ -3586,7 +3586,7 @@
    "to_system": "Iidoken",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Iidoken is 1 jump(s) from Veisto (map DB route)",
-   "note": "COMBAT L2: destroy the Federation Navy guards and their headquarters in Iidoken. Seen 2026-10-30.",
+   "note": "COMBAT L2: destroy the Federation Navy guards and their headquarters in Iidoken. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3594,7 +3594,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Caldari Steel Factory (0.8)",
@@ -3607,7 +3607,7 @@
    "to_system": "Veisto",
    "m3": 6000.0,
    "needs": "6000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: mine 10,000 Mercium (6,000 m3) in Veisto; ~14 hold trips at 450 m3: the bonus time is out of reach with one Miner II. Seen 2026-10-30.",
+   "note": "MINING L2: mine 10,000 Mercium (6,000 m3) in Veisto; ~14 hold trips at 450 m3: the bonus time is out of reach with one Miner II. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3636,7 +3636,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
@@ -3649,7 +3649,7 @@
    "to_system": "Hageken",
    "m3": 1800.0,
    "needs": "1800 m3 of cargo; Hageken is 5 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: mine 18,000 Banidine (1,800 m3) in Hageken, haul back to Veisto; ~4 round trips at 450 m3 unless the ore is jetcanned/hauled; pirates mentioned (may be rats at the site). Seen 2026-10-30.",
+   "note": "MINING L2: mine 18,000 Banidine (1,800 m3) in Hageken, haul back to Veisto; ~4 round trips at 450 m3 unless the ore is jetcanned/hauled; pirates mentioned (may be rats at the site). Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3657,7 +3657,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
@@ -3670,14 +3670,14 @@
    "to_system": "Uosusuokko",
    "m3": 200.0,
    "needs": "200 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
-   "note": "Seen, 48,000 ISK + 24 LP with the bonus. Seen 2026-10-30."
+   "note": "Seen, 48,000 ISK + 24 LP with the bonus. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory (0.8)",
@@ -3690,14 +3690,14 @@
    "to_system": "Uosusuokko",
    "m3": 210.0,
    "needs": "210 m3 of cargo; Uosusuokko is 4 jump(s) from Veisto (map DB route)",
-   "note": "Same drop-off system as Onavirpio's Miracle Drug (Uosusuokko VII): both fit together (410 m3 of 450). Seen 2026-10-30."
+   "note": "Same drop-off system as Onavirpio's Miracle Drug (Uosusuokko VII): both fit together (410 m3 of 450). Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Moon 5 - Poksu Mineral Group Refinery (0.8)",
@@ -3710,7 +3710,7 @@
    "to_system": "Veisto",
    "m3": 6000.0,
    "needs": "6000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L2: 10,000 Mercium (6,000 m3) in Veisto, ~14 hold trips at 450 m3; bonus out of reach with one Miner II. Same mission as Airata Mion's. Seen 2026-10-30.",
+   "note": "MINING L2: 10,000 Mercium (6,000 m3) in Veisto, ~14 hold trips at 450 m3; bonus out of reach with one Miner II. Same mission as Airata Mion's. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3718,7 +3718,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Mining",
    "where": "Veisto V - Moon 4 - Propel Dynamics Factory (0.8)",
@@ -3731,7 +3731,7 @@
    "to_system": "Veisto",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "MINING L1: 20,000 Banidine (2,000 m3) in Veisto, ~5 hold trips at 450 m3. Seen 2026-10-30.",
+   "note": "MINING L1: 20,000 Banidine (2,000 m3) in Veisto, ~5 hold trips at 450 m3. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -3739,7 +3739,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Distribution",
    "where": "Sobaseki IX - Moon 9 - Caldari Provisions Food Packaging (0.8)",
@@ -3752,7 +3752,7 @@
    "to_system": "Akiainavas",
    "m3": 200.0,
    "needs": "200 m3 of cargo; Akiainavas is 3 jump(s) from Sobaseki (map DB route)",
-   "note": "Seen, 86,000 ISK + 64 LP with the bonus. Seen 2026-10-30."
+   "note": "Seen, 86,000 ISK + 64 LP with the bonus. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days)."
   },
   {
    "taxed": false,
@@ -3780,7 +3780,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki XI - Moon 1 - Home Guard Assembly Plant (0.8)",
@@ -3793,7 +3793,7 @@
    "to_system": "Vellaine",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Vellaine is 4 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L2 chain 1 of 2: disable the smuggler ship in Vellaine, bring back the Smuggler DNA. Seen 2026-10-30.",
+   "note": "COMBAT L2 chain 1 of 2: disable the smuggler ship in Vellaine, bring back the Smuggler DNA. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3801,7 +3801,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8)",
@@ -3814,7 +3814,7 @@
    "to_system": "Funtanainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Funtanainen is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L2: destroy the murderer and his guards in Funtanainen. Seen 2026-10-30.",
+   "note": "COMBAT L2: destroy the murderer and his guards in Funtanainen. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3822,7 +3822,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki VIII - Moon 1 - Home Guard Assembly Plant (0.8)",
@@ -3835,7 +3835,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L1: destroy the spy's ship in Veisto, take the Prisoner from the cargo container, return. Seen 2026-10-30.",
+   "note": "COMBAT L1: destroy the spy's ship in Veisto, take the Prisoner from the cargo container, return. Seen 2026-10-30. EXPIRED (seen 2026-10-30, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3864,7 +3864,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Security",
    "where": "Sobaseki VII - Caldari Navy Logistic Support (0.8)",
@@ -3877,7 +3877,7 @@
    "to_system": "Sobaseki",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "COMBAT L1: destroy all ships at the encounter in Sobaseki, main target near the ghost ship (Guristas: kinetic/thermal). Seen 2026-10-31.",
+   "note": "COMBAT L1: destroy all ships at the encounter in Sobaseki, main target near the ghost ship (Guristas: kinetic/thermal). Seen 2026-10-31. EXPIRED (seen 2026-10-31, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3950,7 +3950,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "New Caldari",
    "career": "Security",
    "where": "New Caldari Prime - Moon 1 - CEP Bureau (0.9)",
@@ -3963,7 +3963,7 @@
    "to_system": "Malkalen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Malkalen is 1 jump(s) from New Caldari (map DB route)",
-   "note": "patrol outside embassy, engage hostiles; part 1 of 5 chain Seen 2026-10-31.",
+   "note": "patrol outside embassy, engage hostiles; part 1 of 5 chain Seen 2026-10-31. EXPIRED (seen 2026-10-31, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3971,7 +3971,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Iyen-Oursta",
    "career": "Security",
    "where": "Iyen-Oursta III - Roden Shipyards Factory (0.8)",
@@ -3984,7 +3984,7 @@
    "to_system": "Faurent",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Faurent is 1 jump(s) from Iyen-Oursta (map DB route)",
-   "note": "destroy the Slaver Ship, bring 6 x Freed Slaves (6 m3) back to the agent. Site has ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01.",
+   "note": "destroy the Slaver Ship, bring 6 x Freed Slaves (6 m3) back to the agent. Site has ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -3992,7 +3992,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Mining",
    "where": "Perimeter VII - Poksu Mineral Group Mineral Reserve (0.9)",
@@ -4005,7 +4005,7 @@
    "to_system": "Perimeter",
    "m3": 2250.0,
    "needs": "2250 m3 of cargo; Perimeter is 0 jump(s) from Perimeter (map DB route)",
-   "note": "Mine 7,500 Augumene (2,250 m3) at the site in Perimeter, bring it back. Needs a mining laser and an ore hold or cargo of about 2,250 m3 (several trips in a Venture). Agent standing 1.6. Seen 2026-11-01.",
+   "note": "Mine 7,500 Augumene (2,250 m3) at the site in Perimeter, bring it back. Needs a mining laser and an ore hold or cargo of about 2,250 m3 (several trips in a Venture). Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -4013,7 +4013,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
@@ -4026,7 +4026,7 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L2: destroy the convoy (medium escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01.",
+   "note": "L2: destroy the convoy (medium escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4034,7 +4034,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter VI - Ytiri Storage (0.9)",
@@ -4047,7 +4047,7 @@
    "to_system": "Maurasi",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L1: rescue 20 x Ship's Crew (40 m3) from the spawn container in room 3; gates unlocked, rooms 1-2 can be skipped. Only frigates and destroyers may use the first gate (Catalyst OK). Agent standing 1.6. Seen 2026-11-01.",
+   "note": "L1: rescue 20 x Ship's Crew (40 m3) from the spawn container in room 3; gates unlocked, rooms 1-2 can be skipped. Only frigates and destroyers may use the first gate (Catalyst OK). Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4055,7 +4055,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter VI - Ytiri Storage (0.9)",
@@ -4068,7 +4068,7 @@
    "to_system": "Maurasi",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L1: kill the Sansha ships camping the hidden stargate. Same station and same system (Maurasi) as Kirtikko Aaraken's Worlds Collide: do both in one trip. Agent standing 1.6. Seen 2026-11-01.",
+   "note": "L1: kill the Sansha ships camping the hidden stargate. Same station and same system (Maurasi) as Kirtikko Aaraken's Worlds Collide: do both in one trip. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4076,7 +4076,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
@@ -4089,7 +4089,7 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L1: destroy all ships, main target near the ghost ship. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01.",
+   "note": "L1: destroy all ships, main target near the ghost ship. Normal ship restrictions. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4097,7 +4097,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Perimeter",
    "career": "Security",
    "where": "Perimeter II - Moon 1 - Caldari Navy Assembly Plant (0.9)",
@@ -4110,14 +4110,14 @@
    "to_system": "Maurasi",
    "m3": 1.0,
    "needs": "1 m3 of cargo; Maurasi is 1 jump(s) from Perimeter (map DB route)",
-   "note": "L1 storyline-chain step 1 of 4: approach the Mediation Center in Maurasi, pick up the diplomat, bring him back. No combat stated. Same system as the two Perimeter VI Maurasi missions. Agent standing 1.6. Seen 2026-11-01."
+   "note": "L1 storyline-chain step 1 of 4: approach the Mediation Center in Maurasi, pick up the diplomat, bring him back. No combat stated. Same system as the two Perimeter VI Maurasi missions. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Maurasi",
    "career": "Security",
    "where": "Maurasi VIII - Moon 14 - Caldari Business Tribunal (0.9)",
@@ -4130,7 +4130,7 @@
    "to_system": "Itamo",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Itamo is 1 jump(s) from Maurasi (map DB route)",
-   "note": "L1: kill rogue drones, bring 1 x Rogue Drone A.I. Core back. Special ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01.",
+   "note": "L1: kill rogue drones, bring 1 x Rogue Drone A.I. Core back. Special ship restrictions (check a destroyer may enter). Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4138,7 +4138,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Mining",
    "where": "Muvolailen X - Moon 7 - Wiyrkomi Corporation Factory (0.7)",
@@ -4151,7 +4151,7 @@
    "to_system": "Muvolailen",
    "m3": 2250.0,
    "needs": "2250 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
-   "note": "Mine 7,500 Augumene (2,250 m3) in Muvolailen and bring it back. Needs a mining laser and about 2,250 m3 of hauling. Agent standing 1.6. Seen 2026-11-01.",
+   "note": "Mine 7,500 Augumene (2,250 m3) in Muvolailen and bring it back. Needs a mining laser and about 2,250 m3 of hauling. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -4159,7 +4159,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Mining",
    "where": "Muvolailen XI - Moon 3 - Caldari Steel Factory (0.7)",
@@ -4172,7 +4172,7 @@
    "to_system": "Muvolailen",
    "m3": 2250.0,
    "needs": "2250 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
-   "note": "Mine 7,500 Augumene (2,250 m3) in Muvolailen and bring it back. Needs a mining laser and about 2,250 m3 of hauling. Agent standing 1.6. Seen 2026-11-01.",
+   "note": "Mine 7,500 Augumene (2,250 m3) in Muvolailen and bring it back. Needs a mining laser and about 2,250 m3 of hauling. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days).",
    "needs_tool": "mining"
   },
   {
@@ -4200,7 +4200,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Security",
    "where": "Muvolailen VIII - Moon 2 - Spacelane Patrol Assembly Plant (0.7)",
@@ -4213,14 +4213,14 @@
    "to_system": "Paara",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Paara is 1 jump(s) from Muvolailen (map DB route)",
-   "note": "L1 chain step 1 of 5: get within 5 km of the abandoned mining station, then report back. No combat stated. Agent standing 1.6. Seen 2026-11-01."
+   "note": "L1 chain step 1 of 5: get within 5 km of the abandoned mining station, then report back. No combat stated. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Distribution",
    "where": "Muvolailen VIII - Moon 2 - Spacelane Patrol Assembly Plant (0.7)",
@@ -4233,14 +4233,14 @@
    "to_system": "Tasabeshi",
    "m3": 160.0,
    "needs": "160 m3 of cargo; Tasabeshi is 3 jump(s) from Muvolailen (map DB route)",
-   "note": "L1 courier, 160 m3 fits the Catalyst (450 m3). Agent standing 1.6. Seen 2026-11-01."
+   "note": "L1 courier, 160 m3 fits the Catalyst (450 m3). Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days)."
   },
   {
    "taxed": false,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Distribution",
    "where": "Muvolailen X - Moon 3 - CBD Corporation Storage (0.7)",
@@ -4253,14 +4253,14 @@
    "to_system": "Annaro",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Annaro is 1 jump(s) from Muvolailen (map DB route)",
-   "note": "L1 chain step 1 of 5: pick up the chip at Annaro I, bring it back to the agent. Base reward is 1 x Device (item, value not counted), no ISK; bonus 25,000 ISK. Agent standing 1.6. Seen 2026-11-01."
+   "note": "L1 chain step 1 of 5: pick up the chip at Annaro I, bring it back to the agent. Base reward is 1 x Device (item, value not counted), no ISK; bonus 25,000 ISK. Agent standing 1.6. Seen 2026-11-01. EXPIRED (seen 2026-11-01, offers last 7 days)."
   },
   {
    "taxed": true,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Security",
    "where": "Muvolailen IX - Moon 11 - Spacelane Patrol Assembly Plant (0.7)",
@@ -4273,14 +4273,14 @@
    "to_system": "Muvolailen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Muvolailen is 0 jump(s) from Muvolailen (map DB route)",
-   "note": "L2 chain step 2 of 3: fly to the gate locked by the mining corporation, report back. Mercenaries may be present: check before flying a valuable ship. Agent standing 2.4. Seen 2026-11-02."
+   "note": "L2 chain step 2 of 3: fly to the gate locked by the mining corporation, report back. Mercenaries may be present: check before flying a valuable ship. Agent standing 2.4. Seen 2026-11-02. EXPIRED (seen 2026-11-02, offers last 7 days)."
   },
   {
    "taxed": true,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Muvolailen",
    "career": "Security",
    "where": "Muvolailen X - Moon 16 - Sukuuvestaa Corporation Warehouse (0.7)",
@@ -4293,7 +4293,7 @@
    "to_system": "Paara",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Paara is 1 jump(s) from Muvolailen (map DB route)",
-   "note": "L2: kills required (Guristas ships at the hidden stargate). Fails the L2 99% rule. Agent standing 1.6. Seen 2026-11-02.",
+   "note": "L2: kills required (Guristas ships at the hidden stargate). Fails the L2 99% rule. Agent standing 1.6. Seen 2026-11-02. EXPIRED (seen 2026-11-02, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4398,7 +4398,7 @@
    "to_system": "Airkio",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
-   "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns."
+   "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns. Seen 2026-11-05."
   },
   {
    "taxed": true,
@@ -4418,7 +4418,7 @@
    "to_system": "Kakakela",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kakakela is 0 jump(s) from Kakakela (map DB route)",
-   "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3."
+   "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3. Seen 2026-11-05."
   }
  ],
  "min_per_jump": 3.0,

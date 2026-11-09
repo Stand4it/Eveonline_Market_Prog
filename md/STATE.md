@@ -5,38 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 426 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Fehela Zassalou: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
-- Samivesti Iivonas: 'Lost That Bet (1 of 5)': courier 1 x Dolls (pick up at Hirt
-- Hakadura Otora: 'Stress Reliever': courier 5 x Crates of Tobacco (200 m3) to
-- Tashudan Shizomi: 'Soft Drink Wars': task to Sobaseki (0.8), mission site; bri
-- Veinepas Yarai: 'Foreign Investment': task to Iidoken (0.8), mission site. P
-- Airata Mion: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
-- Aoken Pieppatoh: 'Claimjumpers': courier 18,000 x Banidine, mined at the book
-- Onavirpio Asorela: 'Miracle Drug': courier 5 x Crates of Zemnar (200 m3) to Uos
-- Veinalen Elonko: 'A Special Breed': courier 3 x Group of Kameiras (210 m3) to
-- Ke Kakuruka: 'Mercium Belt': courier 10,000 x Mercium, mined at the missi
-- Ootoh Litiura: 'Bountiful Banidine': courier 20,000 x Banidine, mined at th
-- Gotibera Kanamola: 'Move The Goods': courier 20 x Small Sealed Cargo Containers
-- Eralikken Tila: 'Customs Interdiction (1 of 2)': task to Vellaine (0.6), mis
-- Kasata Mavila: 'Murderer Brought To Justice': task to Funtanainen (0.9), mi
-- Saun Otsusen: 'Escaped Spy': task to Veisto (0.8), mission site; bring 1 x
-- Jukosoni Kauniki: 'The Score': task to Sobaseki (0.8), mission site (Guristas 
-- Nashokoda Pekumatken: 'What's in a Name - Change of Address (1 of 5)': task to Mal
-- Podineilles Galoriel: 'Freedom and Commerce': task to Faurent (0.5) slaver ship si
-- Otuvas Ylitoh: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
-- Ano Pruya: 'Smuggler Interception': task to Niyabainen (0.9) convoy sit
-- Kirtikko Aaraken: 'Worlds Collide': task to Maurasi (0.9) deadspace complex. P
-- Okamainen Niuranto: 'Eliminate the Pirate Campers': task to Maurasi (0.9) hidden
-- Ogyura Unao: 'The Score': task to Niyabainen (0.9) Guristas encounter. Pa
-- Tuga Nato: 'Interstellar Railroad (1 of 4)': courier 1 x Amarr Diplomat
-- Kai Etashanko: 'Drone Detritus': task to Itamo (0.7) abandoned drone hive. 
-- Osunen Karjiras: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
-- Kintura Massiken: 'Down and Dirty': courier 7,500 x Augumene, mined at the mis
-- Coroutte Amenouve: 'Athran Exigency (1 of 5)': task to Paara (0.8) abandoned mi
-- Iivinonen Konkinen: 'Corporate Documents': courier 4 x Crates of Corporate Docum
-- Antaken Kamola: 'Rancorous Researcher (1 of 5)': courier 1 x Encoded Data Ch
-- Haattiekko Oshukata: 'Recon (2 of 3)': task to Muvolailen (0.7) locked accelerati
-- Oinorolen Ocho: 'Eliminate the Pirate Campers': task to Paara (0.8) hidden s
 - Matoh Aketiya: 'Gone Berserk': task to Kakakela (0.9) rendezvous point. Pay
 - Kazara Kankiainen: 'Smuggler Interception': courier 10 x Militants (20 m3) to K
 - Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d

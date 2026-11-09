@@ -8,6 +8,7 @@ WISHES = [
     ("Gallente Hauler", 1, "unlocks the Nereus: a big hold turns the waiting courier offers into ISK"),
     ("Gallente Frigate", 3, "Incursus and Level 2 security missions"),
     ("Small Hybrid Turret", 3, "guns for Level 2 security missions and rats"),
+    ("Small Hybrid Turret", 5, "+10% gun damage now and T2 blasters (Light Ion Blaster II needs V); owner queued IV+V on 2026-11-09"),
     ("Gallente Frigate", 4, "ratting and combat anomalies"),
     ("Astrometrics", 1, "probe scanning: relic sites and the daily scan goal"),
     ("Mining", 3, "better ore yield for the mining offers"),
