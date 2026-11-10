@@ -4438,7 +4438,28 @@
    "to_system": "Uosusuokko",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Uosusuokko is 3 jump(s) from Sobaseki (map DB route)",
-   "note": "L1 combat: destroy the rogue drones. Needs guns."
+   "note": "L1 combat: destroy the rogue drones. Needs guns. Seen 2026-11-10."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Industrialist",
+   "where": "Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve",
+   "agent": "Vasala Akochi (Industrialist, 1, Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve)",
+   "mission": "'Mercium Experiments': courier 1800 x Mercium (1080 m3) to Sobaseki XIII - Moon 3 - Poksu Mineral Group Mineral Reserve. Pays 46,000 ISK + 50 LP; bonus 43,000 ISK within 1h16m.",
+   "isk": 46000,
+   "bonus": 43000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Sobaseki",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
+   "note": "L1 mining: mine 1,800 Mercium (1,080 m3) in Sobaseki, deliver to the agent. Needs a mining ship with a 1,080 m3+ ore hold (Venture).",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,

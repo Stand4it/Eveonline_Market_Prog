@@ -12,3 +12,4 @@ Open agent offers (agent_offers.json):
 - Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39
 - Kiken Yuatakkeimo: 'Undue Attention - Poking Around (1 of 3)': task to deadspac
 - Saun Otsusen: 'The Roving Rogue Drones': task to deadspace (Uosusuokko). P
+- Vasala Akochi: 'Mercium Experiments': courier 1800 x Mercium (1080 m3) to S
