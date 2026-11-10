@@ -4466,7 +4466,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Sobaseki",
    "career": "Industrialist",
    "where": "Sobaseki VI - Minedrill Mineral Reserve",
@@ -4479,7 +4479,7 @@
    "to_system": "Sobaseki",
    "m3": 2000.0,
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
-   "note": "L1 mining: mine 20,000 Banidine (2,000 m3) in Sobaseki, deliver to the agent. Same system as Vasala's Mercium: do both in one Venture trip.",
+   "note": "L1 mining: mine 20,000 Banidine (2,000 m3) in Sobaseki, deliver to the agent. Same system as Vasala's Mercium: do both in one Venture trip. EXPIRED 2026-11-07 (game notice).",
    "needs_tool": "mining"
   },
   {
@@ -4500,7 +4500,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns."
+   "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns. Seen 2026-11-10."
   }
  ],
  "min_per_jump": 3.0,

@@ -12,5 +12,4 @@ Open agent offers (agent_offers.json):
 - Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39
 - Kiken Yuatakkeimo: 'Undue Attention - Poking Around (1 of 3)': task to deadspac
 - Saun Otsusen: 'The Roving Rogue Drones': task to deadspace (Uosusuokko). P
-- Okuro Petsiken: 'Bountiful Banidine': courier 20000 x Banidine (2000 m3) to 
 - Jukosoni Kauniki: 'For the Birds': task to deadspace (Veisto). Pays 62,000 ISK

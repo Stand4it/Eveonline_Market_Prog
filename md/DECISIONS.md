@@ -646,3 +646,4 @@
 - 2026-11-10 agent_offers.json: Vasala Akochi (Sobaseki, Industrialist 1) 'Mercium Experiments' 1080 m3 to Sobaseki (0 jumps), 46,000 + 43,000 bonus (1h16m) + 50 LP.
 - 2026-11-10 agent_offers.json: Okuro Petsiken (Sobaseki, Industrialist 1) 'Bountiful Banidine' 2000 m3 to Sobaseki (0 jumps), 46,000 + 44,000 bonus (1h22m) + 55 LP.
 - 2026-11-10 agent_offers.json: Jukosoni Kauniki (Sobaseki, Enforcer 1) 'For the Birds' 0 m3 to Veisto (1 jumps), 62,000 + 67,000 bonus (3h2m) + 80 LP.
+- 2026-11-10 2026-11-10: Fractured Skies is live. The AIR Career window is replaced by Neocom > Achievements (score 185; Rewards tab had 6 unclaimed). Progressing: Marginal Victory (sell 500M), Market Earnings (earn 500k on market, ~85% done), Deep Pockets (spend 1B). Done: Stellar Exploration (30 systems). The airclaim step ends at the reset; claiming now happens in Achievements > Rewards. Still to do from the backlog: map re-sync, tax rates, price_watch.
