@@ -4419,6 +4419,26 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kakakela is 0 jump(s) from Kakakela (map DB route)",
    "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3. Seen 2026-11-05."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Enforcer",
+   "where": "Sobaseki VIII - Moon 1 - Home Guard Assembly Plant",
+   "agent": "Saun Otsusen (Enforcer, 1, Sobaseki VIII - Moon 1 - Home Guard Assembly Plant)",
+   "mission": "'The Roving Rogue Drones': task to deadspace (Uosusuokko). Pays 37,000 ISK + 54 LP; bonus 47,000 ISK within 2h2m.",
+   "isk": 37000,
+   "bonus": 47000,
+   "task_min": 8,
+   "jumps": 3,
+   "to_system": "Uosusuokko",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Uosusuokko is 3 jump(s) from Sobaseki (map DB route)",
+   "note": "L1 combat: destroy the rogue drones. Needs guns."
   }
  ],
  "min_per_jump": 3.0,

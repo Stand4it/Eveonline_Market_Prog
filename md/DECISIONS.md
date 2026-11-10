@@ -642,3 +642,4 @@
 - 2026-11-05 agent_offers.json: Okasa Kookkalen (Kakakela, Security L1) 'Avenge a Fallen Comrade' 0 m3 to Airkio (1 jumps), 54,000 + 43,000 bonus (2 h 36 min) + 60 LP.
 - 2026-11-05 agent_offers.json: Umunmaa Korakela (Kakakela, Enforcer 1) 'The Drone Infestation' 0 m3 to Airkio (1 jumps), 39,000 + 34,000 bonus (2h8m) + 48 LP.
 - 2026-11-05 agent_offers.json: Kiken Yuatakkeimo (Kakakela, Enforcer 1) 'Undue Attention - Poking Around (1 of 3)' 0 m3 to Kakakela (0 jumps), 33,000 + 40,000 bonus (2h2m) + 47 LP.
+- 2026-11-10 agent_offers.json: Saun Otsusen (Sobaseki, Enforcer 1) 'The Roving Rogue Drones' 0 m3 to Uosusuokko (3 jumps), 37,000 + 47,000 bonus (2h2m) + 54 LP.
