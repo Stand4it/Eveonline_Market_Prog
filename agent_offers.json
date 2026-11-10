@@ -4481,6 +4481,26 @@
    "needs": "2000 m3 of cargo; Sobaseki is 0 jump(s) from Sobaseki (map DB route)",
    "note": "L1 mining: mine 20,000 Banidine (2,000 m3) in Sobaseki, deliver to the agent. Same system as Vasala's Mercium: do both in one Venture trip.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Sobaseki",
+   "career": "Enforcer",
+   "where": "Sobaseki VII - Caldari Navy Logistic Support",
+   "agent": "Jukosoni Kauniki (Enforcer, 1, Sobaseki VII - Caldari Navy Logistic Support)",
+   "mission": "'For the Birds': task to deadspace (Veisto). Pays 62,000 ISK + 80 LP; bonus 67,000 ISK within 3h2m.",
+   "isk": 62000,
+   "bonus": 67000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Veisto",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
+   "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns."
   }
  ],
  "min_per_jump": 3.0,

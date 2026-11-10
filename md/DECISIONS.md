@@ -645,3 +645,4 @@
 - 2026-11-10 agent_offers.json: Saun Otsusen (Sobaseki, Enforcer 1) 'The Roving Rogue Drones' 0 m3 to Uosusuokko (3 jumps), 37,000 + 47,000 bonus (2h2m) + 54 LP.
 - 2026-11-10 agent_offers.json: Vasala Akochi (Sobaseki, Industrialist 1) 'Mercium Experiments' 1080 m3 to Sobaseki (0 jumps), 46,000 + 43,000 bonus (1h16m) + 50 LP.
 - 2026-11-10 agent_offers.json: Okuro Petsiken (Sobaseki, Industrialist 1) 'Bountiful Banidine' 2000 m3 to Sobaseki (0 jumps), 46,000 + 44,000 bonus (1h22m) + 55 LP.
+- 2026-11-10 agent_offers.json: Jukosoni Kauniki (Sobaseki, Enforcer 1) 'For the Birds' 0 m3 to Veisto (1 jumps), 62,000 + 67,000 bonus (3h2m) + 80 LP.
