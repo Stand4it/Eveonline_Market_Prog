@@ -4301,7 +4301,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Security",
    "where": "Kakakela VII - Moon 9 - Corporate Police Force Assembly Plant (0.9)",
@@ -4314,7 +4314,7 @@
    "to_system": "Kakakela",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kakakela is 0 jump(s) from Kakakela (map DB route)",
-   "note": "L1: kill the terrorist fanatics, more may warp in. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-04.",
+   "note": "L1: kill the terrorist fanatics, more may warp in. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-04. EXPIRED (seen 2026-11-04, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4322,7 +4322,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Security",
    "where": "Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9)",
@@ -4335,7 +4335,7 @@
    "to_system": "Kamokor",
    "m3": 20.0,
    "needs": "20 m3 of cargo; Kamokor is 1 jump(s) from Kakakela (map DB route)",
-   "note": "L1: destroy the convoy (small escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-04.",
+   "note": "L1: destroy the convoy (small escort), bring 10 x Militants (20 m3) back. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-04. EXPIRED (seen 2026-11-04, offers last 7 days).",
    "needs_tool": "gun"
   },
   {

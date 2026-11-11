@@ -5,8 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 426 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Matoh Aketiya: 'Gone Berserk': task to Kakakela (0.9) rendezvous point. Pay
-- Kazara Kankiainen: 'Smuggler Interception': courier 10 x Militants (20 m3) to K
 - Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d
 - Okasa Kookkalen: 'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hid
 - Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39
