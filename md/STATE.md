@@ -18,3 +18,4 @@ Open agent offers (agent_offers.json):
 - Kommeras Wakkinen: 'The Drone Infestation': task to deadspace (New Caldari). Pa
 - Koikaski Uika: 'Furrier Fiasco': task to deadspace (New Caldari). Pays 53,0
 - Okada Laah: 'Worlds Collide': courier 20 x Ship's Crew (20 m3) to deadsp
+- Roki Kaurinen: 'Onslaught': task to deadspace (Vaankalen). Pays 79,000 ISK 

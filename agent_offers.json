@@ -4772,6 +4772,27 @@
    "needs": "20 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
    "note": "L1 rescue: 20 Ship's Crew (20 m3) from a spawn container in room 3 of a deadspace complex in New Caldari. Gates NOT locked: rooms 1-2 need no clearing (no kill needed, but pirates in rooms 1-2 will shoot: the Recon 1 lesson). Only frigates/destroyers can use the first gate. Seen 2026-11-12.",
    "needs_tool": "gun"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Niyabainen",
+   "career": "Security",
+   "where": "Niyabainen IV - Moon 1 - Caldari Navy Assembly Plant",
+   "agent": "Roki Kaurinen (Security, 1, Niyabainen IV - Moon 1 - Caldari Navy Assembly Plant)",
+   "mission": "'Onslaught': task to deadspace (Vaankalen). Pays 79,000 ISK + 97 LP; bonus 68,000 ISK within 4h16m.",
+   "isk": 79000,
+   "bonus": 68000,
+   "task_min": 8,
+   "jumps": 4,
+   "to_system": "Vaankalen",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Vaankalen is 4 jump(s) from Niyabainen (map DB route)",
+   "note": "L1: make contact with a silent mining operation in Vaankalen (0.6). Division not visible in the screenshot. 'Being consumed' hints rogue drones: treated as combat. Seen 2026-11-12.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

@@ -612,6 +612,24 @@ def books_here_note(con, g, p):
 
 def offers_ranked(con, g=None, p=None, limit=TOP_OFFERS):
     rows = offers_rows(con, g, p)
+    if rows and g is not None and p is not None:                      # owner 2026-11-12: an offer whose gear you lack (guns, a mining ship) is not a pick: it waits in the full list
+        try:
+            from . import tools as _tl
+            fitted = _tl.fitted_now(con)
+        except Exception:                                               # noqa: BLE001
+            fitted = {}
+        _rd = {}
+
+        def _ok(o):
+            nt = o.get("needs_tool")
+            if nt == "gun":
+                from .combatcheck import level_of
+                lv = level_of(offer=o)
+                if lv not in _rd:
+                    _rd[lv] = combat_ready(con, g, p, lv)
+                return _rd[lv]
+            return not nt or bool(fitted.get(nt))
+        rows = [r for r in rows if _ok(r[3])]
     if not rows:
         return ""
     measured = measured_careers(con)
