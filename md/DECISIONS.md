@@ -653,3 +653,4 @@
 - 2026-11-12 agent_offers.json: Onavirpio Asorela (Veisto, Distribution 1) 'A New Venture - Education is Key (1 of 5)' 0.1 m3 to Veisto (0 jumps), 21,000 + 23,000 bonus (1h8m) + 30 LP.
 - 2026-11-12 agent_offers.json: Veinalen Elonko (Veisto, Distribution 1) 'Regional Stability - Moving the Consul (1 of 4)' 0.1 m3 to Veisto (0 jumps), 29,000 + 32,000 bonus (1h24m) + 37 LP.
 - 2026-11-12 agent_offers.json: Ootoh Litiura (Veisto, Mining 1) 'Burnt Traces' 1080 m3 to Veisto (0 jumps), 34,000 + 29,000 bonus (1h6m) + 44 LP.
+- 2026-11-12 agent_offers.json: Veinalen Elonko (Veisto, Distribution 1) 'Regional Stability - Censorship (2 of 4)' 0 m3 to Sarekuwa (1 jumps), 30,000 + 34,000 bonus (1h18m) + 35 LP.

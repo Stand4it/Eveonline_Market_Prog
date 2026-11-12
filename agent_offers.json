@@ -4568,7 +4568,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory",
@@ -4581,7 +4581,7 @@
    "to_system": "Veisto",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Courier chain 1 of 4, all in Veisto: pick up at Veisto V - Moon 5 - Poksu Mineral Group Refinery, deliver to Veisto V - Moon 15. 0.1 m3: any ship, 0 jumps."
+   "note": "Courier chain 1 of 4, all in Veisto: pick up at Veisto V - Moon 5 - Poksu Mineral Group Refinery, deliver to Veisto V - Moon 15. 0.1 m3: any ship, 0 jumps. Part 1 done 2026-11-12 (standing 0.2 -> 0.4)."
   },
   {
    "taxed": true,
@@ -4603,6 +4603,26 @@
    "needs": "1080 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
    "note": "L1 mining: mine all 3,600 Augumene (1,080 m3) from the rare asteroid in Veisto. Story hints looters may come. Needs a Venture.",
    "needs_tool": "mining"
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Distribution",
+   "where": "Veisto V - Moon 15 - Caldari Steel Factory",
+   "agent": "Veinalen Elonko (Distribution, 1, Veisto V - Moon 15 - Caldari Steel Factory)",
+   "mission": "'Regional Stability - Censorship (2 of 4)': task to deadspace (Sarekuwa). Pays 30,000 ISK + 35 LP; bonus 34,000 ISK within 1h18m.",
+   "isk": 30000,
+   "bonus": 34000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Sarekuwa",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Sarekuwa is 1 jump(s) from Veisto (map DB route)",
+   "note": "Chain 2 of 4: destroy the Scope broadcast array in Sarekuwa (1 jump); do NOT shoot the Scope reporters. Needs guns (structure kill)."
   }
  ],
  "min_per_jump": 3.0,
