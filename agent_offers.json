@@ -4562,6 +4562,26 @@
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
    "note": "Courier chain 1 of 5: pick up at Iidoken III - Caldari Constructions Warehouse (1 jump), deliver back to Veisto V - Moon 15. 0.1 m3: any ship."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Distribution",
+   "where": "Veisto V - Moon 15 - Caldari Steel Factory",
+   "agent": "Veinalen Elonko (Distribution, 1, Veisto V - Moon 15 - Caldari Steel Factory)",
+   "mission": "'Regional Stability - Moving the Consul (1 of 4)': courier 1 x Minmatar Emissary (0.1 m3) to Veisto V - Moon 15 - Caldari Steel Factory. Pays 29,000 ISK + 37 LP; bonus 32,000 ISK within 1h24m.",
+   "isk": 29000,
+   "bonus": 32000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Veisto",
+   "m3": 0.1,
+   "needs": "0.1 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
+   "note": "Courier chain 1 of 4, all in Veisto: pick up at Veisto V - Moon 5 - Poksu Mineral Group Refinery, deliver to Veisto V - Moon 15. 0.1 m3: any ship, 0 jumps."
   }
  ],
  "min_per_jump": 3.0,
