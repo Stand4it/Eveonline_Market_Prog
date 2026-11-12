@@ -16,3 +16,5 @@ Open agent offers (agent_offers.json):
 - Aatvi Nupiroda: 'Carrying AIMEDs': courier 1 x AIMEDs (25 m3) to deadspace (
 - Eurilluin Josisen: 'Denial of Reconnaissance': task to deadspace (Niyabainen). 
 - Kommeras Wakkinen: 'The Drone Infestation': task to deadspace (New Caldari). Pa
+- Koikaski Uika: 'Furrier Fiasco': task to deadspace (New Caldari). Pays 53,0
+- Okada Laah: 'Worlds Collide': courier 20 x Ship's Crew (20 m3) to deadsp
