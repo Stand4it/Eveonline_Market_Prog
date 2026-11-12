@@ -162,18 +162,21 @@ def _next_action_core(con, g, p):
         except Exception:                                        # noqa: BLE001
             _per_min = 1_000_000.0 / 60.0
         min_gain = lambda d_: max(1.0, float((better.get(d_["tid"]) or {}).get("mins", 0.0)) * _per_min)   # noqa: E731
-        for d in sells[:8]:
+        carry = []                                               # EVERY stack that pays clearly more on the way is kept, not just the biggest
+        for d in sells[:8]:                                      # 2026-11-12: Crimson Harvest SKINR Crate said SELL NOW 341k with 'Jita pays 721k' as a note
             b = better.get(d["tid"])
-            if b and detour is None and d is sells[0] and b["best_label"].startswith(("DETOUR to", "CARRY")) and detour_gain(d, b) >= min_gain(d):
+            if b and b["best_label"].startswith(("DETOUR to", "CARRY")) and detour_gain(d, b) >= min_gain(d):
                 # 2026-10-22: 'CARRY to Ikuchi +1.9M' stayed a note while the step said sell 2 Proof of Destruction here at 426k each (bought ~1.1M);
                 # and a +20k 'detour' (Hexfold Terror, Jita) became a 4-action trip step because the gain was read wrong
-                detour = (d, b)
-                break
-        if detour and len(sells) > 1:                            # step by step: sell what sells HERE first; the carried stack waits for its own step
-            d0, b0 = detour
-            sells = [x for x in sells if x is not d0]
-            keep_lines.append(f"   keep {d0['sold']:,} x {d0['name']}: it sells for {detour_gain(d0, b0):+,.0f} ISK more in "
-                              f"{b0['best_label'].split('sell at ', 1)[-1].split('DETOUR to ', 1)[-1].strip()}: the next step carries it there")
+                carry.append((d, b))
+        if carry:
+            detour = max(carry, key=lambda x: detour_gain(*x))
+        rest = [x for x in sells if all(x is not c[0] for c in carry)]
+        if carry and rest:                                       # step by step: sell what sells HERE first; the carried stacks wait for their own step
+            for d0, b0 in carry:
+                keep_lines.append(f"   keep {d0['sold']:,} x {d0['name']}: it sells for {detour_gain(d0, b0):+,.0f} ISK more in "
+                                  f"{b0['best_label'].split('sell at ', 1)[-1].split('DETOUR to ', 1)[-1].strip()}: the next step carries it there")
+            sells = rest
             total = sum(x["net"] for x in sells)
             L[0] = f"STEP: SELL NOW in {where} - about {total:,.0f} ISK"
             detour = None
