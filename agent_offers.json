@@ -4623,6 +4623,26 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sarekuwa is 1 jump(s) from Veisto (map DB route)",
    "note": "Chain 2 of 4: destroy the Scope broadcast array in Sarekuwa (1 jump); do NOT shoot the Scope reporters. Needs guns (structure kill). EXPIRED 2026-10-28 (game notice)."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Tunttaras",
+   "career": "Distribution",
+   "where": "Tunttaras IX - Moon 11 - Ytiri Storage",
+   "agent": "Iji Kiyura (Distribution, 1, Tunttaras IX - Moon 11 - Ytiri Storage)",
+   "mission": "'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (320 m3) to Ichinumi VII - School of Applied Knowledge. Pays 19,000 ISK + 23 LP; bonus 23,000 ISK within 56m.",
+   "isk": 19000,
+   "bonus": 23000,
+   "task_min": 8,
+   "jumps": 1,
+   "to_system": "Ichinumi",
+   "m3": 320.0,
+   "needs": "320 m3 of cargo; Ichinumi is 1 jump(s) from Tunttaras (map DB route)",
+   "note": "Courier 320 m3 (Catalyst hold 450 m3 holds it only if the 4,400 Tritanium, 44 m3, stays: fits). Seen 2026-11-12."
   }
  ],
  "min_per_jump": 3.0,
