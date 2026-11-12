@@ -4343,7 +4343,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Security",
    "where": "Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9)",
@@ -4356,7 +4356,7 @@
    "to_system": "Todaki",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Todaki is 1 jump(s) from Kakakela (map DB route)",
-   "note": "L1 chain step 1 of 5: eliminate all hostiles. Agent standing 0.0. Seen 2026-11-05.",
+   "note": "L1 chain step 1 of 5: eliminate all hostiles. Agent standing 0.0. Seen 2026-11-05. EXPIRED (seen 2026-11-05, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4364,7 +4364,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Security",
    "where": "Kakakela VI - Moon 18 - Caldari Navy Assembly Plant (0.9)",
@@ -4377,7 +4377,7 @@
    "to_system": "Airkio",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
-   "note": "L1: destroy the Guristas habitation module, site heavily guarded per the offer. Structure needs extra DPS time. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-05.",
+   "note": "L1: destroy the Guristas habitation module, site heavily guarded per the offer. Structure needs extra DPS time. Normal ship restrictions. Agent standing 0.0. Seen 2026-11-05. EXPIRED (seen 2026-11-05, offers last 7 days).",
    "needs_tool": "gun"
   },
   {
@@ -4385,7 +4385,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Enforcer",
    "where": "Kakakela VI - Moon 5 - Lai Dai Corporation Factory",
@@ -4398,14 +4398,14 @@
    "to_system": "Airkio",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Airkio is 1 jump(s) from Kakakela (map DB route)",
-   "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns. Seen 2026-11-05."
+   "note": "L1 combat: destroy Drone Silo; roaming drones all aggro when silo is attacked. Needs guns. Seen 2026-11-05. EXPIRED (seen 2026-11-05, offers last 7 days)."
   },
   {
    "taxed": true,
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Kakakela",
    "career": "Enforcer",
    "where": "Kakakela VI - Moon 15 - Caldari Navy Assembly Plant",
@@ -4418,7 +4418,7 @@
    "to_system": "Kakakela",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Kakakela is 0 jump(s) from Kakakela (map DB route)",
-   "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3. Seen 2026-11-05."
+   "note": "L1 scout: approach and investigate large objects, 'if anything pokes back, just run'. No kill needed; same system. Chain 1 of 3. Seen 2026-11-05. EXPIRED (seen 2026-11-05, offers last 7 days)."
   },
   {
    "taxed": true,
@@ -4501,6 +4501,26 @@
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
    "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns. Seen 2026-11-10."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Enforcer",
+   "where": "Veisto V - Moon 15 - Sukuuvestaa Corporation Factory",
+   "agent": "Tashudan Shizomi (Enforcer, 1, Veisto V - Moon 15 - Sukuuvestaa Corporation Factory)",
+   "mission": "'Furrier Fiasco': task to deadspace (Veisto). Pays 58,000 ISK + 64 LP; bonus 52,000 ISK within 2h24m.",
+   "isk": 58000,
+   "bonus": 52000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Veisto",
+   "m3": 0.0,
+   "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
+   "note": "L1 combat: destroy the infested laboratory (structure kill). Same system as the agent. Needs guns."
   }
  ],
  "min_per_jump": 3.0,

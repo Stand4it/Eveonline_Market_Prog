@@ -5,9 +5,6 @@ Branch `claude/dreamy-edison-n9n32f` | tests defined: 426 | commands in code: 65
 
 
 Open agent offers (agent_offers.json):
-- Kukka Huo: 'Fair Play - To the Rescue (1 of 5)': task to Todaki (0.9) d
-- Okasa Kookkalen: 'Avenge a Fallen Comrade': task to Airkio (0.9) Guristas hid
-- Umunmaa Korakela: 'The Drone Infestation': task to deadspace (Airkio). Pays 39
-- Kiken Yuatakkeimo: 'Undue Attention - Poking Around (1 of 3)': task to deadspac
 - Saun Otsusen: 'The Roving Rogue Drones': task to deadspace (Uosusuokko). P
 - Jukosoni Kauniki: 'For the Birds': task to deadspace (Veisto). Pays 62,000 ISK
+- Tashudan Shizomi: 'Furrier Fiasco': task to deadspace (Veisto). Pays 58,000 IS
