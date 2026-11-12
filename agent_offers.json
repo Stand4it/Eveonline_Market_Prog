@@ -4438,7 +4438,8 @@
    "to_system": "Uosusuokko",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Uosusuokko is 3 jump(s) from Sobaseki (map DB route)",
-   "note": "L1 combat: destroy the rogue drones. Needs guns. Seen 2026-11-10."
+   "note": "L1 combat: destroy the rogue drones. Needs guns. Seen 2026-11-10.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4500,7 +4501,8 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 1 jump(s) from Sobaseki (map DB route)",
-   "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns. Seen 2026-11-10."
+   "note": "L1 combat: acceleration gates (special ship restrictions), kill the lead terrorist, loot 1 x Achuran White Song Birds, bring to agent. Needs guns. Seen 2026-11-10.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4520,7 +4522,8 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "L1 combat: destroy the infested laboratory (structure kill). Same system as the agent. Needs guns. Seen 2026-11-12."
+   "note": "L1 combat: destroy the infested laboratory (structure kill). Same system as the agent. Needs guns. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4662,7 +4665,8 @@
    "to_system": "New Caldari",
    "m3": 0.0,
    "needs": "0 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
-   "note": "L1 combat: destroy the Sansha vessels. Needs guns. Seen 2026-11-12."
+   "note": "L1 combat: destroy the Sansha vessels. Needs guns. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4682,7 +4686,8 @@
    "to_system": "New Caldari",
    "m3": 25.0,
    "needs": "25 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
-   "note": "L1: pick up 1 AIMEDs (25 m3) at a deadspace site in New Caldari (ship restrictions), return to agent. Guards unknown: treat as combat until seen. Seen 2026-11-12."
+   "note": "L1: pick up 1 AIMEDs (25 m3) at a deadspace site in New Caldari (ship restrictions), return to agent. Guards unknown: treat as combat until seen. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4702,7 +4707,8 @@
    "to_system": "Niyabainen",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Niyabainen is 0 jump(s) from Niyabainen (map DB route)",
-   "note": "L1 combat: wait for a Gallente recon ship and destroy it. Needs guns. Seen 2026-11-12."
+   "note": "L1 combat: wait for a Gallente recon ship and destroy it. Needs guns. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4722,7 +4728,8 @@
    "to_system": "New Caldari",
    "m3": 0.0,
    "needs": "0 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
-   "note": "L1 combat: destroy the Drone Bunker; belt drones all aggro. Needs guns. Seen 2026-11-12."
+   "note": "L1 combat: destroy the Drone Bunker; belt drones all aggro. Needs guns. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4742,7 +4749,8 @@
    "to_system": "New Caldari",
    "m3": 0.0,
    "needs": "0 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
-   "note": "L1 combat: destroy the infested laboratory. Needs guns. Seen 2026-11-12."
+   "note": "L1 combat: destroy the infested laboratory. Needs guns. Seen 2026-11-12.",
+   "needs_tool": "gun"
   },
   {
    "taxed": true,
@@ -4762,7 +4770,8 @@
    "to_system": "New Caldari",
    "m3": 20.0,
    "needs": "20 m3 of cargo; New Caldari is 1 jump(s) from Niyabainen (map DB route)",
-   "note": "L1 rescue: 20 Ship's Crew (20 m3) from a spawn container in room 3 of a deadspace complex in New Caldari. Gates NOT locked: rooms 1-2 need no clearing (no kill needed, but pirates in rooms 1-2 will shoot: the Recon 1 lesson). Only frigates/destroyers can use the first gate. Seen 2026-11-12."
+   "note": "L1 rescue: 20 Ship's Crew (20 m3) from a spawn container in room 3 of a deadspace complex in New Caldari. Gates NOT locked: rooms 1-2 need no clearing (no kill needed, but pirates in rooms 1-2 will shoot: the Recon 1 lesson). Only frigates/destroyers can use the first gate. Seen 2026-11-12.",
+   "needs_tool": "gun"
   }
  ],
  "min_per_jump": 3.0,

@@ -658,3 +658,4 @@
 - 2026-11-12 agent_offers.json: Iji Kiyura (Tunttaras, Distribution 1) 'A Humble Gift' 320 m3 to Ichinumi (1 jumps), 19,000 + 23,000 bonus (56m) + 23 LP.
 - 2026-11-12 agent_offers.json: Kommeras Wakkinen (Niyabainen, Security 1) 'The Drone Infestation' 0 m3 to New Caldari (1 jumps), 43,000 + 41,000 bonus (2h8m) + 48 LP.
 - 2026-11-12 agent_offers.json: Okada Laah (Niyabainen, Security 1) 'Worlds Collide' 20 m3 to New Caldari (1 jumps), 91,000 + 98,000 bonus (6h) + 136 LP.
+- 2026-11-12 2026-11-12 owner: 'remember my fit, I have no guns or ammo yet' (Catalyst: Salvager I only). The fit gate (combat_ready, 99% rule) only applies to offers with needs_tool=gun; 9 Security offers logged today lacked it and ranked as doable. Marked them; add_offer.py now defaults Security offers to needs_tool=gun (--needs-tool none for scout/courier-type Security missions).

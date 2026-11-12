@@ -26,7 +26,7 @@ a.add_argument("--lp", type=int, default=0)
 a.add_argument("--task-min", type=int, default=8)
 a.add_argument("--level", default="L1")
 a.add_argument("--taxed", action="store_true")
-a.add_argument("--needs-tool", default="", help="gun = combat (waits for a fit passing the 99%% rule), mining, salvaging, scanning")
+a.add_argument("--needs-tool", default="", help="gun = combat (waits for a fit passing the 99%% rule; the default for Security), mining, salvaging, scanning, none")
 a.add_argument("--note", default="")
 a.add_argument("--no-finish", action="store_true")
 o = a.parse_args()
@@ -49,7 +49,9 @@ offer = {
     "needs": f"{o.m3:g} m3 of cargo; {o.to} is {jumps} jump(s) from {o.system} (map DB route)",
     "note": o.note or f"Seen, {o.isk + o.bonus:,} ISK + {o.lp} LP with the bonus.",
 }
-if o.needs_tool:
+if not o.needs_tool and o.career.lower().startswith("security"):          # owner 2026-11-12: Security offers are combat unless said otherwise (--needs-tool none)
+    o.needs_tool = "gun"
+if o.needs_tool and o.needs_tool != "none":
     offer["needs_tool"] = o.needs_tool
 from offers_lock import offers_lock  # noqa: E402
 p = os.path.join(ROOT, "agent_offers.json")
