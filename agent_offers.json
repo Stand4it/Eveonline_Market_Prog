@@ -4520,7 +4520,7 @@
    "to_system": "Veisto",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "L1 combat: destroy the infested laboratory (structure kill). Same system as the agent. Needs guns."
+   "note": "L1 combat: destroy the infested laboratory (structure kill). Same system as the agent. Needs guns. Seen 2026-11-12."
   },
   {
    "taxed": true,
@@ -4540,7 +4540,7 @@
    "to_system": "Veisto",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "L1 mining: mine 1,800 Mercium (1,080 m3) in Veisto. Needs a Venture.",
+   "note": "L1 mining: mine 1,800 Mercium (1,080 m3) in Veisto. Needs a Venture. Seen 2026-11-12.",
    "needs_tool": "mining"
   },
   {
@@ -4561,7 +4561,7 @@
    "to_system": "Veisto",
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "Courier chain 1 of 5: pick up at Iidoken III - Caldari Constructions Warehouse (1 jump), deliver back to Veisto V - Moon 15. 0.1 m3: any ship."
+   "note": "Courier chain 1 of 5: pick up at Iidoken III - Caldari Constructions Warehouse (1 jump), deliver back to Veisto V - Moon 15. 0.1 m3: any ship. Seen 2026-11-12."
   },
   {
    "taxed": true,
@@ -4601,7 +4601,7 @@
    "to_system": "Veisto",
    "m3": 1080.0,
    "needs": "1080 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
-   "note": "L1 mining: mine all 3,600 Augumene (1,080 m3) from the rare asteroid in Veisto. Story hints looters may come. Needs a Venture.",
+   "note": "L1 mining: mine all 3,600 Augumene (1,080 m3) from the rare asteroid in Veisto. Story hints looters may come. Needs a Venture. Seen 2026-11-12.",
    "needs_tool": "mining"
   },
   {
@@ -4609,7 +4609,7 @@
    "loot": [],
    "cost": [],
    "granted": [],
-   "available": true,
+   "available": false,
    "agent_system": "Veisto",
    "career": "Distribution",
    "where": "Veisto V - Moon 15 - Caldari Steel Factory",
@@ -4622,7 +4622,7 @@
    "to_system": "Sarekuwa",
    "m3": 0.0,
    "needs": "0 m3 of cargo; Sarekuwa is 1 jump(s) from Veisto (map DB route)",
-   "note": "Chain 2 of 4: destroy the Scope broadcast array in Sarekuwa (1 jump); do NOT shoot the Scope reporters. Needs guns (structure kill)."
+   "note": "Chain 2 of 4: destroy the Scope broadcast array in Sarekuwa (1 jump); do NOT shoot the Scope reporters. Needs guns (structure kill). EXPIRED 2026-10-28 (game notice)."
   }
  ],
  "min_per_jump": 3.0,

@@ -30,7 +30,7 @@ def _known_agent_names():
         offers = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json"), encoding="utf-8")).get("offers", [])
     except (OSError, ValueError):
         return set()
-    return {o.get("agent", "").split(" (")[0].lower() for o in offers}
+    return {o.get("agent", "").split(" (")[0].lower() for o in offers if o.get("available", True)}   # expired/done: the agent has a NEW offer to read (owner 2026-11-12)
 
 
 NONE_KEY = "agentleads_none"
@@ -175,7 +175,7 @@ def _known_places():
         offers = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "agent_offers.json"), encoding="utf-8")).get("offers", [])
     except (OSError, ValueError):
         return ""
-    return "\n".join(f"{o.get('agent', '')} {o.get('where', '')}" for o in offers).lower()
+    return "\n".join(f"{o.get('agent', '')} {o.get('where', '')}" for o in offers if o.get("available", True)).lower()
 
 
 def _station_known(con, loc, places):
