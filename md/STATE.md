@@ -8,3 +8,5 @@ Open agent offers (agent_offers.json):
 - Saun Otsusen: 'The Roving Rogue Drones': task to deadspace (Uosusuokko). P
 - Jukosoni Kauniki: 'For the Birds': task to deadspace (Veisto). Pays 62,000 ISK
 - Tashudan Shizomi: 'Furrier Fiasco': task to deadspace (Veisto). Pays 58,000 IS
+- Oitko Shiomiken: 'Mercium Experiments': courier 1800 x Mercium (1080 m3) to V
+- Onavirpio Asorela: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
