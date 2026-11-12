@@ -11,3 +11,4 @@ Open agent offers (agent_offers.json):
 - Oitko Shiomiken: 'Mercium Experiments': courier 1800 x Mercium (1080 m3) to V
 - Onavirpio Asorela: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
 - Veinalen Elonko: 'Regional Stability - Moving the Consul (1 of 4)': courier 1
+- Ootoh Litiura: 'Burnt Traces': courier 3600 x Augumene (1080 m3) to Veisto 

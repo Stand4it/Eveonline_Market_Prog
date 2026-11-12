@@ -4582,6 +4582,27 @@
    "m3": 0.1,
    "needs": "0.1 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
    "note": "Courier chain 1 of 4, all in Veisto: pick up at Veisto V - Moon 5 - Poksu Mineral Group Refinery, deliver to Veisto V - Moon 15. 0.1 m3: any ship, 0 jumps."
+  },
+  {
+   "taxed": true,
+   "loot": [],
+   "cost": [],
+   "granted": [],
+   "available": true,
+   "agent_system": "Veisto",
+   "career": "Mining",
+   "where": "Veisto V - Moon 4 - Propel Dynamics Factory",
+   "agent": "Ootoh Litiura (Mining, 1, Veisto V - Moon 4 - Propel Dynamics Factory)",
+   "mission": "'Burnt Traces': courier 3600 x Augumene (1080 m3) to Veisto V - Moon 4 - Propel Dynamics Factory. Pays 34,000 ISK + 44 LP; bonus 29,000 ISK within 1h6m.",
+   "isk": 34000,
+   "bonus": 29000,
+   "task_min": 8,
+   "jumps": 0,
+   "to_system": "Veisto",
+   "m3": 1080.0,
+   "needs": "1080 m3 of cargo; Veisto is 0 jump(s) from Veisto (map DB route)",
+   "note": "L1 mining: mine all 3,600 Augumene (1,080 m3) from the rare asteroid in Veisto. Story hints looters may come. Needs a Venture.",
+   "needs_tool": "mining"
   }
  ],
  "min_per_jump": 3.0,
