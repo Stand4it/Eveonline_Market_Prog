@@ -12,3 +12,7 @@ Open agent offers (agent_offers.json):
 - Onavirpio Asorela: 'A New Venture - Education is Key (1 of 5)': courier 1 x Cor
 - Ootoh Litiura: 'Burnt Traces': courier 3600 x Augumene (1080 m3) to Veisto 
 - Iji Kiyura: 'A Humble Gift': courier 4 x Crates of Mono-Cell Batteries (
+- Ohvola Manjus: 'Pirate Aggression': task to deadspace (New Caldari). Pays 2
+- Aatvi Nupiroda: 'Carrying AIMEDs': courier 1 x AIMEDs (25 m3) to deadspace (
+- Eurilluin Josisen: 'Denial of Reconnaissance': task to deadspace (Niyabainen). 
+- Kommeras Wakkinen: 'The Drone Infestation': task to deadspace (New Caldari). Pa
